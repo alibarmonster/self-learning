@@ -254,27 +254,8 @@
     position: relative;
   }
 
-  /* container-lines: mini squares where each section rule meets the guides */
-  .block::before,
-  .block::after {
-    content: '';
-    position: absolute;
-    top: -2.5px;
-    width: 5px;
-    height: 5px;
-    background: var(--line-strong);
-  }
-
-  .block::before {
-    left: 0;
-  }
-
-  .block::after {
-    right: 0;
-  }
-
   .block h2 {
-    font-size: 23px;
+    font-size: var(--type-h2);
     margin-bottom: 16px;
   }
 

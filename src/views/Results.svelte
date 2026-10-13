@@ -210,7 +210,7 @@
   }
 
   .verdict h1 {
-    font-size: 27px;
+    font-size: var(--type-h3);
   }
 
   .verdict p {
@@ -255,7 +255,7 @@
   }
 
   .breakdown h2 {
-    font-size: 22px;
+    font-size: var(--type-h2);
     margin: 26px 0 18px;
   }
 

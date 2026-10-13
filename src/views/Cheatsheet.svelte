@@ -342,7 +342,7 @@
 
   .part-head h2 {
     margin-top: 26px;
-    font-size: 27px;
+    font-size: var(--type-h2);
     letter-spacing: -0.3px;
   }
 
@@ -366,7 +366,7 @@
     display: flex;
     align-items: baseline;
     gap: 14px;
-    font-size: 21px;
+    font-size: var(--type-h4);
   }
 
   .group-head p {
