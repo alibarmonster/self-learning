@@ -2,17 +2,18 @@
   "name": "exam-prep",
   "private": true,
   "version": "1.0.0",
-  "description": "Timed practice simulators for the Apple Developer Academy entry test and the Google Cloud Digital Leader exam.",
+  "description": "Timed practice simulators for the Apple Developer Academy entry test and Google Cloud certification exams (Cloud Digital Leader, Associate Cloud Engineer).",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "validate": "node scripts/validate-bank.js"
+    "validate": "bun scripts/validate-bank.js"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "svelte": "^5.56.10",
     "vite": "^8.2.2"
-  }
+  },
+  "packageManager": "bun@1.3.13"
 }

@@ -1,5 +1,5 @@
 /**
- * Sanity checks for every exam's question bank. Run with: node scripts/validate-bank.js
+ * Sanity checks for every exam's question bank. Run with: bun run validate
  * Catches the failure modes that are easy to introduce by hand — an answer
  * index pointing past the end of the options, duplicate ids, duplicate option
  * text, or a preset asking for more questions than a section actually holds.

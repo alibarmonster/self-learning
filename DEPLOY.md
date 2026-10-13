@@ -1,6 +1,6 @@
 # Deploying
 
-The app is a static site: `npm run build` writes `dist/`, and `dist/` is the
+The app is a static site: `bun run build` writes `dist/`, and `dist/` is the
 whole thing — about 840 KB, one JS file, one CSS file, a favicon. It makes **no
 network requests at all** once loaded. No API, no database, no web fonts, no
 analytics. Anything that can serve files can host it.
@@ -29,7 +29,7 @@ valid session never reaches the files.
    **Connect to Git**, and pick the repo.
 3. Build settings:
    - Framework preset: **None** (or Vite)
-   - Build command: `npm run build`
+   - Build command: `bun run build` (Pages detects `bun.lock` and installs with Bun)
    - Build output directory: `dist`
 4. Deploy. You get `your-project.pages.dev`.
 5. Now the lock. **Zero Trust** → **Access** → **Applications** →
@@ -53,7 +53,7 @@ pricing page before relying on it. Cloudflare Access is free for personal use.
 
 ### Netlify
 
-1. Import the repo; build `npm run build`, publish `dist`.
+1. Import the repo; build `bun run build`, publish `dist`.
 2. **Site configuration** → **Access & security** → **Password protection**
    (also a paid feature, and site-wide).
 
@@ -96,7 +96,7 @@ localStorage keys are versioned (`-v1`) and unchanged by a deploy.
 ## Checking a build before you ship it
 
 ```bash
-npm run validate   # question banks: no broken answers, modes, or drills
-npm run build      # writes dist/
-npm run preview    # serves dist/ at http://localhost:4173
+bun run validate   # question banks: no broken answers, modes, or drills
+bun run build      # writes dist/
+bun run preview    # serves dist/ at http://localhost:4173
 ```

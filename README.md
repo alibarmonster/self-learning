@@ -21,12 +21,14 @@ next — see *Adding an exam* below.
 
 ## Running it
 
+The project uses [Bun](https://bun.sh) (1.3 or newer) as its package manager and script runner.
+
 ```bash
-npm install
-npm run dev       # http://localhost:5173 — the exam picker
-npm run build     # production bundle in dist/
-npm run preview   # serve the production bundle
-npm run validate  # sanity-check every exam's question bank
+bun install
+bun run dev       # http://localhost:5173 — the exam picker
+bun run build     # production bundle in dist/
+bun run preview   # serve the production bundle
+bun run validate  # sanity-check every exam's question bank
 ```
 
 ## Deploying
@@ -38,7 +40,7 @@ option that enforces the login before the files are served.
 
 ## Storage — why there is no database
 
-There is no database, no server and no API. The app is a static site: `npm run build`
+There is no database, no server and no API. The app is a static site: `bun run build`
 produces one JS file, one CSS file and an `index.html`, and once that is loaded it makes **no
 network requests at all**. The question banks are plain JavaScript modules compiled into the
 bundle, so a paper is drawn in the browser from data that is already there.
@@ -123,7 +125,7 @@ hand-written explanations are never retyped. Two things are deliberate:
 
 The numbering runs 1 to 289 with no gaps, so `et-NNN` is that question's number on the site.
 
-These questions are flagged `verbatim: true`, which tells `npm run validate` not to complain that
+These questions are flagged `verbatim: true`, which tells `bun run validate` not to complain that
 their options are uneven — they are quoted, not written here. They sit in their own section and a
 dedicated **Community Exam** preset (50–60 q / 90 min — a blueprint entry may be `[min, max]`, and
 the paper draws a different length in that range every sitting, the way the real exam does); the guide-weighted Full Exam and Renewal presets
@@ -195,7 +197,7 @@ top of `src/app.css`.
 3. Write `src/lib/exams/<id>/About.svelte` (copy the CDL one as a starting point).
 4. List the exam in `src/lib/exams/data.js` and attach its About page in `src/lib/exams/index.js`.
 5. Optionally give it an accent colour in `app.css` (see the `data-exam='cdl'` block).
-6. `npm run validate`.
+6. `bun run validate`.
 
 ## Question format
 
@@ -296,7 +298,7 @@ figure: grid3((r, c) => motif(['circle', 'square', 'triangle'][r], FILLS[c])),
 ```
 
 So the pattern is guaranteed self-consistent, and a typo in the answer string yields index `-1`,
-which `npm run validate` rejects.
+which `bun run validate` rejects.
 
 `figure-matrix.js` takes the same idea further for the 3x3 figure-matrix format — a grid with the
 bottom-right cell missing and four candidate tiles. A paper is declared as two attribute lists, one
@@ -327,7 +329,7 @@ Drop a new object into the relevant file in `src/lib/exams/apple/questions/`:
 }
 ```
 
-Then run `npm run validate` — it checks for duplicate ids, out-of-range answer indices, duplicate or
+Then run `bun run validate` — it checks for duplicate ids, out-of-range answer indices, duplicate or
 blank options, missing explanations, presets that ask for more questions than a section holds, and
 for figures: unbalanced SVG tags, `NaN`/`undefined` coordinates, and identical option art. It also
 prints — without failing — any pair of questions in the same topic that share more than 68% of their
