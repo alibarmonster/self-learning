@@ -25,7 +25,7 @@
     <p class="eyebrow">Personal exam prep</p>
     <h1>
       <span class="reveal" style="--i:0"><span>Which test are</span></span>
-      <span class="reveal" style="--i:1"><span>you sitting?</span></span>
+      <span class="reveal" style="--i:1"><span>you <mark>sitting</mark>?</span></span>
     </h1>
     <p class="lede">
       One place for every paper you are preparing for. Each exam keeps its own question bank,
@@ -95,15 +95,16 @@
 
   .hero h1 {
     margin-top: 16px;
-    font-size: clamp(34px, 6vw, 54px);
-    letter-spacing: -0.03em;
+    font-size: var(--type-hero);
+    line-height: 1.15;
+    letter-spacing: -0.4px;
   }
 
   .lede {
     margin-top: 18px;
     max-width: 560px;
-    font-size: 17px;
-    line-height: 1.6;
+    font-size: var(--type-lead);
+    line-height: 1.4;
     color: var(--text-secondary);
   }
 
@@ -117,17 +118,12 @@
   .exam {
     display: flex;
     flex-direction: column;
-    padding: 24px 26px 22px;
-    transition:
-      border-color var(--dur-ui) var(--ease),
-      transform var(--dur-ui) var(--ease),
-      box-shadow var(--dur-ui) var(--ease);
+    padding: var(--card-pad);
+    transition: background-color var(--dur-micro) var(--ease);
   }
 
   .exam:hover {
-    border-color: var(--border-strong);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow);
+    background: var(--stone-strong);
   }
 
   .exam-head {
@@ -143,8 +139,8 @@
     display: grid;
     place-items: center;
     border: 1.5px solid var(--text);
-    border-radius: 9px;
-    font-family: var(--font-mono);
+    border-radius: 0;
+    font-family: var(--font);
     font-size: 14px;
     font-weight: 600;
     color: var(--text);
@@ -158,9 +154,8 @@
     bottom: -4px;
     width: 9px;
     height: 9px;
-    border-radius: 2px;
-    background: var(--accent);
-    border: 2px solid var(--bg-elevated);
+    background: var(--exam-tint);
+    border: 2px solid var(--stone);
   }
 
   .exam-title {
@@ -169,7 +164,7 @@
 
   .exam h2 {
     margin-top: 4px;
-    font-size: 21px;
+    font-size: var(--type-h3);
   }
 
   .exam-blurb {
@@ -194,8 +189,8 @@
   }
 
   .stats dt {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-tertiary);
@@ -203,9 +198,10 @@
 
   .stats dd {
     margin: 0;
+    font-family: var(--font-display);
     font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    font-weight: 400;
+    letter-spacing: -0.3px;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
   }
@@ -220,8 +216,8 @@
   }
 
   .note {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     color: var(--text-tertiary);
   }
 

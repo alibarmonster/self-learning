@@ -235,7 +235,7 @@
   }
 
   .num {
-    font-family: var(--font-mono);
+    font-family: var(--font);
     font-size: 12px;
     font-weight: 600;
     color: var(--text-tertiary);
@@ -243,14 +243,14 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Mono utility chips — the metadata line reads as an instrument label. */
+  /* Metadata chips: section on mint, topic on stone, difficulty outlined. */
   .chip {
     padding: 3px 9px;
-    border-radius: 5px;
+    border-radius: var(--radius-control);
     background: var(--accent-soft);
     color: var(--accent);
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -283,20 +283,22 @@
   }
 
   .prompt {
+    font-family: var(--font-display);
     font-size: clamp(20px, 2.4vw, 25px);
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1.35;
     white-space: pre-line;
+    letter-spacing: -0.3px;
   }
 
   .pick-note {
     display: inline-block;
     margin-top: 12px;
     padding: 4px 10px;
-    border-radius: 5px;
+    border-radius: var(--radius-control);
     border: 1px dashed var(--border-strong);
-    font-family: var(--font-mono);
-    font-size: 11px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--text-secondary);
@@ -308,17 +310,17 @@
     color: var(--accent);
   }
 
-  /* Multi-select options get a square marker, the checkbox convention. */
+  /* Multi-select options get a double-ruled marker, the checkbox convention. */
   .option.multi .letter {
-    border-radius: 4px;
+    border-width: 2px;
   }
 
   .code-wrap {
     position: relative;
     margin-top: 20px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: var(--bg-sunken);
+    background: var(--surface);
     overflow: hidden;
   }
 
@@ -326,8 +328,8 @@
     display: block;
     padding: 7px 16px;
     border-bottom: 1px solid var(--line);
-    font-family: var(--font-mono);
-    font-size: 11px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-tertiary);
@@ -351,9 +353,9 @@
   .stem {
     margin: 24px 0 0;
     padding: 20px 16px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    background: var(--bg-sunken);
+    background: var(--surface);
     display: flex;
     justify-content: center;
     overflow-x: auto;
@@ -406,7 +408,7 @@
   .dense .letter {
     width: 20px;
     height: 20px;
-    font-size: 10.5px;
+    font-size: var(--type-label);
   }
 
   .dense .art :global(svg) {
@@ -444,26 +446,18 @@
     gap: 14px;
     padding: 13px 16px;
     text-align: left;
-    border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    background: var(--bg-elevated);
-    font-size: 15.5px;
-    line-height: 1.45;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    background: var(--surface);
+    font-size: 16px;
+    line-height: 1.4;
     transition:
       border-color var(--dur-micro) var(--ease),
-      background var(--dur-micro) var(--ease),
-      box-shadow var(--dur-micro) var(--ease),
-      transform var(--dur-micro) var(--ease);
+      background-color var(--dur-micro) var(--ease);
   }
 
   .option:not(:disabled):hover {
-    border-color: var(--text-tertiary);
-    background: var(--surface-hover);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .option:not(:disabled):active {
-    transform: scale(0.995);
+    border-color: var(--ink);
   }
 
   .option:disabled {
@@ -472,14 +466,14 @@
 
   .letter {
     flex: none;
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     display: grid;
     place-items: center;
-    border-radius: 50%;
-    border: 1px solid var(--border-strong);
-    font-family: var(--font-mono);
-    font-size: 11.5px;
+    border-radius: var(--radius-control);
+    border: 1px solid var(--line-strong);
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 600;
     color: var(--text-secondary);
     transition: inherit;
@@ -493,15 +487,14 @@
   }
 
   .option.chosen {
-    border-color: var(--accent);
-    background: var(--accent-soft);
-    box-shadow: 0 0 0 1px var(--accent);
+    border-color: var(--ink);
+    background: var(--mint-soft);
   }
 
   .option.chosen .letter {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--accent-text);
+    background: var(--mint);
+    border-color: var(--mint);
+    color: #1a1a1a;
   }
 
   .option.correct {
@@ -512,7 +505,7 @@
   .option.correct .letter {
     background: var(--green);
     border-color: var(--green);
-    color: var(--bg-elevated);
+    color: var(--bg);
   }
 
   .option.wrong {
@@ -523,14 +516,14 @@
   .option.wrong .letter {
     background: var(--red);
     border-color: var(--red);
-    color: var(--bg-elevated);
+    color: var(--bg);
   }
 
   .tag {
     flex: none;
     align-self: center;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -547,21 +540,21 @@
   .peek {
     margin-top: 18px;
     padding: 9px 14px;
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    background: var(--bg-elevated);
-    font-family: var(--font-mono);
-    font-size: 11.5px;
+    border: 1px solid var(--line-strong);
+    border-radius: 0;
+    background: var(--surface);
+    font-family: var(--font);
+    font-size: var(--type-label);
+    font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-secondary);
-    box-shadow: var(--shadow-sm);
     transition: border-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
   }
 
   .peek:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: var(--ink);
+    color: var(--ink);
   }
 
   /* The ExamTopics-style verdict: a suggested-answer strip, your vote bar,
@@ -569,7 +562,7 @@
   .verdict {
     margin-top: 18px;
     border: 1px solid color-mix(in srgb, var(--green) 35%, transparent);
-    border-radius: 10px;
+    border-radius: 0;
     overflow: hidden;
     font-size: 15px;
     line-height: 1.6;
@@ -595,8 +588,8 @@
   }
 
   .suggested-label {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -608,16 +601,17 @@
     place-items: center;
     min-width: 28px;
     height: 28px;
-    padding: 0 8px;
-    border-radius: 6px;
-    background: var(--green);
-    color: var(--bg-elevated);
+    padding: 0 10px;
+    border-radius: var(--radius-mark);
+    background: var(--mint);
+    color: #1a1a1a;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .verdict.missed .suggested-letter {
     background: var(--amber);
+    color: var(--bg);
   }
 
   .suggested-note {
@@ -640,8 +634,8 @@
   }
 
   .votes-label {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-tertiary);
@@ -651,9 +645,9 @@
   .votes-bar {
     display: flex;
     height: 22px;
-    border-radius: 5px;
+    border-radius: var(--radius-control);
     overflow: hidden;
-    background: var(--bg-sunken);
+    background: var(--stone-strong);
     border: 1px solid var(--line);
   }
 
@@ -665,10 +659,10 @@
     white-space: nowrap;
     background: var(--red-soft);
     color: var(--red);
-    font-family: var(--font-mono);
-    font-size: 11px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 600;
-    border-right: 1px solid var(--bg-elevated);
+    border-right: 1px solid var(--surface);
   }
 
   .votes-seg.right {
@@ -698,8 +692,8 @@
   .tip-label {
     display: inline-block;
     margin-right: 8px;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;

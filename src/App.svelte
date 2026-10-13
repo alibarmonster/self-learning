@@ -101,7 +101,6 @@
   }
 </script>
 
-<div class="frame">
 <div class="shell">
   <header class="topbar">
     <div class="page bar">
@@ -149,7 +148,7 @@
     </div>
   </header>
 
-  <main class="lines">
+  <main>
     {#if !quiz.exam}
       <Picker />
     {:else if quiz.view === 'home'}
@@ -180,42 +179,20 @@
     </footer>
   {/if}
 </div>
-</div>
 
 <style>
-  /* The dark outer field. The paper shell sits inside it with a small gap on
-     every side, so the whole app reads as one framed, elevated sheet. */
-  .frame {
-    min-height: 100vh;
-    padding: var(--frame-gap);
-    background: var(--frame);
-  }
-
   .shell {
-    position: relative;
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - var(--frame-gap) * 2);
-    border-radius: var(--radius-shell);
-    background-color: var(--bg);
-    /* subtle diagonal texture so the paper reads as material */
-    background-image: repeating-linear-gradient(
-      135deg,
-      transparent 0 7px,
-      var(--texture) 7px 8px
-    );
-    box-shadow: var(--shadow-lg);
-    /* clip (not hidden) so the sticky header keeps working */
-    overflow: clip;
+    min-height: 100vh;
+    background: var(--bg);
   }
 
   .topbar {
     position: sticky;
     top: 0;
     z-index: 40;
-    background: color-mix(in srgb, var(--bg) 86%, transparent);
-    backdrop-filter: saturate(160%) blur(16px);
-    -webkit-backdrop-filter: saturate(160%) blur(16px);
+    background: var(--cream);
     border-bottom: 1px solid var(--line);
   }
 
@@ -224,27 +201,23 @@
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    height: 58px;
+    height: var(--header-h);
   }
 
   .brand-group {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     min-width: 0;
   }
 
   .back {
-    padding: 7px 10px 7px 8px;
-    margin-left: -8px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    margin-left: -12px;
+    font-size: 14px;
   }
 
   .back span {
-    font-size: 17px;
+    font-size: 18px;
     line-height: 1;
     margin-top: -2px;
   }
@@ -252,13 +225,12 @@
   .brand {
     display: flex;
     align-items: center;
-    gap: 11px;
-    padding: 6px 10px 6px 6px;
-    margin-left: -6px;
+    gap: 12px;
+    padding: 8px 12px 8px 8px;
+    margin-left: -8px;
     border: none;
     background: none;
-    border-radius: 10px;
-    transition: background var(--dur-micro) var(--ease);
+    transition: background-color var(--dur-micro) var(--ease);
     min-width: 0;
   }
 
@@ -267,36 +239,33 @@
   }
 
   .brand:not(:disabled):hover {
-    background: var(--surface-hover);
+    background: var(--stone);
   }
 
-  /* A bracketed monogram: the exam's initials inside a thin square. */
+  /* The exam's initials in an ink square, with its tint in the corner. */
   .mark {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     flex: none;
     display: grid;
     place-items: center;
-    border: 1.5px solid var(--text);
-    border-radius: 7px;
-    font-family: var(--font-mono);
-    font-size: 11px;
+    border: 1.5px solid var(--ink);
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.02em;
-    color: var(--text);
+    color: var(--ink);
     position: relative;
   }
 
   .mark::after {
     content: '';
     position: absolute;
-    right: -3px;
-    bottom: -3px;
-    width: 7px;
-    height: 7px;
-    border-radius: 2px;
-    background: var(--accent);
-    border: 1.5px solid var(--bg);
+    right: -4px;
+    bottom: -4px;
+    width: 9px;
+    height: 9px;
+    background: var(--exam-tint);
+    border: 1.5px solid var(--cream);
   }
 
   .brand-text {
@@ -308,7 +277,7 @@
   }
 
   .brand-text strong {
-    font-size: 14.5px;
+    font-size: 15px;
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
@@ -317,10 +286,7 @@
   }
 
   .brand-text span {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 12px;
     color: var(--text-tertiary);
   }
 
@@ -331,23 +297,22 @@
     flex: none;
   }
 
-  .actions :global(.active) {
-    color: var(--text);
-    background: var(--surface-hover);
+  .actions .btn {
+    font-size: 14px;
   }
 
-  .theme {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+  .actions :global(.active) {
+    color: var(--ink);
+    background: var(--stone);
+    box-shadow: inset 0 -2px 0 var(--mint);
   }
 
   .theme .dot {
     width: 8px;
     height: 8px;
-    border-radius: 2px;
-    background: var(--accent);
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    background: linear-gradient(90deg, currentColor 50%, transparent 50%);
   }
 
   main {
@@ -356,59 +321,20 @@
     isolation: isolate;
   }
 
-  /* container-lines: thin vertical guides at the content container's edges,
-     behind content, never intercepting input. */
-  .lines::before,
-  .lines::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    z-index: -1;
-    width: 1px;
-    background: var(--line);
-    pointer-events: none;
-  }
-
-  .lines::before {
-    left: max(var(--page-pad), calc((100% - var(--page)) / 2 + var(--page-pad)));
-  }
-
-  .lines::after {
-    right: max(var(--page-pad), calc((100% - var(--page)) / 2 + var(--page-pad)));
-  }
-
   .foot {
     width: 100%;
-    padding: 0 var(--page-pad) 36px;
+    padding: 0 var(--page-pad) 40px;
   }
 
   .foot p {
-    max-width: 560px;
+    max-width: 600px;
     margin: 0 auto;
-    padding-top: 22px;
+    padding-top: 24px;
     color: var(--text-tertiary);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 1.7;
+    font-size: 13px;
+    line-height: 1.6;
     text-align: center;
-    letter-spacing: 0.01em;
-  }
-
-  @media (max-width: 720px) {
-    .frame {
-      padding: 6px;
-    }
-
-    .shell {
-      min-height: calc(100vh - 12px);
-      border-radius: 14px;
-    }
-
-    .lines::before,
-    .lines::after {
-      display: none;
-    }
+    letter-spacing: -0.1px;
   }
 
   @media (max-width: 560px) {
@@ -417,21 +343,17 @@
       display: none;
     }
 
-    .brand {
-      padding-right: 10px;
-    }
-
     .back {
-      padding: 7px 8px 7px 6px;
+      padding: 8px 8px 8px 6px;
     }
 
     .actions {
-      gap: 2px;
+      gap: 0;
     }
 
     .actions .btn {
-      padding: 7px 9px;
-      font-size: 12.5px;
+      padding: 8px;
+      font-size: 13px;
     }
   }
 </style>

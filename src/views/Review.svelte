@@ -136,7 +136,7 @@
     gap: 4px;
     margin: 28px 0 20px;
     padding: 4px;
-    border-radius: 10px;
+    border-radius: 0;
     border: 1px solid var(--line);
     background: var(--bg-sunken);
     width: fit-content;
@@ -145,9 +145,9 @@
   .filter {
     padding: 7px 14px;
     border: none;
-    border-radius: 7px;
+    border-radius: 0;
     background: transparent;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--text-secondary);
     transition: background var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
@@ -158,13 +158,13 @@
   }
 
   .filter.active {
-    background: var(--bg-elevated);
-    color: var(--text);
-    box-shadow: var(--shadow-sm);
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: inset 0 -2px 0 var(--mint);
   }
 
   .count {
-    font-size: 11px;
+    font-size: var(--type-label);
     color: var(--text-tertiary);
     font-variant-numeric: tabular-nums;
   }
@@ -187,8 +187,8 @@
   .flag-tag {
     display: inline-block;
     margin-bottom: 12px;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;

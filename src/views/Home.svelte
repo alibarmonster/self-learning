@@ -103,7 +103,7 @@
       {/if}
     </div>
 
-    <dl class="stats bracket">
+    <dl class="stats">
       <div><dt>Questions in bank</dt><dd>{exam.bankSize}</dd></div>
       {#if fullTest}
         <div><dt>Full test</dt><dd>{modeQuestionLabel(fullTest)} q · {fullTest.minutes}m</dd></div>
@@ -299,18 +299,20 @@
     gap: 16px;
     margin-top: 28px;
     padding: 18px 22px;
-    border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-    background: var(--accent-soft);
+    border-left: 4px solid var(--mint);
+    background: var(--stone);
   }
 
   .resume-title {
+    font-family: var(--font-display);
     font-size: 17px;
-    font-weight: 600;
+    font-weight: 400;
     margin-top: 2px;
+    letter-spacing: -0.3px;
   }
 
   .resume-meta {
-    font-family: var(--font-mono);
+    font-family: var(--font);
     font-size: 12px;
     color: var(--text-secondary);
   }
@@ -327,15 +329,16 @@
 
   .hero h1 {
     margin-top: 16px;
-    font-size: clamp(34px, 6vw, 56px);
-    letter-spacing: -0.03em;
+    font-size: var(--type-hero);
+    line-height: 1.15;
+    letter-spacing: -0.4px;
   }
 
   .lede {
     margin-top: 20px;
     max-width: 620px;
-    font-size: 18px;
-    line-height: 1.6;
+    font-size: var(--type-lead);
+    line-height: 1.4;
     color: var(--text-secondary);
   }
 
@@ -362,9 +365,8 @@
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 8px 28px;
     margin: 44px 0 0;
-    padding: 20px 22px;
-    background: var(--bg-sunken);
-    border: 1px solid var(--line);
+    padding: 24px;
+    background: var(--stone);
   }
 
   .stats div {
@@ -373,8 +375,8 @@
   }
 
   .stats dt {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-tertiary);
@@ -382,9 +384,10 @@
 
   .stats dd {
     margin: 0;
+    font-family: var(--font-display);
     font-size: 26px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    font-weight: 400;
+    letter-spacing: -0.3px;
     font-variant-numeric: tabular-nums;
   }
 
@@ -405,18 +408,18 @@
     display: flex;
     align-items: baseline;
     gap: 14px;
-    font-size: 24px;
+    font-size: var(--type-h2);
   }
 
   /* Names the untimed mode on the page itself, so "study mode" is findable
      before you are already inside a paper. */
   .block-head h2 .tag {
     padding: 3px 9px;
-    border-radius: 5px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    border-radius: var(--radius-control);
+    background: var(--mint);
+    color: #1a1a1a;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -439,21 +442,16 @@
     display: flex;
     flex-direction: column;
     padding: 24px;
-    transition:
-      border-color var(--dur-ui) var(--ease),
-      transform var(--dur-ui) var(--ease),
-      box-shadow var(--dur-ui) var(--ease);
+    transition: background-color var(--dur-micro) var(--ease);
   }
 
   .mode:hover {
-    border-color: var(--border-strong);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow);
+    background: var(--stone-strong);
   }
 
   .mode h3 {
     margin-top: 6px;
-    font-size: 20px;
+    font-size: var(--type-h4);
   }
 
   .mode-desc {
@@ -488,7 +486,7 @@
   }
 
   .mode-foot span {
-    font-size: 11.5px;
+    font-size: var(--type-label);
     color: var(--text-tertiary);
   }
 
@@ -518,22 +516,23 @@
     gap: 4px;
     padding: 16px 18px;
     text-align: left;
-    transition: border-color var(--dur-micro) var(--ease), box-shadow var(--dur-micro) var(--ease);
+    transition: background-color var(--dur-micro) var(--ease);
   }
 
   .focus-card:hover {
-    border-color: var(--border-strong);
-    box-shadow: var(--shadow);
+    background: var(--stone-strong);
   }
 
   .focus-name {
+    font-family: var(--font-display);
     font-size: 15.5px;
-    font-weight: 600;
+    font-weight: 400;
+    letter-spacing: -0.3px;
   }
 
   .focus-meta {
-    font-family: var(--font-mono);
-    font-size: 11px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     color: var(--text-tertiary);
   }
 
@@ -550,11 +549,15 @@
 
   .topic-list summary {
     display: inline-block;
-    font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--mint);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
     cursor: pointer;
   }
 
@@ -567,22 +570,22 @@
 
   .chip-btn {
     padding: 5px 11px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--bg-elevated);
-    font-size: 12.5px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    font-size: 13px;
     color: var(--text-secondary);
     transition: border-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
   }
 
   .chip-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: var(--ink);
+    color: var(--ink);
   }
 
   .chip-btn .mono {
     margin-left: 4px;
-    font-size: 11px;
+    font-size: var(--type-label);
     color: var(--text-tertiary);
   }
 
@@ -599,8 +602,10 @@
   }
 
   .drill-head h3 {
+    font-family: var(--font-display);
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 400;
+    letter-spacing: -0.3px;
   }
 
   .drill-head p {
@@ -630,10 +635,10 @@
     display: grid;
     place-items: center;
     border: 1px solid var(--border-strong);
-    border-radius: 9px;
+    border-radius: 0;
     background: var(--bg-sunken);
     color: var(--text);
-    font-family: var(--font-mono);
+    font-family: var(--font);
     font-size: 12.5px;
     font-weight: 600;
   }
@@ -644,8 +649,10 @@
   }
 
   .section-copy h4 {
+    font-family: var(--font-display);
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 400;
+    letter-spacing: -0.3px;
   }
 
   .section-copy p {
@@ -676,8 +683,8 @@
   }
 
   .history-meta {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     color: var(--text-tertiary);
   }
 
@@ -688,10 +695,12 @@
   }
 
   .pct {
+    font-family: var(--font-display);
     font-size: 19px;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--amber);
     font-variant-numeric: tabular-nums;
+    letter-spacing: -0.3px;
   }
 
   .pct.good {

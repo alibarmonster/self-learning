@@ -20,7 +20,7 @@
 <div class="page wrap rise">
   <p class="eyebrow">{quiz.label}{timedOut ? ' · time expired' : ''}</p>
 
-  <div class="hero card raised edge bracket">
+  <div class="hero card">
     <div class="ring-wrap">
       <svg viewBox="0 0 120 120" class="ring" aria-hidden="true">
         <circle cx="60" cy="60" r={R} class="track" />
@@ -152,7 +152,7 @@
   .ring circle {
     fill: none;
     stroke-width: 10;
-    stroke-linecap: round;
+    stroke-linecap: butt;
   }
 
   .track {
@@ -165,7 +165,7 @@
 
   .value {
     stroke: var(--amber);
-    transition: stroke-dashoffset 0.9s var(--ease);
+    transition: stroke-dashoffset 0.9s var(--ease-enter);
   }
 
   .value.good {
@@ -187,9 +187,10 @@
   }
 
   .ring-label strong {
+    font-family: var(--font-display);
     font-size: 40px;
-    font-weight: 600;
-    letter-spacing: -0.03em;
+    font-weight: 400;
+    letter-spacing: -0.3px;
     line-height: 1;
   }
 
@@ -234,8 +235,8 @@
   }
 
   .facts dt {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-tertiary);
@@ -243,8 +244,10 @@
 
   .facts dd {
     margin: 0;
+    font-family: var(--font-display);
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 400;
+    letter-spacing: -0.3px;
   }
 
   .breakdown {
@@ -263,10 +266,10 @@
   .n {
     padding: 2px 7px;
     margin-right: 8px;
-    border-radius: 4px;
-    background: var(--accent-soft);
-    color: var(--accent);
-    font-size: 10.5px;
+    border-radius: var(--radius-control);
+    background: var(--mint-soft);
+    color: var(--ink);
+    font-size: var(--type-label);
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;

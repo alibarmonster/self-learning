@@ -102,7 +102,7 @@
 {/if}
 
 <div class="page body rise">
-  <div class="card raised sheet bracket">
+  <div class="card sheet">
     {#key quiz.question.id}
       <QuestionView
         question={quiz.question}
@@ -187,17 +187,15 @@
 <style>
   .quizbar {
     position: sticky;
-    top: 58px;
+    top: var(--header-h);
     z-index: 30;
-    background: color-mix(in srgb, var(--bg) 90%, transparent);
-    backdrop-filter: saturate(160%) blur(16px);
-    -webkit-backdrop-filter: saturate(160%) blur(16px);
+    background: var(--bg);
     border-bottom: 1px solid var(--line);
   }
 
   .progress {
-    height: 2px;
-    background: var(--accent);
+    height: 4px;
+    background: var(--mint);
     transition: width 0.3s var(--ease);
   }
 
@@ -220,23 +218,18 @@
     min-width: 0;
   }
 
-  .sm {
-    padding: 7px 13px;
-    font-size: 13px;
-  }
-
   .label {
     font-size: 14px;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.3px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .section-tag {
-    font-family: var(--font-mono);
-    font-size: 11px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--text-tertiary);
@@ -244,7 +237,7 @@
   }
 
   .counter {
-    font-size: 11.5px;
+    font-size: var(--type-label);
     color: var(--text-tertiary);
   }
 
@@ -253,9 +246,8 @@
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     padding: 4px 10px;
-    border: 1px solid var(--border-strong);
-    border-radius: 7px;
-    background: var(--bg-elevated);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
   }
 
   .clock.untimed {
@@ -296,24 +288,23 @@
     aspect-ratio: 1;
     display: grid;
     place-items: center;
-    border: 1px solid var(--border-strong);
-    border-radius: 6px;
-    background: var(--bg-elevated);
-    font-family: var(--font-mono);
-    font-size: 12.5px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-family: var(--font);
+    font-size: 13px;
     font-weight: 500;
     font-variant-numeric: tabular-nums;
-    transition: transform var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease);
+    transition: border-color var(--dur-micro) var(--ease);
   }
 
   .cell:hover {
-    transform: scale(1.06);
+    border-color: var(--ink);
   }
 
   .cell.answered {
-    background: var(--accent-soft);
-    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-    color: var(--accent);
+    background: var(--stone-strong);
+    border-color: var(--line-strong);
+    color: var(--ink);
   }
 
   .cell.flagged {
@@ -323,9 +314,9 @@
   }
 
   .cell.current {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--accent-text);
+    background: var(--mint);
+    border-color: var(--ink);
+    color: #1a1a1a;
   }
 
   .legend {
@@ -335,8 +326,8 @@
     margin-top: 16px;
     padding-top: 14px;
     border-top: 1px solid var(--line);
-    font-family: var(--font-mono);
-    font-size: 11px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     letter-spacing: 0.03em;
     color: var(--text-tertiary);
   }
@@ -350,13 +341,11 @@
   .swatch {
     width: 11px;
     height: 11px;
-    border-radius: 3px;
-    border: 1px solid var(--border-strong);
+    border: 1px solid var(--line-strong);
   }
 
   .swatch.answered {
-    background: var(--accent-soft);
-    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    background: var(--stone-strong);
   }
 
   .swatch.flagged {
@@ -397,9 +386,9 @@
     padding: 1px 6px;
     border: 1px solid var(--border-strong);
     border-bottom-width: 2px;
-    border-radius: 4px;
-    background: var(--bg-elevated);
-    font-size: 11px;
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    font-size: var(--type-label);
   }
 
   .finish-early {
@@ -422,8 +411,7 @@
     inset: 0;
     z-index: 50;
     border: none;
-    background: rgba(23, 21, 18, 0.5);
-    backdrop-filter: blur(3px);
+    background: rgba(20, 20, 19, 0.45);
     animation: fade var(--dur-ui) var(--ease) both;
   }
 
@@ -447,13 +435,13 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: min(440px, calc(100vw - 40px));
-    padding: 26px;
-    box-shadow: var(--shadow-lg);
+    padding: var(--card-pad);
+    border: 1px solid var(--line);
     animation: pop 280ms var(--ease) both;
   }
 
   .dialog h3 {
-    font-size: 20px;
+    font-size: var(--type-h3);
   }
 
   .dialog p {
@@ -472,7 +460,7 @@
 
   @media (max-width: 700px) {
     .quizbar {
-      top: 58px;
+      top: var(--header-h);
     }
 
     .section-tag,

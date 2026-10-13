@@ -236,8 +236,8 @@
 
   .head h1 {
     margin-top: 12px;
-    font-size: clamp(30px, 5vw, 44px);
-    letter-spacing: -0.03em;
+    font-size: var(--type-h1);
+    letter-spacing: -0.3px;
   }
 
   .lede {
@@ -296,8 +296,8 @@
   }
 
   .n {
-    font-family: var(--font-mono);
-    font-size: 11px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 500;
     letter-spacing: 0.08em;
     color: var(--accent);
@@ -335,8 +335,8 @@
   .facts dt {
     flex: none;
     width: 170px;
-    font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -348,9 +348,11 @@
     flex: 1;
     min-width: 200px;
     margin: 0;
+    font-family: var(--font-display);
     font-size: 14px;
     line-height: 1.6;
     color: var(--text-secondary);
+    letter-spacing: -0.3px;
   }
 
   .topics {
@@ -376,11 +378,11 @@
     display: grid;
     place-items: center;
     border: 1px solid var(--border-strong);
-    border-radius: 7px;
+    border-radius: var(--radius-control);
     background: var(--bg-sunken);
     color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 600;
   }
 
@@ -390,7 +392,7 @@
   }
 
   .count {
-    font-size: 11px;
+    font-size: var(--type-label);
     color: var(--text-tertiary);
   }
 
@@ -409,8 +411,8 @@
 
   .topic .part-label {
     margin-top: 12px;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -426,10 +428,10 @@
 
   .tag {
     padding: 3px 8px;
-    border-radius: 5px;
+    border-radius: var(--radius-control);
     border: 1px solid var(--line);
     background: var(--bg-sunken);
-    font-size: 11.5px;
+    font-size: var(--type-label);
     color: var(--text-secondary);
   }
 

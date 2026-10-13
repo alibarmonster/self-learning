@@ -229,8 +229,8 @@
 
   .head h1 {
     margin-top: 12px;
-    font-size: clamp(30px, 5vw, 44px);
-    letter-spacing: -0.03em;
+    font-size: var(--type-h1);
+    letter-spacing: -0.3px;
   }
 
   .lede {
@@ -251,16 +251,16 @@
     gap: 10px;
     max-width: 560px;
     padding: 0 14px;
-    border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    background: var(--bg-elevated);
-    box-shadow: var(--shadow-sm);
-    transition: border-color var(--dur-micro) var(--ease), box-shadow var(--dur-micro) var(--ease);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    transition: border-color var(--dur-micro) var(--ease);
   }
 
   .search:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
+    border-color: var(--ink);
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
   }
 
   .glyph {
@@ -285,7 +285,7 @@
   }
 
   .search .count {
-    font-size: 11px;
+    font-size: var(--type-label);
     color: var(--text-tertiary);
     white-space: nowrap;
   }
@@ -296,8 +296,8 @@
 
   .jump-part {
     margin: 14px 0 7px;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -315,17 +315,17 @@
     align-items: baseline;
     gap: 8px;
     padding: 5px 11px 5px 9px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--bg-elevated);
-    font-size: 12.5px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-control);
+    background: var(--surface);
+    font-size: 13px;
     color: var(--text-secondary);
     transition: border-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
   }
 
   .jump-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: var(--ink);
+    color: var(--ink);
   }
 
   .empty {
@@ -343,7 +343,7 @@
   .part-head h2 {
     margin-top: 26px;
     font-size: 27px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.3px;
   }
 
   .part-head p {
@@ -405,8 +405,8 @@
   }
 
   .path .arrow {
-    font-family: var(--font-mono);
-    color: var(--accent);
+    font-family: var(--font);
+    color: var(--text-tertiary);
   }
 
   .path .pick {
@@ -449,8 +449,8 @@
 
   .table-caption {
     margin: 20px 0 -2px;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -465,21 +465,22 @@
     gap: 10px;
     margin-top: 14px;
     padding: 13px 18px;
-    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
-    border-radius: 10px;
-    background: var(--accent-soft);
+    border: 0;
+    border-left: 4px solid var(--mint);
+    border-radius: 0;
+    background: var(--mint-soft);
     font-size: 14px;
     line-height: 1.6;
     color: var(--text-secondary);
   }
 
   .tip-label {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--ink);
   }
 
   /* Commands and other literal values read better in the mono face. */
@@ -504,8 +505,8 @@
   thead th {
     padding: 10px 16px;
     text-align: left;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-family: var(--font);
+    font-size: var(--type-label);
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
