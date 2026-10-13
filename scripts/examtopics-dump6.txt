@@ -1,0 +1,115 @@
+Actual exam question from Google's Cloud Digital Leader
+Question #: 260
+Topic #: 1
+[All Cloud Digital Leader Questions]
+When customer data is uploaded to Google Cloud, who owns the data?
+
+A. A third party
+B. The customer and Google share ownership
+C. Google
+D. The customer Most Voted
+
+Actual exam question from Google's Cloud Digital Leader
+Question #: 261
+Topic #: 1
+[All Cloud Digital Leader Questions]
+An organization is deploying their servers to the cloud using the infrastructure as a service model.
+
+In the shared responsibility model, what is the cloud provider responsible for?
+
+A. Data access policies
+B. Security of the operating system
+C. Security of the software
+D. Physical security Most Voted
+
+Actual exam question from Google's Cloud Digital Leader
+Question #: 262
+Topic #: 1
+[All Cloud Digital Leader Questions]
+An organization runs a batch data analysis workload on a virtual machine (VM). The workload can be easily restarted without losing work, and is not time critical. Organizations must choose the lowest cost option to run the workload. What option should they choose?
+
+A. A Preemptible or Spot VM on Compute Engine Most Voted
+B. A custom VM in a pay-as-you-go model on Compute Engine
+C. A standard VM in a pay-as-you-go model on Compute Engine
+D. A Cloud Function with a small memory limit
+
+Actual exam question from Google's Cloud Digital Leader
+Question #: 263
+Topic #: 1
+[All Cloud Digital Leader Questions]
+Customers are reporting very high latencies when accessing an application from the United States. The application is currently running in a single region in Europe.
+
+What should the organization do?
+
+A. Set up a new billing account in the United States.
+B. Run the application in additional zones in the European region.
+C. Run the application in additional regions in Europe.
+D. Run a replica of the application in a region in the United States. Most Voted
+
+Actual exam question from Google's Cloud Digital Leader
+Question #: 264
+Topic #: 1
+[All Cloud Digital Leader Questions]
+An organization needs protection against distributed denial-of-service (DDoS) attacks. Which Google Cloud service should the organization use?
+
+A. Google Cloud Armor Most Voted
+B. Cloud Build
+C. Cloud VPN
+D. Security Command Center
+
+Actual exam question from Google's Cloud Digital Leader
+Question #: 265
+Topic #: 1
+[All Cloud Digital Leader Questions]
+An organization needs to store daily transactional data such as customer records and purchase history. The data follows a consistent schema and is cross-referenced. Which type of service should the organization use?
+
+A. Non-relational database
+B. Data warehouse
+C. Relational database Most Voted
+D. Data lake
+
+Actual exam question from Google's Cloud Digital Leader
+Question #: 266
+Topic #: 1
+[All Cloud Digital Leader Questions]
+An organization is hosting an application in Europe, and customers in Asia are reporting slow response times despite their fast internet connection.
+
+What is the problem?
+
+A. Not enough application servers
+B. Network bandwidth
+C. Network latency Most Voted
+D. Misconfigured application servers
+
+Actual exam question from Google's Cloud Digital Leader
+Question #: 267
+Topic #: 1
+[All Cloud Digital Leader Questions]
+A manufacturing organization has a large collection of images labeled as intact or defective parts. They want to use this data to build a simple solution to detect faulty parts on their production line. They have no data science expertise. Which solution should they use?
+
+A. Pre-trained APIs 
+B. Document AI
+C. AutoML Most Voted
+D. Discovery AI for Retail
+
+Actual exam question from Google's Cloud Digital Leader
+Question #: 268
+Topic #: 1
+[All Cloud Digital Leader Questions]
+An organization has a large dataset that contains text transcripts of conversations between their customers and service representatives. They want an automated solution to identify the topics their customers care most about. Which service should the organization use?
+
+A. Vision API
+B. Speech-to-Text API
+C. Cloud Translation API
+D. Natural Language API Most Voted
+
+Actual exam question from Google's Cloud Digital Leader
+Question #: 269
+Topic #: 1
+[All Cloud Digital Leader Questions]
+An organization wants to analyze data in a data warehouse. How should they proceed?
+
+A. Import data into a semi-structured time-series database.
+B. Choose a system to store structured and semi-structured data that supports ad-hoc analysis and custom reporting. Most Voted
+C. Copy unstructured data into a single large object store.
+D. Ensure data is stored in structured tables and rows to support transactional queries and relationships.

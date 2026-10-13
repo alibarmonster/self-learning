@@ -1,0 +1,490 @@
+/* ── Design system: light-mode paper technical ─────────────────────────────
+   Warm paper surfaces inside a dark outer frame, subtle diagonal texture,
+   thin rules, L-brackets and container guide lines, mono utility labels, one
+   restrained accent per exam, layered neutral shadows, and calm motion.
+   Light is the system's home; dark is a tuned variant of the same structure
+   so the toggle still works.                                                */
+
+:root {
+  /* outer frame (the dark field the paper sits on) */
+  --frame: #171512;
+  --frame-text: #b9b1a3;
+
+  /* paper surfaces */
+  --bg: #f3eee5;
+  --bg-elevated: #fbf8f2;
+  --bg-sunken: #e8e1d4;
+  --surface-hover: #efe9dd;
+  --text: #1c1a17;
+  --text-secondary: #58534a;
+  --text-tertiary: #8a8377;
+  --border: rgba(52, 44, 34, 0.14);
+  --border-strong: rgba(52, 44, 34, 0.3);
+  --line: rgba(52, 44, 34, 0.12);
+  --line-strong: rgba(52, 44, 34, 0.34);
+  --texture: rgba(52, 44, 34, 0.045);
+
+  /* one accent; each exam tunes it below */
+  --accent: #2a4fc4;
+  --accent-hover: #1f41a8;
+  --accent-soft: rgba(42, 79, 196, 0.1);
+  --accent-text: #ffffff;
+
+  --green: #2f7a48;
+  --green-soft: rgba(47, 122, 72, 0.12);
+  --red: #b5322d;
+  --red-soft: rgba(181, 50, 45, 0.1);
+  --amber: #8f6512;
+  --amber-soft: rgba(176, 124, 20, 0.14);
+
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-shell: 22px;
+
+  /* beautiful-shadows: layered neutral elevation (ring layer left to the border) */
+  --shadow-sm: 0px 2px 3px -1px rgba(0, 0, 0, 0.1), 0px 1px 0px 0px rgba(25, 28, 33, 0.02);
+  --shadow: 0px 1px 1px -0.5px rgba(0, 0, 0, 0.06), 0px 3px 3px -1.5px rgba(0, 0, 0, 0.06),
+    0px 6px 6px -3px rgba(0, 0, 0, 0.06), 0px 12px 12px -6px rgba(0, 0, 0, 0.06),
+    0px 24px 24px -12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+    0 12.5px 10px rgba(0, 0, 0, 0.06), 0 22.3px 17.9px rgba(0, 0, 0, 0.072),
+    0 41.8px 33.4px rgba(0, 0, 0, 0.086), 0 100px 80px rgba(0, 0, 0, 0.12);
+
+  /* gradient border stops: neutral highlight → accent → neutral fade */
+  --edge-a: rgba(255, 255, 255, 0.7);
+  --edge-b: color-mix(in srgb, var(--accent) 38%, transparent);
+  --edge-c: rgba(52, 44, 34, 0.12);
+
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Inter, Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: 'SF Mono', ui-monospace, 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas,
+    monospace;
+
+  --page: 1080px;
+  --page-pad: 24px;
+  --frame-gap: 14px;
+
+  /* motion tokens (animation-systems) */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+  --dur-micro: 160ms;
+  --dur-ui: 220ms;
+  --dur-enter: 520ms;
+  --rise: 14px;
+  --stagger: 60ms;
+
+  color-scheme: light;
+}
+
+/* ── Dark variant: same structure on warm charcoal paper ─────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --frame: #0c0b0a;
+    --frame-text: #7d766b;
+    --bg: #1d1b18;
+    --bg-elevated: #26231f;
+    --bg-sunken: #161411;
+    --surface-hover: #2d2925;
+    --text: #efe9dd;
+    --text-secondary: #b3aa9b;
+    --text-tertiary: #7f776b;
+    --border: rgba(255, 244, 226, 0.11);
+    --border-strong: rgba(255, 244, 226, 0.24);
+    --line: rgba(255, 244, 226, 0.09);
+    --line-strong: rgba(255, 244, 226, 0.3);
+    --texture: rgba(255, 244, 226, 0.03);
+    --accent: #7f9bff;
+    --accent-hover: #9cb2ff;
+    --accent-soft: rgba(127, 155, 255, 0.16);
+    --accent-text: #0e1330;
+    --green: #5fce86;
+    --green-soft: rgba(95, 206, 134, 0.14);
+    --red: #ff7b74;
+    --red-soft: rgba(255, 123, 116, 0.13);
+    --amber: #f0c060;
+    --amber-soft: rgba(240, 192, 96, 0.14);
+    --edge-a: rgba(255, 244, 226, 0.22);
+    --edge-c: rgba(255, 244, 226, 0.05);
+    --shadow-sm: 0px 2px 3px -1px rgba(0, 0, 0, 0.5), 0px 1px 0px 0px rgba(0, 0, 0, 0.3);
+    --shadow: 0px 1px 1px -0.5px rgba(0, 0, 0, 0.3), 0px 3px 3px -1.5px rgba(0, 0, 0, 0.3),
+      0px 6px 6px -3px rgba(0, 0, 0, 0.3), 0px 12px 12px -6px rgba(0, 0, 0, 0.3),
+      0px 24px 24px -12px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 12.5px 10px rgba(0, 0, 0, 0.3), 0 41.8px 33.4px rgba(0, 0, 0, 0.35),
+      0 100px 80px rgba(0, 0, 0, 0.4);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --frame: #0c0b0a;
+  --frame-text: #7d766b;
+  --bg: #1d1b18;
+  --bg-elevated: #26231f;
+  --bg-sunken: #161411;
+  --surface-hover: #2d2925;
+  --text: #efe9dd;
+  --text-secondary: #b3aa9b;
+  --text-tertiary: #7f776b;
+  --border: rgba(255, 244, 226, 0.11);
+  --border-strong: rgba(255, 244, 226, 0.24);
+  --line: rgba(255, 244, 226, 0.09);
+  --line-strong: rgba(255, 244, 226, 0.3);
+  --texture: rgba(255, 244, 226, 0.03);
+  --accent: #7f9bff;
+  --accent-hover: #9cb2ff;
+  --accent-soft: rgba(127, 155, 255, 0.16);
+  --accent-text: #0e1330;
+  --green: #5fce86;
+  --green-soft: rgba(95, 206, 134, 0.14);
+  --red: #ff7b74;
+  --red-soft: rgba(255, 123, 116, 0.13);
+  --amber: #f0c060;
+  --amber-soft: rgba(240, 192, 96, 0.14);
+  --edge-a: rgba(255, 244, 226, 0.22);
+  --edge-c: rgba(255, 244, 226, 0.05);
+  --shadow-sm: 0px 2px 3px -1px rgba(0, 0, 0, 0.5), 0px 1px 0px 0px rgba(0, 0, 0, 0.3);
+  --shadow: 0px 1px 1px -0.5px rgba(0, 0, 0, 0.3), 0px 3px 3px -1.5px rgba(0, 0, 0, 0.3),
+    0px 6px 6px -3px rgba(0, 0, 0, 0.3), 0px 12px 12px -6px rgba(0, 0, 0, 0.3),
+    0px 24px 24px -12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12.5px 10px rgba(0, 0, 0, 0.3), 0 41.8px 33.4px rgba(0, 0, 0, 0.35),
+    0 100px 80px rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+
+/* ── Per-exam accent ─────────────────────────────────────────────────────
+   The shell stamps data-exam on <html> while an exam is open, and the picker
+   stamps it on each exam card, so the same rules colour both. Apple keeps the
+   default ink blue; CDL takes a Google-leaning blue, tuned to sit on paper.  */
+
+:root[data-exam='cdl'],
+.card[data-exam='cdl'] {
+  --accent: #1f66d1;
+  --accent-hover: #1856b5;
+  --accent-soft: rgba(31, 102, 209, 0.11);
+  --accent-text: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-exam='cdl']:not([data-theme='light']),
+  :root:not([data-theme='light']) .card[data-exam='cdl'] {
+    --accent: #8ab4f8;
+    --accent-hover: #aecbfa;
+    --accent-soft: rgba(138, 180, 248, 0.16);
+    --accent-text: #0b1a33;
+  }
+}
+
+:root[data-exam='cdl'][data-theme='dark'],
+:root[data-theme='dark'] .card[data-exam='cdl'] {
+  --accent: #8ab4f8;
+  --accent-hover: #aecbfa;
+  --accent-soft: rgba(138, 180, 248, 0.16);
+  --accent-text: #0b1a33;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--frame);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--frame);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.005em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  line-height: 1.12;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── Shared primitives ─────────────────────────────────────────────────── */
+
+.page {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 0 var(--page-pad);
+}
+
+/* Paper surface with a hairline edge and layered neutral depth. */
+.card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.card.raised {
+  box-shadow: var(--shadow);
+}
+
+/* css-border-gradient: one hierarchy level at a time — hero panels only. */
+.card.edge {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--bg-elevated), var(--bg-elevated)) padding-box,
+    linear-gradient(150deg, var(--edge-a), var(--edge-b) 45%, var(--edge-c)) border-box;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-size: 14.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    background var(--dur-micro) var(--ease),
+    border-color var(--dur-micro) var(--ease),
+    color var(--dur-micro) var(--ease),
+    transform var(--dur-micro) var(--ease),
+    box-shadow var(--dur-micro) var(--ease),
+    opacity var(--dur-micro) var(--ease);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--bg-elevated);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--surface-hover);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+/* Mono utility label: the system's small print. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+/* number-details: 01, 02, 03 — architectural, never competing with headings. */
+.num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A measured rule: a hairline with mini squares at both ends, used between
+   major blocks so the container edges read as a real system. */
+.rule {
+  position: relative;
+  height: 1px;
+  background: var(--line);
+}
+
+.rule::before,
+.rule::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  background: var(--line-strong);
+  transform: translateY(-50%);
+}
+
+.rule::before {
+  left: 0;
+}
+
+.rule::after {
+  right: 0;
+}
+
+/* Two opposite L-brackets: the paper-technical framing motif for hero
+   surfaces. Applied sparingly — hero, question sheet, score panel. */
+.bracket {
+  position: relative;
+}
+
+.bracket::before,
+.bracket::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--line-strong);
+  pointer-events: none;
+}
+
+.bracket::before {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 3px;
+}
+
+.bracket::after {
+  right: -1px;
+  bottom: -1px;
+  border-left: none;
+  border-top: none;
+  border-bottom-right-radius: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Motion primitives (animation-systems) ─────────────────────────────── */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal-line {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Default entrance: fade + rise, once, staggered by --i. */
+.rise {
+  animation: rise var(--dur-enter) var(--ease) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+/* Masked headline reveal: each line slides up inside its own clip. */
+.reveal {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.reveal > span {
+  display: block;
+  animation: reveal-line 900ms var(--ease) both;
+  animation-delay: calc(120ms + var(--i, 0) * 100ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
