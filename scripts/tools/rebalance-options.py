@@ -1133,7 +1133,7 @@ def rewrite(path):
 
 base = pathlib.Path('src/exams/cdl/questions')
 total = 0
-for f in base.glob('*.js'):
+for f in base.glob('*.ts'):
     n = rewrite(f)
     print(f.name, n)
     total += n

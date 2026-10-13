@@ -1,6 +1,6 @@
-<script>
-  import { quiz } from '@/state/quiz.svelte.js';
-  import { formatClock, LETTERS } from '@/utils/format.js';
+<script lang="ts">
+  import { quiz } from '@/state/quiz.svelte';
+  import { formatClock, LETTERS } from '@/utils/format';
   import QuestionView from '@/components/QuestionView.svelte';
   import { isMulti } from '@/core';
 
@@ -15,7 +15,7 @@
   const sp = $derived(quiz.sectionProgress);
   const isLast = $derived(quiz.index === quiz.paper.length - 1);
 
-  function onKey(e) {
+  function onKey(e: KeyboardEvent) {
     if (confirming) {
       if (e.key === 'Escape') confirming = false;
       return;
@@ -47,7 +47,7 @@
     }
   }
 
-  function statusOf(i) {
+  function statusOf(i: number) {
     if (i === quiz.index) return 'current';
     if (quiz.flagged[i]) return 'flagged';
     if (quiz.answers[i] !== null) return 'answered';
@@ -107,7 +107,7 @@
       <QuestionView
         question={quiz.question}
         selected={quiz.answers[quiz.index]}
-        onselect={(i) => quiz.select(i)}
+        onselect={(i: number) => quiz.select(i)}
         revealable={quiz.durationMs === 0}
         number={quiz.index + 1}
         total={quiz.paper.length}

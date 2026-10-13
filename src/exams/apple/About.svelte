@@ -1,10 +1,11 @@
-<script>
-  import { quiz } from '@/state/quiz.svelte.js';
+<script lang="ts">
+  import { quiz } from '@/state/quiz.svelte';
+  import type { Section } from '@/types';
 
-  const exam = $derived(quiz.exam);
+  const exam = $derived(quiz.activeExam);
 
-  function partLabel(section) {
-    const part = exam.partById[section.partId];
+  function partLabel(section: Section) {
+    const part = section.partId ? exam.partById[section.partId] : undefined;
     return part ? `Section ${part.number} · ${part.name}` : 'Extra practice';
   }
 

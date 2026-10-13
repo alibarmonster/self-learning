@@ -1,5 +1,5 @@
-<script>
-  import { quiz } from '@/state/quiz.svelte.js';
+<script lang="ts">
+  import { quiz } from '@/state/quiz.svelte';
   import QuestionView from '@/components/QuestionView.svelte';
   import { isCorrect } from '@/core';
 

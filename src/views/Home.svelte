@@ -1,16 +1,17 @@
-<script>
-  import { quiz } from '@/state/quiz.svelte.js';
-  import { REVIEWABLE_ATTEMPTS } from '@/state/storage.js';
-  import { formatDate, formatDuration } from '@/utils/format.js';
+<script lang="ts">
+  import { quiz } from '@/state/quiz.svelte';
+  import { REVIEWABLE_ATTEMPTS } from '@/state/storage';
+  import { formatDate, formatDuration } from '@/utils/format';
   import { modeQuestionLabel, blueprintLabel } from '@/core';
+  import type { Section } from '@/types';
 
-  const exam = $derived(quiz.exam);
+  const exam = $derived(quiz.activeExam);
 
   const best = $derived(
     quiz.history.length ? Math.max(...quiz.history.map((h) => h.percent)) : null
   );
 
-  const fullTest = $derived(exam.modeById[exam.fullModeId]);
+  const fullTest = $derived(exam.fullModeId ? exam.modeById[exam.fullModeId] : undefined);
 
   // Drills follow the paper's own parts when it has them, with everything the
   // paper does not ask collected under one clearly-labelled extra group. An
@@ -45,11 +46,11 @@
   );
 
   /** The topics still too thin for a card of their own — chips on the section row. */
-  function smallTopicsOf(section) {
+  function smallTopicsOf(section: Section) {
     return exam.topics.filter((t) => t.section.id === section.id && t.count < exam.drillMin);
   }
 
-  function practiceCounts(section) {
+  function practiceCounts(section: Section) {
     const n = section.questions.length;
     return [10, 20, n].filter((c, i, arr) => c <= n && arr.indexOf(c) === i);
   }
@@ -89,7 +90,7 @@
       {exam.bankSize} questions in the bank, every one with a written explanation.
     </p>
     <div class="hero-actions">
-      <button class="btn btn-primary lg" onclick={() => quiz.startMode(exam.fullModeId)}>
+      <button class="btn btn-primary lg" onclick={() => quiz.startFullTest()}>
         {exam.home.startLabel}
       </button>
       <button class="btn btn-secondary lg" onclick={() => (quiz.view = 'about')}>
@@ -104,7 +105,9 @@
 
     <dl class="stats bracket">
       <div><dt>Questions in bank</dt><dd>{exam.bankSize}</dd></div>
-      <div><dt>Full test</dt><dd>{modeQuestionLabel(fullTest)} q · {fullTest.minutes}m</dd></div>
+      {#if fullTest}
+        <div><dt>Full test</dt><dd>{modeQuestionLabel(fullTest)} q · {fullTest.minutes}m</dd></div>
+      {/if}
       <div><dt>Papers attempted</dt><dd>{quiz.history.length}</dd></div>
       <div><dt>Best score</dt><dd>{best === null ? '—' : best + '%'}</dd></div>
     </dl>

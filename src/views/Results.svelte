@@ -1,11 +1,11 @@
-<script>
-  import { quiz } from '@/state/quiz.svelte.js';
-  import { formatDuration } from '@/utils/format.js';
+<script lang="ts">
+  import { quiz } from '@/state/quiz.svelte';
+  import { formatDuration } from '@/utils/format';
 
   const r = $derived(quiz.results);
-  const timedOut = $derived(quiz.deadline > 0 && quiz.submittedAt >= quiz.deadline);
+  const timedOut = $derived(quiz.deadline > 0 && (quiz.submittedAt ?? 0) >= quiz.deadline);
 
-  const verdict = $derived(quiz.exam.verdict(r.percent));
+  const verdict = $derived(quiz.activeExam.verdict(r.percent));
 
   // Circle geometry for the score ring.
   const R = 52;

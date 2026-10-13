@@ -1,13 +1,27 @@
-<script>
-  import { quiz } from '@/state/quiz.svelte.js';
+<script lang="ts">
+  import { quiz } from '@/state/quiz.svelte';
+  import type {
+    Cheatsheet,
+    CheatsheetBullet,
+    CheatsheetGroup,
+    CheatsheetTable
+  } from '@/types';
 
-  const exam = $derived(quiz.exam);
-  const sheet = $derived(exam.cheatsheet);
+  /** A group with every optional block filled in, so the markup has one shape. */
+  type Block = CheatsheetGroup & {
+    path: NonNullable<CheatsheetGroup['path']>;
+    bullets: CheatsheetBullet[];
+    tables: CheatsheetTable[];
+  };
+
+  const exam = $derived(quiz.activeExam);
+  // The router only opens this view for an exam that has a sheet.
+  const sheet: Cheatsheet = $derived(exam.cheatsheet ?? { groups: [] });
 
   let query = $state('');
 
   const needle = $derived(query.trim().toLowerCase());
-  const hit = (text) => String(text).toLowerCase().includes(needle);
+  const hit = (text: string | undefined) => String(text ?? '').toLowerCase().includes(needle);
 
   /**
    * A group carries any of four kinds of block: a decision path, one table
@@ -16,8 +30,8 @@
    * folds the single table into the `tables` list so the markup has one shape
    * to render, and everything below counts lines the same way.
    */
-  function normalise(g) {
-    const tables = [
+  function normalise(g: CheatsheetGroup): Block {
+    const tables: CheatsheetTable[] = [
       ...(g.columns && g.rows ? [{ caption: '', columns: g.columns, rows: g.rows }] : []),
       ...(g.tables ?? [])
     ];
@@ -26,7 +40,7 @@
 
   const all = $derived(sheet.groups.map(normalise));
 
-  const lineCount = (g) =>
+  const lineCount = (g: Block) =>
     g.path.length + g.bullets.length + g.tables.reduce((n, t) => n + t.rows.length, 0);
 
   /**
@@ -36,9 +50,9 @@
    */
   const groups = $derived(
     all
-      .map((g) => {
+      .map((g): Block => {
         if (!needle) return g;
-        if (hit(g.title) || hit(g.note) || hit(g.tip ?? '')) return g;
+        if (hit(g.title) || hit(g.note) || hit(g.tip)) return g;
         return {
           ...g,
           path: g.path.filter(([q, a]) => hit(q) || hit(a)),
@@ -63,9 +77,9 @@
   );
 
   /** The number beside a heading is its position on the whole sheet. */
-  const numberOf = $derived((id) => all.findIndex((g) => g.id === id) + 1);
+  const numberOf = $derived((id: string) => all.findIndex((g) => g.id === id) + 1);
 
-  function jump(id) {
+  function jump(id: string) {
     document.getElementById(`cs-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 </script>
@@ -112,7 +126,7 @@
     </div>
   {/if}
 
-  {#snippet notes(list)}
+  {#snippet notes(list: CheatsheetBullet[])}
     <dl class="notes card">
       {#each list as b, i (i)}
         {#if Array.isArray(b)}
@@ -199,7 +213,7 @@
   {/each}
 
   <div class="cta">
-    <button class="btn btn-primary lg" onclick={() => quiz.startMode(exam.fullModeId)}>
+    <button class="btn btn-primary lg" onclick={() => quiz.startFullTest()}>
       Sit the full exam
     </button>
     <button class="btn btn-ghost lg" onclick={() => (quiz.view = 'home')}>Back to start</button>

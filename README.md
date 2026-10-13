@@ -28,6 +28,7 @@ bun install
 bun run dev       # http://localhost:5173 — the exam picker
 bun run build     # production bundle in dist/
 bun run preview   # serve the production bundle
+bun run check     # svelte-check + tsc — zero type errors expected
 bun run validate  # sanity-check every exam's question bank
 ```
 
@@ -80,19 +81,20 @@ a backend and a database become worth adding; nothing in the current design bloc
 
 ```
 src/
-  main.js                    entry point — mounts App
+  main.ts                    entry point — mounts App
   App.svelte                 shell, header, hash routing (#/, #/cdl, #/cdl/about, #/ace/cheatsheet), theme
   styles/global.css          design tokens (light/dark), per-exam accent, shared primitives
   core/                      exam-agnostic logic, no Svelte, no DOM
-    answer.js                isMulti, pickCount, isCorrect — single and multiple select
-    blueprint.js             fixed and [min, max] section counts, length labels
-    exam.js                  defineExam: lookup tables, topics, drillable topics
-    paper.js                 shuffling and the paper builders (mode, section, topic)
-    index.js                 re-exports the above as `@/core`
+    answer.ts                isMulti, pickCount, isCorrect — single and multiple select
+    blueprint.ts             fixed and [min, max] section counts, length labels
+    exam.ts                  defineExam: lookup tables, topics, drillable topics
+    paper.ts                 shuffling and the paper builders (mode, section, topic)
+    index.ts                 re-exports the above as `@/core`
   state/
-    quiz.svelte.js           the Quiz store: current exam, paper, timer, scoring, review
-    storage.js               localStorage keys and safe read/write per exam
-  utils/format.js            clock, duration and date formatting, option letters
+    quiz.svelte.ts           the Quiz store: current exam, paper, timer, scoring, review
+    storage.ts               localStorage keys and safe read/write per exam
+  utils/format.ts            clock, duration and date formatting, option letters
+  types/                     the domain model: Question, Section, Mode, Exam, Cheatsheet, saved sessions
   components/
     QuestionView.svelte      one question, single or multiple select, answering or reveal mode
   views/                     one component per screen
@@ -103,26 +105,25 @@ src/
     Review.svelte            answer review with filters
     Cheatsheet.svelte        the per-exam cheat sheet with filter and jump nav
   exams/
-    registry.js              the list of exams (plain data — loadable by the validator)
-    index.js                 the same list with each exam's About page attached
-    apple/                   index.js, About.svelte, questions/
-    cdl/                     index.js, About.svelte, cheatsheet.js, questions/
-    ace/                     index.js, cheatsheet.js (study-only for now)
+    registry.ts              the list of exams (plain data — loadable by the validator)
+    index.ts                 the same list with each exam's About page attached
+    apple/                   index.ts, About.svelte, questions/
+    cdl/                     index.ts, About.svelte, cheatsheet.ts, questions/
+    ace/                     index.ts, cheatsheet.ts (study-only for now)
 scripts/
-  validate-bank.js           question bank sanity checks, across every exam
+  validate-bank.ts           question bank sanity checks, across every exam
   importers/examtopics/      the CDL community-bank importer (one parse per dump, one merge)
   tools/rebalance-options.py one-off option-length rebalancer for the CDL bank
 docs/
   deployment.md              hosting and password protection
 ```
 
-Imports use the `@/` alias for `src/` (set in `vite.config.js` and the editor config), so a file
+Imports use the `@/` alias for `src/` (set in `vite.config.ts` and `tsconfig.json`), so a file
 never climbs out of its folder with `../../`.
-
 
 ## The CDL community bank
 
-`src/exams/cdl/questions/community.js` holds 289 Cloud Digital Leader questions as they
+`src/exams/cdl/questions/community.ts` holds 289 Cloud Digital Leader questions as they
 circulate in the public community question banks, imported verbatim by
 `scripts/importers/examtopics/*.py` — one `-parseN.py` per raw dump writes `parsedN.json`, and the
 latest `-mergeN.py` execs the previous one's data section and writes the combined bank, so the
@@ -166,7 +167,7 @@ shuffling.
 
 ## Cheat sheet
 
-An exam can carry a `cheatsheet` — plain data in `src/exams/<id>/cheatsheet.js`, rendered by
+An exam can carry a `cheatsheet` — plain data in `src/exams/<id>/cheatsheet.ts`, rendered by
 `src/views/Cheatsheet.svelte` at `#/<id>/cheatsheet`. One keyword filter narrows the whole sheet, and
 the jump nav is grouped by part.
 
@@ -201,14 +202,14 @@ top of `src/styles/global.css`.
 
 ## Adding an exam
 
-1. Create `src/exams/<id>/index.js` and export a `defineExam({...})` with an `id`, a
+1. Create `src/exams/<id>/index.ts` and export a `defineExam({...})` with an `id`, a
    `storagePrefix` (its localStorage namespace), `name`, `subtitle`, `tagline`, `blurb`, `icon`,
    `sections`, `modes`, `fullModeId`, the `home` copy, a `verdict(percent)` function and a `footer`.
    Give it `parts` if the real paper has ordered sections (Academy) or `mixed: true` if it
    interleaves everything (CDL). `drillMin` and `drillSize` are optional.
 2. Put the question files under `src/exams/<id>/questions/`.
 3. Write `src/exams/<id>/About.svelte` (copy the CDL one as a starting point).
-4. List the exam in `src/exams/registry.js` and attach its About page in `src/exams/index.js`.
+4. List the exam in `src/exams/registry.ts` and attach its About page in `src/exams/index.ts`.
 5. Optionally give it an accent colour in `src/styles/global.css` (see the `data-exam='cdl'` block).
 6. `bun run validate`.
 
@@ -295,7 +296,7 @@ as one block and shuffles it. The bank keeps them apart only so they can be dril
 
 ### Figures
 
-Every diagram is **inline SVG generated in `svg.js`** — no image files. Small builders (`series`,
+Every diagram is **inline SVG generated in `svg.ts`** — no image files. Small builders (`series`,
 `matrix`, `grid3`, `analogy`, `net`, `polygon`, `motif`, `pie`, `lines`, `arrow`, …) compose shape
 fragments, and each stroke uses `currentColor`, so the figures stay sharp at any size and follow
 the light/dark theme automatically. Questions whose *answers* are pictures carry `optionFigures`;
@@ -313,7 +314,7 @@ figure: grid3((r, c) => motif(['circle', 'square', 'triangle'][r], FILLS[c])),
 So the pattern is guaranteed self-consistent, and a typo in the answer string yields index `-1`,
 which `bun run validate` rejects.
 
-`figure-matrix.js` takes the same idea further for the 3x3 figure-matrix format — a grid with the
+`figure-matrix.ts` takes the same idea further for the 3x3 figure-matrix format — a grid with the
 bottom-right cell missing and four candidate tiles. A paper is declared as two attribute lists, one
 running down the rows and one across the columns, plus a `draw(row, col)` that renders a cell; the
 grid, the four options, their screen-reader descriptions and the explanation are all derived from

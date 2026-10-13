@@ -1,7 +1,7 @@
-<script>
-  import { quiz } from '@/state/quiz.svelte.js';
+<script lang="ts">
+  import { quiz } from '@/state/quiz.svelte';
 
-  const exam = $derived(quiz.exam);
+  const exam = $derived(quiz.activeExam);
 
   const facts = [
     ['Duration', '90 minutes.'],

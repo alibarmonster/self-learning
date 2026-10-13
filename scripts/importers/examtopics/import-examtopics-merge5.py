@@ -16,7 +16,7 @@ import json, collections
 # Everything in the previous merge script above `def js` is pure data, and it
 # chains back through the earlier ones, so one exec gives all five earlier
 # dumps. Run from this directory with parsed.json … parsed6.json beside it;
-# writes community.js.
+# writes community.ts.
 _src = open('import-examtopics-merge4.py', encoding='utf-8').read()
 _ns = {}
 exec(compile(_src.split('\ndef js(s):')[0], 'import-examtopics-merge4.py', 'exec'), _ns)
@@ -102,7 +102,9 @@ out=["""/**
  * to complain that the options are uneven: they are quoted, not written here.
  */
 
-export const community = ["""]
+import type { Question } from '@/types';
+
+export const community: Question[] = ["""]
 
 for n,(q,topic,expl,diff) in enumerate(rows, start=1):
     idx={l:i for i,l in enumerate(q['letters'])}
@@ -133,7 +135,7 @@ for n,(q,topic,expl,diff) in enumerate(rows, start=1):
     body.append('  },')
     out.append('\n'.join(body))
 out.append('];\n')
-open('community.js','w',encoding='utf-8').write('\n'.join(out))
+open('community.ts','w',encoding='utf-8').write('\n'.join(out))
 print('wrote community.js', len(rows), 'questions')
 print('topics:', dict(collections.Counter(t for _,t,_,_ in rows)))
 print('difficulty:', dict(collections.Counter(d for _,_,_,d in rows)))

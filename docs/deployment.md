@@ -96,6 +96,7 @@ localStorage keys are versioned (`-v1`) and unchanged by a deploy.
 ## Checking a build before you ship it
 
 ```bash
+bun run check      # type-check the app and the scripts
 bun run validate   # question banks: no broken answers, modes, or drills
 bun run build      # writes dist/
 bun run preview    # serves dist/ at http://localhost:4173

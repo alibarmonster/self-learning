@@ -1,5 +1,5 @@
-<script>
-  import { quiz } from '@/state/quiz.svelte.js';
+<script lang="ts">
+  import { quiz } from '@/state/quiz.svelte';
   import { EXAMS, EXAM_BY_ID } from '@/exams';
   import Picker from '@/views/Picker.svelte';
   import Home from '@/views/Home.svelte';
@@ -81,7 +81,7 @@
   // Warn before a refresh or tab close while a timed paper is running.
   $effect(() => {
     if (quiz.view !== 'quiz') return;
-    const handler = (e) => {
+    const handler = (e: BeforeUnloadEvent) => {
       e.preventDefault();
       e.returnValue = '';
     };

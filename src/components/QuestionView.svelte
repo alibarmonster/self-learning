@@ -1,18 +1,29 @@
-<script>
-  import { quiz } from '@/state/quiz.svelte.js';
-  import { LETTERS } from '@/utils/format.js';
+<script lang="ts">
+  import { quiz } from '@/state/quiz.svelte';
+  import { LETTERS } from '@/utils/format';
   import { isMulti, pickCount, isCorrect, isAnswerOption, isChosen } from '@/core';
+  import type { Given, PaperQuestion } from '@/types';
+
+  interface Props {
+    question: PaperQuestion;
+    selected?: Given;
+    onselect?: ((index: number) => void) | null;
+    reveal?: boolean;
+    /** Untimed sittings may open the answer per question, ExamTopics-style. */
+    revealable?: boolean;
+    number?: number | null;
+    total?: number | null;
+  }
 
   let {
     question,
     selected = null,
     onselect = null,
     reveal = false,
-    /** Untimed sittings may open the answer per question, ExamTopics-style. */
     revealable = false,
     number = null,
     total = null
-  } = $props();
+  }: Props = $props();
 
   // A local reveal for study mode. Resets when the question changes because
   // Quiz.svelte keys this component on the question id.
@@ -20,7 +31,9 @@
   const shown = $derived(reveal || peeked);
 
   const answerLetters = $derived(
-    (isMulti(question) ? question.answer : [question.answer]).map((i) => LETTERS[i]).join(', ')
+    (typeof question.answer === 'number' ? [question.answer] : question.answer)
+      .map((i) => LETTERS[i])
+      .join(', ')
   );
 
   /** The published community vote split, when the question carries one. */
@@ -49,13 +62,13 @@
       .sort((a, b) => b.n - a.n);
   });
 
-  const section = $derived(quiz.exam.sectionById[question.sectionId]);
+  const section = $derived(quiz.activeExam.sectionById[question.sectionId]);
   const multi = $derived(isMulti(question));
   const need = $derived(pickCount(question));
   const chosenCount = $derived(Array.isArray(selected) ? selected.length : selected === null ? 0 : 1);
   const correct = $derived(isCorrect(question, selected));
 
-  function stateOf(i) {
+  function stateOf(i: number): 'idle' | 'chosen' | 'correct' | 'wrong' {
     if (!shown) return isChosen(selected, i) ? 'chosen' : 'idle';
     if (isAnswerOption(question, i)) return 'correct';
     if (isChosen(selected, i)) return 'wrong';
@@ -64,9 +77,7 @@
 
   /** On reveal, how many of the sitter's picks were right — for the "1 of 2" note. */
   const hits = $derived(
-    multi && Array.isArray(selected)
-      ? selected.filter((i) => question.answer.includes(i)).length
-      : 0
+    Array.isArray(selected) ? selected.filter((i) => isAnswerOption(question, i)).length : 0
   );
 </script>
 

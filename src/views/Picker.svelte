@@ -1,14 +1,14 @@
-<script>
-  import { quiz } from '@/state/quiz.svelte.js';
-  import { readHistory, readResumable } from '@/state/storage.js';
-  import { formatDate } from '@/utils/format.js';
+<script lang="ts">
+  import { quiz } from '@/state/quiz.svelte';
+  import { readHistory, readResumable } from '@/state/storage';
+  import { formatDate } from '@/utils/format';
   import { EXAMS } from '@/exams';
   import { modeQuestionLabel } from '@/core';
 
   // Read once per visit to the picker; the numbers only change inside an exam.
   const cards = EXAMS.map((exam) => {
     const history = readHistory(exam);
-    const full = exam.modeById[exam.fullModeId] ?? null;
+    const full = exam.fullModeId ? exam.modeById[exam.fullModeId] : null;
     return {
       exam,
       full,
