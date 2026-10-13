@@ -41,16 +41,41 @@ valid session never reaches the files.
 
 That is a login rather than a shared password, which is better: no secret to
 leak, and you can revoke it from the dashboard. If you would rather have a
-plain shared password, use a **Service Auth** policy or pick Vercel below.
+plain shared password, use a **Service Auth** policy or pick Vercel below,
+which this repo is already set up for.
 
-### Vercel (simplest shared password)
+### Vercel + Basic Auth (free shared password)
 
-1. Import the GitHub repo at vercel.com. It detects Vite; output is `dist`.
-2. Project → **Settings** → **Deployment Protection** → **Password
-   Protection** → set a password.
+The repo is ready for Vercel: `vercel.json` sets the build (`bun install`,
+`bun run build`, output `dist`) and the same security headers as
+`public/_headers`, and `middleware.ts` puts HTTP Basic Auth in front of every
+request. Vercel runs that middleware before its cache, so nothing is served
+until the browser sends the right username and password. It works on the free
+Hobby plan.
 
-Password protection on Vercel is a paid feature on current plans — check the
-pricing page before relying on it. Cloudflare Access is free for personal use.
+1. Push the repo to GitHub.
+2. vercel.com → **Add New… → Project** → import the repo. The settings come
+   from `vercel.json`; leave them as they are.
+3. Before (or right after) the first deploy: **Settings → Environment
+   Variables**, add for **Production** and **Preview**:
+   - `BASIC_AUTH_USER` — the username
+   - `BASIC_AUTH_PASSWORD` — a long password
+4. **Deployments → Redeploy** so the variables take effect.
+5. Open the site: the browser shows its own login box. After that it remembers
+   the credentials until you close the browser.
+
+Until both variables exist the site answers `503 Site locked` to everyone —
+a missing variable never makes it public. To change the password, edit the
+variable and redeploy.
+
+Basic Auth sends the credentials with every request, so only use it over
+HTTPS (every `*.vercel.app` URL is HTTPS). There is no logout button: close the
+browser, or use a private window to test.
+
+Vercel's own *Password Protection* (a hosted password page) is not available on
+Hobby — it needs Pro plus $20 per month per project. *Vercel Authentication*
+with scope **All Deployments** is free too, but it is a Vercel-account login
+rather than a password.
 
 ### Netlify
 
@@ -69,8 +94,8 @@ public to anyone with the URL, question bank and all.
 Pages and Netlify. It sets a strict Content-Security-Policy (the app needs no
 outside origins), `noindex`, and caching: `/assets/*` forever because Vite
 fingerprints those filenames, `index.html` never, so a new deploy reaches you
-immediately. Vercel ignores `_headers` — move those rules into `vercel.json` if
-you deploy there.
+immediately. Vercel ignores `_headers`; the same rules are repeated in
+`vercel.json`, so keep the two in step when you change one.
 
 `public/robots.txt` disallows crawling. Behind Access it is redundant, but it
 costs nothing and matters if the site is ever reachable without the lock.
