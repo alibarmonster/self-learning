@@ -1,6 +1,6 @@
 # Exam Prep
 
-A personal, timed practice simulator for the exams I am sitting, built with Vite + Svelte 5. Open
+A personal, timed practice simulator for the exams I am sitting, built with Vite, Svelte 5 and TypeScript. Open
 `http://localhost:5173`, pick an exam, and each one has its own question bank, timed presets, topic
 drills, review screen and attempt history.
 
@@ -116,6 +116,7 @@ scripts/
   tools/rebalance-options.py one-off option-length rebalancer for the CDL bank
 docs/
   deployment.md              hosting and password protection
+  design-guideline.md        colours, type, components — derived from Kira Learning
 ```
 
 Imports use the `@/` alias for `src/` (set in `vite.config.ts` and `tsconfig.json`), so a file
@@ -191,14 +192,13 @@ at the end of the group.
 
 ## Design system
 
-The UI follows the **light-mode-paper-technical** direction from [MengTo/Skills](https://github.com/MengTo/Skills):
-warm paper surfaces inside a dark outer frame, a faint diagonal texture, thin rules with corner
-squares at the container edges (`container-lines`), L-brackets on each screen's primary surface,
-mono utility labels, numbered section heads (`number-details`), one restrained accent per exam,
-layered neutral shadows (`beautiful-shadows`), a gradient edge on the score panel
-(`css-border-gradient`) and calm fade-and-rise motion with reduced-motion support
-(`animation-systems`). Dark mode is a tuned variant of the same structure. All tokens live at the
-top of `src/styles/global.css`.
+The look is taken from Kira Learning and written up in
+[docs/design-guideline.md](docs/design-guideline.md): an editorial serif (Newsreader) over a quiet
+grotesk (Hanken Grotesk), ink on white, stone and cream, square corners, no shadows, and one mint
+highlighter for the thing to look at — the chosen option, the current question, the progress bar,
+the suggested answer. Dark mode keeps the same structure on warm near-black. Both fonts are
+self-hosted from `@fontsource-variable/*`, so the app still makes no request to another origin. All
+tokens live at the top of `src/styles/global.css`.
 
 ## Adding an exam
 

@@ -1,9 +1,10 @@
 # Deploying
 
 The app is a static site: `bun run build` writes `dist/`, and `dist/` is the
-whole thing — about 840 KB, one JS file, one CSS file, a favicon. It makes **no
-network requests at all** once loaded. No API, no database, no web fonts, no
-analytics. Anything that can serve files can host it.
+whole thing — one JS file, one CSS file, the self-hosted font files and a
+favicon, about 1.2 MB before compression. It makes **no request to any other
+origin** once loaded: no API, no database, no font CDN, no analytics. Anything
+that can serve files can host it.
 
 Two things make this easier than a typical SPA deploy:
 
