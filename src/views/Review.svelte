@@ -1,7 +1,7 @@
 <script>
-  import { quiz } from './quiz.svelte.js';
-  import QuestionView from './QuestionView.svelte';
-  import { isCorrect } from './bank.js';
+  import { quiz } from '@/state/quiz.svelte.js';
+  import QuestionView from '@/components/QuestionView.svelte';
+  import { isCorrect } from '@/core';
 
   let filter = $state('missed');
 

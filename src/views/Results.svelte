@@ -1,5 +1,6 @@
 <script>
-  import { quiz, formatDuration } from './quiz.svelte.js';
+  import { quiz } from '@/state/quiz.svelte.js';
+  import { formatDuration } from '@/utils/format.js';
 
   const r = $derived(quiz.results);
   const timedOut = $derived(quiz.deadline > 0 && quiz.submittedAt >= quiz.deadline);

@@ -1,4 +1,4 @@
-import { defineExam } from '../../bank.js';
+import { defineExam } from '@/core';
 import { cheatsheet } from './cheatsheet.js';
 
 /**

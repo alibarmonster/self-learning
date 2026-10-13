@@ -1,4 +1,4 @@
-import { defineExam } from '../../bank.js';
+import { defineExam } from '@/core';
 import { digitalTransformation } from './questions/digital-transformation.js';
 import { data } from './questions/data.js';
 import { ai } from './questions/ai.js';

@@ -1,7 +1,8 @@
 <script>
-  import { quiz, formatClock, LETTERS } from './quiz.svelte.js';
-  import QuestionView from './QuestionView.svelte';
-  import { isMulti } from './bank.js';
+  import { quiz } from '@/state/quiz.svelte.js';
+  import { formatClock, LETTERS } from '@/utils/format.js';
+  import QuestionView from '@/components/QuestionView.svelte';
+  import { isMulti } from '@/core';
 
   let confirming = $state(false);
 

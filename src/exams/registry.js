@@ -1,6 +1,6 @@
 /**
  * Every exam the app can prepare for, as plain data — no Svelte imports, so
- * the validator can load this under Node. `index.js` attaches each exam's
+ * the validator can load this outside the browser. `index.js` attaches each exam's
  * About page for the browser.
  *
  * To add an exam (JLPT is next): create `exams/<id>/index.js` exporting a

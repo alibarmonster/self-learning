@@ -1,4 +1,4 @@
-import { EXAM_DATA } from './data.js';
+import { EXAM_DATA } from './registry.js';
 import AppleAbout from './apple/About.svelte';
 import CdlAbout from './cdl/About.svelte';
 

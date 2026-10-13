@@ -1,4 +1,4 @@
-import { defineExam } from '../../bank.js';
+import { defineExam } from '@/core';
 import { logic } from './questions/logic.js';
 import { figural } from './questions/figural.js';
 import { inductive } from './questions/inductive.js';

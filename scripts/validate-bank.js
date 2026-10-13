@@ -4,8 +4,8 @@
  * index pointing past the end of the options, duplicate ids, duplicate option
  * text, or a preset asking for more questions than a section actually holds.
  */
-import { EXAM_DATA } from '../src/lib/exams/data.js';
-import { modeQuestionCount, modeQuestionLabel } from '../src/lib/bank.js';
+import { EXAM_DATA } from '../src/exams/registry.js';
+import { modeQuestionCount, modeQuestionLabel } from '../src/core/index.js';
 
 const problems = [];
 let total = 0;

@@ -1,7 +1,9 @@
 <script>
-  import { quiz, readHistory, readResumable, formatDate } from './quiz.svelte.js';
-  import { EXAMS } from './exams/index.js';
-  import { modeQuestionLabel } from './bank.js';
+  import { quiz } from '@/state/quiz.svelte.js';
+  import { readHistory, readResumable } from '@/state/storage.js';
+  import { formatDate } from '@/utils/format.js';
+  import { EXAMS } from '@/exams';
+  import { modeQuestionLabel } from '@/core';
 
   // Read once per visit to the picker; the numbers only change inside an exam.
   const cards = EXAMS.map((exam) => {

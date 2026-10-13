@@ -3,7 +3,7 @@
 
 Run from this directory, with parsed.json and parsed2.json (the outputs of
 import-examtopics-parse.py and import-examtopics-parse2.py) beside it. Writes
-community.js, which is copied to src/lib/exams/cdl/questions/community.js.
+community.js, which is copied to src/exams/cdl/questions/community.js.
 
 The first 92 keep their topics, difficulties, explanations and published vote
 rows exactly as gen.py produced them; the 58 in the second dump carry no

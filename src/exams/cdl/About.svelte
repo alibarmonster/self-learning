@@ -1,5 +1,5 @@
 <script>
-  import { quiz } from '../../quiz.svelte.js';
+  import { quiz } from '@/state/quiz.svelte.js';
 
   const exam = $derived(quiz.exam);
 

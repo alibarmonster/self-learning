@@ -35,7 +35,7 @@ bun run validate  # sanity-check every exam's question bank
 
 It is a static site with hash routing, so any static host works and no SPA rewrite rules are
 needed. **Put the password on the host, never in the app** — everything in `dist/` is public by
-definition. See [DEPLOY.md](DEPLOY.md) for the steps; Cloudflare Pages + Access is the free
+definition. See [docs/deployment.md](docs/deployment.md) for the steps; Cloudflare Pages + Access is the free
 option that enforces the login before the files are served.
 
 ## Storage — why there is no database
@@ -80,38 +80,51 @@ a backend and a database become worth adding; nothing in the current design bloc
 
 ```
 src/
-  App.svelte                 shell, header, hash routing (#/, #/apple, #/cdl, #/cdl/about), theme
-  app.css                    design tokens (light/dark), per-exam accent, shared primitives
-  lib/
-    bank.js                  exam-agnostic machinery: defineExam, paper drawing, shuffling, scoring
-    quiz.svelte.js           quiz state: current exam, paper, timer, persistence (per-exam keys)
+  main.js                    entry point — mounts App
+  App.svelte                 shell, header, hash routing (#/, #/cdl, #/cdl/about, #/ace/cheatsheet), theme
+  styles/global.css          design tokens (light/dark), per-exam accent, shared primitives
+  core/                      exam-agnostic logic, no Svelte, no DOM
+    answer.js                isMulti, pickCount, isCorrect — single and multiple select
+    blueprint.js             fixed and [min, max] section counts, length labels
+    exam.js                  defineExam: lookup tables, topics, drillable topics
+    paper.js                 shuffling and the paper builders (mode, section, topic)
+    index.js                 re-exports the above as `@/core`
+  state/
+    quiz.svelte.js           the Quiz store: current exam, paper, timer, scoring, review
+    storage.js               localStorage keys and safe read/write per exam
+  utils/format.js            clock, duration and date formatting, option letters
+  components/
+    QuestionView.svelte      one question, single or multiple select, answering or reveal mode
+  views/                     one component per screen
     Picker.svelte            the landing page — one card per exam with its attempts and best score
     Home.svelte              an exam's start page: presets, topic drills, section drills, history
     Quiz.svelte              the test itself — timer, navigator, shortcuts
-    QuestionView.svelte      one question, single or multiple select, answering or reveal mode
     Results.svelte           score ring and per-section breakdown
     Review.svelte            answer review with filters
-    exams/
-      data.js                the list of exams (plain data — Node-loadable for the validator)
-      index.js               the same list with each exam's About page attached
-      apple/
-        index.js             parts, sections, presets, home copy, verdicts
-        About.svelte         what the real test looks like, plus sources
-        questions/           logic.js … design.js, svg.js, figure-matrix.js
-      cdl/
-        index.js             the six exam-guide sections, presets, home copy, verdicts
-        About.svelte         exam facts, sections, how to prepare, sources
-        questions/           digital-transformation.js, data.js, ai.js, infrastructure.js,
-                             security.js, operations.js
-scripts/validate-bank.js     question bank sanity checks, across every exam
-scripts/import-examtopics*   the CDL community-bank importer (one parse per dump, one merge)
+    Cheatsheet.svelte        the per-exam cheat sheet with filter and jump nav
+  exams/
+    registry.js              the list of exams (plain data — loadable by the validator)
+    index.js                 the same list with each exam's About page attached
+    apple/                   index.js, About.svelte, questions/
+    cdl/                     index.js, About.svelte, cheatsheet.js, questions/
+    ace/                     index.js, cheatsheet.js (study-only for now)
+scripts/
+  validate-bank.js           question bank sanity checks, across every exam
+  importers/examtopics/      the CDL community-bank importer (one parse per dump, one merge)
+  tools/rebalance-options.py one-off option-length rebalancer for the CDL bank
+docs/
+  deployment.md              hosting and password protection
 ```
+
+Imports use the `@/` alias for `src/` (set in `vite.config.js` and the editor config), so a file
+never climbs out of its folder with `../../`.
+
 
 ## The CDL community bank
 
-`src/lib/exams/cdl/questions/community.js` holds 289 Cloud Digital Leader questions as they
+`src/exams/cdl/questions/community.js` holds 289 Cloud Digital Leader questions as they
 circulate in the public community question banks, imported verbatim by
-`scripts/import-examtopics*.py` — one `-parseN.py` per raw dump writes `parsedN.json`, and the
+`scripts/importers/examtopics/*.py` — one `-parseN.py` per raw dump writes `parsedN.json`, and the
 latest `-mergeN.py` execs the previous one's data section and writes the combined bank, so the
 hand-written explanations are never retyped. Two things are deliberate:
 
@@ -153,8 +166,8 @@ shuffling.
 
 ## Cheat sheet
 
-An exam can carry a `cheatsheet` — plain data in `src/lib/exams/<id>/cheatsheet.js`, rendered by
-`src/lib/Cheatsheet.svelte` at `#/<id>/cheatsheet`. One keyword filter narrows the whole sheet, and
+An exam can carry a `cheatsheet` — plain data in `src/exams/<id>/cheatsheet.js`, rendered by
+`src/views/Cheatsheet.svelte` at `#/<id>/cheatsheet`. One keyword filter narrows the whole sheet, and
 the jump nav is grouped by part.
 
 The CDL sheet runs in three parts, declared in `cheatsheet.parts` with each group naming its `part`:
@@ -184,19 +197,19 @@ mono utility labels, numbered section heads (`number-details`), one restrained a
 layered neutral shadows (`beautiful-shadows`), a gradient edge on the score panel
 (`css-border-gradient`) and calm fade-and-rise motion with reduced-motion support
 (`animation-systems`). Dark mode is a tuned variant of the same structure. All tokens live at the
-top of `src/app.css`.
+top of `src/styles/global.css`.
 
 ## Adding an exam
 
-1. Create `src/lib/exams/<id>/index.js` and export a `defineExam({...})` with an `id`, a
+1. Create `src/exams/<id>/index.js` and export a `defineExam({...})` with an `id`, a
    `storagePrefix` (its localStorage namespace), `name`, `subtitle`, `tagline`, `blurb`, `icon`,
    `sections`, `modes`, `fullModeId`, the `home` copy, a `verdict(percent)` function and a `footer`.
    Give it `parts` if the real paper has ordered sections (Academy) or `mixed: true` if it
    interleaves everything (CDL). `drillMin` and `drillSize` are optional.
-2. Put the question files under `src/lib/exams/<id>/questions/`.
-3. Write `src/lib/exams/<id>/About.svelte` (copy the CDL one as a starting point).
-4. List the exam in `src/lib/exams/data.js` and attach its About page in `src/lib/exams/index.js`.
-5. Optionally give it an accent colour in `app.css` (see the `data-exam='cdl'` block).
+2. Put the question files under `src/exams/<id>/questions/`.
+3. Write `src/exams/<id>/About.svelte` (copy the CDL one as a starting point).
+4. List the exam in `src/exams/registry.js` and attach its About page in `src/exams/index.js`.
+5. Optionally give it an accent colour in `src/styles/global.css` (see the `data-exam='cdl'` block).
 6. `bun run validate`.
 
 ## Question format
@@ -312,7 +325,7 @@ five-line entry in `PAPERS`.
 
 ### Adding questions
 
-Drop a new object into the relevant file in `src/lib/exams/apple/questions/`:
+Drop a new object into the relevant file in `src/exams/apple/questions/`:
 
 ```js
 {

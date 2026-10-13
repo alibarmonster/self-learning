@@ -3,7 +3,7 @@ One-off: replace the options/answer of CDL questions with balanced sets where
 every option is written in the same register and length, and the distractors
 are near-misses (neighbouring product, swapped concept, half-true statement).
 Prompts and explanations are kept; a few explanations get a short addendum.
-Run from the project root: python3 scripts/rebalance-options.py
+Run from the project root: python3 scripts/tools/rebalance-options.py
 """
 import re, pathlib
 
@@ -1131,7 +1131,7 @@ def rewrite(path):
     return changed
 
 
-base = pathlib.Path('src/lib/exams/cdl/questions')
+base = pathlib.Path('src/exams/cdl/questions')
 total = 0
 for f in base.glob('*.js'):
     n = rewrite(f)

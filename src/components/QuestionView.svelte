@@ -1,6 +1,7 @@
 <script>
-  import { quiz, LETTERS } from './quiz.svelte.js';
-  import { isMulti, pickCount, isCorrect, isAnswerOption, isChosen } from './bank.js';
+  import { quiz } from '@/state/quiz.svelte.js';
+  import { LETTERS } from '@/utils/format.js';
+  import { isMulti, pickCount, isCorrect, isAnswerOption, isChosen } from '@/core';
 
   let {
     question,

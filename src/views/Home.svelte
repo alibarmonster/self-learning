@@ -1,6 +1,8 @@
 <script>
-  import { quiz, formatDate, formatDuration, REVIEWABLE_ATTEMPTS } from './quiz.svelte.js';
-  import { modeQuestionLabel, blueprintLabel } from './bank.js';
+  import { quiz } from '@/state/quiz.svelte.js';
+  import { REVIEWABLE_ATTEMPTS } from '@/state/storage.js';
+  import { formatDate, formatDuration } from '@/utils/format.js';
+  import { modeQuestionLabel, blueprintLabel } from '@/core';
 
   const exam = $derived(quiz.exam);
 

@@ -1,12 +1,12 @@
 <script>
-  import { quiz } from './lib/quiz.svelte.js';
-  import { EXAMS, EXAM_BY_ID } from './lib/exams/index.js';
-  import Picker from './lib/Picker.svelte';
-  import Home from './lib/Home.svelte';
-  import Quiz from './lib/Quiz.svelte';
-  import Results from './lib/Results.svelte';
-  import Review from './lib/Review.svelte';
-  import Cheatsheet from './lib/Cheatsheet.svelte';
+  import { quiz } from '@/state/quiz.svelte.js';
+  import { EXAMS, EXAM_BY_ID } from '@/exams';
+  import Picker from '@/views/Picker.svelte';
+  import Home from '@/views/Home.svelte';
+  import Quiz from '@/views/Quiz.svelte';
+  import Results from '@/views/Results.svelte';
+  import Review from '@/views/Review.svelte';
+  import Cheatsheet from '@/views/Cheatsheet.svelte';
 
   quiz.init();
 
