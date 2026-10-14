@@ -146,6 +146,15 @@ Presets: Full Exam (50 q / 2 h in the guide's weights), Real-length Exam (50–6
 Exam (20 q / 1 h) and Quick Drill (15 q / 20 min); every section and topic can also be drilled
 untimed.
 
+**Practice sets.** The bank is also split into 14 fixed sets in `src/exams/ace/sets.ts`: 13 sets of
+50 and a final set of the 16 left over. No question is in two sets, every set mixes all five
+sections, and none follows bank order. A set always holds the same questions but is shuffled — order
+and options — every sitting, so you can work through the bank set by set and see each set's best
+score on the home page. Each set can be sat timed (2.4 minutes a question, so 120 minutes for 50) or
+in study mode. The sets were dealt once by `scripts/tools/make-sets.ts` (seeded) and the file it
+wrote is now the source, so editing the bank does not reshuffle them. Any exam can have sets: give
+its definition a `sets` array of `{ id, name, questionIds }`.
+
 ## The CDL community bank
 
 `src/exams/cdl/questions/community.ts` holds 289 Cloud Digital Leader questions as they

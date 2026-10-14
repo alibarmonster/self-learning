@@ -1,6 +1,7 @@
 import { defineExam } from '@/core';
 import type { Mode, Section } from '@/types';
 import { cheatsheet } from './cheatsheet';
+import { sets } from './sets';
 import { setup } from './questions/setup';
 import { planning } from './questions/planning';
 import { deploying } from './questions/deploying';
@@ -133,6 +134,9 @@ export const ace = defineExam({
   drillMin: 5,
   sections: SECTIONS,
   modes: MODES,
+  /** The whole bank split into 13 fixed sets of 50 and a final 16 — see sets.ts. */
+  sets,
+  setMinutesPerQuestion: 2.4,
   home: {
     eyebrow: 'Google Cloud · Associate Cloud Engineer',
     title: 'Know the console\nbefore you book it.',
