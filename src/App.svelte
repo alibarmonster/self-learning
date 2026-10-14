@@ -10,6 +10,10 @@
 
   quiz.init();
 
+  // Set by the Vercel sign-in middleware; absent locally and on other hosts,
+  // where there is nothing to sign out of.
+  const signedIn = typeof document !== 'undefined' && /(?:^|;\s*)ep_signed_in=1/.test(document.cookie);
+
   const themeLabel = $derived(
     quiz.theme === 'system' ? 'Auto' : quiz.theme === 'light' ? 'Light' : 'Dark'
   );
@@ -139,6 +143,9 @@
               About the test
             </button>
           {/if}
+        {/if}
+        {#if signedIn}
+          <a class="btn btn-ghost signout" href="/__logout">Sign out</a>
         {/if}
         <button class="btn btn-ghost theme" onclick={() => quiz.cycleTheme()}>
           <span class="dot" aria-hidden="true"></span>
@@ -305,6 +312,10 @@
     color: var(--ink);
     background: var(--stone);
     box-shadow: inset 0 -2px 0 var(--mint);
+  }
+
+  .signout {
+    text-decoration: none;
   }
 
   .theme .dot {
