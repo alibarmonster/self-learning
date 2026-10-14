@@ -93,9 +93,11 @@
       <button class="btn btn-primary lg" onclick={() => quiz.startFullTest()}>
         {exam.home.startLabel}
       </button>
-      <button class="btn btn-secondary lg" onclick={() => (quiz.view = 'about')}>
-        {exam.home.aboutLabel}
-      </button>
+      {#if exam.about}
+        <button class="btn btn-secondary lg" onclick={() => (quiz.view = 'about')}>
+          {exam.home.aboutLabel}
+        </button>
+      {/if}
       {#if exam.cheatsheet}
         <button class="btn btn-ghost lg" onclick={() => (quiz.view = 'cheatsheet')}>
           Cheat sheet →
