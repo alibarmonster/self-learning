@@ -91,7 +91,7 @@
     <span class="chip difficulty {question.difficulty}">{question.difficulty}</span>
   </div>
 
-  <h2 class="prompt">{question.prompt}</h2>
+  <h2 class="prompt" class:long={question.prompt.length > 280}>{question.prompt}</h2>
 
   {#if multi}
     <p class="pick-note" class:done={!reveal && chosenCount === need}>
@@ -289,6 +289,13 @@
     line-height: 1.35;
     white-space: pre-line;
     letter-spacing: -0.3px;
+  }
+
+  /* Scenario-style stems run to several sentences; set them a size down so the
+     options stay on screen. */
+  .prompt.long {
+    font-size: var(--type-h4);
+    line-height: 1.4;
   }
 
   .pick-note {
