@@ -36,8 +36,9 @@ bun run validate  # sanity-check every exam's question bank
 It is a static site with hash routing, so any static host works and no SPA rewrite rules are
 needed. **Put the password on the host, never in the app** — everything in `dist/` is public by
 definition. The repo is set up for **Vercel**: `vercel.json` holds the build and security headers, and
-`middleware.ts` asks for a username and password (`BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD`, set as
-Vercel environment variables) before any file is served — free on the Hobby plan. See
+`middleware.ts` shows a sign-in page (username and password from the `BASIC_AUTH_USER` /
+`BASIC_AUTH_PASSWORD` Vercel environment variables) before any file is served, with a 30-day session
+cookie and a Sign out button — free on the Hobby plan. See
 [docs/deployment.md](docs/deployment.md) for the steps, and for Cloudflare Pages + Access as the
 alternative.
 
@@ -116,7 +117,8 @@ scripts/
   validate-bank.ts           question bank sanity checks, across every exam
   importers/examtopics/      the CDL community-bank importer (one parse per dump, one merge)
   tools/rebalance-options.py one-off option-length rebalancer for the CDL bank
-middleware.ts                Vercel Basic Auth in front of the whole site (never bundled by Vite)
+middleware.ts                Vercel sign-in in front of the whole site (never bundled by Vite)
+server/auth/                 session cookies and the sign-in page it serves
 vercel.json                  Vercel build settings and security headers
 docs/
   deployment.md              hosting and password protection

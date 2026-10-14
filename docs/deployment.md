@@ -44,14 +44,13 @@ leak, and you can revoke it from the dashboard. If you would rather have a
 plain shared password, use a **Service Auth** policy or pick Vercel below,
 which this repo is already set up for.
 
-### Vercel + Basic Auth (free shared password)
+### Vercel + sign-in page (free)
 
 The repo is ready for Vercel: `vercel.json` sets the build (`bun install`,
 `bun run build`, output `dist`) and the same security headers as
-`public/_headers`, and `middleware.ts` puts HTTP Basic Auth in front of every
-request. Vercel runs that middleware before its cache, so nothing is served
-until the browser sends the right username and password. It works on the free
-Hobby plan.
+`public/_headers`, and `middleware.ts` puts a sign-in page in front of every
+request. Vercel runs that middleware before its cache, so no app file is
+served until you have signed in. It works on the free Hobby plan.
 
 1. Push the repo to GitHub.
 2. vercel.com → **Add New… → Project** → import the repo. The settings come
@@ -60,22 +59,33 @@ Hobby plan.
    Variables**, add for **Production** and **Preview**:
    - `BASIC_AUTH_USER` — the username
    - `BASIC_AUTH_PASSWORD` — a long password
+   - `SESSION_SECRET` (optional) — any long random string; see below
 4. **Deployments → Redeploy** so the variables take effect.
-5. Open the site: the browser shows its own login box. After that it remembers
-   the credentials until you close the browser.
+5. Open the site: you land on `/__login`. Sign in and you go back to the page
+   you asked for, including the exam route after `#`. **Sign out** in the
+   header (or `/__logout`) ends the session.
 
-Until both variables exist the site answers `503 Site locked` to everyone —
-a missing variable never makes it public. To change the password, edit the
-variable and redeploy.
+How it works: a correct sign-in sets an `HttpOnly`, `Secure`, `SameSite=Lax`
+cookie holding an expiry and an HMAC signature, valid for 30 days. The key is
+derived from the username and password, so **changing the password signs every
+browser out**; set `SESSION_SECRET` if you would rather sessions survive a
+password change. A wrong password waits 0.8 s before answering, to make
+guessing slow. A second, readable cookie only tells the app to show the Sign
+out button. `favicon.svg` and `robots.txt` are served without a session; nothing
+else is.
 
-Basic Auth sends the credentials with every request, so only use it over
-HTTPS (every `*.vercel.app` URL is HTTPS). There is no logout button: close the
-browser, or use a private window to test.
+Until both credential variables exist the site answers `503 Site locked` to
+everyone — a missing variable never makes it public. To change the password,
+edit the variable and redeploy.
+
+The sign-in page only exists on Vercel. `bun run dev` and `bun run preview`
+have no middleware, so the app opens directly and shows no Sign out button.
 
 Vercel's own *Password Protection* (a hosted password page) is not available on
 Hobby — it needs Pro plus $20 per month per project. *Vercel Authentication*
 with scope **All Deployments** is free too, but it is a Vercel-account login
-rather than a password.
+rather than a password. Both would sit in front of this sign-in page, not
+replace it, so pick one.
 
 ### Netlify
 
