@@ -19,7 +19,7 @@
  * Vite never sees this file; it is only picked up by Vercel.
  */
 import { next } from '@vercel/functions';
-import { LOGIN_SCRIPT, loginPage } from './server/auth/login-page';
+import { LOGIN_SCRIPT, loginPage } from './server/auth/login-page.js';
 import {
   FLAG_COOKIE,
   SESSION_COOKIE,
@@ -30,7 +30,7 @@ import {
   readCookie,
   safeNext,
   verifyToken
-} from './server/auth/session';
+} from './server/auth/session.js';
 
 export const config = {
   runtime: 'nodejs'

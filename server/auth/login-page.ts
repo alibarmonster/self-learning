@@ -3,7 +3,7 @@
  * self-contained (the app's CSS and fonts are behind the login too), styled to
  * the design guideline with system fallbacks for the two typefaces.
  */
-import { SESSION_DAYS } from './session';
+import { SESSION_DAYS } from './session.js';
 
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
