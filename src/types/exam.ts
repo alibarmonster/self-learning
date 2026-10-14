@@ -39,6 +39,17 @@ export interface Mode {
   description: string;
 }
 
+/**
+ * A fixed paper: the same questions every time it is sat, in a new order with
+ * the options reshuffled. Lets a large bank be worked through set by set.
+ */
+export interface PaperSet {
+  id: string;
+  name: string;
+  /** Question ids from any section of the exam. */
+  questionIds: string[];
+}
+
 export interface ExamHome {
   eyebrow: string;
   /** Line breaks (`\n`) are kept when the title is rendered. */
@@ -78,6 +89,10 @@ export interface ExamDefinition {
   parts?: Part[];
   sections?: Section[];
   modes?: Mode[];
+  /** Fixed numbered papers, shown as their own block on the home page. */
+  sets?: PaperSet[];
+  /** Minutes per question when a set is sat timed (2.4 is the ACE pace: 50 in 120). */
+  setMinutesPerQuestion?: number;
   home: ExamHome;
   verdict(percent: number): Verdict;
   footer: string;
@@ -98,10 +113,15 @@ export interface Topic {
 }
 
 export interface Exam
-  extends Omit<ExamDefinition, 'parts' | 'sections' | 'modes' | 'drillMin' | 'drillSize' | 'focusTopicIds'> {
+  extends Omit<
+    ExamDefinition,
+    'parts' | 'sections' | 'modes' | 'sets' | 'drillMin' | 'drillSize' | 'focusTopicIds'
+  > {
   parts: Part[];
   sections: Section[];
   modes: Mode[];
+  sets: PaperSet[];
+  setById: Record<string, PaperSet>;
   drillMin: number;
   drillSize: number;
   focusTopicIds: string[];

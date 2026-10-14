@@ -1,5 +1,6 @@
 import {
   buildPaper,
+  buildSetPaper,
   buildSectionPaper,
   buildTopicPaper,
   isCorrect,
@@ -28,6 +29,12 @@ import type {
   Section,
   Theme
 } from '@/types';
+
+/**
+ * Attempt rows kept per exam. Rows are small; this is enough for every fixed
+ * set to keep its best score while still being sat alongside other papers.
+ */
+const HISTORY_LIMIT = 100;
 
 export type View = 'home' | 'quiz' | 'results' | 'review' | 'about' | 'cheatsheet';
 
@@ -248,10 +255,20 @@ class Quiz {
     );
   }
 
+  /** Sits a fixed set — timed when `minutes` is above zero, study mode at zero. */
+  startSet(setId: string, minutes: number) {
+    const exam = this.activeExam;
+    const set = exam.setById[setId];
+    if (!set) return;
+    this.lastConfig = { kind: 'set', setId, minutes };
+    this.#begin(buildSetPaper(exam, set), minutes > 0 ? set.name : `${set.name} · study`, minutes);
+  }
+
   restart() {
     const c = this.lastConfig;
     if (!c) return;
     if (c.kind === 'mode') this.startMode(c.modeId);
+    else if (c.kind === 'set') this.startSet(c.setId, c.minutes);
     else if (c.kind === 'topic') this.startTopicPractice(c.topicId, c.count, c.minutes);
     else this.startPractice(c.sectionId, c.count, c.minutes);
   }
@@ -356,10 +373,11 @@ class Quiz {
         total: r.total,
         percent: r.percent,
         elapsedMs: r.elapsedMs,
-        auto
+        auto,
+        ...(this.lastConfig?.kind === 'set' ? { setId: this.lastConfig.setId } : {})
       },
       ...this.history
-    ].slice(0, 25);
+    ].slice(0, HISTORY_LIMIT);
     write(keys.history, this.history);
 
     // Keep the paper itself, so this attempt can be reopened from the history

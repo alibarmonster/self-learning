@@ -4,7 +4,8 @@ import type { Given, PaperQuestion } from './question';
 export type PaperConfig =
   | { kind: 'mode'; modeId: string }
   | { kind: 'practice'; sectionId: string; count: number; minutes: number }
-  | { kind: 'topic'; topicId: string; count: number; minutes: number };
+  | { kind: 'topic'; topicId: string; count: number; minutes: number }
+  | { kind: 'set'; setId: string; minutes: number };
 
 /** A paper in progress, as saved after every answer so it can be resumed. */
 export interface SavedSession {
@@ -43,6 +44,8 @@ export interface Attempt {
   elapsedMs: number;
   /** Handed in by the clock rather than the sitter. */
   auto: boolean;
+  /** The fixed set this attempt sat, so each set can show its best score. */
+  setId?: string;
 }
 
 /** Question id → option text → times picked, across every sitting. */

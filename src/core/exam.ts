@@ -22,6 +22,7 @@ export function defineExam(def: ExamDefinition): Exam {
   // that. `studyOnly` is what the views check before offering a paper.
   const sections = def.sections ?? [];
   const modes = def.modes ?? [];
+  const sets = def.sets ?? [];
   const drillMin = def.drillMin ?? DEFAULT_DRILL_MIN;
   const drillSize = def.drillSize ?? DEFAULT_DRILL_SIZE;
 
@@ -52,6 +53,8 @@ export function defineExam(def: ExamDefinition): Exam {
     parts,
     sections,
     modes,
+    sets,
+    setById: Object.fromEntries(sets.map((s) => [s.id, s])),
     drillMin,
     drillSize,
     partById: Object.fromEntries(parts.map((p) => [p.id, p])),

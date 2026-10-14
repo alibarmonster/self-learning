@@ -2,7 +2,7 @@
  * Paper builders: draw questions from an exam's bank and shuffle their options
  * so sitting the same paper twice does not reward memorising letter positions.
  */
-import type { Exam, Mode, PaperQuestion, Question } from '@/types';
+import type { Exam, Mode, PaperQuestion, PaperSet, Question } from '@/types';
 import { drawCount } from './blueprint';
 
 export function shuffle<T>(items: readonly T[]): T[] {
@@ -80,4 +80,21 @@ export function buildTopicPaper(
   return shuffle(pool)
     .slice(0, Math.min(count, pool.length))
     .map((q) => ({ ...withShuffledOptions(q), sectionId }));
+}
+
+/**
+ * Draws a fixed set: always the same questions, shuffled into a new order with
+ * their options reshuffled. Ids that no longer exist in the bank are skipped,
+ * so editing the bank can shrink a set but never break it.
+ */
+export function buildSetPaper(exam: Exam, set: PaperSet): PaperQuestion[] {
+  const where = new Map<string, { question: Question; sectionId: string }>();
+  for (const section of exam.sections) {
+    for (const question of section.questions) where.set(question.id, { question, sectionId: section.id });
+  }
+  const drawn = set.questionIds.flatMap((id) => {
+    const hit = where.get(id);
+    return hit ? [{ ...withShuffledOptions(hit.question), sectionId: hit.sectionId }] : [];
+  });
+  return shuffle(drawn);
 }

@@ -182,6 +182,23 @@ for (const exam of EXAM_DATA) {
     problems.push(`${exam.id}: fullModeId "${exam.fullModeId}" is not a mode`);
   }
 
+  // A fixed set must point at real questions, each at most once, and no
+  // question may sit in two sets — the sets are meant to partition the bank.
+  const ids = new Set(exam.sections.flatMap((s) => s.questions.map((q) => q.id)));
+  const placed = new Map<string, string>();
+  for (const set of exam.sets) {
+    const seen = new Set<string>();
+    if (!set.questionIds.length) problems.push(`${exam.id}/${set.id}: empty set`);
+    for (const id of set.questionIds) {
+      if (!ids.has(id)) problems.push(`${exam.id}/${set.id}: unknown question ${id}`);
+      if (seen.has(id)) problems.push(`${exam.id}/${set.id}: ${id} listed twice`);
+      if (placed.has(id)) problems.push(`${exam.id}/${set.id}: ${id} is also in ${placed.get(id)}`);
+      seen.add(id);
+      placed.set(id, set.id);
+    }
+  }
+  const unplaced = [...ids].filter((id) => !placed.has(id)).length;
+
   // A pinned drill whose topic was renamed would silently vanish from the home
   // page, so check the ids still resolve and still hold enough to be a drill.
   for (const id of exam.focusTopicIds) {
@@ -192,6 +209,9 @@ for (const exam of EXAM_DATA) {
   }
 
   console.log(`\n${exam.name} (${exam.id})`);
+  if (exam.sets.length) {
+    console.log(`  sets             ${exam.sets.length} fixed sets, ${placed.size} questions placed, ${unplaced} in none`);
+  }
   if (exam.studyOnly) {
     console.log(`  cheat sheet only — ${exam.cheatsheet?.groups.length ?? 0} groups, no question bank yet`);
     for (const section of exam.sections) {

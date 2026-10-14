@@ -13,6 +13,33 @@
 
   const fullTest = $derived(exam.fullModeId ? exam.modeById[exam.fullModeId] : undefined);
 
+  // Block numbers follow the blocks actually shown, so an exam without sets
+  // still reads 01, 02, 03.
+  const hasSets = $derived(exam.sets.length > 0);
+  const ordinal = (n: number) => String(n).padStart(2, '0');
+  const blockNo = $derived({
+    papers: ordinal(1),
+    sets: ordinal(2),
+    topics: ordinal(hasSets ? 3 : 2),
+    sections: ordinal(hasSets ? 4 : 3),
+    attempts: ordinal(hasSets ? 5 : 4)
+  });
+
+  /** Best score and sitting count per fixed set, from the attempt history. */
+  const setStats = $derived.by(() => {
+    const stats: Record<string, { best: number; sat: number }> = {};
+    for (const h of quiz.history) {
+      if (!h.setId) continue;
+      const s = (stats[h.setId] ??= { best: 0, sat: 0 });
+      s.best = Math.max(s.best, h.percent);
+      s.sat += 1;
+    }
+    return stats;
+  });
+
+  const setMinutes = (count: number) => Math.round(count * (exam.setMinutesPerQuestion ?? 2.4));
+  const setsDone = $derived(exam.sets.filter((s) => setStats[s.id]).length);
+
   // Drills follow the paper's own parts when it has them, with everything the
   // paper does not ask collected under one clearly-labelled extra group. An
   // exam without parts — one flat list of domains — gets a single group.
@@ -118,7 +145,7 @@
   <section class="block">
     <div class="rule"></div>
     <header class="block-head">
-      <h2><span class="num">01</span>Choose a paper</h2>
+      <h2><span class="num">{blockNo.papers}</span>Choose a paper</h2>
       <p>Questions and answer options are shuffled on every attempt.</p>
     </header>
 
@@ -149,10 +176,50 @@
     </div>
   </section>
 
+  {#if hasSets}
+    <section class="block">
+      <div class="rule"></div>
+      <header class="block-head">
+        <h2><span class="num">{blockNo.sets}</span>Practice sets</h2>
+        <p>
+          The whole bank, split into fixed sets of {exam.sets[0].questionIds.length}. A set always holds
+          the same questions — mixed across every section, never in bank order — but they come in a new
+          order each sitting. Work through them one by one; {setsDone} of {exam.sets.length} sat so far.
+        </p>
+      </header>
+
+      <div class="sets">
+        {#each exam.sets as set (set.id)}
+          {@const stat = setStats[set.id]}
+          {@const count = set.questionIds.length}
+          <article class="set card" class:done={stat && stat.best >= 70}>
+            <div class="set-head">
+              <h3>{set.name}</h3>
+              <span class="mono">{count} q</span>
+            </div>
+            <p class="set-meta">
+              {#if stat}
+                Best <strong>{stat.best}%</strong> · sat {stat.sat}×
+              {:else}
+                Not sat yet
+              {/if}
+            </p>
+            <div class="set-actions">
+              <button class="btn btn-primary sm" onclick={() => quiz.startSet(set.id, setMinutes(count))}>
+                Timed · {setMinutes(count)} min
+              </button>
+              <button class="btn btn-ghost sm" onclick={() => quiz.startSet(set.id, 0)}>Study</button>
+            </div>
+          </article>
+        {/each}
+      </div>
+    </section>
+  {/if}
+
   <section class="block">
     <div class="rule"></div>
     <header class="block-head">
-      <h2><span class="num">02</span>Topic drills <span class="tag">study mode</span></h2>
+      <h2><span class="num">{blockNo.topics}</span>Topic drills <span class="tag">study mode</span></h2>
       <p>
         One topic at a time, untimed, every question with a written explanation — and a method tip
         where the question has one. Nothing here runs a clock: each question carries a
@@ -202,7 +269,7 @@
   <section class="block">
     <div class="rule"></div>
     <header class="block-head">
-      <h2><span class="num">03</span>Or drill a whole section <span class="tag">study mode</span></h2>
+      <h2><span class="num">{blockNo.sections}</span>Or drill a whole section <span class="tag">study mode</span></h2>
       <p>Untimed too — the whole mixed section, or the few topics too small for a card above.</p>
     </header>
 
@@ -256,7 +323,7 @@
     <section class="block">
       <div class="rule"></div>
       <header class="block-head">
-        <h2><span class="num">04</span>Your attempts</h2>
+        <h2><span class="num">{blockNo.attempts}</span>Your attempts</h2>
         <button class="btn btn-ghost sm" onclick={() => quiz.clearHistory()}>Clear history</button>
       </header>
       <p class="block-note">
@@ -731,5 +798,62 @@
       width: 100%;
       padding-left: 58px;
     }
+  }
+
+  .sets {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .set {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 20px;
+    border-left: 4px solid transparent;
+    transition: background-color var(--dur-micro) var(--ease);
+  }
+
+  .set:hover {
+    background: var(--stone-strong);
+  }
+
+  /* A set passed at the usual bar gets the highlighter edge. */
+  .set.done {
+    border-left-color: var(--mint);
+  }
+
+  .set-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .set-head h3 {
+    font-size: var(--type-h4);
+  }
+
+  .set-head .mono {
+    color: var(--text-tertiary);
+    font-size: var(--type-label);
+  }
+
+  .set-meta {
+    font-size: var(--type-small);
+    color: var(--text-secondary);
+  }
+
+  .set-meta strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .set-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
   }
 </style>
