@@ -8,12 +8,11 @@ drills, review screen and attempt history.
 | ---- | ----- | ----------------------- | ---- |
 | **Apple Developer Academy Indonesia** — Tech division online entry test | `#/apple` | 50 q · 120 min · Section 1 Logic then Section 2 Programming | 448 |
 | **Google Cloud Digital Leader** certification | `#/cdl` | 50 q · 90 min · six domains mixed, multiple choice + multiple select | 475 |
-| **Google Cloud Associate Cloud Engineer** certification | `#/ace` | 50–60 q · 120 min · five sections | cheat sheet only |
+| **Google Cloud Associate Cloud Engineer** certification | `#/ace` | 50–60 q · 120 min · five sections mixed, multiple choice + multiple select | 666 |
 
-ACE ships with its cheat sheet first: it declares the five official sections and their weights but no
-questions and no presets, so `defineExam` marks it `studyOnly` and entering it opens the sheet. Adding
-`questions` to its sections and a `modes` array is all that turns it into a sittable paper. JLPT is
-next — see *Adding an exam* below.
+An exam can also ship with only a cheat sheet: with no `modes`, `defineExam` marks it `studyOnly` and
+entering it opens the sheet. ACE started that way; it now has a full bank (see *The ACE bank* below).
+JLPT is next — see *Adding an exam* below.
 
 > Unofficial study aids. Not affiliated with, endorsed by, or produced by Apple Inc., the Apple
 > Developer Academy, or Google LLC. None of the questions are real test questions — they are written
@@ -112,7 +111,7 @@ src/
     index.ts                 the same list with each exam's About page attached
     apple/                   index.ts, About.svelte, questions/
     cdl/                     index.ts, About.svelte, cheatsheet.ts, questions/
-    ace/                     index.ts, cheatsheet.ts (study-only for now)
+    ace/                     index.ts, cheatsheet.ts, questions/ (one file per exam-guide section)
 scripts/
   validate-bank.ts           question bank sanity checks, across every exam
   importers/examtopics/      the CDL community-bank importer (one parse per dump, one merge)
@@ -126,6 +125,26 @@ docs/
 
 Imports use the `@/` alias for `src/` (set in `vite.config.ts` and `tsconfig.json`), so a file
 never climbs out of its folder with `../../`.
+
+## The ACE bank
+
+`src/exams/ace/questions/*.ts` holds 666 Associate Cloud Engineer questions from a community PDF
+dump (667 questions; one word-for-word repeat dropped), one file per exam-guide section. `ace-NNN` is
+the question's number in that PDF. Each question was assigned to the section and topic its decision
+belongs to, given a difficulty, and given an explanation.
+
+Dump keys are often wrong, so every key was reviewed against current Google Cloud documentation, and
+the doubtful ones got an independent second opinion. Thirteen keys were corrected (ace-005, 006, 033,
+218, 257, 291, 335, 382, 457, 530, 576, 593, 635); each of those explanations opens with "The PDF's key
+says …" and gives the reason. Where two options are defensible the PDF key was kept and the
+explanation says what makes it debatable.
+
+The pipeline that produced them is in `scripts/importers/ace-pdf/` (see its README). Its intermediate
+data is not kept, so the question files are now the source: edit them directly.
+
+Presets: Full Exam (50 q / 2 h in the guide's weights), Real-length Exam (50–60 q / 2 h), Renewal
+Exam (20 q / 1 h) and Quick Drill (15 q / 20 min); every section and topic can also be drilled
+untimed.
 
 ## The CDL community bank
 
