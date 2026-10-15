@@ -107,6 +107,7 @@ src/
     Results.svelte           score ring and per-section breakdown
     Review.svelte            answer review with filters
     Cheatsheet.svelte        the per-exam cheat sheet with filter and jump nav
+  sheets/                    Commands and Concepts sheets shared by the Google Cloud exams
   exams/
     registry.ts              the list of exams (plain data — loadable by the validator)
     index.ts                 the same list with each exam's About page attached
@@ -224,6 +225,29 @@ bottom, stop at the first match), one table as `columns`/`rows`, several caption
 table does), and `bullets`, whose entries are either a string or a `[term, text]` pair. Notes render
 after the tables unless the group sets `notesFirst`. A `tip` renders as a highlighted exam-tip line
 at the end of the group.
+
+### More than one sheet: Commands and Concepts
+
+An exam can add further sheets with `extraSheets: [{ id, label, sheet }]`; the exam's own sheet is
+always first, with id `exam`. They show as tabs on the cheat sheet page and as buttons in the header
+(on phones only the first button shows; the tabs remain), and each has its own route:
+`#/<exam>/cheatsheet/<id>`. Both Google Cloud exams carry the two shared sheets in `src/sheets/`:
+
+- **Commands** (`commands.ts`) — gcloud, built on Google's official gcloud cheat sheet and extended
+  with Compute Engine, networking, GKE, Cloud Run, App Engine, logging and Cloud SQL; kubectl;
+  gsutil next to its successor gcloud storage; bq; Terraform; Docker with Artifact Registry. Every
+  table lists *what you want* against *the command*, so the filter finds a command by its purpose.
+- **Concepts** (`concepts.ts`, written in Indonesian, `lang: 'id'`) — load balancing explained
+  slowly with a diagram, the three questions that pick a load balancer, a decision path and the old
+  and new product names; then the cloud vocabulary the exams assume (availability, high
+  availability, fault tolerance, durability, RTO/RPO, SLA/SLO/SLI, scalability, elasticity, agility,
+  CapEx/OpEx, TCO, regions and zones, IaaS/PaaS/SaaS, hybrid and multicloud, least privilege…). The
+  terms stay in English as the exam prints them; each card gives the meaning, an everyday analogy, a
+  Google Cloud example and the phrases that signal it in a question.
+
+Two more block kinds exist for this: `terms` (glossary cards with `meaning`, `analogy`, `example`
+and `exam`) and `figure` (inline SVG drawn with `currentColor`, plus a `figureCaption`). A sheet can
+also set `filterHint` for the search placeholder.
 
 ## Design system
 
