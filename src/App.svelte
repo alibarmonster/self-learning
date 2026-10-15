@@ -20,15 +20,15 @@
 
   // ── Hash routing ──
   // `#/` is the exam picker, `#/apple` an exam's start page, `#/apple/about`
-  // its background page. A paper in progress is not addressable — a refresh
+  // its background page, `#/ace/cheatsheet[/<sheet>]` one of its cheat sheets. A paper in progress is not addressable — a refresh
   // lands on the start page with the resume card, as before.
   function parseHash() {
-    const [examId = '', sub = ''] = location.hash.replace(/^#\/?/, '').split('/');
-    return { examId, sub };
+    const [examId = '', sub = '', sheet = ''] = location.hash.replace(/^#\/?/, '').split('/');
+    return { examId, sub, sheet };
   }
 
   function applyHash() {
-    const { examId, sub } = parseHash();
+    const { examId, sub, sheet } = parseHash();
     const exam = EXAM_BY_ID[examId];
     if (!exam) {
       if (quiz.exam) quiz.leaveExam();
@@ -41,12 +41,17 @@
     const wanted =
       sub === 'about' && exam.about
         ? 'about'
-        : sub === 'cheatsheet' && exam.cheatsheet
+        : sub === 'cheatsheet' && exam.sheets.length
           ? 'cheatsheet'
-          : exam.studyOnly && exam.cheatsheet
+          : exam.studyOnly && exam.sheets.length
             ? 'cheatsheet'
             : 'home';
-    if (quiz.view !== 'quiz' && quiz.view !== wanted) quiz.view = wanted;
+    if (quiz.view === 'quiz') return;
+    if (wanted === 'cheatsheet') {
+      const id = exam.sheetById[sheet] ? sheet : exam.sheets[0].id;
+      if (quiz.sheetId !== id) quiz.sheetId = id;
+    }
+    if (quiz.view !== wanted) quiz.view = wanted;
   }
 
   applyHash();
@@ -60,11 +65,14 @@
   $effect(() => {
     const exam = quiz.exam;
     const view = quiz.view;
+    const sheet = quiz.sheetId;
     const target = !exam
       ? '#/'
-      : view === 'about' || view === 'cheatsheet'
-        ? `#/${exam.id}/${view}`
-        : `#/${exam.id}`;
+      : view === 'cheatsheet'
+        ? `#/${exam.id}/cheatsheet${sheet && sheet !== exam.sheets[0]?.id ? `/${sheet}` : ''}`
+        : view === 'about'
+          ? `#/${exam.id}/about`
+          : `#/${exam.id}`;
     if (location.hash !== target) {
       // First load with a bare URL should not leave a spare history entry.
       if (!location.hash) history.replaceState(null, '', target);
@@ -125,15 +133,19 @@
 
       <nav class="actions">
         {#if quiz.exam && quiz.view !== 'quiz'}
-          {#if quiz.exam.cheatsheet}
+          <!-- One button per sheet: the exam's own, then Commands and Concepts.
+               On narrow screens only the first shows; the sheet page has tabs. -->
+          {#each quiz.exam.sheets as s, i (s.id)}
+            {@const open = quiz.view === 'cheatsheet' && quiz.sheetId === s.id}
             <button
               class="btn btn-ghost"
-              class:active={quiz.view === 'cheatsheet'}
-              onclick={() => (quiz.view = quiz.view === 'cheatsheet' ? 'home' : 'cheatsheet')}
+              class:extra-sheet={i > 0}
+              class:active={open}
+              onclick={() => (open ? (quiz.view = 'home') : quiz.openSheet(s.id))}
             >
-              Cheat sheet
+              {s.label}
             </button>
-          {/if}
+          {/each}
           {#if quiz.exam.about}
             <button
               class="btn btn-ghost"
@@ -316,6 +328,12 @@
 
   .signout {
     text-decoration: none;
+  }
+
+  @media (max-width: 900px) {
+    .extra-sheet {
+      display: none;
+    }
   }
 
   .theme .dot {

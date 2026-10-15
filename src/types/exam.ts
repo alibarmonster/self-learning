@@ -1,5 +1,5 @@
 import type { Component } from 'svelte';
-import type { Cheatsheet } from './cheatsheet';
+import type { Cheatsheet, NamedSheet } from './cheatsheet';
 import type { Question } from './question';
 
 /** A block of the real paper, e.g. "Section 1 — Logic Test". */
@@ -99,6 +99,8 @@ export interface ExamDefinition {
   /** Topics surfaced first on the home page. */
   focusTopicIds?: string[];
   cheatsheet?: Cheatsheet;
+  /** Further sheets after the exam's own one — command references, glossaries. */
+  extraSheets?: NamedSheet[];
 }
 
 /** A topic within a section, with its question counts by difficulty. */
@@ -115,13 +117,23 @@ export interface Topic {
 export interface Exam
   extends Omit<
     ExamDefinition,
-    'parts' | 'sections' | 'modes' | 'sets' | 'drillMin' | 'drillSize' | 'focusTopicIds'
+    | 'parts'
+    | 'sections'
+    | 'modes'
+    | 'sets'
+    | 'drillMin'
+    | 'drillSize'
+    | 'focusTopicIds'
+    | 'extraSheets'
   > {
   parts: Part[];
   sections: Section[];
   modes: Mode[];
   sets: PaperSet[];
   setById: Record<string, PaperSet>;
+  /** Every cheat sheet, the exam's own first (id 'exam'). */
+  sheets: NamedSheet[];
+  sheetById: Record<string, NamedSheet>;
   drillMin: number;
   drillSize: number;
   focusTopicIds: string[];

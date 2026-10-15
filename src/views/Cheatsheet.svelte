@@ -4,7 +4,8 @@
     Cheatsheet,
     CheatsheetBullet,
     CheatsheetGroup,
-    CheatsheetTable
+    CheatsheetTable,
+    CheatsheetTerm
   } from '@/types';
 
   /** A group with every optional block filled in, so the markup has one shape. */
@@ -12,13 +13,27 @@
     path: NonNullable<CheatsheetGroup['path']>;
     bullets: CheatsheetBullet[];
     tables: CheatsheetTable[];
+    terms: CheatsheetTerm[];
   };
 
   const exam = $derived(quiz.activeExam);
   // The router only opens this view for an exam that has a sheet.
-  const sheet: Cheatsheet = $derived(exam.cheatsheet ?? { groups: [] });
+  const current = $derived(exam.sheetById[quiz.sheetId] ?? exam.sheets[0]);
+  const sheet: Cheatsheet = $derived(current?.sheet ?? { groups: [] });
+  /** Glossary labels follow the sheet's language. */
+  const labels = $derived(
+    sheet.lang === 'id'
+      ? { analogy: 'Analogi', example: 'Contoh', exam: 'Di soal ujian', tip: 'Tips ujian' }
+      : { analogy: 'Analogy', example: 'Example', exam: 'In the exam', tip: 'Exam tip' }
+  );
 
   let query = $state('');
+
+  // A new sheet starts unfiltered.
+  $effect(() => {
+    void quiz.sheetId;
+    query = '';
+  });
 
   const needle = $derived(query.trim().toLowerCase());
   const hit = (text: string | undefined) => String(text ?? '').toLowerCase().includes(needle);
@@ -35,13 +50,20 @@
       ...(g.columns && g.rows ? [{ caption: '', columns: g.columns, rows: g.rows }] : []),
       ...(g.tables ?? [])
     ];
-    return { ...g, path: g.path ?? [], bullets: g.bullets ?? [], tables };
+    return { ...g, path: g.path ?? [], bullets: g.bullets ?? [], tables, terms: g.terms ?? [] };
   }
 
   const all = $derived(sheet.groups.map(normalise));
 
   const lineCount = (g: Block) =>
-    g.path.length + g.bullets.length + g.tables.reduce((n, t) => n + t.rows.length, 0);
+    g.path.length +
+    g.bullets.length +
+    g.terms.length +
+    (g.figure ? 1 : 0) +
+    g.tables.reduce((n, t) => n + t.rows.length, 0);
+
+  const termHit = (t: CheatsheetTerm) =>
+    hit(t.term) || hit(t.meaning) || hit(t.analogy) || hit(t.example) || hit(t.exam);
 
   /**
    * With a query, keep only the lines that mention it and drop groups left
@@ -55,7 +77,9 @@
         if (hit(g.title) || hit(g.note) || hit(g.tip)) return g;
         return {
           ...g,
+          figure: undefined,
           path: g.path.filter(([q, a]) => hit(q) || hit(a)),
+          terms: g.terms.filter(termHit),
           bullets: g.bullets.filter((b) => (Array.isArray(b) ? b.some(hit) : hit(b))),
           tables: g.tables
             .map((t) => ({ ...t, rows: t.rows.filter((r) => r.some(hit)) }))
@@ -84,9 +108,23 @@
   }
 </script>
 
-<div class="page wrap rise">
+<div class="page wrap rise" lang={sheet.lang}>
   <header class="head">
-    <p class="eyebrow">{exam.short} · Cheat sheet</p>
+    {#if exam.sheets.length > 1}
+      <nav class="sheet-tabs" aria-label="Cheat sheets" lang="en">
+        {#each exam.sheets as s (s.id)}
+          <button
+            class="sheet-tab"
+            class:active={s.id === current?.id}
+            aria-current={s.id === current?.id ? 'page' : undefined}
+            onclick={() => quiz.openSheet(s.id)}
+          >
+            {s.label}
+          </button>
+        {/each}
+      </nav>
+    {/if}
+    <p class="eyebrow">{exam.short} · {current?.label ?? 'Cheat sheet'}</p>
     <h1>{sheet.title ?? 'How to pick between the core services'}</h1>
     <p class="lede">{sheet.intro}</p>
 
@@ -96,7 +134,7 @@
         <span class="glyph" aria-hidden="true">⌕</span>
         <input
           type="search"
-          placeholder="Filter — try “once a month”, “SQL”, “event”, “global”…"
+          placeholder={sheet.filterHint ?? 'Filter — try “once a month”, “SQL”, “event”, “global”…'}
           bind:value={query}
         />
         {#if needle}
@@ -122,7 +160,7 @@
 
   {#if groups.length === 0}
     <div class="empty card">
-      <p>Nothing on the sheet mentions “{query}”. Try a product name or the access pattern in the question.</p>
+      <p>Nothing on this sheet mentions “{query}”. Try a shorter word, or another sheet.</p>
     </div>
   {/if}
 
@@ -157,6 +195,14 @@
             <h3><span class="num">{String(numberOf(g.id)).padStart(2, '0')}</span>{g.title}</h3>
             <p>{g.note}</p>
           </header>
+
+          {#if g.figure}
+            <figure class="figure card">
+              <!-- Figures are authored in the sheet data, never user input. -->
+              {@html g.figure}
+              {#if g.figureCaption}<figcaption>{g.figureCaption}</figcaption>{/if}
+            </figure>
+          {/if}
 
           {#if g.path.length}
             <ol class="path card">
@@ -202,10 +248,30 @@
             </div>
           {/each}
 
+          {#if g.terms.length}
+            <div class="terms">
+              {#each g.terms as t (t.term)}
+                <article class="term card">
+                  <h4>{t.term}</h4>
+                  <p class="meaning">{t.meaning}</p>
+                  {#if t.analogy}
+                    <p class="term-line"><span class="term-label">{labels.analogy}</span>{t.analogy}</p>
+                  {/if}
+                  {#if t.example}
+                    <p class="term-line"><span class="term-label">{labels.example}</span>{t.example}</p>
+                  {/if}
+                  {#if t.exam}
+                    <p class="term-line exam" lang="en"><span class="term-label">{labels.exam}</span>{t.exam}</p>
+                  {/if}
+                </article>
+              {/each}
+            </div>
+          {/if}
+
           {#if g.bullets.length && !g.notesFirst}{@render notes(g.bullets)}{/if}
 
           {#if g.tip}
-            <p class="tip"><span class="tip-label">Exam tip</span>{g.tip}</p>
+            <p class="tip"><span class="tip-label">{labels.tip}</span>{g.tip}</p>
           {/if}
         </section>
       {/each}
@@ -537,6 +603,111 @@
 
   tbody td {
     color: var(--text-secondary);
+  }
+
+  /* One tab per sheet: the exam's own, commands, concepts. */
+  .sheet-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 28px;
+    padding: 4px;
+    width: fit-content;
+    max-width: 100%;
+    background: var(--stone);
+  }
+
+  .sheet-tab {
+    padding: 9px 16px;
+    border: 0;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: background-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
+  }
+
+  .sheet-tab:hover {
+    color: var(--ink);
+  }
+
+  .sheet-tab.active {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: inset 0 -2px 0 var(--mint);
+  }
+
+  .figure {
+    margin: 0 0 12px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+
+  .figure {
+    overflow-x: auto;
+  }
+
+  /* Diagrams keep a readable size on phones and scroll sideways instead. */
+  .figure :global(svg) {
+    display: block;
+    width: 100%;
+    min-width: 520px;
+    height: auto;
+    max-height: 360px;
+  }
+
+  .figure figcaption {
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+
+  /* Glossary cards: term, meaning, then the supporting lines. */
+  .terms {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+
+  .term {
+    padding: 20px;
+  }
+
+  .term h4 {
+    font-size: var(--type-h4);
+  }
+
+  .meaning {
+    margin-top: 8px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .term-line {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+
+  .term-label {
+    display: block;
+    margin-bottom: 2px;
+    font-size: var(--type-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  .term-line.exam {
+    padding: 8px 12px;
+    border-left: 3px solid var(--mint);
+    background: var(--surface);
+    color: var(--ink);
   }
 
   .cta {

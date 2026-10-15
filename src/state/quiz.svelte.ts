@@ -71,6 +71,8 @@ class Quiz {
   exam = $state<ExamEntry | null>(null);
 
   view = $state<View>('home');
+  /** Which of the exam's cheat sheets the cheat sheet view shows. */
+  sheetId = $state('exam');
 
   paper = $state<PaperQuestion[]>([]);
   /** Per question: null, an option index, or (multi-select) a sorted array of indices. */
@@ -115,11 +117,20 @@ class Quiz {
     return this.exam;
   }
 
+  /** Opens one of the exam's cheat sheets. */
+  openSheet(id: string) {
+    if (!this.activeExam.sheetById[id]) return;
+    this.sheetId = id;
+    this.view = 'cheatsheet';
+    scrollTop();
+  }
+
   /** Switches to an exam: loads its history and any paper left unfinished. */
   enterExam(exam: ExamEntry) {
     if (this.exam?.id === exam.id) return;
     if (this.exam) this.leaveExam();
     this.exam = exam;
+    this.sheetId = exam.sheets[0]?.id ?? 'exam';
     // Nothing to sit yet on a cheat-sheet-only exam, so open the sheet itself.
     this.view = exam.studyOnly ? 'cheatsheet' : 'home';
     this.history = readHistory(exam);

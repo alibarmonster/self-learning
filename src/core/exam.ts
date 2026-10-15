@@ -23,6 +23,10 @@ export function defineExam(def: ExamDefinition): Exam {
   const sections = def.sections ?? [];
   const modes = def.modes ?? [];
   const sets = def.sets ?? [];
+  const sheets = [
+    ...(def.cheatsheet ? [{ id: 'exam', label: 'Cheat sheet', sheet: def.cheatsheet }] : []),
+    ...(def.extraSheets ?? [])
+  ];
   const drillMin = def.drillMin ?? DEFAULT_DRILL_MIN;
   const drillSize = def.drillSize ?? DEFAULT_DRILL_SIZE;
 
@@ -55,6 +59,8 @@ export function defineExam(def: ExamDefinition): Exam {
     modes,
     sets,
     setById: Object.fromEntries(sets.map((s) => [s.id, s])),
+    sheets,
+    sheetById: Object.fromEntries(sheets.map((s) => [s.id, s])),
     drillMin,
     drillSize,
     partById: Object.fromEntries(parts.map((p) => [p.id, p])),
