@@ -1,4 +1,5 @@
 import { defineExam } from '@/core';
+import { GOOGLE_CLOUD_SHEETS } from '@/sheets';
 import type { Mode, Section } from '@/types';
 import { digitalTransformation } from './questions/digital-transformation';
 import { data } from './questions/data';
@@ -205,5 +206,7 @@ export const cdl = defineExam({
     'An unofficial practice tool built for personal preparation. Not affiliated with, endorsed by, or produced by Google LLC. None of these questions are real exam questions — they are written to the topics in Google\'s published exam guide.',
   focusTopicIds: [],
   /** Decision tables for the product-choice questions — see Cheatsheet.svelte. */
-  cheatsheet
+  cheatsheet,
+  /** Command reference and plain-language concepts, as extra tabs. */
+  extraSheets: GOOGLE_CLOUD_SHEETS
 });

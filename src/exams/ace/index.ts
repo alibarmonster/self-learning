@@ -1,4 +1,5 @@
 import { defineExam } from '@/core';
+import { GOOGLE_CLOUD_SHEETS } from '@/sheets';
 import type { Mode, Section } from '@/types';
 import { cheatsheet } from './cheatsheet';
 import { sets } from './sets';
@@ -172,5 +173,7 @@ export const ace = defineExam({
   footer:
     'An unofficial practice tool built for personal preparation. Not affiliated with, endorsed by, or produced by Google LLC. Section weights are quoted from Google\'s published exam guide. Questions come from a community dump; where its answer key was wrong it has been corrected and the explanation says so.',
   focusTopicIds: [],
-  cheatsheet
+  cheatsheet,
+  /** Command reference and plain-language concepts, as extra tabs. */
+  extraSheets: GOOGLE_CLOUD_SHEETS
 });
