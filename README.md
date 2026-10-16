@@ -10,6 +10,10 @@ drills, review screen and attempt history.
 | **Google Cloud Digital Leader** certification | `#/cdl` | 50 q · 90 min · six domains mixed, multiple choice + multiple select | 475 |
 | **Google Cloud Associate Cloud Engineer** certification | `#/ace` | 50–60 q · 120 min · five sections mixed, multiple choice + multiple select | 666 |
 
+Both Google Cloud exams also open a **simulated lab** at `#/<exam>/lab` — a Cloud Shell terminal,
+a Packet Tracer-style VPC topology builder and graded architecture cases, all running in the browser
+with no cloud account (see *The lab* below).
+
 An exam can also ship with only a cheat sheet: with no `modes`, `defineExam` marks it `studyOnly` and
 entering it opens the sheet. ACE started that way; it now has a full bank (see *The ACE bank* below).
 JLPT is next — see *Adding an exam* below.
@@ -29,6 +33,7 @@ bun run build     # production bundle in dist/
 bun run preview   # serve the production bundle
 bun run check     # svelte-check + tsc — zero type errors expected
 bun run validate  # sanity-check every exam's question bank
+bun run lab       # every lab scenario starts unsolved and its reference solution solves it
 ```
 
 ## Deploying
@@ -85,7 +90,7 @@ a backend and a database become worth adding; nothing in the current design bloc
 ```
 src/
   main.ts                    entry point — mounts App
-  App.svelte                 shell, header, hash routing (#/, #/cdl, #/cdl/about, #/ace/cheatsheet), theme
+  App.svelte                 shell, header, hash routing (#/, #/cdl, #/cdl/about, #/ace/cheatsheet, #/ace/lab), theme
   styles/global.css          design tokens (light/dark), per-exam accent, shared primitives
   core/                      exam-agnostic logic, no Svelte, no DOM
     answer.ts                isMulti, pickCount, isCorrect — single and multiple select
@@ -107,6 +112,11 @@ src/
     Results.svelte           score ring and per-section breakdown
     Review.svelte            answer review with filters
     Cheatsheet.svelte        the per-exam cheat sheet with filter and jump nav
+    lab/                     the lab: hub, terminal, topology canvas + inspector, architecture board
+  lab/                       the lab's simulators — plain TypeScript, no Svelte (see docs/lab.md)
+    net/                     VPC model, reachability engine, canvas layout, topology scenarios
+    term/                    fake project state, gcloud/gsutil/kubectl/bq, shell, terminal scenarios
+    arch/                    service catalog, architecture cases and their grader
   sheets/                    Commands and Concepts sheets shared by the Google Cloud exams
   exams/
     registry.ts              the list of exams (plain data — loadable by the validator)
@@ -116,6 +126,7 @@ src/
     ace/                     index.ts, cheatsheet.ts, questions/ (one file per exam-guide section)
 scripts/
   validate-bank.ts           question bank sanity checks, across every exam
+  lab/                       regression checks for the lab (bun run lab)
   importers/examtopics/      the CDL community-bank importer (one parse per dump, one merge)
   tools/rebalance-options.py one-off option-length rebalancer for the CDL bank
 middleware.ts                Vercel sign-in in front of the whole site (never bundled by Vite)
@@ -124,6 +135,7 @@ vercel.json                  Vercel build settings and security headers
 docs/
   deployment.md              hosting and password protection
   design-guideline.md        colours, type, components — derived from Kira Learning
+  lab.md                     how the lab simulates Google Cloud, and how to add a scenario
 ```
 
 Imports use the `@/` alias for `src/` (set in `vite.config.ts` and `tsconfig.json`), so a file
@@ -248,6 +260,29 @@ always first, with id `exam`. They show as tabs on the cheat sheet page and as b
 Two more block kinds exist for this: `terms` (glossary cards with `meaning`, `analogy`, `example`
 and `exam`) and `figure` (inline SVG drawn with `currentColor`, plus a `figureCaption`). A sheet can
 also set `filterHint` for the search placeholder.
+
+## The lab
+
+`#/<exam>/lab` (button **Lab** in the header, on CDL and ACE) is hands-on practice in the spirit of
+Cisco Packet Tracer, but for Google Cloud. Nothing leaves the browser: every resource is a fake,
+so there is no account, no bill and nothing to break. It is lazy-loaded as its own chunk. Three modes,
+written in Indonesian with the English product terms, 26 scenarios plus two sandboxes:
+
+- **Terminal** (10 scenarios + sandbox) — a Cloud Shell look-alike that understands about 160
+  `gcloud`, `gsutil`, `kubectl` and `bq` commands against a simulated project. Errors are the real
+  ones (no project set, API not enabled, billing not linked, overlapping subnet, legacy SQL by
+  default, kubectl with no credentials…), each followed by a hint in Indonesian. Tasks are checked
+  against the project's *state*, the way Skills Boost and Killercoda verify a step, so any correct
+  route counts. Tab completion, history, `hint`, `reset`, `export VAR=` and `echo … > file` work.
+- **Topologi jaringan** (9 + sandbox) — build VPCs, subnets, VMs, firewall rules, Cloud NAT, peering,
+  HA VPN and load balancers on a canvas, then send a packet and watch it travel hop by hop: egress
+  firewall, route, NAT or peering, ingress firewall, the process listening. Each hop names the rule
+  that decided it, like Connectivity Tests. Goals are probes that must connect or must be blocked.
+- **Skenario arsitektur** (7) — exam-style cases: drag services into the slots of a design and get it
+  graded per slot — best fit, workable with a caveat, or wrong with the reason.
+
+Progress and work in progress are kept in `localStorage`, shared by both exams. `docs/lab.md`
+describes the model and how to add a scenario.
 
 ## Design system
 
