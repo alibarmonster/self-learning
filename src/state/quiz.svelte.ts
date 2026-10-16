@@ -36,7 +36,7 @@ import type {
  */
 const HISTORY_LIMIT = 100;
 
-export type View = 'home' | 'quiz' | 'results' | 'review' | 'about' | 'cheatsheet';
+export type View = 'home' | 'quiz' | 'results' | 'review' | 'about' | 'cheatsheet' | 'lab';
 
 export interface SectionScore {
   section: Section;
@@ -73,6 +73,8 @@ class Quiz {
   view = $state<View>('home');
   /** Which of the exam's cheat sheets the cheat sheet view shows. */
   sheetId = $state('exam');
+  /** Where in the lab: '' for the hub, or `<mode>/<scenario>`. */
+  labPath = $state('');
 
   paper = $state<PaperQuestion[]>([]);
   /** Per question: null, an option index, or (multi-select) a sorted array of indices. */
@@ -122,6 +124,14 @@ class Quiz {
     if (!this.activeExam.sheetById[id]) return;
     this.sheetId = id;
     this.view = 'cheatsheet';
+    scrollTop();
+  }
+
+  /** Opens the lab hub, or one scenario as `<mode>/<id>`. */
+  openLab(path = '') {
+    if (!this.activeExam.lab) return;
+    this.labPath = path;
+    this.view = 'lab';
     scrollTop();
   }
 

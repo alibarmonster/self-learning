@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc -p tsconfig.node.json",
-    "validate": "bun scripts/validate-bank.ts"
+    "validate": "bun scripts/validate-bank.ts",
+    "lab": "bun scripts/lab/net-solutions.ts && bun scripts/lab/term-solutions.ts && bun scripts/lab/arch-check.ts"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.3.0",

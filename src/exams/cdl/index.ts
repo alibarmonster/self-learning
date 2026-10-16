@@ -208,5 +208,6 @@ export const cdl = defineExam({
   /** Decision tables for the product-choice questions — see Cheatsheet.svelte. */
   cheatsheet,
   /** Command reference and plain-language concepts, as extra tabs. */
-  extraSheets: GOOGLE_CLOUD_SHEETS
+  extraSheets: GOOGLE_CLOUD_SHEETS,
+  lab: true
 });

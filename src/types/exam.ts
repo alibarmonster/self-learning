@@ -101,6 +101,8 @@ export interface ExamDefinition {
   cheatsheet?: Cheatsheet;
   /** Further sheets after the exam's own one — command references, glossaries. */
   extraSheets?: NamedSheet[];
+  /** Offer the simulated Google Cloud lab (terminal, topology, architecture). */
+  lab?: boolean;
 }
 
 /** A topic within a section, with its question counts by difficulty. */

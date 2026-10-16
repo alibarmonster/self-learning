@@ -20,15 +20,17 @@
 
   // ── Hash routing ──
   // `#/` is the exam picker, `#/apple` an exam's start page, `#/apple/about`
-  // its background page, `#/ace/cheatsheet[/<sheet>]` one of its cheat sheets. A paper in progress is not addressable — a refresh
-  // lands on the start page with the resume card, as before.
+  // its background page, `#/ace/cheatsheet[/<sheet>]` one of its cheat
+  // sheets, `#/ace/lab[/<mode>/<scenario>]` the simulated lab. A paper in
+  // progress is not addressable — a refresh lands on the start page with the
+  // resume card, as before.
   function parseHash() {
-    const [examId = '', sub = '', sheet = ''] = location.hash.replace(/^#\/?/, '').split('/');
-    return { examId, sub, sheet };
+    const [examId = '', sub = '', sheet = '', extra = ''] = location.hash.replace(/^#\/?/, '').split('/');
+    return { examId, sub, sheet, extra };
   }
 
   function applyHash() {
-    const { examId, sub, sheet } = parseHash();
+    const { examId, sub, sheet, extra } = parseHash();
     const exam = EXAM_BY_ID[examId];
     if (!exam) {
       if (quiz.exam) quiz.leaveExam();
@@ -43,10 +45,16 @@
         ? 'about'
         : sub === 'cheatsheet' && exam.sheets.length
           ? 'cheatsheet'
-          : exam.studyOnly && exam.sheets.length
-            ? 'cheatsheet'
-            : 'home';
+          : sub === 'lab' && exam.lab
+            ? 'lab'
+            : exam.studyOnly && exam.sheets.length
+              ? 'cheatsheet'
+              : 'home';
     if (quiz.view === 'quiz') return;
+    if (wanted === 'lab') {
+      const path = sheet && extra ? `${sheet}/${extra}` : '';
+      if (quiz.labPath !== path) quiz.labPath = path;
+    }
     if (wanted === 'cheatsheet') {
       const id = exam.sheetById[sheet] ? sheet : exam.sheets[0].id;
       if (quiz.sheetId !== id) quiz.sheetId = id;
@@ -66,9 +74,12 @@
     const exam = quiz.exam;
     const view = quiz.view;
     const sheet = quiz.sheetId;
+    const labPath = quiz.labPath;
     const target = !exam
       ? '#/'
-      : view === 'cheatsheet'
+      : view === 'lab'
+        ? `#/${exam.id}/lab${labPath ? `/${labPath}` : ''}`
+        : view === 'cheatsheet'
         ? `#/${exam.id}/cheatsheet${sheet && sheet !== exam.sheets[0]?.id ? `/${sheet}` : ''}`
         : view === 'about'
           ? `#/${exam.id}/about`
@@ -146,6 +157,15 @@
               {s.label}
             </button>
           {/each}
+          {#if quiz.exam.lab}
+            <button
+              class="btn btn-ghost"
+              class:active={quiz.view === 'lab'}
+              onclick={() => (quiz.view === 'lab' && !quiz.labPath ? (quiz.view = 'home') : quiz.openLab())}
+            >
+              Lab
+            </button>
+          {/if}
           {#if quiz.exam.about}
             <button
               class="btn btn-ghost"
@@ -180,6 +200,15 @@
       <Review />
     {:else if quiz.view === 'cheatsheet'}
       <Cheatsheet />
+    {:else if quiz.view === 'lab'}
+      <!-- The lab is its own chunk: fetched the first time it is opened. -->
+      {#await import('@/views/lab/Lab.svelte')}
+        <p class="page loading">Memuat lab…</p>
+      {:then { default: Lab }}
+        <Lab />
+      {:catch}
+        <p class="page loading">Lab gagal dimuat. Muat ulang halaman.</p>
+      {/await}
     {:else if quiz.exam.about}
       {@const About = quiz.exam.about}
       <About />
@@ -348,6 +377,11 @@
     flex: 1;
     position: relative;
     isolation: isolate;
+  }
+
+  .loading {
+    padding-top: 64px;
+    color: var(--text-tertiary);
   }
 
   .foot {
