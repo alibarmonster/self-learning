@@ -11,9 +11,14 @@ import { operating } from './questions/operating';
 import { access } from './questions/access';
 
 /**
- * Associate Cloud Engineer. The five sections and their weights are Google's
- * own, from the published exam guide:
- * https://cloud.google.com/learn/certification/guides/cloud-engineer
+ * Associate Cloud Engineer. The four sections and their weights are Google's
+ * own, from the current exam guide linked from
+ * https://cloud.google.com/learn/certification/cloud-engineer
+ *
+ * That guide merged the old "Planning and configuring" and "Deploying and
+ * implementing" sections into one, "Planning and implementing". Both question
+ * files stay; the planning section holds them together, and the retired
+ * `deploying` id is aliased to it so papers saved before the change still open.
  *
  * The bank is 666 questions from a community dump, each assigned to the section
  * its decision belongs to, with every key reviewed — see questions/*.ts. The
@@ -27,54 +32,44 @@ const SECTIONS: Section[] = [
     icon: '01',
     weight: 20,
     blurb:
-      'Projects and the resource hierarchy, organisation policy, IAM roles in a project, users and groups in Cloud Identity, enabling APIs, billing accounts, budgets and billing export, and installing and configuring the Cloud SDK.',
+      'Projects, the resource hierarchy and organization policies, IAM roles in a project, users and groups in Cloud Identity, enabling APIs, quotas and regional availability, first networking and Cloud Observability setup, Cloud Asset Inventory with Gemini Cloud Assist, Workforce Identity Federation, and billing accounts, budgets, alerts and exports.',
     questions: setup
   },
   {
     id: 'planning',
-    name: 'Planning and configuring a cloud solution',
-    short: 'Planning',
+    name: 'Planning and implementing a cloud solution',
+    short: 'Plan & build',
     icon: '02',
-    weight: 17.5,
+    weight: 30,
     blurb:
-      'Pricing Calculator estimates, choosing compute for a workload, preemptible and custom machine types, choosing between the databases and the storage classes, telling the load balancers apart, and placing resources for availability.',
-    questions: planning
-  },
-  {
-    id: 'deploying',
-    name: 'Deploying and implementing a cloud solution',
-    short: 'Deploying',
-    icon: '03',
-    weight: 25,
-    blurb:
-      'The largest section. Launching instances and managed instance groups, deploying GKE clusters and workloads, Cloud Run and Cloud Functions, loading data, building VPCs, firewall rules, VPNs and load balancers, Marketplace, and infrastructure as code.',
-    questions: deploying
+      'Choosing and building, now one section. Compute — Compute Engine, GKE, Cloud Run and Cloud Run functions, Agent Runtime — with disks, managed instance groups, OS Login, Spot VMs, GPUs or TPUs, Autopilot and private clusters, and event-driven deploys; data and storage products, storage classes and loading data; VPCs, firewall rules and Cloud NGFW policies, VPN, peering and Interconnect, load balancers and network tiers; Terraform, Config Connector and Helm, and AI-assisted tools such as Gemini CLI.',
+    questions: [...planning, ...deploying]
   },
   {
     id: 'operating',
-    name: 'Ensuring successful operation of a cloud solution',
+    name: 'Ensuring the successful operation of a cloud solution',
     short: 'Operating',
-    icon: '04',
-    weight: 20,
+    icon: '03',
+    weight: 30,
     blurb:
-      'Day-two work: managing instances, snapshots and images, node pools and pods, Cloud Run traffic and scaling, object lifecycle and database backups, growing subnets and reserving addresses, and Cloud Monitoring alerts, custom metrics and log sinks.',
+      'Day-two work: connecting to and managing VMs, snapshots and images, GKE inventory, node pools and Pod autoscaling, Cloud Run revisions, traffic splitting and scaling; securing and expiring Cloud Storage objects, querying and backing up databases, CMEK; resizing subnets, static IPs, custom routes, Cloud DNS and Cloud NAT; and Cloud Monitoring alerts, custom metrics, audit and flow logs, log routing and buckets, Ops Agent and diagnostic tools.',
     questions: operating
   },
   {
     id: 'access',
     name: 'Configuring access and security',
     short: 'Access',
-    icon: '05',
-    weight: 17.5,
+    icon: '04',
+    weight: 20,
     blurb:
-      'Viewing and writing IAM policies, predefined against custom roles, service accounts and least privilege, assigning and impersonating them, short-lived credentials, and reading audit logs.',
+      'Viewing and creating IAM policies, inheritance down the hierarchy, role types and custom roles; creating service accounts and granting them the least they need, assigning and impersonating them, short-lived credentials, service accounts for GKE workloads, and Workload Identity Federation.',
     questions: access
   }
 ];
 
 /**
  * Presets follow the published format: 50–60 questions in two hours, drawn in
- * the guide's section weights (20 / 17.5 / 25 / 20 / 17.5).
+ * the guide's section weights (20 / 30 / 30 / 20).
  */
 const MODES: Mode[] = [
   {
@@ -82,9 +77,9 @@ const MODES: Mode[] = [
     name: 'Full Exam',
     tagline: '50 questions · 2 hours',
     minutes: 120,
-    blueprint: { setup: 10, planning: 9, deploying: 12, operating: 10, access: 9 },
+    blueprint: { setup: 10, planning: 15, operating: 15, access: 10 },
     description:
-      '50 questions in 120 minutes, drawn across the five sections in the guide\'s proportions and shuffled together the way the real paper is. A handful are multiple select — every pick must be right to score. About two and a half minutes a question.'
+      '50 questions in 120 minutes, drawn across the four sections in the guide\'s proportions and shuffled together the way the real paper is. A handful are multiple select — every pick must be right to score. About two and a half minutes a question.'
   },
   {
     id: 'real',
@@ -94,10 +89,9 @@ const MODES: Mode[] = [
     /** The real paper is 50–60 questions, so this draws a different length every sitting. */
     blueprint: {
       setup: [10, 12],
-      planning: [9, 10],
-      deploying: [12, 15],
-      operating: [10, 12],
-      access: [9, 11]
+      planning: [15, 18],
+      operating: [15, 18],
+      access: [10, 12]
     },
     description:
       'Google hands out somewhere between 50 and 60 questions in two hours, so this draws a different number in that range every sitting, still in the guide\'s section weights. The closest thing to the real clock pressure.'
@@ -107,17 +101,17 @@ const MODES: Mode[] = [
     name: 'Renewal Exam',
     tagline: '20 questions · 1 hour',
     minutes: 60,
-    blueprint: { setup: 4, planning: 4, deploying: 5, operating: 4, access: 3 },
+    blueprint: { setup: 4, planning: 6, operating: 6, access: 4 },
     description:
-      'The shape of the renewal paper for current certificate holders: 20 questions in an hour across the same five sections. A good first sitting to find your weak section before a full mock.'
+      'The shape of the renewal paper for current certificate holders: 20 questions in an hour across the same four sections. A good first sitting to find your weak section before a full mock.'
   },
   {
     id: 'quick',
     name: 'Quick Drill',
     tagline: 'A short warm-up',
     minutes: 20,
-    blueprint: { setup: 3, planning: 3, deploying: 4, operating: 3, access: 2 },
-    description: '15 mixed questions in 20 minutes, two to four from each section. Good for a daily rep.'
+    blueprint: { setup: 3, planning: 5, operating: 4, access: 3 },
+    description: '15 mixed questions in 20 minutes, three to five from each section. Good for a daily rep.'
   }
 ];
 
@@ -135,6 +129,7 @@ export const ace = defineExam({
   mixed: true,
   drillMin: 5,
   sections: SECTIONS,
+  sectionAliases: { deploying: 'planning' },
   modes: MODES,
   /** The whole bank split into 13 fixed sets of 50 and a final 16 — see sets.ts. */
   sets,
@@ -143,12 +138,12 @@ export const ace = defineExam({
     eyebrow: 'Google Cloud · Associate Cloud Engineer',
     title: 'Know the console\nbefore you book it.',
     lede:
-      'Five sections — <strong>setup, planning, deploying, operating and access</strong> — in 50 to 60 questions over two hours. Unlike the Digital Leader paper, this one expects you to have actually done the work. Every key in the bank has been checked against current documentation.',
+      'Four sections — <strong>setup, planning and implementing, operations, and access</strong> — in 50 to 60 questions over two hours. Unlike the Digital Leader paper, this one expects you to have actually done the work. Every key in the bank has been checked against current documentation.',
     startLabel: 'Start the 2-hour exam',
     aboutLabel: 'What is on the exam?',
-    sectionsTitle: 'The five sections of the exam guide',
+    sectionsTitle: 'The four sections of the exam guide',
     extraNote:
-      'Deploying is the heaviest section at a quarter of the paper, and operating is a fifth of it — between them, half the exam is about doing rather than choosing.'
+      'Planning and implementing, and operations, are 30% each — three-fifths of the paper is building and running things. The current guide merged the old planning and deploying sections, and added AI tooling such as Gemini Cloud Assist.'
   },
   verdict(percent) {
     if (percent >= 85)
@@ -159,7 +154,7 @@ export const ace = defineExam({
     if (percent >= 70)
       return {
         title: 'Around the bar — tighten the weak section',
-        note: 'Find your lowest section below. On this paper the gap is usually operating or deploying, which reward time in the console rather than more reading.'
+        note: 'Find your lowest section below. On this paper the gap is usually operations or implementing, which reward time in the console rather than more reading.'
       };
     if (percent >= 50)
       return {

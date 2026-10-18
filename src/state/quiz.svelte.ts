@@ -265,9 +265,10 @@ class Quiz {
   startPractice(sectionId: string, count: number, minutes: number) {
     const exam = this.activeExam;
     const section = exam.sectionById[sectionId];
-    this.lastConfig = { kind: 'practice', sectionId, count, minutes };
+    if (!section) return;
+    this.lastConfig = { kind: 'practice', sectionId: section.id, count, minutes };
     this.#begin(
-      buildSectionPaper(exam, sectionId, count),
+      buildSectionPaper(exam, section.id, count),
       `${section.name} practice`,
       minutes
     );
@@ -549,7 +550,8 @@ class Quiz {
     }
 
     this.paper.forEach((q, i) => {
-      const bucket = bySection[q.sectionId];
+      // Through sectionById, so a paper saved under a retired section id still counts.
+      const bucket = bySection[this.activeExam.sectionById[q.sectionId].id];
       bucket.total += 1;
       if (this.answers[i] === null) bucket.unanswered += 1;
       else if (isCorrect(q, this.answers[i])) {

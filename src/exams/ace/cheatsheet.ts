@@ -20,13 +20,13 @@ export const cheatsheet: Cheatsheet = {
       id: 'choose',
       title: 'Choosing between the services',
       blurb:
-        'The planning section is a fifth of the paper, and these come up inside the deployment questions too.'
+        'Choosing is now half of the planning-and-implementing section, the joint-largest at 30% of the paper — and these choices come up inside the build questions too.'
     },
     {
       id: 'reference',
       title: 'Configuration and operations',
       blurb:
-        'Half the exam is deploying and operating. This is the part you cannot answer from first principles — it has to be known.'
+        'Implementing and operating make up most of the paper. This is the part you cannot answer from first principles — it has to be known.'
     },
     {
       id: 'sitting',
@@ -600,26 +600,41 @@ export const cheatsheet: Cheatsheet = {
       part: 'sitting',
       title: 'What the paper is',
       notesFirst: true,
-      note: 'Weights are Google’s own, from the published exam guide. Deploying and operating together are 45% of the paper — nearly half the exam is about doing rather than choosing.',
+      note: 'Weights are Google’s own, from the current exam guide. It has four sections, not five: the old planning and deploying sections are now one, and together with operations they are 60% of the paper — most of the exam is about building and running things.',
       bullets: [
         ['Questions', '50–60, multiple choice and multiple select'],
         ['Time', '2 hours'],
         ['Cost', '$125 USD'],
         ['Languages', 'English, Japanese, Spanish, Portuguese'],
         ['Valid for', 'Three years'],
-        ['Renewal exam', '20 questions in 1 hour, $75, English and Japanese'],
+        ['Renewal exam', '20 questions in 1 hour, $75, English and Japanese — or renew through a learning path on Google Skills (one more year)'],
         ['Recommended', 'At least six months of hands-on Google Cloud experience'],
         ['Delivered', 'Remotely proctored, or at a Pearson VUE test centre']
       ],
       columns: ['Section', 'Weight', 'What it asks'],
       rows: [
-        ['1 · Setting up a cloud solution environment', '~20%', 'Projects, hierarchy, IAM in a project, Cloud Identity, billing accounts and budgets, Cloud SDK'],
-        ['2 · Planning and configuring a cloud solution', '~17.5%', 'Pricing Calculator, choosing compute, storage and databases, load balancer types, placement'],
-        ['3 · Deploying and implementing a cloud solution', '~25%', 'Instances and MIGs, GKE clusters and workloads, Cloud Run and Functions, VPCs and firewall rules, Marketplace, IaC'],
-        ['4 · Ensuring successful operation of a cloud solution', '~20%', 'Managing instances, snapshots, node pools, lifecycle rules, backups, subnets, monitoring and log sinks'],
-        ['5 · Configuring access and security', '~17.5%', 'IAM policies, role types, service accounts, impersonation, audit logs']
+        ['1 · Setting up a cloud solution environment', '~20%', 'Projects, hierarchy and org policies, IAM in a project, Cloud Identity, APIs and quotas, Cloud Asset Inventory, Workforce Identity Federation, billing accounts, budgets and exports'],
+        ['2 · Planning and implementing a cloud solution', '~30%', 'Choosing and deploying compute (VMs, MIGs, GKE, Cloud Run, Agent Runtime), data and storage products, VPCs, firewall rules and Cloud NGFW policies, connectivity, load balancers, IaC and AI-assisted tooling'],
+        ['3 · Ensuring the successful operation of a cloud solution', '~30%', 'Managing VMs, snapshots, GKE node pools and autoscaling, Cloud Run traffic; buckets, queries, backups, CMEK; subnets, routes, DNS and NAT; monitoring, logging and audit logs'],
+        ['4 · Configuring access and security', '~20%', 'IAM policies and inheritance, role types and custom roles, service accounts, impersonation, short-lived credentials, Workload Identity Federation']
       ],
       tip: 'This exam rewards having clicked through the console. Where the Digital Leader paper wants the business answer, this one wants the one that actually works — the right role, the right access mode, the right flag.'
+    },
+    {
+      id: 'guide-changes',
+      part: 'sitting',
+      title: 'What the current guide changed',
+      note: 'The guide was rewritten around four sections and now names newer products. The question bank here was built against the older five-section guide, so it is thin on the items below — read the docs for those.',
+      bullets: [
+        ['Sections', 'Planning and configuring (~17.5%) and Deploying and implementing (~25%) merged into Planning and implementing (~30%); operations grew to ~30%, access to ~20%'],
+        ['AI tooling', 'Gemini Cloud Assist (resource analysis, monitoring), Gemini CLI, Google Antigravity, Application Design Center'],
+        ['Agents and notebooks', 'Agent Runtime on Gemini Enterprise Agent Platform (formerly Vertex AI Agent Engine), Agent Platform Workbench notebooks, Cloud Workstations'],
+        ['Setup', 'Standalone organizations, quotas, checking regional availability, Cloud Asset Inventory, Workforce Identity Federation'],
+        ['Compute and data', 'Hyperdisk, VM Manager, GPUs vs TPUs, Eventarc, AlloyDB, Managed Service for Apache Kafka, NetApp Volumes, Managed Lustre, Database Center'],
+        ['Networking', 'Cloud NGFW policies with secure tags and service accounts, Network Service Tiers, Fabric FAST for IaC'],
+        ['Operations', 'Personalized Service Health, Managed Service for Prometheus, Active Assist, Cloud Hub, Query Insights, log analytics'],
+        ['Renamed', 'Cloud Functions is Cloud Run functions; Vertex AI Agent Engine is Agent Runtime']
+      ]
     },
     {
       id: 'technique',

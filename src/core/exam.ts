@@ -46,6 +46,14 @@ export function defineExam(def: ExamDefinition): Exam {
     }));
   });
 
+  const sectionById = Object.fromEntries(sections.map((s) => [s.id, s]));
+  const topicById = Object.fromEntries(topics.map((t) => [t.id, t]));
+  for (const [old, now] of Object.entries(def.sectionAliases ?? {})) {
+    if (!sectionById[now]) throw new Error(`${def.id}: section alias ${old} points at unknown section ${now}`);
+    sectionById[old] = sectionById[now];
+    for (const t of topics) if (t.section.id === now) topicById[`${old}:${t.topic}`] = t;
+  }
+
   const drillTopics = sections.flatMap((section) =>
     topics
       .filter((t) => t.section.id === section.id && t.count >= drillMin)
@@ -64,12 +72,12 @@ export function defineExam(def: ExamDefinition): Exam {
     drillMin,
     drillSize,
     partById: Object.fromEntries(parts.map((p) => [p.id, p])),
-    sectionById: Object.fromEntries(sections.map((s) => [s.id, s])),
+    sectionById,
     modeById: Object.fromEntries(modes.map((m) => [m.id, m])),
     bankSize: sections.reduce((n, s) => n + s.questions.length, 0),
     studyOnly: modes.length === 0,
     topics,
-    topicById: Object.fromEntries(topics.map((t) => [t.id, t])),
+    topicById,
     drillTopics,
     focusTopicIds: def.focusTopicIds ?? []
   };

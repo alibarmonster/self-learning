@@ -8,7 +8,7 @@ drills, review screen and attempt history.
 | ---- | ----- | ----------------------- | ---- |
 | **Apple Developer Academy Indonesia** — Tech division online entry test | `#/apple` | 50 q · 120 min · Section 1 Logic then Section 2 Programming | 448 |
 | **Google Cloud Digital Leader** certification | `#/cdl` | 50 q · 90 min · six domains mixed, multiple choice + multiple select | 475 |
-| **Google Cloud Associate Cloud Engineer** certification | `#/ace` | 50–60 q · 120 min · five sections mixed, multiple choice + multiple select | 666 |
+| **Google Cloud Associate Cloud Engineer** certification | `#/ace` | 50–60 q · 120 min · four sections mixed, multiple choice + multiple select | 666 |
 
 Both Google Cloud exams also open a **simulated lab** at `#/<exam>/lab` — a Cloud Shell terminal,
 a Packet Tracer-style VPC topology builder and graded architecture cases, all running in the browser
@@ -150,9 +150,14 @@ never climbs out of its folder with `../../`.
 ## The ACE bank
 
 `src/exams/ace/questions/*.ts` holds 666 Associate Cloud Engineer questions from a community PDF
-dump (667 questions; one word-for-word repeat dropped), one file per exam-guide section. `ace-NNN` is
-the question's number in that PDF. Each question was assigned to the section and topic its decision
-belongs to, given a difficulty, and given an explanation.
+dump (667 questions; one word-for-word repeat dropped). `ace-NNN` is the question's number in that
+PDF. Each question was assigned to the section and topic its decision belongs to, given a difficulty,
+and given an explanation. The files follow the older five-section guide; the current guide has four
+sections (setup ~20%, planning and implementing ~30%, operations ~30%, access ~20%), so `planning.ts`
+and `deploying.ts` together make up its second section, and the retired `deploying` section id is
+aliased (`sectionAliases`) so papers saved before the change still open. The guide's newest topics —
+Gemini Cloud Assist, Agent Runtime, Cloud NGFW policies and the like — are listed on the cheat sheet
+but barely covered by the bank.
 
 Dump keys are often wrong, so every key was reviewed against current Google Cloud documentation, and
 the doubtful ones got an independent second opinion. Thirteen keys were corrected (ace-005, 006, 033,
@@ -168,7 +173,7 @@ Exam (20 q / 1 h) and Quick Drill (15 q / 20 min); every section and topic can a
 untimed.
 
 **Practice sets.** The bank is also split into 14 fixed sets in `src/exams/ace/sets.ts`: 13 sets of
-50 and a final set of the 16 left over. No question is in two sets, every set mixes all five
+50 and a final set of the 16 left over. No question is in two sets, every set mixes all four
 sections, and none follows bank order. A set always holds the same questions but is shuffled — order
 and options — every sitting, so you can work through the bank set by set and see each set's best
 score on the home page. Each set can be sat timed (2.4 minutes a question, so 120 minutes for 50) or

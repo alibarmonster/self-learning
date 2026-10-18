@@ -89,6 +89,12 @@ export interface ExamDefinition {
   drillSize?: number;
   parts?: Part[];
   sections?: Section[];
+  /**
+   * Retired section ids → the section that took over their questions, so
+   * papers saved, drills started and "take it again" configs recorded before
+   * an exam guide changed still resolve.
+   */
+  sectionAliases?: Record<string, string>;
   modes?: Mode[];
   /** Fixed numbered papers, shown as their own block on the home page. */
   sets?: PaperSet[];
