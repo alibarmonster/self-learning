@@ -36,7 +36,7 @@ import type {
  */
 const HISTORY_LIMIT = 100;
 
-export type View = 'home' | 'quiz' | 'results' | 'review' | 'about' | 'cheatsheet' | 'lab';
+export type View = 'home' | 'quiz' | 'results' | 'review' | 'about' | 'cheatsheet' | 'lab' | 'learn';
 
 export interface SectionScore {
   section: Section;
@@ -75,6 +75,8 @@ class Quiz {
   sheetId = $state('exam');
   /** Where in the lab: '' for the hub, or `<mode>/<scenario>`. */
   labPath = $state('');
+  /** Which deep-dive lesson is open: '' for the list. */
+  lessonId = $state('');
 
   paper = $state<PaperQuestion[]>([]);
   /** Per question: null, an option index, or (multi-select) a sorted array of indices. */
@@ -132,6 +134,14 @@ class Quiz {
     if (!this.activeExam.lab) return;
     this.labPath = path;
     this.view = 'lab';
+    scrollTop();
+  }
+
+  /** Opens the lesson list, or one lesson by id. */
+  openLesson(id = '') {
+    if (!this.activeExam.lessons?.length) return;
+    this.lessonId = id;
+    this.view = 'learn';
     scrollTop();
   }
 

@@ -1,5 +1,6 @@
 import type { Component } from 'svelte';
 import type { Cheatsheet, NamedSheet } from './cheatsheet';
+import type { LessonMeta } from './lesson';
 import type { Question } from './question';
 
 /** A block of the real paper, e.g. "Section 1 — Logic Test". */
@@ -103,6 +104,8 @@ export interface ExamDefinition {
   extraSheets?: NamedSheet[];
   /** Offer the simulated Google Cloud lab (terminal, topology, architecture). */
   lab?: boolean;
+  /** Deep-dive lessons, one service each, at #/<exam>/learn/<id>. */
+  lessons?: LessonMeta[];
 }
 
 /** A topic within a section, with its question counts by difficulty. */

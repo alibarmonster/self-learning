@@ -112,6 +112,7 @@ src/
     Results.svelte           score ring and per-section breakdown
     Review.svelte            answer review with filters
     Cheatsheet.svelte        the per-exam cheat sheet with filter and jump nav
+    Learn.svelte             the deep-dive lessons: list, table of contents, blocks, quiz
     lab/                     the lab: hub, command quiz, terminal, topology canvas, service canvas, architecture board
   lab/                       the lab's simulators — plain TypeScript, no Svelte (see docs/lab.md)
     net/                     VPC model, reachability engine, canvas layout, topology scenarios
@@ -120,6 +121,7 @@ src/
     cmd/                     CLI grammars, a parser that prints the real CLI errors, grader, quiz bank
     canvas/                  service catalog, connection rules, deploy and request simulation, scenarios
   sheets/                    Commands and Concepts sheets shared by the Google Cloud exams
+  lessons/                   deep-dive lessons shared by the Google Cloud exams (gke.ts)
   exams/
     registry.ts              the list of exams (plain data — loadable by the validator)
     index.ts                 the same list with each exam's About page attached
@@ -262,6 +264,27 @@ always first, with id `exam`. They show as tabs on the cheat sheet page and as b
 Two more block kinds exist for this: `terms` (glossary cards with `meaning`, `analogy`, `example`
 and `exam`) and `figure` (inline SVG drawn with `currentColor`, plus a `figureCaption`). A sheet can
 also set `filterHint` for the search placeholder.
+
+## Deep dive lessons
+
+Cheat sheets are shorthand for remembering; a deep dive is for understanding. `#/<exam>/learn`
+(button **Deep dive** in the header, on ACE) lists lessons that teach one service from the ground up,
+in Indonesian with the English terms. The first is **Getting Started with Google Kubernetes Engine**:
+why containers need Kubernetes, the core objects and workload types, Services and storage, the
+cluster's components, node pools, regional clusters and upgrades, networking, IAM vs RBAC vs
+Workload Identity, Autopilot against Standard, kubectl, introspection (reading Pod phase, container
+state and Events), nine case studies (first deploy, Pending, CrashLoopBackOff, ImagePullBackOff, an
+empty Service, a failed rollout, a traffic spike, Pods reaching Cloud Storage, node maintenance) and
+ten check-yourself questions. Each case reads situation → symptom → diagnosis → fix → why → how the
+exam asks it, and the lesson ends with links into the lab to practise.
+
+A lesson is plain data (`src/types/lesson.ts`): parts of sections made of blocks — paragraphs,
+lists, tables, inline SVG figures, terminal walkthroughs, callouts, numbered steps, case studies and
+quiz questions. Only the list in `src/lessons/index.ts` ships in the main bundle; each lesson is a
+separate chunk loaded when it is opened. Sections read and quiz answers are kept in `localStorage`
+(`ep-learn-read-v1:<lesson>`, `ep-learn-quiz-v1:<lesson>`). `bun run validate` also runs
+`scripts/lessons-check.ts`, which checks quiz answers, figure markup, table widths and that every
+practice link points at a lab scenario that exists.
 
 ## The lab
 

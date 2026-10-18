@@ -21,7 +21,8 @@
   // ── Hash routing ──
   // `#/` is the exam picker, `#/apple` an exam's start page, `#/apple/about`
   // its background page, `#/ace/cheatsheet[/<sheet>]` one of its cheat
-  // sheets, `#/ace/lab[/<mode>/<scenario>]` the simulated lab. A paper in
+  // sheets, `#/ace/lab[/<mode>/<scenario>]` the simulated lab,
+  // `#/ace/learn[/<lesson>]` the deep-dive lessons. A paper in
   // progress is not addressable — a refresh lands on the start page with the
   // resume card, as before.
   function parseHash() {
@@ -47,13 +48,19 @@
           ? 'cheatsheet'
           : sub === 'lab' && exam.lab
             ? 'lab'
-            : exam.studyOnly && exam.sheets.length
+            : sub === 'learn' && exam.lessons?.length
+              ? 'learn'
+              : exam.studyOnly && exam.sheets.length
               ? 'cheatsheet'
               : 'home';
     if (quiz.view === 'quiz') return;
     if (wanted === 'lab') {
       const path = sheet && extra ? `${sheet}/${extra}` : '';
       if (quiz.labPath !== path) quiz.labPath = path;
+    }
+    if (wanted === 'learn') {
+      const id = exam.lessons?.some((l) => l.id === sheet) ? sheet : '';
+      if (quiz.lessonId !== id) quiz.lessonId = id;
     }
     if (wanted === 'cheatsheet') {
       const id = exam.sheetById[sheet] ? sheet : exam.sheets[0].id;
@@ -75,10 +82,13 @@
     const view = quiz.view;
     const sheet = quiz.sheetId;
     const labPath = quiz.labPath;
+    const lessonId = quiz.lessonId;
     const target = !exam
       ? '#/'
       : view === 'lab'
         ? `#/${exam.id}/lab${labPath ? `/${labPath}` : ''}`
+        : view === 'learn'
+        ? `#/${exam.id}/learn${lessonId ? `/${lessonId}` : ''}`
         : view === 'cheatsheet'
         ? `#/${exam.id}/cheatsheet${sheet && sheet !== exam.sheets[0]?.id ? `/${sheet}` : ''}`
         : view === 'about'
@@ -157,6 +167,15 @@
               {s.label}
             </button>
           {/each}
+          {#if quiz.exam.lessons?.length}
+            <button
+              class="btn btn-ghost"
+              class:active={quiz.view === 'learn'}
+              onclick={() => (quiz.view === 'learn' && !quiz.lessonId ? (quiz.view = 'home') : quiz.openLesson())}
+            >
+              Deep dive
+            </button>
+          {/if}
           {#if quiz.exam.lab}
             <button
               class="btn btn-ghost"
@@ -208,6 +227,14 @@
         <Lab />
       {:catch}
         <p class="page loading">Lab gagal dimuat. Muat ulang halaman.</p>
+      {/await}
+    {:else if quiz.view === 'learn'}
+      {#await import('@/views/Learn.svelte')}
+        <p class="page loading">Memuat pelajaran…</p>
+      {:then { default: Learn }}
+        <Learn />
+      {:catch}
+        <p class="page loading">Pelajaran gagal dimuat. Muat ulang halaman.</p>
       {/await}
     {:else if quiz.exam.about}
       {@const About = quiz.exam.about}

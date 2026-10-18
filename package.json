@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc -p tsconfig.node.json",
-    "validate": "bun scripts/validate-bank.ts",
+    "validate": "bun scripts/validate-bank.ts && bun scripts/lessons-check.ts",
     "lab": "bun scripts/lab/net-solutions.ts && bun scripts/lab/term-solutions.ts && bun scripts/lab/arch-check.ts && bun scripts/lab/cmd-check.ts && bun scripts/lab/canvas-solutions.ts"
   },
   "devDependencies": {
