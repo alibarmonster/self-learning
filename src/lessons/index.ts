@@ -22,5 +22,14 @@ export const GOOGLE_CLOUD_LESSONS: LessonMeta[] = [
     level: 'Dasar → Menengah',
     topics: ['VPC', 'Firewall', 'CIDR', 'Cloud NAT', 'Peering', 'Shared VPC', 'Cloud VPN'],
     load: () => import('./vpc')
+  },
+  {
+    id: 'cloud-run',
+    title: 'Fundamentals of Cloud Run',
+    summary: 'Service dan job, model resource, siklus hidup container, autoscaling (dengan kalkulator), rilis bertahap, IAM, ingress, VPC egress, dan 9 skenario troubleshooting.',
+    minutes: 50,
+    level: 'Dasar → Menengah',
+    topics: ['Cloud Run', 'Autoscaling', 'Revisions', 'IAM', 'Ingress', 'Direct VPC egress'],
+    load: () => import('./cloudrun')
   }
 ];

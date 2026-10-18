@@ -55,6 +55,22 @@ export interface FwPacket {
   expect: 'allow' | 'deny';
 }
 
+/** The knobs of the Cloud Run autoscaling calculator. */
+export interface ScaleInput {
+  /** Requests per second arriving at the service. */
+  rps: number;
+  /** How long one request takes, in milliseconds. */
+  latencyMs: number;
+  /** Maximum concurrent requests per instance. */
+  concurrency: number;
+  min: number;
+  max: number;
+  /** Database connections each instance keeps open. */
+  pool: number;
+  /** Connections the database accepts in total. */
+  dbMax: number;
+}
+
 export type LessonBlock =
   | { kind: 'p'; text: string }
   | { kind: 'list'; items: string[]; ordered?: boolean }
@@ -81,7 +97,9 @@ export type LessonBlock =
   /** An interactive subnet calculator, starting from `value`. */
   | { kind: 'cidr'; value: string; note?: string }
   /** Judge each connection allow or deny, then see which rule decided it. */
-  | { kind: 'firewall'; title: string; vms: FwVm[]; rules: FwRule[]; packets: FwPacket[]; after?: string };
+  | { kind: 'firewall'; title: string; vms: FwVm[]; rules: FwRule[]; packets: FwPacket[]; after?: string }
+  /** Play with traffic, latency, concurrency and min/max instances; presets load a situation. */
+  | { kind: 'scaling'; start: ScaleInput; presets: { label: string; values: ScaleInput; note: string }[] };
 
 export interface LessonSection {
   id: string;

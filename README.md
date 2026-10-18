@@ -113,7 +113,7 @@ src/
     Review.svelte            answer review with filters
     Cheatsheet.svelte        the per-exam cheat sheet with filter and jump nav
     Learn.svelte             the deep-dive lessons: list, table of contents, blocks, quiz
-    learn/                   interactive lesson blocks: subnet calculator, firewall exercise
+    learn/                   interactive lesson blocks: subnet calculator, firewall exercise, autoscaling calculator
     lab/                     the lab: hub, command quiz, terminal, topology canvas, service canvas, architecture board
   lab/                       the lab's simulators — plain TypeScript, no Svelte (see docs/lab.md)
     net/                     VPC model, reachability engine, canvas layout, topology scenarios
@@ -122,8 +122,9 @@ src/
     cmd/                     CLI grammars, a parser that prints the real CLI errors, grader, quiz bank
     canvas/                  service catalog, connection rules, deploy and request simulation, scenarios
   sheets/                    Commands and Concepts sheets shared by the Google Cloud exams
-  lessons/                   deep-dive lessons shared by the Google Cloud exams (gke.ts, vpc.ts; net.ts
-                             is the CIDR calculator and firewall evaluator behind the VPC lesson)
+  lessons/                   deep-dive lessons shared by the Google Cloud exams (gke.ts, vpc.ts,
+                             cloudrun.ts; net.ts and scaling.ts hold the arithmetic behind their
+                             interactive blocks)
   exams/
     registry.ts              the list of exams (plain data — loadable by the validator)
     index.ts                 the same list with each exam's About page attached
@@ -298,14 +299,23 @@ blocks: a subnet calculator that shows the locked bits, the size and Google's re
 firewall exercises where you call each connection allow or deny and then see the deciding rule and
 the full evaluation trace.
 
+The third, **Fundamentals of Cloud Run**, follows the "Fundamentals of Cloud Run" training module —
+overview, resource model, container lifecycle, autoscaling and access control — rewritten in
+Indonesian and brought up to date (request-based and instance-based billing, Direct VPC egress). It
+adds releases and traffic splitting, the service identity, nine troubleshooting scenarios and twelve
+questions, and an autoscaling calculator: set traffic, latency, concurrency, min/max instances and
+database connections per instance, or load a preset situation, and see how many instances run, which
+are idle and billed, when requests overflow into 429s, and how many database connections that means.
+
 A lesson is plain data (`src/types/lesson.ts`): parts of sections made of blocks — paragraphs,
 lists, tables, inline SVG figures, terminal walkthroughs, callouts, numbered steps, case studies,
-quiz questions, a subnet calculator and firewall exercises. Only the list in `src/lessons/index.ts` ships in the main bundle; each lesson is a
+quiz questions, a subnet calculator, firewall exercises and an autoscaling calculator. Only the list in `src/lessons/index.ts` ships in the main bundle; each lesson is a
 separate chunk loaded when it is opened. Sections read and quiz answers are kept in `localStorage`
 (`ep-learn-read-v1:<lesson>`, `ep-learn-quiz-v1:<lesson>`, `ep-learn-fw-v1:<lesson>:<section>:<block>`).
 `bun run validate` also runs `scripts/lessons-check.ts`, which checks quiz answers, figure markup,
-table widths, that the firewall evaluator agrees with every exercise's intended answer, and that
-every practice link points at a lab scenario that exists.
+table widths, that the firewall evaluator agrees with every exercise's intended answer, that
+calculator presets stay inside the calculator's ranges, and that every practice link points at a lab
+scenario that exists.
 
 ## The lab
 

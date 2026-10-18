@@ -1,8 +1,9 @@
 /**
  * Sanity checks for the deep-dive lessons: unique section ids, quiz answers in
  * range, balanced SVG markup in figures, firewall exercises whose intended
- * answers the evaluator agrees with, and practice links that point at a lab
- * scenario that exists. Run with `bun scripts/lessons-check.ts`.
+ * answers the evaluator agrees with, calculator presets inside the ranges the
+ * calculator accepts, and practice links that point at a lab scenario that
+ * exists. Run with `bun scripts/lessons-check.ts`.
  */
 import { GOOGLE_CLOUD_LESSONS } from '../src/lessons';
 import { CMD_BY_ID } from '../src/lab/cmd/bank';
@@ -10,6 +11,7 @@ import { TERM_BY_ID } from '../src/lab/term/scenarios';
 import { CANVAS_BY_ID } from '../src/lab/canvas/scenarios';
 import { NET_BY_ID } from '../src/lab/net/scenarios';
 import { cidrInfo, describePacket, evaluate, parseCidr } from '../src/lessons/net';
+import { scaleProblem } from '../src/lessons/scaling';
 
 let failed = 0;
 const fail = (msg: string) => {
@@ -48,6 +50,11 @@ for (const meta of GOOGLE_CLOUD_LESSONS) {
         }
         if (b.kind === 'figure' && (!balanced(b.svg) || /NaN|undefined/.test(b.svg))) fail(`${meta.id}/${s.id}: figure markup is broken`);
         if (b.kind === 'table' && b.rows.some((r) => r.length !== b.columns.length)) fail(`${meta.id}/${s.id}: table row width differs from its columns`);
+        if (b.kind === 'scaling')
+          for (const [label, v] of [['start', b.start], ...b.presets.map((p) => [p.label, p.values] as const)] as const) {
+            const problem = scaleProblem(v);
+            if (problem) fail(`${meta.id}/${s.id}: calculator ${label}: ${problem}`);
+          }
         if (b.kind === 'cidr' && !cidrInfo(b.value).ok) fail(`${meta.id}/${s.id}: calculator starts from an invalid range ${b.value}`);
         if (b.kind === 'firewall') {
           const names = new Set(b.vms.map((v) => v.name));

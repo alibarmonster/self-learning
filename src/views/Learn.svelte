@@ -4,6 +4,7 @@
   import type { Lesson, LessonBlock, LessonMeta } from '@/types';
   import CidrCalc from './learn/CidrCalc.svelte';
   import FirewallDrill from './learn/FirewallDrill.svelte';
+  import ScaleCalc from './learn/ScaleCalc.svelte';
 
   const exam = $derived(quiz.activeExam);
   const metas = $derived<LessonMeta[]>(exam.lessons ?? []);
@@ -270,6 +271,8 @@
                   <CidrCalc value={b.value} note={b.note} />
                 {:else if b.kind === 'firewall'}
                   <FirewallDrill title={b.title} vms={b.vms} rules={b.rules} packets={b.packets} after={b.after} store={`ep-learn-fw-v1:${lesson.id}:${s.id}:${bi}`} />
+                {:else if b.kind === 'scaling'}
+                  <ScaleCalc start={b.start} presets={b.presets} />
                 {:else if isQuiz(b)}
                   {@const key = `${s.id}:${bi}`}
                   {@const chosen = picks[key]}
