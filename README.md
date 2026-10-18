@@ -112,11 +112,13 @@ src/
     Results.svelte           score ring and per-section breakdown
     Review.svelte            answer review with filters
     Cheatsheet.svelte        the per-exam cheat sheet with filter and jump nav
-    lab/                     the lab: hub, terminal, topology canvas + inspector, architecture board
+    lab/                     the lab: hub, command quiz, terminal, topology canvas, service canvas, architecture board
   lab/                       the lab's simulators — plain TypeScript, no Svelte (see docs/lab.md)
     net/                     VPC model, reachability engine, canvas layout, topology scenarios
     term/                    fake project state, gcloud/gsutil/kubectl/bq, shell, terminal scenarios
     arch/                    service catalog, architecture cases and their grader
+    cmd/                     CLI grammars, a parser that prints the real CLI errors, grader, quiz bank
+    canvas/                  service catalog, connection rules, deploy and request simulation, scenarios
   sheets/                    Commands and Concepts sheets shared by the Google Cloud exams
   exams/
     registry.ts              the list of exams (plain data — loadable by the validator)
@@ -265,9 +267,28 @@ also set `filterHint` for the search placeholder.
 
 `#/<exam>/lab` (button **Lab** in the header, on CDL and ACE) is hands-on practice in the spirit of
 Cisco Packet Tracer, but for Google Cloud. Nothing leaves the browser: every resource is a fake,
-so there is no account, no bill and nothing to break. It is lazy-loaded as its own chunk. Three modes,
-written in Indonesian with the English product terms, 26 scenarios plus two sandboxes:
+so there is no account, no bill and nothing to break. It is lazy-loaded as its own chunk. Five modes,
+written in Indonesian with the English product terms:
 
+- **Kuis perintah** (14 sections, 271 questions, plus a mixed paper of 20) — the Commands sheet as a
+  drill. Each question is a task in the sheet's words ("Initialise, sign in and pick defaults in one
+  go") and is answered by typing the command into a Cloud Shell look-alike. Answers are graded by
+  meaning, not by text: both sides go through a parser that knows each tool's grammar (gcloud,
+  gcloud storage, gsutil, kubectl, bq, terraform, docker), so flag order, `--flag=value` vs
+  `--flag value`, aliases (`-q`, `-n`, `po`, `deploy/web`), `--location` vs `--zone`, and gsutil vs
+  gcloud storage equivalents all count. A wrong line gets the error the real CLI prints —
+  `gcloud auth init` answers `ERROR: (gcloud.auth) Invalid choice: 'init'.` and `Maybe you meant:
+  gcloud init …` — then a hint in Indonesian. A right one prints realistic output and the
+  explanation.
+- **Kanvas layanan** (10 scenarios + sandbox) — n8n / Packet Tracer for Google Cloud services. Drag
+  services from a palette onto a canvas, wire them, edit each one's config in a side panel (the
+  fields the Console create page asks for, with Google's limits), and read the equivalent gcloud
+  command live under the form. Every wire is a real mechanism (push subscription, Eventarc trigger,
+  serverless NEG, Direct VPC egress…) and lists the IAM roles it needs and who must hold them; pairs
+  with no mechanism are refused with the reason. **Deploy & uji** creates everything in order and
+  then sends test requests hop by hop, checking network path and IAM at each hop, with link lights
+  on the wires and a Packet Tracer-style event list. Some scenarios start broken (a push 403, a
+  Cloud SQL timeout, a load balancer 502) and must be fixed.
 - **Terminal** (10 scenarios + sandbox) — a Cloud Shell look-alike that understands about 160
   `gcloud`, `gsutil`, `kubectl` and `bq` commands against a simulated project. Errors are the real
   ones (no project set, API not enabled, billing not linked, overlapping subnet, legacy SQL by
@@ -282,7 +303,10 @@ written in Indonesian with the English product terms, 26 scenarios plus two sand
   graded per slot — best fit, workable with a caveat, or wrong with the reason.
 
 Progress and work in progress are kept in `localStorage`, shared by both exams. `docs/lab.md`
-describes the model and how to add a scenario.
+describes the model and how to add a scenario. The CLI strings, config limits and IAM wiring the
+quiz and the canvas reproduce were researched for this lab; the report is in
+[reports/GCP lab command quiz and canvas.md](<reports/GCP lab command quiz and canvas.md>) and the
+cited notes behind it in `research_notes/`.
 
 ## Design system
 

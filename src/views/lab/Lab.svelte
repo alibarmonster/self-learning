@@ -4,14 +4,20 @@
   import { NET_BY_ID, NET_SCENARIOS } from '@/lab/net/scenarios';
   import { TERM_BY_ID, TERM_SCENARIOS } from '@/lab/term/scenarios';
   import { ARCH_BY_ID, ARCH_SCENARIOS } from '@/lab/arch/scenarios';
+  import { CMD_BY_ID, CMD_LIST, MIX_SIZE } from '@/lab/cmd/bank';
+  import { CANVAS_BY_ID, CANVAS_SCENARIOS } from '@/lab/canvas/scenarios';
   import { doneMap } from '@/lab/progress';
   import TerminalLab from './TerminalLab.svelte';
   import NetworkLab from './NetworkLab.svelte';
   import ArchLab from './ArchLab.svelte';
+  import CmdQuiz from './CmdQuiz.svelte';
+  import CanvasLab from './CanvasLab.svelte';
 
   const LISTS: Record<LabMode, LabMeta[]> = {
+    cmd: CMD_LIST,
     terminal: TERM_SCENARIOS,
     network: NET_SCENARIOS,
+    canvas: CANVAS_SCENARIOS,
     arch: ARCH_SCENARIOS
   };
 
@@ -23,7 +29,9 @@
   const term = $derived(mode === 'terminal' ? TERM_BY_ID[id] : undefined);
   const net = $derived(mode === 'network' ? NET_BY_ID[id] : undefined);
   const arch = $derived(mode === 'arch' ? ARCH_BY_ID[id] : undefined);
-  const open = $derived(term ?? net ?? arch);
+  const cmd = $derived(mode === 'cmd' ? CMD_BY_ID[id] : undefined);
+  const canvas = $derived(mode === 'canvas' ? CANVAS_BY_ID[id] : undefined);
+  const open = $derived(term ?? net ?? arch ?? cmd ?? canvas);
 
   // Re-read progress whenever the hub comes back into view.
   let done = $state(doneMap());
@@ -45,7 +53,7 @@
 
 {#if open}
   {#key quiz.labPath}
-    <div class="scenario rise" class:wide={mode !== 'terminal'} lang="id">
+    <div class="scenario rise" class:wide={mode !== 'terminal' && mode !== 'cmd'} class:full={mode === 'canvas'} lang="id">
       <button class="btn btn-ghost crumb" onclick={back}><span aria-hidden="true">‹</span> Semua lab</button>
       {#if term}
         <TerminalLab sc={term} />
@@ -53,6 +61,10 @@
         <NetworkLab sc={net} />
       {:else if arch}
         <ArchLab sc={arch} />
+      {:else if cmd}
+        <CmdQuiz sc={cmd} />
+      {:else if canvas}
+        <CanvasLab sc={canvas} />
       {/if}
     </div>
   {/key}
@@ -85,6 +97,7 @@
               <button class="card scenario-card" class:done={isDone} onclick={() => quiz.openLab(`${m.id}/${s.id}`)}>
                 <span class="meta">
                   <span class="level" data-level={s.level}>{s.level}</span>
+                  {#if m.id === 'cmd'}<span class="qcount mono">{CMD_BY_ID[s.id].items.length || MIX_SIZE} soal</span>{/if}
                   {#if isDone}<span class="tick">✓ Selesai</span>{/if}
                 </span>
                 <strong>{s.title}</strong>
@@ -236,6 +249,11 @@
     color: var(--ink);
   }
 
+  .qcount {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
   .tick {
     font-size: 12.5px;
     font-weight: 600;
@@ -265,6 +283,10 @@
 
   .scenario.wide {
     max-width: 1360px;
+  }
+
+  .scenario.full {
+    max-width: 1680px;
   }
 
   .crumb {
