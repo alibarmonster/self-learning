@@ -2,6 +2,8 @@
   import { quiz } from '@/state/quiz.svelte';
   import { read, write } from '@/state/storage';
   import type { Lesson, LessonBlock, LessonMeta } from '@/types';
+  import CidrCalc from './learn/CidrCalc.svelte';
+  import FirewallDrill from './learn/FirewallDrill.svelte';
 
   const exam = $derived(quiz.activeExam);
   const metas = $derived<LessonMeta[]>(exam.lessons ?? []);
@@ -264,6 +266,10 @@
                     <div class="case-row"><span class="case-label">Kenapa</span><p>{@html fmt(b.why)}</p></div>
                     {#if b.exam}<aside class="callout exam slim"><p class="callout-title">Di soal ujian</p><p>{@html fmt(b.exam)}</p></aside>{/if}
                   </div>
+                {:else if b.kind === 'cidr'}
+                  <CidrCalc value={b.value} note={b.note} />
+                {:else if b.kind === 'firewall'}
+                  <FirewallDrill title={b.title} vms={b.vms} rules={b.rules} packets={b.packets} after={b.after} store={`ep-learn-fw-v1:${lesson.id}:${s.id}:${bi}`} />
                 {:else if isQuiz(b)}
                   {@const key = `${s.id}:${bi}`}
                   {@const chosen = picks[key]}

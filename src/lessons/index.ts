@@ -13,5 +13,14 @@ export const GOOGLE_CLOUD_LESSONS: LessonMeta[] = [
     level: 'Dasar → Menengah',
     topics: ['GKE', 'Kubernetes', 'kubectl', 'Autopilot', 'Workload Identity'],
     load: () => import('./gke')
+  },
+  {
+    id: 'vpc',
+    title: 'VPC Networks and Firewall Rules',
+    summary: 'Alamat IP dan CIDR, routing, cara firewall memutuskan allow/deny, jalan keluar VM privat, peering, Shared VPC, hybrid, dan 9 skenario troubleshooting.',
+    minutes: 50,
+    level: 'Dasar → Menengah',
+    topics: ['VPC', 'Firewall', 'CIDR', 'Cloud NAT', 'Peering', 'Shared VPC', 'Cloud VPN'],
+    load: () => import('./vpc')
   }
 ];

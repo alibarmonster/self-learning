@@ -113,6 +113,7 @@ src/
     Review.svelte            answer review with filters
     Cheatsheet.svelte        the per-exam cheat sheet with filter and jump nav
     Learn.svelte             the deep-dive lessons: list, table of contents, blocks, quiz
+    learn/                   interactive lesson blocks: subnet calculator, firewall exercise
     lab/                     the lab: hub, command quiz, terminal, topology canvas, service canvas, architecture board
   lab/                       the lab's simulators — plain TypeScript, no Svelte (see docs/lab.md)
     net/                     VPC model, reachability engine, canvas layout, topology scenarios
@@ -121,7 +122,8 @@ src/
     cmd/                     CLI grammars, a parser that prints the real CLI errors, grader, quiz bank
     canvas/                  service catalog, connection rules, deploy and request simulation, scenarios
   sheets/                    Commands and Concepts sheets shared by the Google Cloud exams
-  lessons/                   deep-dive lessons shared by the Google Cloud exams (gke.ts)
+  lessons/                   deep-dive lessons shared by the Google Cloud exams (gke.ts, vpc.ts; net.ts
+                             is the CIDR calculator and firewall evaluator behind the VPC lesson)
   exams/
     registry.ts              the list of exams (plain data — loadable by the validator)
     index.ts                 the same list with each exam's About page attached
@@ -278,13 +280,27 @@ empty Service, a failed rollout, a traffic spike, Pods reaching Cloud Storage, n
 ten check-yourself questions. Each case reads situation → symptom → diagnosis → fix → why → how the
 exam asks it, and the lesson ends with links into the lab to practise.
 
+The second, **VPC Networks and Firewall Rules**, is organised around the questions a network
+answers rather than around components: the big picture (global VPC, regional subnets, auto vs custom
+mode, the default network), IP addresses (reading CIDR, the four reserved addresses, planning and
+expanding ranges, internal and external IPs), routing (most-specific match, Cloud Router and dynamic
+routing mode), the firewall (distributed and stateful, rule anatomy, evaluation order, tags vs
+service accounts, the ranges to memorise, hierarchical policies), the ways out of a private VM
+(Cloud NAT, Private Google Access, PSC, private services access), connecting networks (peering,
+Shared VPC, HA VPN and Interconnect), access and observability (IAP, Connectivity Tests, logs and
+Firewall Insights), nine troubleshooting scenarios and twelve questions. It has two interactive
+blocks: a subnet calculator that shows the locked bits, the size and Google's reserved addresses, and
+firewall exercises where you call each connection allow or deny and then see the deciding rule and
+the full evaluation trace.
+
 A lesson is plain data (`src/types/lesson.ts`): parts of sections made of blocks — paragraphs,
-lists, tables, inline SVG figures, terminal walkthroughs, callouts, numbered steps, case studies and
-quiz questions. Only the list in `src/lessons/index.ts` ships in the main bundle; each lesson is a
+lists, tables, inline SVG figures, terminal walkthroughs, callouts, numbered steps, case studies,
+quiz questions, a subnet calculator and firewall exercises. Only the list in `src/lessons/index.ts` ships in the main bundle; each lesson is a
 separate chunk loaded when it is opened. Sections read and quiz answers are kept in `localStorage`
-(`ep-learn-read-v1:<lesson>`, `ep-learn-quiz-v1:<lesson>`). `bun run validate` also runs
-`scripts/lessons-check.ts`, which checks quiz answers, figure markup, table widths and that every
-practice link points at a lab scenario that exists.
+(`ep-learn-read-v1:<lesson>`, `ep-learn-quiz-v1:<lesson>`, `ep-learn-fw-v1:<lesson>:<section>:<block>`).
+`bun run validate` also runs `scripts/lessons-check.ts`, which checks quiz answers, figure markup,
+table widths, that the firewall evaluator agrees with every exercise's intended answer, and that
+every practice link points at a lab scenario that exists.
 
 ## The lab
 

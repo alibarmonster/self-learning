@@ -21,6 +21,40 @@ export interface LessonCode {
   lines: string[];
 }
 
+/** A VPC firewall rule as the exercise block shows it. `ports` is `all`, `icmp`, or `tcp:80,tcp:8000-8100`. */
+export interface FwRule {
+  name: string;
+  direction: 'INGRESS' | 'EGRESS';
+  priority: number;
+  action: 'allow' | 'deny';
+  ports: string;
+  /** Ingress: source ranges. Neither ranges nor tags means 0.0.0.0/0. */
+  sources?: string[];
+  sourceTags?: string[];
+  /** Egress: destination ranges; empty means 0.0.0.0/0. */
+  destinations?: string[];
+  targetTags?: string[];
+  targetSa?: string;
+}
+
+export interface FwVm {
+  name: string;
+  ip: string;
+  tags: string[];
+  sa: string;
+}
+
+/** One connection to judge. `vm` is the VM the rule is applied to; `peer` is an IP or another VM's name. */
+export interface FwPacket {
+  direction: 'INGRESS' | 'EGRESS';
+  vm: string;
+  peer: string;
+  proto: 'tcp' | 'udp' | 'icmp';
+  port?: number;
+  /** The intended answer; the lesson check confirms the evaluator agrees. */
+  expect: 'allow' | 'deny';
+}
+
 export type LessonBlock =
   | { kind: 'p'; text: string }
   | { kind: 'list'; items: string[]; ordered?: boolean }
@@ -43,7 +77,11 @@ export type LessonBlock =
       why: string;
       exam?: string;
     }
-  | { kind: 'quiz'; q: string; options: string[]; answer: number; explain: string };
+  | { kind: 'quiz'; q: string; options: string[]; answer: number; explain: string }
+  /** An interactive subnet calculator, starting from `value`. */
+  | { kind: 'cidr'; value: string; note?: string }
+  /** Judge each connection allow or deny, then see which rule decided it. */
+  | { kind: 'firewall'; title: string; vms: FwVm[]; rules: FwRule[]; packets: FwPacket[]; after?: string };
 
 export interface LessonSection {
   id: string;
