@@ -31,5 +31,14 @@ export const GOOGLE_CLOUD_LESSONS: LessonMeta[] = [
     level: 'Beginner → Intermediate',
     topics: ['Cloud Run', 'Autoscaling', 'Revisions', 'IAM', 'Ingress', 'Direct VPC egress'],
     load: () => import('./cloudrun')
+  },
+  {
+    id: 'load-balancing',
+    title: "Cloud Load Balancing: Today's Names and How to Choose",
+    summary: 'The 2023 renames mapped old to new, the three families, a picker that names the right load balancer, URL maps, NEGs, Cloud Armor, health check ranges, proxy-only subnets, and 9 troubleshooting scenarios.',
+    minutes: 50,
+    level: 'Beginner → Intermediate',
+    topics: ['Application LB', 'Network LB', 'Cloud Armor', 'Cloud CDN', 'Health checks', 'Proxy-only subnet'],
+    load: () => import('./loadbalancing')
   }
 ];

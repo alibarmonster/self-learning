@@ -2,8 +2,9 @@
  * Sanity checks for the deep-dive lessons: unique section ids, quiz answers in
  * range, balanced SVG markup in figures, firewall exercises whose intended
  * answers the evaluator agrees with, calculator presets inside the ranges the
- * calculator accepts, and practice links that point at a lab scenario that
- * exists. Run with `bun scripts/lessons-check.ts`.
+ * calculator accepts, a load balancer picker where every path names a product
+ * and every product can be reached, and practice links that point at a lab
+ * scenario that exists. Run with `bun scripts/lessons-check.ts`.
  */
 import { GOOGLE_CLOUD_LESSONS } from '../src/lessons';
 import { CMD_BY_ID } from '../src/lab/cmd/bank';
@@ -12,6 +13,7 @@ import { CANVAS_BY_ID } from '../src/lab/canvas/scenarios';
 import { NET_BY_ID } from '../src/lab/net/scenarios';
 import { cidrInfo, describePacket, evaluate, parseCidr } from '../src/lessons/net';
 import { scaleProblem } from '../src/lessons/scaling';
+import { LB_PRODUCTS, lbPaths } from '../src/lessons/lb';
 
 let failed = 0;
 const fail = (msg: string) => {
@@ -55,6 +57,13 @@ for (const meta of GOOGLE_CLOUD_LESSONS) {
             const problem = scaleProblem(v);
             if (problem) fail(`${meta.id}/${s.id}: calculator ${label}: ${problem}`);
           }
+        if (b.kind === 'lbpicker') {
+          const paths = lbPaths();
+          for (const p of paths) if (!p.product) fail(`${meta.id}/${s.id}: picker answers ${JSON.stringify(p.answers)} lead nowhere`);
+          const reached = new Set(paths.map((p) => p.product?.id));
+          for (const lb of LB_PRODUCTS) if (lb.inPicker && !reached.has(lb.id)) fail(`${meta.id}/${s.id}: ${lb.name} cannot be reached in the picker`);
+          if (new Set(LB_PRODUCTS.map((l) => l.name)).size !== LB_PRODUCTS.length) fail(`${meta.id}/${s.id}: duplicate load balancer names`);
+        }
         if (b.kind === 'cidr' && !cidrInfo(b.value).ok) fail(`${meta.id}/${s.id}: calculator starts from an invalid range ${b.value}`);
         if (b.kind === 'firewall') {
           const names = new Set(b.vms.map((v) => v.name));

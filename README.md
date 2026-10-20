@@ -113,7 +113,8 @@ src/
     Review.svelte            answer review with filters
     Cheatsheet.svelte        the per-exam cheat sheet with filter and jump nav
     Learn.svelte             the deep-dive lessons: list, table of contents, blocks, quiz
-    learn/                   interactive lesson blocks: subnet calculator, firewall exercise, autoscaling calculator
+    learn/                   interactive lesson blocks: subnet calculator, firewall exercise, autoscaling calculator,
+                             load balancer picker
     lab/                     the lab: hub, command quiz, terminal, topology canvas, service canvas, architecture board
   lab/                       the lab's simulators — plain TypeScript, no Svelte (see docs/lab.md)
     net/                     VPC model, reachability engine, canvas layout, topology scenarios
@@ -123,8 +124,8 @@ src/
     canvas/                  service catalog, connection rules, deploy and request simulation, scenarios
   sheets/                    Commands and Concepts sheets shared by the Google Cloud exams
   lessons/                   deep-dive lessons shared by the Google Cloud exams (gke.ts, vpc.ts,
-                             cloudrun.ts; net.ts and scaling.ts hold the arithmetic behind their
-                             interactive blocks)
+                             cloudrun.ts, loadbalancing.ts; net.ts, scaling.ts and lb.ts hold the
+                             logic and data behind their interactive blocks)
   exams/
     registry.ts              the list of exams (plain data — loadable by the validator)
     index.ts                 the same list with each exam's About page attached
@@ -307,15 +308,29 @@ questions, and an autoscaling calculator: set traffic, latency, concurrency, min
 database connections per instance, or load a preset situation, and see how many instances run, which
 are idle and billed, when requests overflow into 429s, and how many database connections that means.
 
+The fourth, **Cloud Load Balancing: Today's Names and How to Choose**, is built around the names:
+Google renamed every load balancer in 2023 and older material and exam questions still use the old
+names. It shows how a current name is put together, maps every old name to today's (with the
+`--load-balancing-scheme` value), then picks one with four questions — traffic type, clients,
+reach, network tier — and goes deep on URL maps and backend types, TLS, Cloud CDN, Cloud Armor and
+IAP, proxy and passthrough Network Load Balancers, health checks, the firewall ranges each family
+needs (current as of October 2026: health check probes from `35.191.0.0/16`, Google Front End
+traffic also from `130.211.0.0/22`), proxy-only subnets, and nine troubleshooting scenarios. Its
+interactive block is a picker backed by `src/lessons/lb.ts`: answer the questions and it names the
+load balancer, the name it used to have, its scheme, what the backend sees as the client, and what
+the firewall must allow.
+
 A lesson is plain data (`src/types/lesson.ts`): parts of sections made of blocks — paragraphs,
 lists, tables, inline SVG figures, terminal walkthroughs, callouts, numbered steps, case studies,
-quiz questions, a subnet calculator, firewall exercises and an autoscaling calculator. Only the list in `src/lessons/index.ts` ships in the main bundle; each lesson is a
+quiz questions, a subnet calculator, firewall exercises, an autoscaling calculator and a load
+balancer picker. Only the list in `src/lessons/index.ts` ships in the main bundle; each lesson is a
 separate chunk loaded when it is opened. Sections read and quiz answers are kept in `localStorage`
 (`ep-learn-read-v1:<lesson>`, `ep-learn-quiz-v1:<lesson>`, `ep-learn-fw-v1:<lesson>:<section>:<block>`).
 `bun run validate` also runs `scripts/lessons-check.ts`, which checks quiz answers, figure markup,
 table widths, that the firewall evaluator agrees with every exercise's intended answer, that
-calculator presets stay inside the calculator's ranges, and that every practice link points at a lab
-scenario that exists.
+calculator presets stay inside the calculator's ranges, that every path through the load balancer
+picker names a product and every product can be reached, and that every practice link points at a
+lab scenario that exists.
 
 ## The lab
 

@@ -99,7 +99,9 @@ export type LessonBlock =
   /** Judge each connection allow or deny, then see which rule decided it. */
   | { kind: 'firewall'; title: string; vms: FwVm[]; rules: FwRule[]; packets: FwPacket[]; after?: string }
   /** Play with traffic, latency, concurrency and min/max instances; presets load a situation. */
-  | { kind: 'scaling'; start: ScaleInput; presets: { label: string; values: ScaleInput; note: string }[] };
+  | { kind: 'scaling'; start: ScaleInput; presets: { label: string; values: ScaleInput; note: string }[] }
+  /** Answer the questions that pick a load balancer; shows today's name, the old one, and what it needs. */
+  | { kind: 'lbpicker'; title: string };
 
 export interface LessonSection {
   id: string;
