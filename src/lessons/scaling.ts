@@ -62,19 +62,19 @@ export const SCALE_LIMITS: Record<keyof ScaleInput, [min: number, max: number]> 
 
 const NAMES: Record<keyof ScaleInput, string> = {
   rps: 'Traffic',
-  latencyMs: 'Waktu per request',
+  latencyMs: 'Time per request',
   concurrency: 'Max concurrency',
   min: 'Min instances',
   max: 'Max instances',
-  pool: 'Koneksi DB per instance',
-  dbMax: 'Batas koneksi DB'
+  pool: 'DB connections per instance',
+  dbMax: 'DB connection limit'
 };
 
 export function scaleProblem(i: ScaleInput): string | null {
   for (const [k, [lo, hi]] of Object.entries(SCALE_LIMITS) as [keyof ScaleInput, [number, number]][]) {
     const v = i[k];
-    if (!Number.isFinite(v) || v < lo || v > hi) return `${NAMES[k]} harus di antara ${lo} dan ${hi}.`;
+    if (!Number.isFinite(v) || v < lo || v > hi) return `${NAMES[k]} must be between ${lo} and ${hi}.`;
   }
-  if (i.min > i.max) return 'Min instances tidak boleh lebih besar dari max instances.';
+  if (i.min > i.max) return 'Min instances cannot be more than max instances.';
   return null;
 }

@@ -1,8 +1,8 @@
 /**
- * Getting started with Google Kubernetes Engine — the deep-dive lesson. Prose
- * in plain Indonesian, terms in English as the exam prints them. Written to
- * GKE as of late 2026: Autopilot as the recommended mode, release channels,
- * VPC-native clusters, Workload Identity Federation for GKE, Artifact Registry.
+ * Getting started with Google Kubernetes Engine — the deep-dive lesson, in
+ * English with the terms as the exam prints them. Written to GKE as of late
+ * 2026: Autopilot as the recommended mode, release channels, VPC-native
+ * clusters, Workload Identity Federation for GKE, Artifact Registry.
  */
 import type { Lesson } from '@/types';
 
@@ -19,7 +19,7 @@ const MINT = 'style="fill: var(--mint)" stroke="currentColor" stroke-width="1.5"
 const ON_MINT = 'style="fill: #1a1a1a"';
 
 const FIG_ARCH = SVG(
-  'Arsitektur cluster GKE: kubectl memanggil kube-apiserver di control plane yang dikelola Google; control plane berisi etcd, scheduler dan controller manager; setiap node menjalankan kubelet, kube-proxy, containerd dan Pod',
+  'GKE cluster architecture: kubectl calls kube-apiserver in the Google-managed control plane, which also holds etcd, the scheduler and the controller managers; every node runs kubelet, kube-proxy, containerd and Pods',
   720,
   360,
   `
@@ -52,15 +52,15 @@ const FIG_ARCH = SVG(
   <g fill="currentColor" text-anchor="middle">
     <text x="78" y="174" style="font-weight: 600">kubectl</text>
     <text x="78" y="193" opacity="0.7">Console · CI/CD</text>
-    <text x="286" y="40" opacity="0.75">Control plane — dikelola Google</text>
+    <text x="286" y="40" opacity="0.75">Control plane — run by Google</text>
     <text x="286" y="77" ${ON_MINT} font-weight="600">kube-apiserver</text>
-    <text x="286" y="131">etcd · menyimpan state</text>
+    <text x="286" y="131">etcd · stores state</text>
     <text x="286" y="185">kube-scheduler</text>
     <text x="286" y="239">kube-controller-manager</text>
     <text x="286" y="293">cloud-controller-manager</text>
-    <text x="286" y="331" opacity="0.65">zonal: 1 replika · regional: 3</text>
-    <text x="568" y="38" opacity="0.75">Node 1 · VM Compute Engine</text>
-    <text x="568" y="210" opacity="0.75">Node 2 · VM Compute Engine</text>
+    <text x="286" y="331" opacity="0.65">zonal: 1 replica · regional: 3</text>
+    <text x="568" y="38" opacity="0.75">Node 1 · Compute Engine VM</text>
+    <text x="568" y="210" opacity="0.75">Node 2 · Compute Engine VM</text>
     <text x="506" y="70">kubelet</text>
     <text x="631" y="70">kube-proxy</text>
     <text x="568" y="106">containerd (container runtime)</text>
@@ -77,7 +77,7 @@ const FIG_ARCH = SVG(
 );
 
 const FIG_OBJECTS = SVG(
-  'Deployment membuat ReplicaSet, ReplicaSet menjaga tiga Pod berlabel app=web, dan Service memilih Pod itu lewat selector app=web',
+  'A Deployment creates a ReplicaSet, the ReplicaSet keeps three Pods labelled app=web running, and a Service finds those Pods through the selector app=web',
   720,
   240,
   `
@@ -106,8 +106,8 @@ const FIG_OBJECTS = SVG(
     <text x="480" y="193">Pod</text><text x="480" y="210" opacity="0.65">app=web</text>
     <text x="647" y="113" ${ON_MINT} font-weight="600">Service web</text>
     <text x="647" y="134" ${ON_MINT}>selector app=web</text>
-    <text x="185" y="110" opacity="0.6">membuat</text>
-    <text x="388" y="98" opacity="0.6">menjaga</text>
+    <text x="186" y="80" opacity="0.6">creates</text>
+    <text x="388" y="98" opacity="0.6">keeps</text>
   </g>`
 );
 
@@ -128,13 +128,13 @@ const row = (y: number, name: string, desc: string, a: string, b: string, c: str
   </g>`;
 
 const FIG_TRAFFIC = SVG(
-  'Empat cara trafik mencapai Pod: ClusterIP dari dalam cluster, NodePort lewat IP node, LoadBalancer lewat Network Load Balancer publik, dan Ingress atau Gateway lewat Application Load Balancer',
+  'Four ways traffic reaches a Pod: ClusterIP from inside the cluster, NodePort through a node IP, LoadBalancer through a public Network Load Balancer, and Ingress or Gateway through an Application Load Balancer',
   720,
   296,
-  row(16, 'ClusterIP', 'hanya dari dalam cluster', 'Pod frontend', '10.12.5.140:80', 'Pod web') +
-    row(88, 'NodePort', 'port tinggi di tiap node', 'Klien di VPC', 'IP node :30080', 'Pod web') +
-    row(160, 'LoadBalancer', 'L4, satu IP publik', 'Internet', 'Network LB', 'Pod web') +
-    row(232, 'Ingress / Gateway', 'L7, host & path', 'Internet', 'Application LB', 'Pod web (NEG)')
+  row(16, 'ClusterIP', 'inside the cluster only', 'frontend Pod', '10.12.5.140:80', 'web Pod') +
+    row(88, 'NodePort', 'high port on every node', 'Client in VPC', 'node IP :30080', 'web Pod') +
+    row(160, 'LoadBalancer', 'L4, one public IP', 'Internet', 'Network LB', 'web Pod') +
+    row(232, 'Ingress / Gateway', 'L7, host & path', 'Internet', 'Application LB', 'web Pod (NEG)')
 );
 
 const layer = (x: number, y: number, label: string, kind: 'google' | 'you' | 'shared') =>
@@ -143,16 +143,16 @@ const layer = (x: number, y: number, label: string, kind: 'google' | 'you' | 'sh
     : `<rect x="${x}" y="${y}" width="300" height="36" rx="5" fill="none" stroke="currentColor" stroke-width="1.5"${kind === 'shared' ? ' stroke-dasharray="5 4"' : ''}/><text x="${x + 150}" y="${y + 23}" text-anchor="middle" fill="currentColor">${label}</text>`;
 
 const LAYERS: [string, 'google' | 'you' | 'shared', 'google' | 'you' | 'shared'][] = [
-  ['Workload: Pod, Deployment, YAML', 'you', 'you'],
-  ['Keamanan & hardening node', 'you', 'google'],
-  ['Kapasitas: node pool, autoscaling', 'you', 'google'],
-  ['Node: VM, OS, upgrade, repair', 'shared', 'google'],
+  ['Workloads: Pods, Deployments, YAML', 'you', 'you'],
+  ['Node security & hardening', 'you', 'google'],
+  ['Capacity: node pools, autoscaling', 'you', 'google'],
+  ['Nodes: VM, OS, upgrade, repair', 'shared', 'google'],
   ['Control plane', 'google', 'google'],
-  ['Infrastruktur Google', 'google', 'google']
+  ['Google infrastructure', 'google', 'google']
 ];
 
 const FIG_MODES = SVG(
-  'Pembagian tanggung jawab: di GKE Standard kamu mengurus node pool, kapasitas dan keamanan node; di Autopilot Google mengurus semuanya kecuali workload',
+  'Who looks after what: in GKE Standard you manage node pools, capacity and node security; in Autopilot Google manages everything except your workloads',
   720,
   360,
   `
@@ -162,9 +162,9 @@ const FIG_MODES = SVG(
   </g>
   ${LAYERS.map(([l, s, a], i) => layer(40, 46 + i * 44, l, s) + layer(380, 46 + i * 44, l, a)).join('')}
   <g fill="currentColor" opacity="0.8">
-    <rect x="40" y="326" width="16" height="16" rx="3" ${MINT}/><text x="64" y="339">Dikelola Google</text>
-    <rect x="210" y="326" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="234" y="339">Tanggung jawabmu</text>
-    <rect x="390" y="326" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/><text x="414" y="339">Kamu atur, Google membantu (auto-upgrade, auto-repair)</text>
+    <rect x="40" y="326" width="16" height="16" rx="3" ${MINT}/><text x="64" y="339">Managed by Google</text>
+    <rect x="210" y="326" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/><text x="234" y="339">Your job</text>
+    <rect x="390" y="326" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/><text x="414" y="339">You set it, Google helps (auto-upgrade, auto-repair)</text>
   </g>`
 );
 
@@ -179,7 +179,7 @@ const zoneBox = (x: number, w: number, label: string, cp: boolean, nodes: number
   }).join('')}`;
 
 const FIG_REGIONAL = SVG(
-  'Cluster zonal punya satu control plane dan node di satu zone; cluster regional punya tiga replika control plane dan node di tiga zone, sehingga --num-nodes=1 menghasilkan tiga node',
+  'A zonal cluster has one control plane and its nodes in one zone; a regional cluster has three control plane replicas and nodes in three zones, so --num-nodes=1 gives three nodes',
   720,
   250,
   `
@@ -189,20 +189,20 @@ const FIG_REGIONAL = SVG(
   </g>
   <g fill="currentColor" opacity="0.75" style="font-size: 12px">
     <text x="70" y="30">--zone=us-central1-a --num-nodes=3</text>
-    <text x="370" y="30">--region=us-central1 --num-nodes=1 → 3 node</text>
+    <text x="370" y="30">--region=us-central1 --num-nodes=1 → 3 nodes</text>
   </g>
   ${zoneBox(16, 250, 'us-central1-a', true, 3)}
   ${zoneBox(300, 128, 'us-central1-a', true, 1)}
   ${zoneBox(438, 128, 'us-central1-b', true, 1)}
   ${zoneBox(576, 128, 'us-central1-c', true, 1)}
   <g fill="currentColor" opacity="0.7" style="font-size: 12px">
-    <text x="141" y="226" text-anchor="middle">zone mati = cluster mati</text>
-    <text x="502" y="226" text-anchor="middle">satu zone mati, cluster tetap melayani</text>
+    <text x="141" y="226" text-anchor="middle">zone down = cluster down</text>
+    <text x="502" y="226" text-anchor="middle">one zone down, the cluster keeps serving</text>
   </g>`
 );
 
 const FIG_LIFECYCLE = SVG(
-  'Fase Pod: Pending lalu Running, lalu Succeeded atau Failed; Unknown bila status node tidak terbaca',
+  'Pod phases: Pending, then Running, then Succeeded or Failed; Unknown when the node status cannot be read',
   720,
   210,
   `
@@ -222,18 +222,18 @@ const FIG_LIFECYCLE = SVG(
     <text x="620" y="47" font-weight="600">Succeeded</text>
     <text x="620" y="125" font-weight="600">Failed</text>
     <text x="365" y="177">Unknown</text>
-    <text x="99" y="128" opacity="0.7" style="font-size: 12px">belum dijadwalkan /</text>
-    <text x="99" y="144" opacity="0.7" style="font-size: 12px">image belum siap</text>
-    <text x="231" y="74" opacity="0.6" style="font-size: 12px">dijadwalkan</text>
-    <text x="620" y="82" opacity="0.6" style="font-size: 12px">(Job selesai)</text>
-    <text x="620" y="160" opacity="0.6" style="font-size: 12px">container keluar dengan error</text>
-    <text x="365" y="132" opacity="0.6" style="font-size: 12px">CrashLoopBackOff tetap Running,</text>
-    <text x="365" y="146" opacity="0.6" style="font-size: 12px">tapi RESTARTS terus naik</text>
+    <text x="99" y="128" opacity="0.7" style="font-size: 12px">not scheduled yet /</text>
+    <text x="99" y="144" opacity="0.7" style="font-size: 12px">image not ready</text>
+    <text x="231" y="74" opacity="0.6" style="font-size: 12px">scheduled</text>
+    <text x="620" y="82" opacity="0.6" style="font-size: 12px">(Job finished)</text>
+    <text x="620" y="160" opacity="0.6" style="font-size: 12px">container exited with an error</text>
+    <text x="365" y="132" opacity="0.6" style="font-size: 12px">CrashLoopBackOff stays Running,</text>
+    <text x="365" y="146" opacity="0.6" style="font-size: 12px">but RESTARTS keeps climbing</text>
   </g>`
 );
 
 const FIG_WI = SVG(
-  'Workload Identity: Pod dengan Kubernetes service account meminta token ke metadata server GKE, yang menukarnya lewat workload identity pool menjadi token Google berumur pendek untuk memanggil Cloud Storage',
+  'Workload Identity: a Pod running as a Kubernetes service account asks the GKE metadata server for a token, which is exchanged through the workload identity pool for a short-lived Google token used to call Cloud Storage',
   720,
   210,
   `
@@ -251,86 +251,84 @@ const FIG_WI = SVG(
     <text x="86" y="88" font-weight="600">Pod</text>
     <text x="86" y="107" opacity="0.7">KSA shop/app-ksa</text>
     <text x="271" y="88" font-weight="600">Metadata server</text>
-    <text x="271" y="107" opacity="0.7">GKE (di tiap node)</text>
+    <text x="271" y="107" opacity="0.7">GKE (on every node)</text>
     <text x="466" y="88" ${ON_MINT} font-weight="600">IAM</text>
     <text x="466" y="107" ${ON_MINT}>pool PROJECT.svc.id.goog</text>
     <text x="645" y="88" font-weight="600">Cloud Storage</text>
-    <text x="645" y="107" opacity="0.7">cek role</text>
-    <text x="175" y="52" opacity="0.65" style="font-size: 12px">1 minta token</text>
-    <text x="365" y="52" opacity="0.65" style="font-size: 12px">2 tukar</text>
-    <text x="565" y="52" opacity="0.65" style="font-size: 12px">3 token Google</text>
-    <text x="365" y="196" opacity="0.65" style="font-size: 12px">4 panggil API dengan token berumur pendek — tanpa file kunci</text>
+    <text x="645" y="107" opacity="0.7">checks the role</text>
+    <text x="175" y="52" opacity="0.65" style="font-size: 12px">1 ask for a token</text>
+    <text x="365" y="52" opacity="0.65" style="font-size: 12px">2 exchange</text>
+    <text x="565" y="52" opacity="0.65" style="font-size: 12px">3 Google token</text>
+    <text x="365" y="196" opacity="0.65" style="font-size: 12px">4 call the API with a short-lived token — no key file</text>
   </g>`
 );
 
 export const lesson: Lesson = {
   id: 'gke',
-  lang: 'id',
+  lang: 'en',
   title: 'Getting Started with Google Kubernetes Engine',
   intro:
-    'Cheat sheet memberi singkatannya; halaman ini memberi ceritanya. Kita mulai dari kenapa container butuh Kubernetes, lalu konsep Kubernetes satu per satu, komponen sebuah cluster GKE, perbedaan Autopilot dan Standard, kubectl, cara "introspeksi" — membaca apa yang sebenarnya terjadi di cluster — dan diakhiri studi kasus yang paling sering muncul, di ujian maupun di pekerjaan. Istilah tetap bahasa Inggris seperti di soal.',
+    'The cheat sheet gives you the shorthand; this page tells the story. We start with why containers need Kubernetes, then the Kubernetes concepts one by one, the parts of a GKE cluster, how Autopilot and Standard differ, kubectl, and introspection — reading what is really happening in a cluster — and finish with the case studies that come up most, on the exam and at work.',
   practice: [
-    { label: 'Kuis perintah: GKE (sisi gcloud)', href: '#/ace/lab/cmd/gke', note: '16 soal — create-auto, get-credentials, node pool, resize, autoscaling' },
-    { label: 'Kuis perintah: kubectl, melihat isi cluster', href: '#/ace/lab/cmd/kubectl-look', note: 'get, describe, logs, exec, top, events' },
-    { label: 'Kuis perintah: kubectl, deploy & scale', href: '#/ace/lab/cmd/kubectl-deploy', note: 'apply, expose, scale, autoscale, rollout, drain' },
-    { label: 'Terminal: deploy aplikasi ke GKE', href: '#/ace/lab/terminal/gke-deploy', note: 'Cluster, get-credentials, deployment, service' },
-    { label: 'Terminal: rollback deployment', href: '#/ace/lab/terminal/gke-rollback', note: 'set image, rollout status, undo' }
+    { label: 'Command quiz: GKE (the gcloud side)', href: '#/ace/lab/cmd/gke', note: '16 questions — create-auto, get-credentials, node pools, resize, autoscaling' },
+    { label: 'Command quiz: kubectl, looking inside a cluster', href: '#/ace/lab/cmd/kubectl-look', note: 'get, describe, logs, exec, top, events' },
+    { label: 'Command quiz: kubectl, deploy & scale', href: '#/ace/lab/cmd/kubectl-deploy', note: 'apply, expose, scale, autoscale, rollout, drain' },
+    { label: 'Terminal: deploy an app to GKE', href: '#/ace/lab/terminal/gke-deploy', note: 'Cluster, get-credentials, deployment, service' },
+    { label: 'Terminal: roll back a deployment', href: '#/ace/lab/terminal/gke-rollback', note: 'set image, rollout status, undo' }
   ],
   parts: [
     // ── 1 ─────────────────────────────────────────────────────────────────
     {
       id: 'start',
-      title: 'Memulai',
+      title: 'Getting started',
       sections: [
         {
           id: 'why',
-          title: 'GKE dalam satu menit',
+          title: 'GKE in one minute',
           blocks: [
             {
               kind: 'p',
-              text: 'Aplikasi modern dikemas sebagai **container**: kode, runtime dan library-nya dibungkus jadi satu **image** yang jalan sama persis di laptop, di server, atau di cloud. Masalahnya muncul saat container-nya banyak: siapa yang memutuskan container mana jalan di mesin mana, menyalakan ulang yang mati, menambah salinan saat trafik naik, dan mengganti versi tanpa downtime?'
+              text: 'Modern applications ship as **containers**: the code, its runtime and its libraries packed into one **image** that runs exactly the same on a laptop, a server or in the cloud. The trouble starts when there are many of them: who decides which container runs on which machine, restarts the ones that die, adds copies when traffic grows, and swaps versions without downtime?'
             },
             {
               kind: 'p',
-              text: '**Kubernetes** adalah sistem yang mengerjakan semua itu. Kamu menulis keinginanmu — "jalankan 3 salinan aplikasi web versi 1.4, buka di port 80" — dan Kubernetes terus-menerus memastikan kenyataan sama dengan keinginan itu. **Google Kubernetes Engine (GKE)** adalah Kubernetes yang dikelola Google: control plane-nya dijalankan, di-patch, di-upgrade dan dibuat high-available oleh Google, dan (di mode Autopilot) node-nya juga.'
+              text: '**Kubernetes** is the system that does all of that. You write down what you want — "run 3 copies of web version 1.4 and expose them on port 80" — and Kubernetes keeps making reality match it. **Google Kubernetes Engine (GKE)** is Kubernetes run by Google: Google runs, patches, upgrades and keeps the control plane highly available, and in Autopilot mode the nodes too.'
             },
             {
               kind: 'callout',
               tone: 'analogy',
-              title: 'Analogi',
-              text: 'Container itu peti kemas, image adalah cetakan petinya. Kubernetes adalah syahbandar pelabuhan: kamu cukup bilang "kirim 3 peti ini ke tujuan", ia yang memilih kapal (node), memindahkan peti saat kapal rusak, dan menambah kapal saat muatan menumpuk. GKE berarti pelabuhannya dikelola Google.'
+              text: 'A container is a shipping container and the image is its mould. Kubernetes is the harbour master: you say "ship these 3 containers", and it picks the ships (nodes), moves containers when a ship breaks down, and adds ships when cargo piles up. GKE means Google runs the harbour.'
             },
             {
               kind: 'table',
-              caption: 'Kapan GKE, kapan yang lain',
-              columns: ['Kebutuhan', 'Pilihan yang biasanya benar', 'Kenapa'],
+              caption: 'When GKE, when something else',
+              columns: ['Need', 'Usually the right choice', 'Why'],
               rows: [
-                ['Satu service HTTP stateless, ingin tanpa ops', 'Cloud Run', 'Tidak ada cluster untuk diurus; skala ke nol.'],
-                ['Banyak microservice, butuh kontrol jaringan, sidecar, job, workload stateful', 'GKE', 'Kubernetes memberi semua primitive itu dalam satu platform.'],
-                ['Sudah punya manifest Kubernetes / Helm, ingin portabel antar cloud', 'GKE', 'API Kubernetes sama di mana-mana.'],
-                ['Software lama yang butuh OS penuh, lisensi per mesin', 'Compute Engine', 'Kontrol penuh atas VM.'],
-                ['Kode kecil yang dipicu event', 'Cloud Run functions', 'Paling sedikit yang perlu ditulis.']
+                ['One stateless HTTP service, no ops wanted', 'Cloud Run', 'No cluster to look after; scales to zero.'],
+                ['Many microservices that need network control, sidecars, jobs, stateful workloads', 'GKE', 'Kubernetes gives you all of those primitives on one platform.'],
+                ['Existing Kubernetes manifests or Helm charts, portable across clouds', 'GKE', 'The Kubernetes API is the same everywhere.'],
+                ['Old software that needs a full OS, per-machine licences', 'Compute Engine', 'Full control of the VM.'],
+                ['A small piece of code triggered by events', 'Cloud Run functions', 'The least to write.']
               ]
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: 'Kata kunci "microservices", "containerized application yang sudah memakai Kubernetes", "portability", "hybrid/multicloud" mengarah ke GKE. "Without managing infrastructure" + satu service HTTP mengarah ke Cloud Run. "Without managing nodes" tapi tetap Kubernetes mengarah ke **GKE Autopilot**.'
+              text: 'The words "microservices", "containerized application already on Kubernetes", "portability", "hybrid/multicloud" point to GKE. "Without managing infrastructure" plus a single HTTP service points to Cloud Run. "Without managing nodes" but still Kubernetes points to **GKE Autopilot**.'
             }
           ]
         },
         {
           id: 'images',
-          title: 'Container image dan Artifact Registry',
+          title: 'Container images and Artifact Registry',
           blocks: [
             {
               kind: 'p',
-              text: 'Sebelum ada yang bisa jalan di GKE, harus ada image. Image dibangun dari `Dockerfile` (dengan `docker build` di laptop atau `gcloud builds submit` di Cloud Build) lalu disimpan di **Artifact Registry**. Alamatnya selalu berbentuk `REGION-docker.pkg.dev/PROJECT/REPOSITORY/IMAGE:TAG`.'
+              text: 'Before anything can run on GKE there has to be an image. It is built from a `Dockerfile` (with `docker build` on a laptop or `gcloud builds submit` on Cloud Build) and stored in **Artifact Registry**. Its address always looks like `REGION-docker.pkg.dev/PROJECT/REPOSITORY/IMAGE:TAG`.'
             },
             {
               kind: 'code',
-              title: 'Membangun dan menyimpan image tanpa Docker lokal',
+              title: 'Building and storing an image without local Docker',
               lines: [
                 '$ gcloud artifacts repositories create apps --repository-format=docker --location=us-central1',
                 'Created repository [apps].',
@@ -344,12 +342,12 @@ export const lesson: Lesson = {
             {
               kind: 'callout',
               tone: 'warn',
-              title: 'Container Registry sudah ditutup',
-              text: 'Alamat `gcr.io/…` dari materi lama milik Container Registry, yang sejak 18 Maret 2025 tidak menerima image baru. Untuk image baru, jawabannya selalu Artifact Registry.'
+              title: 'Container Registry is shut down',
+              text: '`gcr.io/…` addresses in older material belong to Container Registry, which has not accepted new images since 18 March 2025. For new images the answer is always Artifact Registry.'
             },
             {
               kind: 'p',
-              text: 'Node GKE menarik image memakai service account node-nya. Kalau repository-nya di project yang sama dan service account node punya `roles/artifactregistry.reader`, semuanya berjalan; kalau tidak, Pod berakhir di `ImagePullBackOff` (lihat studi kasus).'
+              text: 'GKE nodes pull images with their node service account. If the repository is in the same project and the node service account has `roles/artifactregistry.reader`, everything works; if not, the Pod ends up in `ImagePullBackOff` (see the case studies).'
             }
           ]
         }
@@ -359,35 +357,34 @@ export const lesson: Lesson = {
     // ── 2 ─────────────────────────────────────────────────────────────────
     {
       id: 'concepts',
-      title: 'Konsep Kubernetes',
+      title: 'Kubernetes concepts',
       sections: [
         {
           id: 'declarative',
-          title: 'Berpikir deklaratif: desired state',
+          title: 'Thinking declaratively: desired state',
           blocks: [
             {
               kind: 'p',
-              text: 'Hal terpenting tentang Kubernetes: kamu tidak menyuruh "jalankan container ini sekarang". Kamu **mendeklarasikan state yang diinginkan** dalam sebuah objek (biasanya file YAML), mengirimnya ke API, lalu **controller** di control plane bekerja dalam lingkaran tanpa henti: lihat kenyataan, bandingkan dengan keinginan, perbaiki selisihnya. Pod mati? Controller membuat yang baru. Node hilang? Pod-nya dijadwalkan ulang di node lain.'
+              text: 'The most important thing about Kubernetes: you do not say "run this container now". You **declare the state you want** in an object (usually a YAML file), send it to the API, and **controllers** in the control plane loop forever: look at reality, compare it with what you asked for, fix the difference. A Pod died? The controller makes a new one. A node disappeared? Its Pods are rescheduled on other nodes.'
             },
             {
               kind: 'callout',
               tone: 'analogy',
-              title: 'Analogi',
-              text: 'Seperti AC dengan termostat. Kamu tidak menyalakan dan mematikan kompresor sendiri; kamu menyetel "24°C" dan termostat terus menyesuaikan. `replicas: 3` adalah angka di termostat itu.'
+              text: 'It is like air conditioning with a thermostat. You do not switch the compressor on and off yourself; you set "24°C" and the thermostat keeps adjusting. `replicas: 3` is the number on that thermostat.'
             },
             {
               kind: 'code',
-              title: 'deployment.yaml — dibaca dari atas',
+              title: 'deployment.yaml — read from the top',
               lines: [
-                'apiVersion: apps/v1          # grup API dan versinya',
-                'kind: Deployment             # jenis objek',
+                'apiVersion: apps/v1          # API group and version',
+                'kind: Deployment             # kind of object',
                 'metadata:',
-                '  name: web                  # nama objek',
+                '  name: web                  # object name',
                 'spec:                        # desired state',
-                '  replicas: 3                # selalu 3 Pod',
+                '  replicas: 3                # always 3 Pods',
                 '  selector:',
-                '    matchLabels: {app: web}  # Pod mana yang menjadi milik Deployment ini',
-                '  template:                  # cetakan Pod',
+                '    matchLabels: {app: web}  # which Pods belong to this Deployment',
+                '  template:                  # the Pod template',
                 '    metadata:',
                 '      labels: {app: web}',
                 '    spec:',
@@ -396,8 +393,8 @@ export const lesson: Lesson = {
                 '        image: us-central1-docker.pkg.dev/ace-lab-123/apps/web:v1',
                 '        ports: [{containerPort: 8080}]',
                 '        resources:',
-                '          requests: {cpu: 250m, memory: 512Mi}   # yang dijamin; dasar penjadwalan',
-                '          limits: {memory: 512Mi}                # batas atas; lewat = OOMKilled',
+                '          requests: {cpu: 250m, memory: 512Mi}   # guaranteed; what scheduling is based on',
+                '          limits: {memory: 512Mi}                # ceiling; going over = OOMKilled',
                 '$ kubectl apply -f deployment.yaml',
                 'deployment.apps/web created'
               ]
@@ -405,53 +402,53 @@ export const lesson: Lesson = {
             {
               kind: 'list',
               items: [
-                '`kubectl apply -f` bersifat deklaratif: menjalankannya lagi setelah file diubah hanya menerapkan selisihnya. Ini cara yang dianjurkan dan cocok untuk Git.',
-                '`kubectl create deployment …` / `kubectl expose …` bersifat imperatif: cepat untuk mencoba, tapi tidak meninggalkan file yang bisa ditinjau.',
-                '**requests** menentukan di node mana Pod muat (scheduler hanya melihat requests). **limits** membatasi pemakaian; melewati limit memori membuat container dibunuh (`OOMKilled`).'
+                '`kubectl apply -f` is declarative: running it again after editing the file applies only the difference. It is the recommended way and fits Git well.',
+                '`kubectl create deployment …` / `kubectl expose …` are imperative: quick for trying things, but they leave no file anyone can review.',
+                '**requests** decide which node a Pod fits on (the scheduler only looks at requests). **limits** cap usage; going over the memory limit gets the container killed (`OOMKilled`).'
               ]
             }
           ]
         },
         {
           id: 'objects',
-          title: 'Objek-objek inti',
+          title: 'The core objects',
           blocks: [
-            { kind: 'figure', svg: FIG_OBJECTS, caption: 'Kamu biasanya hanya menulis Deployment dan Service. Deployment membuat ReplicaSet, ReplicaSet menjaga jumlah Pod, dan Service menemukan Pod lewat label — bukan lewat nama, karena nama Pod berganti setiap kali dibuat ulang.' },
+            { kind: 'figure', svg: FIG_OBJECTS, caption: 'You usually only write the Deployment and the Service. The Deployment creates a ReplicaSet, the ReplicaSet keeps the number of Pods, and the Service finds Pods by label — not by name, because a Pod gets a new name every time it is recreated.' },
             {
               kind: 'terms',
               items: [
                 {
                   term: 'Pod',
-                  meaning: 'Unit terkecil yang dijalankan Kubernetes: satu atau beberapa container yang selalu dijadwalkan bersama di satu node, berbagi IP dan volume.',
-                  analogy: 'Satu kamar kos: penghuninya (container) berbagi alamat dan dapur.',
-                  example: 'Container aplikasi + container sidecar pengirim log dalam satu Pod.'
+                  meaning: 'The smallest thing Kubernetes runs: one or more containers that are always scheduled together on one node and share an IP and volumes.',
+                  analogy: 'A shared flat: the tenants (containers) share an address and a kitchen.',
+                  example: 'An app container plus a log-shipping sidecar container in one Pod.'
                 },
                 {
                   term: 'Deployment / ReplicaSet',
-                  meaning: 'Deployment menjaga sejumlah Pod identik tetap jalan dan mengatur rolling update; di baliknya ia membuat ReplicaSet untuk tiap versi.',
-                  analogy: 'Manajer shift yang memastikan selalu ada 3 kasir, dan mengganti mereka satu per satu saat seragam baru datang.',
-                  example: 'Frontend web stateless dengan `replicas: 3`.'
+                  meaning: 'A Deployment keeps a number of identical Pods running and handles rolling updates; behind it, it creates a ReplicaSet for each version.',
+                  analogy: 'A shift manager who makes sure there are always 3 cashiers, and swaps them one at a time when new uniforms arrive.',
+                  example: 'A stateless web frontend with `replicas: 3`.'
                 },
                 {
                   term: 'Service',
-                  meaning: 'Alamat tetap (nama DNS + IP virtual) di depan sekumpulan Pod yang dipilih lewat label; membagi trafik ke Pod yang Ready.',
-                  analogy: 'Nomor telepon kantor: pegawainya berganti, nomornya tetap.',
-                  example: '`web.default.svc.cluster.local:80` meneruskan ke Pod berlabel `app=web` di port 8080.'
+                  meaning: 'A stable address (DNS name + virtual IP) in front of a set of Pods chosen by label; it spreads traffic across the Pods that are Ready.',
+                  analogy: 'An office phone number: the staff change, the number stays.',
+                  example: '`web.default.svc.cluster.local:80` forwards to Pods labelled `app=web` on port 8080.'
                 },
                 {
                   term: 'Label & selector',
-                  meaning: 'Label adalah pasangan kunci=nilai di objek; selector adalah kueri atas label. Hampir semua hubungan antar objek dibuat dengan cara ini.',
+                  meaning: 'A label is a key=value pair on an object; a selector is a query over labels. Almost every link between objects is made this way.',
                   example: '`app=web, tier=frontend`; `kubectl get pods -l app=web`.'
                 },
                 {
                   term: 'Namespace',
-                  meaning: 'Ruang nama di dalam satu cluster untuk memisahkan tim atau lingkungan; RBAC, quota dan network policy bisa diatur per namespace.',
-                  example: '`dev`, `staging`, `shop`; `kube-system` berisi komponen sistem.'
+                  meaning: 'A name space inside one cluster to separate teams or environments; RBAC, quotas and network policies can be set per namespace.',
+                  example: '`dev`, `staging`, `shop`; `kube-system` holds the system components.'
                 },
                 {
                   term: 'ConfigMap & Secret',
-                  meaning: 'Konfigurasi di luar image, disuntikkan sebagai env var atau file. Secret untuk data sensitif — tapi isinya hanya di-base64, bukan dienkripsi oleh Kubernetes sendiri.',
-                  example: 'URL database di ConfigMap, password di Secret (atau lebih baik: Secret Manager).'
+                  meaning: 'Configuration kept outside the image and injected as environment variables or files. Secrets are for sensitive data — but Kubernetes itself only base64-encodes them, it does not encrypt them.',
+                  example: 'The database URL in a ConfigMap, the password in a Secret (or better: Secret Manager).'
                 }
               ]
             }
@@ -459,83 +456,82 @@ export const lesson: Lesson = {
         },
         {
           id: 'workloads',
-          title: 'Jenis workload: pilih controller yang tepat',
+          title: 'Workload types: pick the right controller',
           blocks: [
             {
               kind: 'table',
-              columns: ['Controller', 'Untuk apa', 'Contoh', 'Ciri khas'],
+              columns: ['Controller', 'For', 'Example', 'What sets it apart'],
               rows: [
-                ['**Deployment**', 'Aplikasi stateless', 'Web, API', 'Pod bisa saling menggantikan; rolling update'],
-                ['**StatefulSet**', 'Aplikasi stateful', 'Database, Kafka, Elasticsearch', 'Nama stabil (`db-0`, `db-1`), disk sendiri per replika, urutan start/stop'],
-                ['**DaemonSet**', 'Satu Pod di setiap node', 'Agen log, agen monitoring, CNI', 'Bertambah otomatis saat node bertambah'],
-                ['**Job**', 'Tugas yang selesai', 'Migrasi database, batch', 'Selesai = fase Succeeded; bisa paralel dan diulang'],
-                ['**CronJob**', 'Job terjadwal', 'Laporan harian, backup', 'Jadwal format cron, membuat Job baru tiap kali']
+                ['**Deployment**', 'Stateless applications', 'Web, API', 'Pods are interchangeable; rolling updates'],
+                ['**StatefulSet**', 'Stateful applications', 'Databases, Kafka, Elasticsearch', 'Stable names (`db-0`, `db-1`), a disk per replica, ordered start/stop'],
+                ['**DaemonSet**', 'One Pod on every node', 'Log agent, monitoring agent, CNI', 'Grows automatically as nodes are added'],
+                ['**Job**', 'Work that finishes', 'Database migration, batch', 'Done = Succeeded phase; can run in parallel and retry'],
+                ['**CronJob**', 'Scheduled Jobs', 'Daily report, backup', 'Cron-format schedule, creates a new Job each time']
               ]
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
               text: '"Run a logging agent on every node" → DaemonSet. "Stable network identity and persistent storage per replica" → StatefulSet. "Run a batch task to completion" → Job. "Stateless web tier" → Deployment.'
             },
             {
               kind: 'p',
-              text: 'Untuk menjalankan ulang Pod tanpa mengubah spec (misalnya setelah ConfigMap diganti), pakai `kubectl rollout restart deployment/web` — Pod diganti bertahap dengan cara yang sama seperti update image.'
+              text: 'To restart Pods without changing the spec (for example after replacing a ConfigMap), use `kubectl rollout restart deployment/web` — the Pods are replaced gradually, the same way as an image update.'
             }
           ]
         },
         {
           id: 'services',
-          title: 'Service: bagaimana trafik sampai ke Pod',
+          title: 'Services: how traffic reaches a Pod',
           blocks: [
-            { kind: 'figure', svg: FIG_TRAFFIC, caption: 'Empat jalan masuk. Di GKE, Service LoadBalancer membuat passthrough Network Load Balancer (L4) dengan IP publik; Ingress atau Gateway membuat Application Load Balancer (L7) yang langsung ke Pod lewat NEG (container-native load balancing).' },
+            { kind: 'figure', svg: FIG_TRAFFIC, caption: 'Four ways in. On GKE, a LoadBalancer Service creates a passthrough Network Load Balancer (L4) with a public IP; an Ingress or Gateway creates an Application Load Balancer (L7) that goes straight to Pods through NEGs (container-native load balancing).' },
             {
               kind: 'table',
-              columns: ['Jenis', 'Dari mana bisa dicapai', 'Kapan dipakai'],
+              columns: ['Type', 'Reachable from', 'When to use it'],
               rows: [
-                ['`ClusterIP` (default)', 'Hanya dari dalam cluster', 'Komunikasi antar service internal: frontend → backend'],
-                ['`NodePort`', 'IP node + port 30000–32767', 'Jarang dipakai langsung; dasar bagi jenis lain'],
-                ['`LoadBalancer`', 'Internet (atau VPC bila internal)', 'Satu service TCP/UDP ke luar dengan satu IP'],
-                ['Ingress / Gateway API', 'Internet lewat satu Application LB', 'Banyak service HTTP(S) di bawah satu IP, routing per host/path, TLS, Cloud Armor, IAP'],
-                ['`ExternalName`', '—', 'Nama DNS alias ke layanan di luar cluster']
+                ['`ClusterIP` (default)', 'Inside the cluster only', 'Service-to-service traffic: frontend → backend'],
+                ['`NodePort`', 'Node IP + a port in 30000–32767', 'Rarely used directly; the base for other types'],
+                ['`LoadBalancer`', 'The internet (or the VPC, when internal)', 'One TCP/UDP service exposed with one IP'],
+                ['Ingress / Gateway API', 'The internet through one Application LB', 'Many HTTP(S) services under one IP, routing by host/path, TLS, Cloud Armor, IAP'],
+                ['`ExternalName`', '—', 'A DNS alias to a service outside the cluster']
               ]
             },
             {
               kind: 'code',
-              title: 'Membuka Deployment ke internet',
+              title: 'Exposing a Deployment to the internet',
               lines: [
                 '$ kubectl expose deployment web --type=LoadBalancer --port=80 --target-port=8080',
                 'service/web exposed',
                 '$ kubectl get service web',
                 'NAME   TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE',
                 'web    LoadBalancer   10.12.5.140   <pending>     80:31234/TCP   10s',
-                '# setelah ±1 menit Google selesai membuat load balancer-nya',
+                '# about a minute later Google has finished creating the load balancer',
                 'web    LoadBalancer   10.12.5.140   34.70.88.21   80:31234/TCP   72s'
               ]
             },
             {
               kind: 'callout',
               tone: 'tip',
-              text: '`port` adalah port Service (yang dipanggil klien), `targetPort` adalah port container. Salah satu kesalahan paling umum: aplikasi mendengarkan 8080 tapi `targetPort` dibiarkan 80.'
+              text: '`port` is the Service port (what clients call), `targetPort` is the container port. One of the most common mistakes: the app listens on 8080 but `targetPort` is left at 80.'
             }
           ]
         },
         {
           id: 'storage',
-          title: 'Storage: data yang bertahan saat Pod mati',
+          title: 'Storage: data that survives a Pod',
           blocks: [
             {
               kind: 'p',
-              text: 'Disk di dalam container hilang ketika container dibuat ulang. Data yang harus bertahan memakai **PersistentVolumeClaim (PVC)**: Pod "meminta" storage, dan **StorageClass** menentukan jenis disk yang dibuat otomatis (dynamic provisioning) oleh driver Compute Engine Persistent Disk CSI.'
+              text: 'The disk inside a container is gone when the container is recreated. Data that must survive uses a **PersistentVolumeClaim (PVC)**: the Pod "claims" storage, and a **StorageClass** decides what kind of disk the Compute Engine Persistent Disk CSI driver creates for it automatically (dynamic provisioning).'
             },
             {
               kind: 'table',
-              columns: ['Kebutuhan', 'Di GKE', 'Catatan'],
+              columns: ['Need', 'On GKE', 'Note'],
               rows: [
-                ['Disk untuk satu Pod (ReadWriteOnce)', 'StorageClass `standard-rwo` (pd-balanced, default) atau `premium-rwo` (pd-ssd)', 'Disk zonal: Pod harus di zone yang sama dengan disk'],
-                ['Satu volume dibaca/ditulis banyak Pod (ReadWriteMany)', 'Filestore (NFS) lewat Filestore CSI', 'Untuk konten bersama, upload'],
-                ['Disk per replika database', '`volumeClaimTemplates` di StatefulSet', 'Tiap replika mendapat PVC sendiri: `data-db-0`, `data-db-1`'],
-                ['Objek/file besar, data lake', 'Cloud Storage (lewat API atau Cloud Storage FUSE CSI)', 'Bukan block storage']
+                ['A disk for one Pod (ReadWriteOnce)', 'StorageClass `standard-rwo` (pd-balanced, default) or `premium-rwo` (pd-ssd)', 'Zonal disk: the Pod must be in the same zone as the disk'],
+                ['One volume read and written by many Pods (ReadWriteMany)', 'Filestore (NFS) through the Filestore CSI driver', 'For shared content, uploads'],
+                ['A disk per database replica', '`volumeClaimTemplates` in a StatefulSet', 'Each replica gets its own PVC: `data-db-0`, `data-db-1`'],
+                ['Large objects and files, a data lake', 'Cloud Storage (through the API or the Cloud Storage FUSE CSI driver)', 'Not block storage']
               ]
             }
           ]
@@ -546,78 +542,78 @@ export const lesson: Lesson = {
     // ── 3 ─────────────────────────────────────────────────────────────────
     {
       id: 'components',
-      title: 'Komponen GKE',
+      title: 'GKE components',
       sections: [
         {
           id: 'architecture',
-          title: 'Arsitektur cluster: control plane dan node',
+          title: 'Cluster architecture: control plane and nodes',
           blocks: [
-            { kind: 'figure', svg: FIG_ARCH, caption: 'Semua perintah — kubectl, Console, pipeline CI — masuk lewat kube-apiserver. Di GKE, seluruh kotak putus-putus itu dijalankan Google; kamu tidak bisa SSH ke sana dan tidak membayar VM-nya.' },
+            { kind: 'figure', svg: FIG_ARCH, caption: 'Every command — kubectl, the Console, a CI pipeline — comes in through kube-apiserver. On GKE, Google runs everything in the dashed box; you cannot SSH into it and you do not pay for its VMs.' },
             {
               kind: 'table',
-              caption: 'Control plane (dikelola Google)',
-              columns: ['Komponen', 'Tugasnya'],
+              caption: 'Control plane (run by Google)',
+              columns: ['Component', 'Its job'],
               rows: [
-                ['kube-apiserver', 'Pintu masuk satu-satunya. Memeriksa autentikasi (IAM) dan otorisasi (RBAC), lalu menyimpan objek ke etcd.'],
-                ['etcd', 'Database key-value berisi seluruh state cluster: semua objek dan statusnya.'],
-                ['kube-scheduler', 'Memilih node untuk setiap Pod baru berdasarkan requests, affinity, taint/toleration dan zone.'],
-                ['kube-controller-manager', 'Menjalankan controller (Deployment, ReplicaSet, Node, Job…) yang terus menyamakan kenyataan dengan desired state.'],
-                ['cloud-controller-manager', 'Jembatan ke Google Cloud: membuat load balancer untuk Service, mengatur route, mengenali node yang hilang.']
+                ['kube-apiserver', 'The only way in. Checks authentication (IAM) and authorization (RBAC), then stores objects in etcd.'],
+                ['etcd', 'A key-value database holding the whole cluster state: every object and its status.'],
+                ['kube-scheduler', 'Picks a node for every new Pod based on requests, affinity, taints/tolerations and zones.'],
+                ['kube-controller-manager', 'Runs the controllers (Deployment, ReplicaSet, Node, Job…) that keep making reality match the desired state.'],
+                ['cloud-controller-manager', 'The bridge to Google Cloud: creates load balancers for Services, sets up routes, notices nodes that have gone.']
               ]
             },
             {
               kind: 'table',
-              caption: 'Di setiap node (VM Compute Engine)',
-              columns: ['Komponen', 'Tugasnya'],
+              caption: 'On every node (a Compute Engine VM)',
+              columns: ['Component', 'Its job'],
               rows: [
-                ['kubelet', 'Agen node: menerima daftar Pod dari API server, menyuruh runtime menjalankannya, melaporkan status dan menjalankan probe.'],
-                ['containerd', 'Container runtime yang benar-benar menarik image dan menjalankan container.'],
-                ['kube-proxy / GKE Dataplane V2', 'Mengatur jaringan Service ke Pod di node itu (Dataplane V2 memakai eBPF/Cilium dan juga menegakkan NetworkPolicy).'],
-                ['Node image', 'Container-Optimized OS dengan containerd (default) atau Ubuntu.']
+                ['kubelet', 'The node agent: gets its list of Pods from the API server, tells the runtime to run them, reports status and runs probes.'],
+                ['containerd', 'The container runtime that actually pulls images and runs containers.'],
+                ['kube-proxy / GKE Dataplane V2', 'Wires Service traffic to Pods on that node (Dataplane V2 uses eBPF/Cilium and also enforces NetworkPolicy).'],
+                ['Node image', 'Container-Optimized OS with containerd (the default) or Ubuntu.']
               ]
             },
             {
               kind: 'steps',
               items: [
-                { title: 'Kamu mengirim manifest', text: '`kubectl apply` mengirim Deployment ke kube-apiserver, yang mengecek identitasmu lalu menyimpannya di etcd.' },
-                { title: 'Controller bereaksi', text: 'Deployment controller melihat Deployment baru dan membuat ReplicaSet; ReplicaSet controller membuat 3 objek Pod tanpa node.' },
-                { title: 'Scheduler memilih node', text: 'Untuk tiap Pod, scheduler mencari node dengan sisa CPU/memori yang cukup untuk requests-nya dan menuliskan pilihannya.' },
-                { title: 'kubelet menjalankan', text: 'kubelet di node terpilih menyuruh containerd menarik image dan menjalankan container, lalu melaporkan status Running/Ready.' },
-                { title: 'Lingkaran tidak berhenti', text: 'Kalau container mati, kubelet me-restart-nya; kalau node hilang, controller membuat Pod pengganti dan scheduler menaruhnya di node lain.' }
+                { title: 'You send a manifest', text: '`kubectl apply` sends the Deployment to kube-apiserver, which checks who you are and stores it in etcd.' },
+                { title: 'Controllers react', text: 'The Deployment controller sees the new Deployment and creates a ReplicaSet; the ReplicaSet controller creates 3 Pod objects with no node yet.' },
+                { title: 'The scheduler picks nodes', text: 'For each Pod, the scheduler finds a node with enough spare CPU and memory for its requests and records the choice.' },
+                { title: 'kubelet runs it', text: 'The kubelet on the chosen node tells containerd to pull the image and start the container, then reports Running/Ready.' },
+                { title: 'The loop never stops', text: 'If a container dies, the kubelet restarts it; if a node disappears, the controllers create replacement Pods and the scheduler places them on other nodes.' }
               ]
             }
           ]
         },
         {
           id: 'location',
-          title: 'Node pool, lokasi cluster dan upgrade',
+          title: 'Node pools, cluster location and upgrades',
           blocks: [
             {
               kind: 'p',
-              text: 'Di mode Standard, node dikelompokkan dalam **node pool**: sekumpulan node dengan konfigurasi sama (machine type, disk, label, taint, Spot atau tidak). Satu cluster bisa punya banyak node pool — misalnya `default-pool` untuk aplikasi biasa dan `gpu-pool` atau `spot-pool` untuk pekerjaan khusus.'
+              text: 'In Standard mode, nodes are grouped into **node pools**: sets of nodes with the same configuration (machine type, disk, labels, taints, Spot or not). One cluster can have many node pools — for example `default-pool` for ordinary apps and a `gpu-pool` or `spot-pool` for special work.'
             },
-            { kind: 'figure', svg: FIG_REGIONAL, caption: 'Perhatikan angkanya. Di cluster regional, `--num-nodes` berlaku per zone: `--num-nodes=1` di tiga zone menghasilkan tiga node, dan `--num-nodes=3` menghasilkan sembilan.' },
+            { kind: 'figure', svg: FIG_REGIONAL, caption: 'Watch the numbers. In a regional cluster `--num-nodes` is per zone: `--num-nodes=1` across three zones gives three nodes, and `--num-nodes=3` gives nine.' },
             {
               kind: 'table',
-              columns: ['Lokasi', 'Control plane', 'Node', 'Cocok untuk'],
+              columns: ['Location', 'Control plane', 'Nodes', 'Good for'],
               rows: [
-                ['Zonal (single-zone)', '1 replika di satu zone', 'Di zone itu', 'Dev/test, biaya minimum'],
-                ['Zonal multi-zone', '1 replika di satu zone', 'Di beberapa zone (`--node-locations`)', 'Workload tahan gangguan zone, tapi API cluster bisa sempat tidak tersedia'],
-                ['Regional', '3 replika di 3 zone', 'Di setiap zone region', 'Produksi; upgrade control plane tanpa jeda API']
+                ['Zonal (single-zone)', '1 replica in one zone', 'In that zone', 'Dev/test, lowest cost'],
+                ['Zonal multi-zone', '1 replica in one zone', 'In several zones (`--node-locations`)', 'Workloads that survive a zone outage, though the cluster API can be briefly unavailable'],
+                ['Regional', '3 replicas in 3 zones', 'In every zone of the region', 'Production; control plane upgrades with no API gap']
               ]
             },
             {
               kind: 'list',
               items: [
-                '**Release channel** (`rapid`, `regular` — default, `stable`, `extended`) menentukan seberapa cepat cluster menerima versi Kubernetes baru. Google meng-upgrade control plane dan node otomatis sesuai channel.',
-                '**Maintenance window** dan **maintenance exclusion** mengatur kapan upgrade otomatis boleh terjadi (misalnya tidak saat Black Friday).',
-                '**Surge upgrade** mengganti node bertahap: `maxSurge` node baru dibuat dulu, `maxUnavailable` node lama boleh dikeluarkan sekaligus. Pod dipindahkan dengan menghormati PodDisruptionBudget.',
-                '**Node auto-repair** membuat ulang node yang terus gagal health check; **auto-upgrade** menjaga versi node mengikuti control plane.'
+                'The **release channel** (`rapid`, `regular` — the default, `stable`, `extended`) decides how quickly the cluster gets new Kubernetes versions. Google upgrades the control plane and nodes automatically to follow the channel.',
+                'A **maintenance window** and **maintenance exclusions** control when automatic upgrades may happen (for example, not during Black Friday).',
+                '**Surge upgrades** replace nodes gradually: `maxSurge` new nodes are created first, and `maxUnavailable` old nodes may be taken out at once. Pods are moved respecting PodDisruptionBudgets.',
+                '**Node auto-repair** recreates nodes that keep failing health checks; **auto-upgrade** keeps node versions in step with the control plane.'
               ]
             },
             {
               kind: 'code',
-              title: 'Membuat cluster Standard regional dengan dua node pool',
+              title: 'Creating a regional Standard cluster with two node pools',
               lines: [
                 '$ gcloud container clusters create shop --region=us-central1 --num-nodes=1 --release-channel=regular --workload-pool=ace-lab-123.svc.id.goog',
                 '$ gcloud container node-pools create spot-pool --cluster=shop --region=us-central1 --spot --machine-type=e2-standard-4 --num-nodes=1 --enable-autoscaling --min-nodes=0 --max-nodes=5',
@@ -631,74 +627,73 @@ export const lesson: Lesson = {
         },
         {
           id: 'networking',
-          title: 'Jaringan cluster',
+          title: 'Cluster networking',
           blocks: [
             {
               kind: 'p',
-              text: 'Cluster GKE modern bersifat **VPC-native**: setiap Pod mendapat IP sungguhan dari VPC (alias IP), sehingga Pod bisa dijangkau langsung dari VM lain dan dari load balancer. Untuk itu subnet cluster punya tiga rentang: rentang primer untuk node, rentang sekunder untuk **Pod**, dan rentang sekunder untuk **Service**.'
+              text: 'Modern GKE clusters are **VPC-native**: every Pod gets a real IP from the VPC (an alias IP), so Pods can be reached directly from other VMs and from load balancers. For that, the cluster subnet has three ranges: the primary range for nodes, a secondary range for **Pods**, and a secondary range for **Services**.'
             },
             {
               kind: 'table',
-              columns: ['Rentang', 'Contoh', 'Habis kalau…'],
+              columns: ['Range', 'Example', 'If it runs out…'],
               rows: [
-                ['Node (primer)', '10.10.0.0/24', 'Node tidak bisa ditambah'],
-                ['Pod (sekunder)', '10.40.0.0/14', 'Node baru tidak mendapat blok IP Pod — cluster berhenti tumbuh. Di Standard tiap node mengambil /24 (maks. 110 Pod) secara default.'],
-                ['Service (sekunder)', '10.12.0.0/20', 'Service baru tidak mendapat ClusterIP']
+                ['Nodes (primary)', '10.10.0.0/24', 'No more nodes can be added'],
+                ['Pods (secondary)', '10.40.0.0/14', 'New nodes get no block of Pod IPs — the cluster stops growing. On Standard each node takes a /24 (max. 110 Pods) by default.'],
+                ['Services (secondary)', '10.12.0.0/20', 'New Services get no ClusterIP']
               ],
               mono: [1]
             },
             {
               kind: 'list',
               items: [
-                '**Private nodes** (`--enable-private-nodes`): node tanpa IP eksternal. Aman, tapi untuk menarik image dari internet (Docker Hub) butuh **Cloud NAT**; image di Artifact Registry tetap bisa lewat Private Google Access.',
-                '**Control plane authorized networks**: membatasi IP mana yang boleh memanggil API cluster (misalnya hanya kantor dan Cloud Shell).',
-                '**NetworkPolicy**: firewall antar Pod di dalam cluster ("hanya frontend boleh ke backend port 8080"), ditegakkan oleh Dataplane V2.',
-                'Firewall VPC tetap berlaku untuk trafik dari luar ke node; GKE membuat rule yang dibutuhkan untuk health check load balancer secara otomatis.'
+                '**Private nodes** (`--enable-private-nodes`): nodes with no external IP. Safer, but pulling images from the internet (Docker Hub) then needs **Cloud NAT**; images in Artifact Registry still work through Private Google Access.',
+                '**Control plane authorized networks**: limit which IPs may call the cluster API (for example only the office and Cloud Shell).',
+                '**NetworkPolicy**: a firewall between Pods inside the cluster ("only the frontend may reach the backend on port 8080"), enforced by Dataplane V2.',
+                'VPC firewall rules still apply to traffic from outside to the nodes; GKE creates the rules that load balancer health checks need automatically.'
               ]
             }
           ]
         },
         {
           id: 'identity',
-          title: 'Identitas: IAM, RBAC dan Workload Identity',
+          title: 'Identity: IAM, RBAC and Workload Identity',
           blocks: [
             {
               kind: 'p',
-              text: 'Ada dua pertanyaan berbeda yang sering tertukar. Pertama, **siapa boleh mengelola cluster** — orang dan pipeline yang memanggil API GKE. Kedua, **apa yang boleh dilakukan aplikasi** di dalam Pod terhadap layanan Google lain (Cloud Storage, BigQuery, Pub/Sub).'
+              text: 'Two different questions are often mixed up. First, **who may manage the cluster** — the people and pipelines calling the GKE API. Second, **what the application in a Pod may do** to other Google services (Cloud Storage, BigQuery, Pub/Sub).'
             },
             {
               kind: 'table',
-              columns: ['Lapisan', 'Mengatur', 'Contoh'],
+              columns: ['Layer', 'Controls', 'Example'],
               rows: [
-                ['IAM (level project)', 'Siapa boleh membuat cluster dan memakai API Kubernetes', '`roles/container.admin`, `roles/container.developer`, `roles/container.viewer`'],
-                ['RBAC Kubernetes', 'Detail di dalam cluster, per namespace', '`Role` + `RoleBinding`: tim A boleh mengelola Deployment di namespace `shop` saja'],
-                ['Workload Identity Federation for GKE', 'Identitas Google untuk Pod', 'KSA `shop/app-ksa` boleh membaca bucket tertentu']
+                ['IAM (project level)', 'Who may create clusters and use the Kubernetes API', '`roles/container.admin`, `roles/container.developer`, `roles/container.viewer`'],
+                ['Kubernetes RBAC', 'Fine-grained rights inside the cluster, per namespace', '`Role` + `RoleBinding`: team A may manage Deployments in the `shop` namespace only'],
+                ['Workload Identity Federation for GKE', 'A Google identity for Pods', 'KSA `shop/app-ksa` may read one particular bucket']
               ]
             },
-            { kind: 'figure', svg: FIG_WI, caption: 'Tanpa file kunci: Pod memakai Kubernetes service account (KSA), GKE menukarnya menjadi token Google berumur pendek, dan Cloud Storage memeriksa role IAM principal itu.' },
+            { kind: 'figure', svg: FIG_WI, caption: 'No key file: the Pod runs as a Kubernetes service account (KSA), GKE exchanges it for a short-lived Google token, and Cloud Storage checks that principal\'s IAM roles.' },
             {
               kind: 'code',
-              title: 'Memberi Pod akses baca ke satu bucket',
+              title: 'Giving a Pod read access to one bucket',
               lines: [
-                '# cluster dibuat dengan --workload-pool=ace-lab-123.svc.id.goog (Autopilot: selalu aktif)',
+                '# the cluster was created with --workload-pool=ace-lab-123.svc.id.goog (Autopilot: always on)',
                 '$ kubectl create serviceaccount app-ksa -n shop',
                 '$ gcloud storage buckets add-iam-policy-binding gs://ace-assets-123 \\',
                 '    --role=roles/storage.objectViewer \\',
                 '    --member="principal://iam.googleapis.com/projects/123456789012/locations/global/workloadIdentityPools/ace-lab-123.svc.id.goog/subject/ns/shop/sa/app-ksa"',
-                '# lalu di spec Pod/Deployment: serviceAccountName: app-ksa'
+                '# then in the Pod/Deployment spec: serviceAccountName: app-ksa'
               ]
             },
             {
               kind: 'callout',
               tone: 'tip',
-              title: 'Cara lama yang masih sering muncul',
-              text: 'Sebelum role bisa diberikan langsung ke principal KSA, polanya adalah: buat Google service account (GSA), beri GSA role yang dibutuhkan, beri KSA `roles/iam.workloadIdentityUser` pada GSA itu, lalu anotasi KSA dengan `iam.gke.io/gcp-service-account=GSA_EMAIL`. Kedua cara benar; yang penting jangan menyimpan kunci JSON di Secret.'
+              title: 'The older way you will still see',
+              text: 'Before roles could be granted straight to the KSA principal, the pattern was: create a Google service account (GSA), give the GSA the roles it needs, give the KSA `roles/iam.workloadIdentityUser` on that GSA, then annotate the KSA with `iam.gke.io/gcp-service-account=GSA_EMAIL`. Both ways are right; what matters is never keeping a JSON key in a Secret.'
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"Pods need to access Google Cloud APIs following best practices / least privilege" → Workload Identity. Jawaban yang salah biasanya: memberi role luas ke service account node, atau menyimpan service account key di Kubernetes Secret.'
+              text: '"Pods need to access Google Cloud APIs following best practices / least privilege" → Workload Identity. The wrong answers are usually: grant a broad role to the node service account, or store a service account key in a Kubernetes Secret.'
             }
           ]
         }
@@ -712,36 +707,36 @@ export const lesson: Lesson = {
       sections: [
         {
           id: 'compare',
-          title: 'Siapa mengurus apa',
+          title: 'Who looks after what',
           blocks: [
-            { kind: 'figure', svg: FIG_MODES, caption: 'Di Standard kamu membeli dan mengurus node; di Autopilot kamu hanya menulis workload dan Google menyediakan node yang pas untuk Pod-mu.' },
+            { kind: 'figure', svg: FIG_MODES, caption: 'In Standard you buy and look after nodes; in Autopilot you only write workloads and Google provides nodes that fit your Pods.' },
             {
               kind: 'table',
               columns: ['', 'Autopilot', 'Standard'],
               rows: [
-                ['Node', 'Disediakan, di-upgrade dan diamankan Google; tidak terlihat sebagai node pool untuk diatur', 'Kamu membuat node pool, memilih machine type, mengatur autoscaling'],
-                ['Bayar untuk', 'CPU, memori dan disk yang di-**request** Pod', 'VM node, terpakai atau tidak'],
-                ['Lokasi', 'Selalu regional', 'Zonal atau regional'],
-                ['Release channel', 'Wajib', 'Opsional'],
-                ['Keamanan default', 'Hardened: tidak ada Pod privileged, tidak ada SSH ke node, Workload Identity selalu aktif', 'Bisa dibuat sama ketatnya, tapi kamu yang mengatur'],
-                ['Kustomisasi', 'Lewat compute class (mis. Balanced, Scale-Out, GPU)', 'Bebas: DaemonSet privileged, kernel tuning, OS Ubuntu'],
-                ['SLA', 'Control plane dan Pod (multi-zone)', 'Control plane (regional 99,95%, zonal 99,5%)'],
-                ['Cocok untuk', 'Default untuk kebanyakan workload baru, tim kecil tanpa ops Kubernetes', 'Kebutuhan khusus node, lisensi per node, agen keamanan privileged']
+                ['Nodes', 'Provisioned, upgraded and secured by Google; not shown as node pools for you to manage', 'You create node pools, choose machine types, set up autoscaling'],
+                ['You pay for', 'The CPU, memory and disk your Pods **request**', 'The node VMs, used or not'],
+                ['Location', 'Always regional', 'Zonal or regional'],
+                ['Release channel', 'Required', 'Optional'],
+                ['Default security', 'Hardened: no privileged Pods, no SSH to nodes, Workload Identity always on', 'Can be made just as strict, but you do it'],
+                ['Customisation', 'Through compute classes (e.g. Balanced, Scale-Out, GPU)', 'Anything: privileged DaemonSets, kernel tuning, Ubuntu nodes'],
+                ['SLA', 'Control plane and Pods (multi-zone)', 'Control plane (regional 99.95%, zonal 99.5%)'],
+                ['Good for', 'The default for most new workloads, small teams without Kubernetes ops', 'Special node needs, per-node licences, privileged security agents']
               ]
             },
             {
               kind: 'list',
               items: [
-                'Kedua mode sama-sama dikenai biaya manajemen cluster per jam; ada kredit gratis bulanan yang menutup satu cluster zonal atau Autopilot per billing account.',
-                'Di Autopilot, Pod tanpa `resources.requests` diberi nilai default oleh GKE, dan request yang terlalu kecil dinaikkan ke minimum. Tulis requests sendiri supaya biaya dan penjadwalan bisa diprediksi.',
-                'Autopilot tetap Kubernetes biasa: manifest, kubectl, Helm dan Service yang sama berlaku. Yang berbeda hanya siapa yang mengurus node.'
+                'Both modes pay a per-hour cluster management fee; a monthly free credit covers one zonal or Autopilot cluster per billing account.',
+                'In Autopilot, Pods without `resources.requests` get defaults from GKE, and requests that are too small are raised to the minimum. Write your own requests so cost and scheduling are predictable.',
+                'Autopilot is still ordinary Kubernetes: the same manifests, kubectl, Helm and Services work. The only difference is who looks after the nodes.'
               ]
             }
           ]
         },
         {
           id: 'create',
-          title: 'Membuat keduanya dan menghubungkan kubectl',
+          title: 'Creating both and connecting kubectl',
           blocks: [
             {
               kind: 'code',
@@ -757,7 +752,7 @@ export const lesson: Lesson = {
             },
             {
               kind: 'code',
-              title: 'Standard zonal, lalu ambil kredensial',
+              title: 'Standard zonal, then fetch credentials',
               lines: [
                 '$ gcloud container clusters create shop-std --zone=us-central1-a --num-nodes=3 --machine-type=e2-medium',
                 '$ gcloud container clusters get-credentials shop-std --zone=us-central1-a',
@@ -770,8 +765,7 @@ export const lesson: Lesson = {
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"Minimize operational overhead", "don\'t want to manage nodes", "pay only for running Pods" → Autopilot. "Need to run privileged DaemonSets / specific node configuration" → Standard. Pertanyaan "berapa node yang dibuat" untuk cluster regional selalu dihitung per zone.'
+              text: '"Minimize operational overhead", "don\'t want to manage nodes", "pay only for running Pods" → Autopilot. "Need to run privileged DaemonSets / specific node configuration" → Standard. "How many nodes are created" for a regional cluster is always counted per zone.'
             }
           ]
         }
@@ -785,18 +779,18 @@ export const lesson: Lesson = {
       sections: [
         {
           id: 'connect',
-          title: 'Menghubungkan kubectl ke cluster',
+          title: 'Connecting kubectl to a cluster',
           blocks: [
             {
               kind: 'p',
-              text: '`kubectl` membaca file `~/.kube/config` (kubeconfig). Di dalamnya ada daftar **cluster** (alamat API server), **user** (cara autentikasi) dan **context** (pasangan cluster + user + namespace default). `gcloud container clusters get-credentials` menulis satu context untuk cluster GKE; autentikasinya memakai plugin `gke-gcloud-auth-plugin` dengan kredensial gcloud-mu, jadi aksesmu tetap ditentukan IAM.'
+              text: '`kubectl` reads `~/.kube/config` (the kubeconfig). It lists **clusters** (API server addresses), **users** (how to authenticate) and **contexts** (a cluster + user + default namespace). `gcloud container clusters get-credentials` writes one context for a GKE cluster; it authenticates through the `gke-gcloud-auth-plugin` with your gcloud credentials, so your access is still decided by IAM.'
             },
             {
               kind: 'code',
               lines: [
                 '$ kubectl get pods',
                 'The connection to the server localhost:8080 was refused - did you specify the right host or port?',
-                '# belum ada kubeconfig — jalankan get-credentials dulu',
+                '# no kubeconfig yet — run get-credentials first',
                 '$ kubectl config get-contexts',
                 'CURRENT   NAME                                     CLUSTER                                  AUTHINFO   NAMESPACE',
                 '*         gke_ace-lab-123_us-central1-a_shop-std   gke_ace-lab-123_us-central1-a_shop-std   …          default',
@@ -811,44 +805,44 @@ export const lesson: Lesson = {
         },
         {
           id: 'anatomy',
-          title: 'Anatomi perintah kubectl',
+          title: 'Anatomy of a kubectl command',
           blocks: [
             {
               kind: 'p',
-              text: 'Hampir semua perintah berbentuk `kubectl [perintah] [TYPE] [NAME] [flags]`. TYPE boleh tunggal, jamak atau singkatan (`pod`, `pods`, `po`; `deployment`, `deploy`; `service`, `svc`), dan `TYPE NAME` boleh ditulis `TYPE/NAME`.'
+              text: 'Almost every command has the shape `kubectl [command] [TYPE] [NAME] [flags]`. TYPE can be singular, plural or short (`pod`, `pods`, `po`; `deployment`, `deploy`; `service`, `svc`), and `TYPE NAME` can be written `TYPE/NAME`.'
             },
             {
               kind: 'table',
-              columns: ['Kelompok', 'Perintah', 'Gunanya'],
+              columns: ['Group', 'Command', 'What it does'],
               mono: [1],
               rows: [
-                ['Melihat', 'kubectl get pods -o wide', 'Daftar Pod plus IP dan node'],
-                ['', 'kubectl get all -n shop', 'Pod, Service, Deployment, ReplicaSet di satu namespace'],
-                ['', 'kubectl describe pod POD', 'Detail + **Events** (alasan Pending, gagal pull, probe gagal)'],
-                ['Mengubah', 'kubectl apply -f FILE.yaml', 'Buat/perbarui dari manifest (deklaratif)'],
-                ['', 'kubectl scale deployment web --replicas=5', 'Ubah jumlah Pod'],
-                ['', 'kubectl set image deployment/web web=IMAGE:v2', 'Rolling update ke image baru'],
-                ['', 'kubectl rollout undo deployment/web', 'Kembali ke revisi sebelumnya'],
-                ['Debug', 'kubectl logs POD -f / --previous', 'Log container (yang sedang jalan / yang sebelumnya crash)'],
-                ['', 'kubectl exec -it POD -- sh', 'Shell di dalam container'],
-                ['', 'kubectl port-forward POD 8080:8080', 'Coba Pod dari laptop tanpa membuka ke internet'],
-                ['Node', 'kubectl cordon / drain / uncordon NODE', 'Kosongkan node untuk maintenance']
+                ['Look', 'kubectl get pods -o wide', 'List Pods with their IPs and nodes'],
+                ['', 'kubectl get all -n shop', 'Pods, Services, Deployments, ReplicaSets in one namespace'],
+                ['', 'kubectl describe pod POD', 'Details + **Events** (why Pending, pull failures, failing probes)'],
+                ['Change', 'kubectl apply -f FILE.yaml', 'Create/update from a manifest (declarative)'],
+                ['', 'kubectl scale deployment web --replicas=5', 'Change the number of Pods'],
+                ['', 'kubectl set image deployment/web web=IMAGE:v2', 'Rolling update to a new image'],
+                ['', 'kubectl rollout undo deployment/web', 'Go back to the previous revision'],
+                ['Debug', 'kubectl logs POD -f / --previous', 'Container logs (the running one / the one that crashed before)'],
+                ['', 'kubectl exec -it POD -- sh', 'A shell inside the container'],
+                ['', 'kubectl port-forward POD 8080:8080', 'Try a Pod from your laptop without exposing it to the internet'],
+                ['Nodes', 'kubectl cordon / drain / uncordon NODE', 'Empty a node for maintenance']
               ]
             },
             {
               kind: 'list',
               items: [
-                '`-o yaml` menampilkan objek lengkap termasuk `status` — sumber kebenaran tentang apa yang terjadi.',
-                '`-o jsonpath=\'{.items[*].status.podIP}\'` mengambil satu field untuk skrip.',
-                '`-l app=web` memilih berdasarkan label; `-A` melihat semua namespace; `-w` mengikuti perubahan secara live.',
-                '`--dry-run=client -o yaml` membuat manifest dari perintah imperatif — cara cepat menulis YAML pertama.'
+                '`-o yaml` shows the whole object including `status` — the source of truth about what is happening.',
+                '`-o jsonpath=\'{.items[*].status.podIP}\'` pulls out one field for scripts.',
+                '`-l app=web` selects by label; `-A` looks at every namespace; `-w` watches changes live.',
+                '`--dry-run=client -o yaml` turns an imperative command into a manifest — a quick way to write your first YAML.'
               ]
             }
           ]
         },
         {
           id: 'lifecycle-cmds',
-          title: 'Deploy, expose, scale dan update — dari awal sampai akhir',
+          title: 'Deploy, expose, scale and update — end to end',
           blocks: [
             {
               kind: 'code',
@@ -878,13 +872,13 @@ export const lesson: Lesson = {
             {
               kind: 'callout',
               tone: 'warn',
-              title: 'Tiga skala yang berbeda',
-              text: '`kubectl scale` mengubah jumlah **Pod** sekali. HorizontalPodAutoscaler (`kubectl autoscale`) mengubah jumlah Pod **otomatis** berdasarkan CPU/memori. **Cluster autoscaler** (`gcloud container clusters update … --enable-autoscaling`) menambah/mengurangi **node** saat Pod tidak muat. `gcloud container clusters resize` mengubah jumlah node sekali. Di Autopilot, urusan node sepenuhnya otomatis.'
+              title: 'Three different kinds of scaling',
+              text: '`kubectl scale` changes the number of **Pods** once. A HorizontalPodAutoscaler (`kubectl autoscale`) changes the number of Pods **automatically** from CPU/memory. The **cluster autoscaler** (`gcloud container clusters update … --enable-autoscaling`) adds and removes **nodes** when Pods do not fit. `gcloud container clusters resize` changes the number of nodes once. In Autopilot, nodes are entirely automatic.'
             },
             {
               kind: 'callout',
               tone: 'tip',
-              text: 'kubectl 1.34 menulis target CPU sebagai `--cpu=60%`. Materi lama memakai `--cpu-percent=60`; itu masih jalan tapi diberi peringatan deprecated.'
+              text: 'kubectl 1.34 writes the CPU target as `--cpu=60%`. Older material uses `--cpu-percent=60`; it still works but prints a deprecation warning.'
             }
           ]
         }
@@ -898,30 +892,30 @@ export const lesson: Lesson = {
       sections: [
         {
           id: 'status',
-          title: 'Membaca status Pod',
+          title: 'Reading a Pod\'s status',
           blocks: [
             {
               kind: 'p',
-              text: '"Introspection" berarti melihat ke dalam: mengumpulkan informasi tentang objek yang sedang jalan supaya tahu kenapa ia berperilaku seperti itu. Titik awalnya selalu status Pod, yang punya tiga lapis: **phase** Pod, **state** tiap container (dengan *reason*), dan **conditions**.'
+              text: '"Introspection" means looking inside: gathering information about running objects to understand why they behave the way they do. It always starts with the Pod status, which has three layers: the Pod **phase**, the **state** of each container (with a *reason*), and the **conditions**.'
             },
-            { kind: 'figure', svg: FIG_LIFECYCLE, caption: 'Fase Pod hanya lima. Detail yang paling berguna justru ada di state container dan reason-nya.' },
+            { kind: 'figure', svg: FIG_LIFECYCLE, caption: 'There are only five Pod phases. The most useful detail is in the container state and its reason.' },
             {
               kind: 'table',
-              caption: 'Reason yang paling sering kamu lihat di kolom STATUS',
-              columns: ['STATUS', 'Artinya', 'Langkah pertama'],
+              caption: 'The reasons you will see most in the STATUS column',
+              columns: ['STATUS', 'Meaning', 'First step'],
               rows: [
-                ['`Pending`', 'Belum ada node yang muat, atau menunggu volume', '`kubectl describe pod` → lihat Events `FailedScheduling`'],
-                ['`ContainerCreating`', 'Sedang menarik image / memasang volume', 'Tunggu; kalau lama, `describe` untuk melihat volume/image'],
-                ['`ImagePullBackOff` / `ErrImagePull`', 'Image tidak bisa ditarik: nama/tag salah atau tidak ada izin', '`describe` → pesan "Failed to pull image"'],
-                ['`CrashLoopBackOff`', 'Container start lalu mati berulang; jeda restart makin panjang', '`kubectl logs POD --previous`'],
-                ['`OOMKilled`', 'Container melewati limit memori', '`describe` → Last State: Terminated, Reason: OOMKilled, Exit Code 137'],
-                ['`Running` tapi READY `0/1`', 'Container jalan tapi readiness probe gagal — tidak menerima trafik', '`describe` → Events "Readiness probe failed"'],
-                ['`Completed`', 'Container selesai dengan exit code 0 (wajar untuk Job)', 'Tidak ada, kecuali seharusnya terus jalan']
+                ['`Pending`', 'No node fits yet, or waiting for a volume', '`kubectl describe pod` → look for `FailedScheduling` in Events'],
+                ['`ContainerCreating`', 'Pulling the image / mounting volumes', 'Wait; if it takes long, `describe` to check volumes and the image'],
+                ['`ImagePullBackOff` / `ErrImagePull`', 'The image cannot be pulled: wrong name/tag or no permission', '`describe` → the "Failed to pull image" message'],
+                ['`CrashLoopBackOff`', 'The container starts and dies over and over; the restart delay keeps growing', '`kubectl logs POD --previous`'],
+                ['`OOMKilled`', 'The container went over its memory limit', '`describe` → Last State: Terminated, Reason: OOMKilled, Exit Code 137'],
+                ['`Running` but READY `0/1`', 'The container runs but its readiness probe fails — it gets no traffic', '`describe` → "Readiness probe failed" in Events'],
+                ['`Completed`', 'The container finished with exit code 0 (normal for a Job)', 'Nothing, unless it was meant to keep running']
               ]
             },
             {
               kind: 'code',
-              title: 'kubectl describe pod — bagian yang perlu dibaca',
+              title: 'kubectl describe pod — the parts to read',
               lines: [
                 '$ kubectl describe pod web-7d4b9c8f6d-abcde',
                 'Name:         web-7d4b9c8f6d-abcde',
@@ -950,28 +944,27 @@ export const lesson: Lesson = {
         },
         {
           id: 'tools',
-          title: 'Alat introspeksi dan urutan memakainya',
+          title: 'Introspection tools, and the order to use them in',
           blocks: [
             {
               kind: 'steps',
               items: [
-                { title: 'Gambaran besar', text: 'Apa saja yang ada dan bagaimana statusnya.', code: ['kubectl get pods -o wide', 'kubectl get deploy,svc,hpa'] },
-                { title: 'Detail dan Events', text: 'Hampir semua masalah penjadwalan, image, volume dan probe tertulis di Events.', code: ['kubectl describe pod POD', 'kubectl get events --sort-by=.metadata.creationTimestamp'] },
-                { title: 'Log aplikasi', text: 'Untuk error di dalam aplikasi. `--previous` untuk container yang sudah mati; `-c` untuk memilih container di Pod multi-container.', code: ['kubectl logs POD', 'kubectl logs POD --previous', 'kubectl logs -l app=web --tail=50'] },
-                { title: 'Masuk ke dalam', text: 'Cek konfigurasi, file, DNS dan koneksi dari sudut pandang Pod.', code: ['kubectl exec -it POD -- sh', 'kubectl port-forward svc/web 8080:80'] },
-                { title: 'Pemakaian resource', text: 'Apakah Pod mendekati limit, node mana yang penuh.', code: ['kubectl top pods', 'kubectl top nodes'] },
-                { title: 'State lengkap', text: 'Status mentah objek: conditions, IP, waktu start.', code: ['kubectl get pod POD -o yaml'] }
+                { title: 'The big picture', text: 'What exists and what state it is in.', code: ['kubectl get pods -o wide', 'kubectl get deploy,svc,hpa'] },
+                { title: 'Details and Events', text: 'Almost every scheduling, image, volume and probe problem is written in the Events.', code: ['kubectl describe pod POD', 'kubectl get events --sort-by=.metadata.creationTimestamp'] },
+                { title: 'Application logs', text: 'For errors inside the application. `--previous` for a container that already died; `-c` to pick a container in a multi-container Pod.', code: ['kubectl logs POD', 'kubectl logs POD --previous', 'kubectl logs -l app=web --tail=50'] },
+                { title: 'Step inside', text: 'Check config, files, DNS and connections from the Pod\'s point of view.', code: ['kubectl exec -it POD -- sh', 'kubectl port-forward svc/web 8080:80'] },
+                { title: 'Resource usage', text: 'Is a Pod close to its limits, which node is full.', code: ['kubectl top pods', 'kubectl top nodes'] },
+                { title: 'The full state', text: 'The raw object status: conditions, IPs, start times.', code: ['kubectl get pod POD -o yaml'] }
               ]
             },
             {
               kind: 'p',
-              text: 'Di luar kubectl, GKE mengirim log container (stdout/stderr) dan log sistem ke **Cloud Logging**, serta metrik ke **Cloud Monitoring** secara default. Halaman Workloads di Console menampilkan hal yang sama dengan `describe`, dan Logs Explorer bisa menyaring per namespace, Pod atau container — berguna untuk Pod yang sudah dihapus dan tidak bisa di-`logs` lagi.'
+              text: 'Outside kubectl, GKE sends container logs (stdout/stderr) and system logs to **Cloud Logging**, and metrics to **Cloud Monitoring**, by default. The Workloads page in the Console shows the same things as `describe`, and Logs Explorer can filter by namespace, Pod or container — useful for Pods that have already been deleted and can no longer be read with `logs`.'
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"Pod is in Pending state, how to find out why" → `kubectl describe pod`. "Application in the Pod is crashing, see the error" → `kubectl logs` (dengan `--previous` untuk crash). "View logs of Pods that were deleted" → Cloud Logging.'
+              text: '"Pod is in Pending state, how to find out why" → `kubectl describe pod`. "Application in the Pod is crashing, see the error" → `kubectl logs` (with `--previous` for a crash). "View logs of Pods that were deleted" → Cloud Logging.'
             }
           ]
         }
@@ -981,20 +974,20 @@ export const lesson: Lesson = {
     // ── 7 ─────────────────────────────────────────────────────────────────
     {
       id: 'cases',
-      title: 'Studi kasus',
+      title: 'Case studies',
       sections: [
         {
           id: 'case-first-deploy',
-          title: 'Kasus 1 — Deploy aplikasi pertama ke Autopilot',
+          title: 'Case 1 — First deployment to Autopilot',
           blocks: [
             {
               kind: 'case',
-              title: 'Dari source code sampai bisa dibuka di browser',
-              situation: 'Tim punya aplikasi web Python dengan Dockerfile. Mereka ingin menjalankannya di GKE tanpa mengurus node, dan bisa dibuka dari internet.',
+              title: 'From source code to something you can open in a browser',
+              situation: 'A team has a Python web app with a Dockerfile. They want to run it on GKE without managing nodes, reachable from the internet.',
               diagnose: [
-                'Pilih mode: tidak ingin mengurus node → **Autopilot**.',
-                'Image disimpan di Artifact Registry; dibangun dengan Cloud Build supaya tidak perlu Docker lokal.',
-                'Aplikasi stateless → **Deployment**; dibuka ke internet → **Service LoadBalancer** (atau Ingress bila nanti butuh HTTPS dan banyak path).'
+                'Pick the mode: no node management wanted → **Autopilot**.',
+                'Store the image in Artifact Registry; build it with Cloud Build so no local Docker is needed.',
+                'A stateless app → **Deployment**; exposed to the internet → a **LoadBalancer Service** (or an Ingress later, when it needs HTTPS and several paths).'
               ],
               fix: [
                 '$ gcloud artifacts repositories create apps --repository-format=docker --location=us-central1',
@@ -1007,19 +1000,19 @@ export const lesson: Lesson = {
                 'web    LoadBalancer   10.12.5.140   34.70.88.21   80:31234/TCP   75s',
                 '$ curl http://34.70.88.21/'
               ],
-              why: 'Urutannya selalu: image → cluster → kredensial kubectl → workload → Service. Di Autopilot, Pod pertama bisa sempat Pending sebentar sementara Google menyiapkan kapasitas; itu normal.',
-              exam: 'Soal sering mengacak urutan langkah ini, atau menghilangkan `get-credentials` sehingga kubectl tidak terhubung.'
+              why: 'The order is always: image → cluster → kubectl credentials → workload → Service. On Autopilot the first Pod may sit in Pending briefly while Google brings up capacity; that is normal.',
+              exam: 'Questions often shuffle these steps, or leave out `get-credentials` so kubectl is not connected.'
             }
           ]
         },
         {
           id: 'case-pending',
-          title: 'Kasus 2 — Pod nyangkut di Pending',
+          title: 'Case 2 — Pods stuck in Pending',
           blocks: [
             {
               kind: 'case',
-              title: 'Deployment baru di-scale ke 10, tapi 4 Pod tidak pernah jalan',
-              situation: 'Cluster Standard dengan satu node pool 3 node e2-medium, cluster autoscaler tidak aktif. Tim menaikkan replicas ke 10.',
+              title: 'A Deployment scaled to 10, but 4 Pods never start',
+              situation: 'A Standard cluster with one node pool of 3 e2-medium nodes and no cluster autoscaler. The team raised replicas to 10.',
               symptom: [
                 '$ kubectl get pods',
                 'NAME                   READY   STATUS    RESTARTS   AGE',
@@ -1029,61 +1022,61 @@ export const lesson: Lesson = {
                 '  Warning  FailedScheduling  4m  default-scheduler  0/3 nodes are available: 3 Insufficient cpu.'
               ],
               diagnose: [
-                'Pending = scheduler tidak menemukan node. Pesan Events-nya menyebut alasannya: **Insufficient cpu**.',
-                'Scheduler melihat **requests**, bukan pemakaian sebenarnya: 10 Pod × 500m CPU tidak muat di 3 × e2-medium.',
-                'Alasan lain yang mungkin tertulis: `didn\'t match Pod\'s node affinity/selector`, `had untolerated taint`, atau `pod has unbound immediate PersistentVolumeClaims`.'
+                'Pending = the scheduler found no node. The Events message gives the reason: **Insufficient cpu**.',
+                'The scheduler looks at **requests**, not actual usage: 10 Pods × 500m CPU do not fit on 3 × e2-medium.',
+                'Other reasons you may see: `didn\'t match Pod\'s node affinity/selector`, `had untolerated taint`, or `pod has unbound immediate PersistentVolumeClaims`.'
               ],
               fix: [
-                '# Pilihan A: biarkan GKE menambah node sendiri',
+                '# Option A: let GKE add nodes itself',
                 '$ gcloud container clusters update shop-std --zone=us-central1-a --enable-autoscaling --node-pool=default-pool --min-nodes=3 --max-nodes=8',
-                '# Pilihan B: tambah node manual',
+                '# Option B: add nodes by hand',
                 '$ gcloud container clusters resize shop-std --zone=us-central1-a --node-pool=default-pool --num-nodes=5',
-                '# Pilihan C: requests memang terlalu besar — perkecil di manifest lalu apply ulang'
+                '# Option C: the requests really are too big — lower them in the manifest and apply again'
               ],
-              why: 'HPA atau `kubectl scale` hanya menambah Pod; kalau node penuh, Pod baru akan Pending. Yang menambah node adalah cluster autoscaler (atau kamu, lewat resize). Di Autopilot, kasus ini selesai sendiri karena Google menambah kapasitas.',
-              exam: '"Pods remain Pending after HPA scales out" → aktifkan cluster autoscaler pada node pool.'
+              why: 'An HPA or `kubectl scale` only adds Pods; when the nodes are full, new Pods stay Pending. What adds nodes is the cluster autoscaler (or you, with resize). On Autopilot this case solves itself because Google adds capacity.',
+              exam: '"Pods remain Pending after HPA scales out" → enable the cluster autoscaler on the node pool.'
             }
           ]
         },
         {
           id: 'case-crashloop',
-          title: 'Kasus 3 — CrashLoopBackOff',
+          title: 'Case 3 — CrashLoopBackOff',
           blocks: [
             {
               kind: 'case',
-              title: 'Versi baru terus restart',
-              situation: 'Setelah deploy image v2, Pod berstatus CrashLoopBackOff dan RESTARTS terus naik.',
+              title: 'The new version keeps restarting',
+              situation: 'After deploying image v2, Pods show CrashLoopBackOff and RESTARTS keeps climbing.',
               symptom: [
                 '$ kubectl get pods',
                 'NAME                   READY   STATUS             RESTARTS      AGE',
                 'web-5c9f8d7b6-klmno    0/1     CrashLoopBackOff   5 (40s ago)   6m'
               ],
               diagnose: [
-                'Container sempat jalan lalu mati. Log container yang **sudah mati** dilihat dengan `--previous`.',
-                '`kubectl logs web-5c9f8d7b6-klmno --previous` → misalnya `KeyError: DATABASE_URL` (env var tidak ada) atau stack trace aplikasi.',
-                'Kalau log kosong, `describe` → Last State: Terminated, **Reason: OOMKilled, Exit Code: 137** berarti melewati limit memori. Exit Code 1 biasanya error aplikasi.'
+                'The container ran and then died. The logs of a container that **already died** are read with `--previous`.',
+                '`kubectl logs web-5c9f8d7b6-klmno --previous` → for example `KeyError: DATABASE_URL` (a missing environment variable) or an application stack trace.',
+                'If the log is empty, `describe` → Last State: Terminated, **Reason: OOMKilled, Exit Code: 137** means it went over its memory limit. Exit Code 1 is usually an application error.'
               ],
               fix: [
-                '# Env var hilang: pasang dari ConfigMap/Secret, lalu restart',
+                '# Missing env var: provide it from a ConfigMap/Secret, then restart',
                 '$ kubectl create configmap web-config --from-literal=DATABASE_URL=postgres://10.40.0.3/app',
-                '# (tambahkan envFrom: configMapRef web-config di manifest, lalu kubectl apply)',
-                '# OOMKilled: naikkan limit memori di manifest, atau perbaiki kebocoran memori',
-                '# Darurat: kembali ke versi yang sehat',
+                '# (add envFrom: configMapRef web-config to the manifest, then kubectl apply)',
+                '# OOMKilled: raise the memory limit in the manifest, or fix the memory leak',
+                '# In an emergency: go back to the healthy version',
                 '$ kubectl rollout undo deployment/web'
               ],
-              why: 'CrashLoopBackOff bukan penyebab, melainkan gejala: kubelet menunggu makin lama sebelum mencoba lagi. Penyebabnya hampir selalu ada di log container sebelumnya atau di Last State.',
+              why: 'CrashLoopBackOff is a symptom, not a cause: the kubelet waits longer each time before trying again. The cause is almost always in the previous container\'s logs or in Last State.',
               exam: '"View the logs of the previous instance of a container" → `kubectl logs POD --previous`.'
             }
           ]
         },
         {
           id: 'case-imagepull',
-          title: 'Kasus 4 — ImagePullBackOff',
+          title: 'Case 4 — ImagePullBackOff',
           blocks: [
             {
               kind: 'case',
-              title: 'Pod tidak pernah mulai karena image tidak bisa ditarik',
-              situation: 'Deployment baru di cluster Standard dengan node privat; image disimpan di Artifact Registry project lain.',
+              title: 'The Pod never starts because the image cannot be pulled',
+              situation: 'A new Deployment on a Standard cluster with private nodes; the image lives in Artifact Registry in another project.',
               symptom: [
                 '$ kubectl describe pod api-6d8f7c9b5-x2k4p',
                 'Events:',
@@ -1092,57 +1085,57 @@ export const lesson: Lesson = {
                 '  Normal   BackOff  5s   kubelet  Back-off pulling image …'
               ],
               diagnose: [
-                '**403 Forbidden** → masalah izin: service account node tidak boleh membaca repository itu.',
-                '**not found / manifest unknown** → nama atau tag image salah ketik.',
-                '**i/o timeout** ke registry di internet (mis. Docker Hub) dari node privat → tidak ada Cloud NAT.'
+                '**403 Forbidden** → a permissions problem: the node service account may not read that repository.',
+                '**not found / manifest unknown** → a typo in the image name or tag.',
+                '**i/o timeout** to a registry on the internet (e.g. Docker Hub) from private nodes → there is no Cloud NAT.'
               ],
               fix: [
                 '$ gcloud artifacts repositories add-iam-policy-binding apps --project=shared-images --location=us-central1 \\',
                 '    --member=serviceAccount:gke-nodes@ace-lab-123.iam.gserviceaccount.com --role=roles/artifactregistry.reader',
-                '# Tag salah: perbaiki image di manifest, kubectl apply ulang',
-                '# Docker Hub dari node privat: pasang Cloud NAT di region cluster, atau salin image ke Artifact Registry'
+                '# Wrong tag: fix the image in the manifest and kubectl apply again',
+                '# Docker Hub from private nodes: add Cloud NAT in the cluster region, or copy the image into Artifact Registry'
               ],
-              why: 'Yang menarik image adalah node (kubelet), memakai service account node — bukan identitas Pod dan bukan akunmu. Karena itu izin harus diberikan ke service account node.',
-              exam: '"GKE cannot pull images from Artifact Registry in another project" → beri `roles/artifactregistry.reader` ke service account node.'
+              why: 'The node (kubelet) pulls the image, using the node service account — not the Pod\'s identity and not your account. That is why the permission has to go to the node service account.',
+              exam: '"GKE cannot pull images from Artifact Registry in another project" → give the node service account `roles/artifactregistry.reader`.'
             }
           ]
         },
         {
           id: 'case-service',
-          title: 'Kasus 5 — Service ada, tapi aplikasinya tidak bisa diakses',
+          title: 'Case 5 — The Service exists, but the app is unreachable',
           blocks: [
             {
               kind: 'case',
-              title: 'EXTERNAL-IP sudah muncul, tapi curl timeout atau 502',
-              situation: 'Service LoadBalancer sudah punya IP publik. Pod berstatus Running. Tapi request ke IP itu tidak pernah dijawab.',
+              title: 'EXTERNAL-IP is there, but curl times out or gets a 502',
+              situation: 'The LoadBalancer Service has a public IP. The Pods are Running. But requests to that IP are never answered.',
               symptom: ['$ kubectl get endpoints web', 'NAME   ENDPOINTS   AGE', 'web    <none>      5m'],
               diagnose: [
-                'Endpoints kosong berarti **selector Service tidak cocok dengan label Pod** satu pun.',
-                'Bandingkan: `kubectl describe svc web` (Selector: `app=web`) dengan `kubectl get pods --show-labels` (ternyata `app=web-app`).',
-                'Kalau endpoints terisi tapi tetap gagal: cek `targetPort` sama dengan port yang didengarkan container, dan readiness probe tidak gagal (Pod yang belum Ready dikeluarkan dari endpoints).',
-                'Kalau EXTERNAL-IP lama `<pending>`: lihat `kubectl describe svc web` → Events (misalnya kuota IP habis).'
+                'Empty endpoints means **the Service selector matches no Pod labels** at all.',
+                'Compare `kubectl describe svc web` (Selector: `app=web`) with `kubectl get pods --show-labels` (which turn out to be `app=web-app`).',
+                'If endpoints are filled in but it still fails: check that `targetPort` is the port the container listens on, and that the readiness probe is not failing (Pods that are not Ready are taken out of the endpoints).',
+                'If EXTERNAL-IP stays `<pending>` for long: look at `kubectl describe svc web` → Events (for example an exhausted IP quota).'
               ],
               fix: [
-                '# Samakan label: perbaiki selector Service atau label di template Pod, lalu apply',
+                '# Make the labels match: fix the Service selector or the Pod template labels, then apply',
                 '$ kubectl get endpoints web',
                 'NAME   ENDPOINTS                                       AGE',
                 'web    10.40.0.12:8080,10.40.1.7:8080,10.40.2.3:8080   6m',
-                '# Uji dari dalam cluster tanpa load balancer',
+                '# Test from inside the cluster without the load balancer',
                 '$ kubectl port-forward svc/web 8080:80'
               ],
-              why: 'Service tidak tahu nama Pod; ia hanya menjalankan selector atas label. Satu karakter beda di label membuat Service "kosong" padahal semuanya terlihat sehat.',
-              exam: 'Pertanyaan "Pods are running but the Service returns no response" hampir selalu soal selector/label atau targetPort.'
+              why: 'A Service does not know Pod names; it just runs its selector over labels. One character off in a label leaves the Service "empty" while everything looks healthy.',
+              exam: '"Pods are running but the Service returns no response" is almost always about selectors/labels or targetPort.'
             }
           ]
         },
         {
           id: 'case-rollback',
-          title: 'Kasus 6 — Update gagal di tengah jalan',
+          title: 'Case 6 — An update fails halfway',
           blocks: [
             {
               kind: 'case',
-              title: 'Rolling update tertahan; kembalikan versi lama secepatnya',
-              situation: 'Tim menjalankan `kubectl set image` ke tag v3 yang ternyata tidak ada. Rollout tidak selesai.',
+              title: 'The rolling update is stuck; get the old version back fast',
+              situation: 'The team ran `kubectl set image` to a v3 tag that does not exist. The rollout never finishes.',
               symptom: [
                 '$ kubectl rollout status deployment/web',
                 'Waiting for deployment "web" rollout to finish: 1 out of 3 new replicas have been updated...',
@@ -1152,27 +1145,27 @@ export const lesson: Lesson = {
                 'web-84f6c7d9b-zz9q1    0/1   ImagePullBackOff   0   3m'
               ],
               diagnose: [
-                'Rolling update default (`maxUnavailable: 25%`, `maxSurge: 25%`) baru menghentikan Pod lama setelah Pod baru Ready — karena itu dua Pod lama masih melayani. Inilah alasan rolling update aman.',
-                '`kubectl rollout history deployment/web` menunjukkan revisi yang tersedia.'
+                'The default rolling update (`maxUnavailable: 25%`, `maxSurge: 25%`) only stops old Pods once new Pods are Ready — which is why two old Pods are still serving. That is what makes rolling updates safe.',
+                '`kubectl rollout history deployment/web` shows the revisions available.'
               ],
-              fix: ['$ kubectl rollout undo deployment/web', 'deployment.apps/web rolled back', '# atau ke revisi tertentu:', '$ kubectl rollout undo deployment/web --to-revision=2'],
-              why: 'Setiap perubahan template Pod membuat ReplicaSet baru; ReplicaSet lama tetap disimpan dengan 0 replika. Undo hanya menaikkan kembali ReplicaSet lama — cepat dan tanpa build ulang.',
+              fix: ['$ kubectl rollout undo deployment/web', 'deployment.apps/web rolled back', '# or to a specific revision:', '$ kubectl rollout undo deployment/web --to-revision=2'],
+              why: 'Every change to the Pod template creates a new ReplicaSet; the old ReplicaSet is kept at 0 replicas. Undo just scales the old ReplicaSet back up — fast, with no rebuild.',
               exam: '"Quickly revert a Deployment to the previous version" → `kubectl rollout undo`.'
             }
           ]
         },
         {
           id: 'case-scale',
-          title: 'Kasus 7 — Lonjakan trafik',
+          title: 'Case 7 — A traffic spike',
           blocks: [
             {
               kind: 'case',
-              title: 'Promo jam 12 siang: trafik naik 5×',
-              situation: 'Toko online di GKE Standard. Saat promo, CPU Pod web 95% dan respons melambat. Tim ingin skala otomatis, naik saat ramai dan turun lagi setelahnya.',
+              title: 'Noon promotion: traffic up 5×',
+              situation: 'An online shop on GKE Standard. During a promotion the web Pods sit at 95% CPU and responses slow down. The team wants automatic scaling: up when it is busy, back down afterwards.',
               diagnose: [
-                'Dua lapis skala: **Pod** (HPA) dan **node** (cluster autoscaler). HPA tanpa cluster autoscaler membuat Pod baru Pending saat node penuh (Kasus 2).',
-                'HPA butuh `requests` CPU di container, karena persentase dihitung terhadap requests.',
-                'VerticalPodAutoscaler membantu menebak requests yang pas, tapi jangan dipakai bersama HPA pada metrik CPU/memori yang sama.'
+                'Two layers of scaling: **Pods** (HPA) and **nodes** (cluster autoscaler). An HPA without the cluster autoscaler leaves new Pods Pending once nodes are full (Case 2).',
+                'The HPA needs CPU `requests` on the container, because the percentage is measured against requests.',
+                'A VerticalPodAutoscaler helps find the right requests, but do not use it alongside an HPA on the same CPU/memory metrics.'
               ],
               fix: [
                 '$ kubectl autoscale deployment web --min=3 --max=30 --cpu=60%',
@@ -1181,48 +1174,48 @@ export const lesson: Lesson = {
                 'NAME   REFERENCE        TARGETS       MINPODS   MAXPODS   REPLICAS   AGE',
                 'web    Deployment/web   cpu: 58%/60%  3         30        14         20m'
               ],
-              why: 'HPA menambah Pod saat rata-rata CPU melewati target; Pod yang tidak muat memicu cluster autoscaler menambah node; saat sepi keduanya turun lagi. Di Autopilot cukup HPA — kapasitas node mengikuti otomatis.',
-              exam: 'Pembeda klasik: `kubectl scale`/HPA = Pod, cluster autoscaler/`clusters resize` = node.'
+              why: 'The HPA adds Pods when average CPU passes the target; Pods that do not fit make the cluster autoscaler add nodes; when it is quiet both come back down. On Autopilot the HPA is enough — node capacity follows automatically.',
+              exam: 'The classic distinction: `kubectl scale`/HPA = Pods, cluster autoscaler/`clusters resize` = nodes.'
             }
           ]
         },
         {
           id: 'case-wi',
-          title: 'Kasus 8 — Aplikasi perlu membaca Cloud Storage',
+          title: 'Case 8 — The app needs to read Cloud Storage',
           blocks: [
             {
               kind: 'case',
-              title: 'Tanpa kunci, dengan least privilege',
-              situation: 'Service `report` di namespace `shop` perlu membaca file dari bucket `ace-assets-123`. Developer berencana membuat kunci JSON service account dan menyimpannya di Secret.',
+              title: 'No keys, least privilege',
+              situation: 'The `report` service in the `shop` namespace needs to read files from the bucket `ace-assets-123`. A developer plans to create a JSON service account key and keep it in a Secret.',
               diagnose: [
-                'Kunci JSON adalah kredensial jangka panjang yang bisa bocor; banyak organisasi memblokir pembuatannya.',
-                'Memberi role ke service account node membuat **semua** Pod di node itu ikut mendapat akses — melanggar least privilege.',
-                'Yang benar: **Workload Identity Federation for GKE** — role diberikan ke identitas KSA milik aplikasi itu saja.'
+                'A JSON key is a long-lived credential that can leak; many organisations block creating them.',
+                'Granting the role to the node service account gives **every** Pod on that node access too — against least privilege.',
+                'The right way: **Workload Identity Federation for GKE** — the role goes to that application\'s KSA identity only.'
               ],
               fix: [
                 '$ kubectl create serviceaccount report-ksa -n shop',
                 '$ gcloud storage buckets add-iam-policy-binding gs://ace-assets-123 --role=roles/storage.objectViewer \\',
                 '    --member="principal://iam.googleapis.com/projects/123456789012/locations/global/workloadIdentityPools/ace-lab-123.svc.id.goog/subject/ns/shop/sa/report-ksa"',
-                '# di Deployment report: spec.template.spec.serviceAccountName: report-ksa',
+                '# in the report Deployment: spec.template.spec.serviceAccountName: report-ksa',
                 '$ kubectl rollout restart deployment/report -n shop'
               ],
-              why: 'Client library Google di dalam Pod otomatis mengambil token dari metadata server GKE; kode aplikasi tidak berubah sama sekali dan tidak ada rahasia yang disimpan.',
-              exam: 'Jawaban "store a service account key as a Kubernetes Secret" hampir selalu salah; "use Workload Identity" hampir selalu benar.'
+              why: 'Google client libraries in the Pod pick up a token from the GKE metadata server automatically; the application code does not change at all and no secret is stored.',
+              exam: '"Store a service account key as a Kubernetes Secret" is almost always wrong; "use Workload Identity" is almost always right.'
             }
           ]
         },
         {
           id: 'case-maintenance',
-          title: 'Kasus 9 — Maintenance node tanpa downtime',
+          title: 'Case 9 — Node maintenance without downtime',
           blocks: [
             {
               kind: 'case',
-              title: 'Mengosongkan satu node dengan aman',
-              situation: 'Satu node di cluster Standard perlu dikeluarkan (misalnya mau diganti machine type-nya lewat node pool baru). Aplikasi tidak boleh down.',
+              title: 'Emptying one node safely',
+              situation: 'One node in a Standard cluster has to go (for example, to move to another machine type through a new node pool). The application must not go down.',
               diagnose: [
-                '`cordon` menghentikan Pod baru ditaruh di node itu; `drain` mengusir Pod yang ada supaya dijadwalkan ulang di node lain.',
-                'Node GKE selalu menjalankan DaemonSet sistem (log, metrik, CSI), jadi `drain` butuh `--ignore-daemonsets`.',
-                '**PodDisruptionBudget** (mis. `minAvailable: 2`) membuat drain menunggu supaya replika tidak turun di bawah batas.'
+                '`cordon` stops new Pods from being placed on the node; `drain` evicts the existing Pods so they are rescheduled on other nodes.',
+                'GKE nodes always run system DaemonSets (logging, metrics, CSI), so `drain` needs `--ignore-daemonsets`.',
+                'A **PodDisruptionBudget** (e.g. `minAvailable: 2`) makes the drain wait so replicas never drop below the limit.'
               ],
               fix: [
                 '$ kubectl cordon gke-shop-std-default-pool-1a2b',
@@ -1231,9 +1224,9 @@ export const lesson: Lesson = {
                 'evicting pod default/web-7d4b9c8f6d-abcde',
                 'pod/web-7d4b9c8f6d-abcde evicted',
                 'node/gke-shop-std-default-pool-1a2b drained',
-                '$ kubectl uncordon gke-shop-std-default-pool-1a2b   # bila node dipakai lagi'
+                '$ kubectl uncordon gke-shop-std-default-pool-1a2b   # if the node is used again'
               ],
-              why: 'Upgrade otomatis GKE melakukan hal yang sama untuk setiap node (surge upgrade) dan juga menghormati PodDisruptionBudget — karena itu PDB penting untuk aplikasi produksi.',
+              why: 'GKE automatic upgrades do the same for every node (surge upgrades) and also respect PodDisruptionBudgets — which is why PDBs matter for production apps.',
               exam: '"Safely evict all Pods from a node before maintenance" → `kubectl drain`.'
             }
           ]
@@ -1244,86 +1237,86 @@ export const lesson: Lesson = {
     // ── 8 ─────────────────────────────────────────────────────────────────
     {
       id: 'check',
-      title: 'Cek pemahaman',
+      title: 'Check yourself',
       sections: [
         {
           id: 'quiz',
-          title: 'Sepuluh soal singkat',
+          title: 'Ten quick questions',
           blocks: [
             {
               kind: 'quiz',
-              q: 'Perusahaan ingin menjalankan aplikasi container di Kubernetes tanpa mengurus node sama sekali dan hanya membayar resource yang dipakai Pod. Mode apa?',
-              options: ['GKE Standard dengan cluster autoscaler', 'GKE Autopilot', 'Cloud Run', 'Compute Engine dengan managed instance group'],
+              q: 'A company wants to run container apps on Kubernetes without managing nodes at all, paying only for the resources Pods use. Which mode?',
+              options: ['GKE Standard with the cluster autoscaler', 'GKE Autopilot', 'Cloud Run', 'Compute Engine with a managed instance group'],
               answer: 1,
-              explain: 'Autopilot: Google mengelola node, dan biaya dihitung dari requests Pod. Cloud Run juga tanpa node, tapi soal menyebut Kubernetes.'
+              explain: 'Autopilot: Google manages the nodes, and you are billed for Pod requests. Cloud Run has no nodes either, but the question says Kubernetes.'
             },
             {
               kind: 'quiz',
-              q: 'Perintah `gcloud container clusters create web --region=us-central1 --num-nodes=2` — berapa node yang dibuat (region punya 3 zone)?',
+              q: '`gcloud container clusters create web --region=us-central1 --num-nodes=2` — how many nodes are created (the region has 3 zones)?',
               options: ['2', '3', '6', '1'],
               answer: 2,
-              explain: 'Di cluster regional, `--num-nodes` berlaku per zone: 2 × 3 zone = 6 node.'
+              explain: 'In a regional cluster `--num-nodes` is per zone: 2 × 3 zones = 6 nodes.'
             },
             {
               kind: 'quiz',
-              q: 'Pod berstatus Pending. Perintah pertama untuk mengetahui alasannya?',
+              q: 'A Pod is Pending. What is the first command to find out why?',
               options: ['kubectl logs POD', 'kubectl describe pod POD', 'kubectl exec -it POD -- sh', 'kubectl top pod POD'],
               answer: 1,
-              explain: 'Pod Pending belum pernah jalan, jadi belum ada log. Alasannya (Insufficient cpu, taint, PVC) tertulis di Events pada describe.'
+              explain: 'A Pending Pod has never run, so there are no logs yet. The reason (Insufficient cpu, a taint, a PVC) is in the Events shown by describe.'
             },
             {
               kind: 'quiz',
-              q: 'Container terus restart (CrashLoopBackOff). Bagaimana melihat error dari container yang barusan mati?',
+              q: 'A container keeps restarting (CrashLoopBackOff). How do you see the error from the container that just died?',
               options: ['kubectl logs POD --previous', 'kubectl get pod POD -o wide', 'kubectl rollout status deployment/web', 'kubectl get events -A'],
               answer: 0,
-              explain: '`--previous` menampilkan log instance container sebelumnya, yang crash. Log container yang sedang start sering masih kosong.'
+              explain: '`--previous` shows the logs of the previous container instance, the one that crashed. The log of a container that is just starting is often still empty.'
             },
             {
               kind: 'quiz',
-              q: 'Agen pengumpul log harus berjalan tepat satu di setiap node, termasuk node baru. Objek apa?',
-              options: ['Deployment dengan replicas = jumlah node', 'StatefulSet', 'DaemonSet', 'CronJob'],
+              q: 'A log-collecting agent must run exactly once on every node, including new nodes. Which object?',
+              options: ['A Deployment with replicas = number of nodes', 'StatefulSet', 'DaemonSet', 'CronJob'],
               answer: 2,
-              explain: 'DaemonSet menjalankan satu Pod per node dan otomatis menambah Pod saat node bertambah.'
+              explain: 'A DaemonSet runs one Pod per node and adds Pods automatically as nodes are added.'
             },
             {
               kind: 'quiz',
-              q: 'HPA menaikkan jumlah Pod, tapi Pod baru Pending karena node penuh. Apa yang perlu diaktifkan?',
-              options: ['VerticalPodAutoscaler', 'Cluster autoscaler pada node pool', 'kubectl scale dengan replicas lebih besar', 'Release channel rapid'],
+              q: 'The HPA raises the number of Pods, but the new Pods stay Pending because the nodes are full. What needs turning on?',
+              options: ['VerticalPodAutoscaler', 'The cluster autoscaler on the node pool', 'kubectl scale with more replicas', 'The rapid release channel'],
               answer: 1,
-              explain: 'Cluster autoscaler menambah node saat ada Pod yang tidak bisa dijadwalkan. HPA dan kubectl scale hanya mengatur Pod.'
+              explain: 'The cluster autoscaler adds nodes when there are Pods that cannot be scheduled. The HPA and kubectl scale only deal with Pods.'
             },
             {
               kind: 'quiz',
-              q: 'Pod perlu membaca bucket Cloud Storage mengikuti best practice. Caranya?',
+              q: 'A Pod needs to read a Cloud Storage bucket following best practice. How?',
               options: [
-                'Simpan kunci JSON service account di Kubernetes Secret',
-                'Beri roles/storage.admin ke service account node',
-                'Pakai Workload Identity: beri role ke identitas KSA aplikasi',
-                'Buat bucket publik'
+                'Store a service account JSON key in a Kubernetes Secret',
+                'Give roles/storage.admin to the node service account',
+                'Use Workload Identity: grant the role to the app\'s KSA identity',
+                'Make the bucket public'
               ],
               answer: 2,
-              explain: 'Workload Identity memberi token berumur pendek untuk KSA tertentu — tanpa kunci, dan hanya Pod itu yang mendapat akses.'
+              explain: 'Workload Identity gives a short-lived token to one particular KSA — no keys, and only that Pod gets access.'
             },
             {
               kind: 'quiz',
-              q: 'Service LoadBalancer punya EXTERNAL-IP, Pod Running, tapi `kubectl get endpoints web` menunjukkan `<none>`. Penyebab paling mungkin?',
-              options: ['Kuota IP habis', 'Selector Service tidak cocok dengan label Pod', 'Cluster autoscaler mati', 'Release channel terlalu lama'],
+              q: 'A LoadBalancer Service has an EXTERNAL-IP and the Pods are Running, but `kubectl get endpoints web` shows `<none>`. The most likely cause?',
+              options: ['The IP quota is exhausted', 'The Service selector does not match the Pod labels', 'The cluster autoscaler is off', 'The release channel is too old'],
               answer: 1,
-              explain: 'Endpoints kosong = tidak ada Pod (yang Ready) yang cocok dengan selector Service.'
+              explain: 'Empty endpoints = no (Ready) Pod matches the Service selector.'
             },
             {
               kind: 'quiz',
-              q: 'Image versi baru membuat aplikasi error di produksi. Cara tercepat kembali ke versi sebelumnya?',
-              options: ['Hapus Deployment lalu buat ulang', 'kubectl rollout undo deployment/web', 'gcloud container clusters upgrade --master', 'kubectl delete pods --all'],
+              q: 'A new image version breaks the app in production. What is the fastest way back to the previous version?',
+              options: ['Delete the Deployment and create it again', 'kubectl rollout undo deployment/web', 'gcloud container clusters upgrade --master', 'kubectl delete pods --all'],
               answer: 1,
-              explain: 'Undo menaikkan kembali ReplicaSet revisi sebelumnya — tanpa build ulang, dengan rolling update.'
+              explain: 'Undo scales the previous revision\'s ReplicaSet back up — no rebuild, using a rolling update.'
             },
             {
               kind: 'quiz',
-              q: 'Di Cloud Shell, `kubectl get pods` menjawab "The connection to the server localhost:8080 was refused". Apa yang terlupa?',
+              q: 'In Cloud Shell, `kubectl get pods` answers "The connection to the server localhost:8080 was refused". What was forgotten?',
               options: ['gcloud container clusters get-credentials', 'gcloud services enable container.googleapis.com', 'kubectl apply -f', 'gcloud auth configure-docker'],
               answer: 0,
-              explain: 'Tanpa kubeconfig, kubectl mencoba localhost:8080. get-credentials menulis context untuk cluster GKE.'
+              explain: 'Without a kubeconfig, kubectl tries localhost:8080. get-credentials writes a context for the GKE cluster.'
             }
           ]
         }

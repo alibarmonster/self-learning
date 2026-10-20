@@ -277,7 +277,7 @@ also set `filterHint` for the search placeholder.
 
 Cheat sheets are shorthand for remembering; a deep dive is for understanding. `#/<exam>/learn`
 (button **Deep dive** in the header, on ACE) lists lessons that teach one service from the ground up,
-in Indonesian with the English terms. The first is **Getting Started with Google Kubernetes Engine**:
+in English (the lab they link to is in Indonesian). The first is **Getting Started with Google Kubernetes Engine**:
 why containers need Kubernetes, the core objects and workload types, Services and storage, the
 cluster's components, node pools, regional clusters and upgrades, networking, IAM vs RBAC vs
 Workload Identity, Autopilot against Standard, kubectl, introspection (reading Pod phase, container
@@ -300,8 +300,8 @@ firewall exercises where you call each connection allow or deny and then see the
 the full evaluation trace.
 
 The third, **Fundamentals of Cloud Run**, follows the "Fundamentals of Cloud Run" training module —
-overview, resource model, container lifecycle, autoscaling and access control — rewritten in
-Indonesian and brought up to date (request-based and instance-based billing, Direct VPC egress). It
+overview, resource model, container lifecycle, autoscaling and access control — rewritten in its
+own words and brought up to date (request-based and instance-based billing, Direct VPC egress). It
 adds releases and traffic splitting, the service identity, nine troubleshooting scenarios and twelve
 questions, and an autoscaling calculator: set traffic, latency, concurrency, min/max instances and
 database connections per instance, or load a preset situation, and see how many instances run, which

@@ -106,20 +106,20 @@
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
   const lineKind = (l: string) => (l.startsWith('$ ') ? 'cmd' : l.startsWith('# ') ? 'note' : 'out');
-  const TONE: Record<string, string> = { analogy: 'Analogi', exam: 'Di soal ujian', tip: 'Tips', warn: 'Perhatikan' };
+  const TONE: Record<string, string> = { analogy: 'Analogy', exam: 'On the exam', tip: 'Tip', warn: 'Watch out' };
   const letter = (i: number) => String.fromCharCode(65 + i);
 
   const isQuiz = (b: LessonBlock): b is Extract<LessonBlock, { kind: 'quiz' }> => b.kind === 'quiz';
 </script>
 
 {#if !meta}
-  <div class="page hub rise" lang="id">
+  <div class="page hub rise" lang="en">
     <header class="head">
       <p class="eyebrow">{exam.short} · Deep dive</p>
-      <h1>Pelajaran mendalam</h1>
+      <h1>Deep dives</h1>
       <p class="lede">
-        Cheat sheet berisi singkatan untuk mengingat. Halaman ini untuk memahami: satu layanan dibahas dari nol — konsep, komponen,
-        perintah, cara membaca apa yang terjadi — lalu studi kasus dan soal cek pemahaman.
+        A cheat sheet is shorthand for remembering. These pages are for understanding: one service taught from the ground up —
+        concepts, components, commands, how to read what is going on — then case studies and questions to check yourself.
       </p>
     </header>
     <ul class="cards">
@@ -127,7 +127,7 @@
         {@const done = Object.keys(read<Record<string, true>>(readKey(m.id), {})).length}
         <li>
           <button class="card lesson-card" onclick={() => quiz.openLesson(m.id)}>
-            <span class="meta"><span class="level">{m.level}</span><span class="mins mono">±{m.minutes} menit</span>{#if done}<span class="tick">{done} bagian dibaca</span>{/if}</span>
+            <span class="meta"><span class="level">{m.level}</span><span class="mins mono">~{m.minutes} min</span>{#if done}<span class="tick">{done} sections read</span>{/if}</span>
             <strong>{m.title}</strong>
             <span class="summary">{m.summary}</span>
             <span class="topics">{#each m.topics as t (t)}<span>{t}</span>{/each}</span>
@@ -137,25 +137,25 @@
     </ul>
   </div>
 {:else if failed}
-  <p class="page loading">Pelajaran gagal dimuat. Muat ulang halaman.</p>
+  <p class="page loading">The lesson failed to load. Reload the page.</p>
 {:else if !lesson}
-  <p class="page loading">Memuat pelajaran…</p>
+  <p class="page loading">Loading the lesson…</p>
 {:else}
   <div class="page lesson rise" lang={lesson.lang}>
-    <button class="btn btn-ghost crumb" onclick={() => quiz.openLesson()}><span aria-hidden="true">‹</span> Semua pelajaran</button>
+    <button class="btn btn-ghost crumb" onclick={() => quiz.openLesson()}><span aria-hidden="true">‹</span> All lessons</button>
     <header class="head">
-      <p class="eyebrow">Deep dive · {meta.level} · ±{meta.minutes} menit</p>
-      <h1 lang="en">{lesson.title}</h1>
+      <p class="eyebrow">Deep dive · {meta.level} · ~{meta.minutes} min</p>
+      <h1>{lesson.title}</h1>
       <p class="lede">{lesson.intro}</p>
       <div class="progress">
         <div class="bar" aria-hidden="true"><span style:width={`${(readCount / Math.max(1, sections.length)) * 100}%`}></span></div>
-        <span class="mono">{readCount}/{sections.length} bagian dibaca{#if quizDone} · kuis {quizRight}/{quizzes.length} benar{/if}</span>
+        <span class="mono">{readCount}/{sections.length} sections read{#if quizDone} · quiz {quizRight}/{quizzes.length} right{/if}</span>
       </div>
     </header>
 
     <div class="layout">
-      <nav class="toc" aria-label="Daftar isi">
-        <button class="toc-toggle" onclick={() => (tocOpen = !tocOpen)} aria-expanded={tocOpen}>Daftar isi <span aria-hidden="true">{tocOpen ? '▴' : '▾'}</span></button>
+      <nav class="toc" aria-label="Contents">
+        <button class="toc-toggle" onclick={() => (tocOpen = !tocOpen)} aria-expanded={tocOpen}>Contents <span aria-hidden="true">{tocOpen ? '▴' : '▾'}</span></button>
         <div class="toc-body" class:open={tocOpen}>
           {#each lesson.parts as part, pi (part.id)}
             <p class="toc-part"><span class="mono">{pi + 1}</span> {part.title}</p>
@@ -169,18 +169,18 @@
               {/each}
             </ul>
           {/each}
-          <p class="toc-part"><span class="mono">→</span> <button class="link" onclick={() => document.getElementById('practice')?.scrollIntoView({ behavior: 'smooth' })}>Latihan di lab</button></p>
+          <p class="toc-part"><span class="mono">→</span> <button class="link" onclick={() => document.getElementById('practice')?.scrollIntoView({ behavior: 'smooth' })}>Practise in the lab</button></p>
         </div>
       </nav>
 
       <article class="content">
         {#each lesson.parts as part, pi (part.id)}
-          <p class="part-label"><span class="mono">Bagian {pi + 1}</span> {part.title}</p>
+          <p class="part-label"><span class="mono">Part {pi + 1}</span> {part.title}</p>
           {#each part.sections as s (s.id)}
             <section id={`s-${s.id}`} class="sec" use:watch={s.id}>
               <h2>{s.title}</h2>
               {#if s.id === 'quiz' && quizzes.length}
-                <p class="quiz-score mono">{quizDone}/{quizzes.length} dijawab · {quizRight} benar {#if quizDone}<button class="link" onclick={resetQuiz}>ulangi</button>{/if}</p>
+                <p class="quiz-score mono">{quizDone}/{quizzes.length} answered · {quizRight} right {#if quizDone}<button class="link" onclick={resetQuiz}>reset</button>{/if}</p>
               {/if}
               {#each s.blocks as b, bi (bi)}
                 {#if b.kind === 'p'}
@@ -226,8 +226,8 @@
                       <article class="term-card">
                         <h3 lang="en">{t.term}</h3>
                         <p>{@html fmt(t.meaning)}</p>
-                        {#if t.analogy}<p class="term-line"><span>Analogi</span>{@html fmt(t.analogy)}</p>{/if}
-                        {#if t.example}<p class="term-line"><span>Contoh</span>{@html fmt(t.example)}</p>{/if}
+                        {#if t.analogy}<p class="term-line"><span>Analogy</span>{@html fmt(t.analogy)}</p>{/if}
+                        {#if t.example}<p class="term-line"><span>Example</span>{@html fmt(t.example)}</p>{/if}
                       </article>
                     {/each}
                   </div>
@@ -247,25 +247,25 @@
                 {:else if b.kind === 'case'}
                   <div class="case">
                     <p class="case-title">{b.title}</p>
-                    <div class="case-row"><span class="case-label">Situasi</span><p>{@html fmt(b.situation)}</p></div>
+                    <div class="case-row"><span class="case-label">Situation</span><p>{@html fmt(b.situation)}</p></div>
                     {#if b.symptom}
                       <div class="case-row">
-                        <span class="case-label">Gejala</span>
+                        <span class="case-label">Symptom</span>
                         <pre class="mini">{#each b.symptom as l, k (k)}<span class={`ln ${lineKind(l)}`}>{l}</span>
 {/each}</pre>
                       </div>
                     {/if}
                     <div class="case-row">
-                      <span class="case-label">Diagnosa</span>
+                      <span class="case-label">Diagnosis</span>
                       <ol class="list tight">{#each b.diagnose as d, k (k)}<li>{@html fmt(d)}</li>{/each}</ol>
                     </div>
                     <div class="case-row">
-                      <span class="case-label">Perbaikan</span>
+                      <span class="case-label">Fix</span>
                       <pre class="mini">{#each b.fix as l, k (k)}<span class={`ln ${lineKind(l)}`}>{l}</span>
 {/each}</pre>
                     </div>
-                    <div class="case-row"><span class="case-label">Kenapa</span><p>{@html fmt(b.why)}</p></div>
-                    {#if b.exam}<aside class="callout exam slim"><p class="callout-title">Di soal ujian</p><p>{@html fmt(b.exam)}</p></aside>{/if}
+                    <div class="case-row"><span class="case-label">Why</span><p>{@html fmt(b.why)}</p></div>
+                    {#if b.exam}<aside class="callout exam slim"><p class="callout-title">On the exam</p><p>{@html fmt(b.exam)}</p></aside>{/if}
                   </div>
                 {:else if b.kind === 'cidr'}
                   <CidrCalc value={b.value} note={b.note} />
@@ -294,7 +294,7 @@
                       {/each}
                     </ul>
                     {#if chosen !== undefined}
-                      <p class="explain" class:ok={chosen === b.answer}><strong>{chosen === b.answer ? 'Benar.' : `Belum tepat — jawabannya ${letter(b.answer)}.`}</strong> {@html fmt(b.explain)}</p>
+                      <p class="explain" class:ok={chosen === b.answer}><strong>{chosen === b.answer ? 'Correct.' : `Not quite — the answer is ${letter(b.answer)}.`}</strong> {@html fmt(b.explain)}</p>
                     {/if}
                   </div>
                 {/if}
@@ -305,8 +305,8 @@
         {/each}
 
         <section id="practice" class="sec practice">
-          <h2>Latihan di lab</h2>
-          <p class="para">Pahami dulu di sini, lalu latih tangan tanpa akun Google Cloud — semua disimulasikan di browser.</p>
+          <h2>Practise in the lab</h2>
+          <p class="para">Understand it here first, then practise hands-on without a Google Cloud account — everything is simulated in the browser. (The lab itself is in Indonesian.)</p>
           <ul class="links">
             {#each lesson.practice as l (l.href)}
               <li>

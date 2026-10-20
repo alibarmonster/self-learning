@@ -26,7 +26,7 @@ const A = 'marker-end="url(#run-arrow)"';
 const SM = 'style="font-size: 12px"';
 
 const FIG_CONTRACT = SVG(
-  'Klien mengirim HTTPS ke endpoint run.app; Cloud Run mengurus TLS dan meneruskan HTTP ke port 8080 container milikmu',
+  'A client sends HTTPS to the run.app endpoint; Cloud Run handles TLS and forwards HTTP to port 8080 of your container',
   720,
   220,
   `
@@ -40,23 +40,23 @@ const FIG_CONTRACT = SVG(
   <path d="M16,170 L396,170 M16,164 L16,176 M396,164 L396,176" ${LINE} opacity="0.5"/>
   <path d="M488,170 L704,170 M488,164 L488,176 M704,164 L704,176" ${LINE} opacity="0.5"/>
   <g fill="currentColor" text-anchor="middle">
-    <text x="94" y="97" font-weight="600">Klien</text>
-    <text x="94" y="115" opacity="0.7" ${SM}>browser, app, service lain</text>
+    <text x="94" y="97" font-weight="600">Client</text>
+    <text x="94" y="115" opacity="0.7" ${SM}>browser, app, service</text>
     <text x="193" y="90" ${SM}>HTTPS</text>
     <text x="306" y="86" ${ON} font-weight="600">Cloud Run</text>
     <text x="306" y="106" ${ON_SM}>*.run.app · TLS · HTTP/2</text>
     <text x="306" y="124" ${ON_SM}>gRPC · WebSockets</text>
     <text x="441" y="90" ${SM}>HTTP :8080</text>
     <text x="596" y="56" opacity="0.7" ${SM}>revision · instance</text>
-    <text x="596" y="89">container milikmu</text>
-    <text x="596" y="135">container milikmu</text>
-    <text x="206" y="196" ${SM}>Diurus Cloud Run: endpoint, sertifikat, load balancing, scaling</text>
-    <text x="596" y="196" ${SM}>Urusanmu: kode yang listen di $PORT</text>
+    <text x="596" y="89">your container</text>
+    <text x="596" y="135">your container</text>
+    <text x="206" y="196" ${SM}>Cloud Run handles: endpoint, certificate, load balancing, scaling</text>
+    <text x="596" y="196" ${SM}>You handle: code listening on $PORT</text>
   </g>`
 );
 
 const FIG_MODEL = SVG(
-  'Model resource Cloud Run: service regional berisi revision; revision aktif punya instance. Job berisi execution yang menjalankan beberapa task paralel',
+  'The Cloud Run resource model: a regional service holds revisions; the serving revision has instances. A job holds executions that run several tasks in parallel',
   720,
   300,
   `
@@ -78,22 +78,22 @@ const FIG_MODEL = SVG(
     <text x="32" y="36" font-weight="600">Project ace-lab-123</text>
     <text x="52" y="66" opacity="0.75">Region asia-southeast2</text>
     <text x="390" y="66" opacity="0.75">Region us-central1</text>
-    <text x="64" y="102" font-weight="600">Service shop · URL tetap</text>
+    <text x="64" y="102" font-weight="600">Service shop · stable URL</text>
     <text x="80" y="139" opacity="0.7">shop-00001-abc · 0% traffic</text>
     <text x="80" y="186" ${ON} font-weight="600">shop-00002-xyz · 100%</text>
-    <text x="178" y="221" ${ON_SM}>3 instance aktif</text>
+    <text x="178" y="221" ${ON_SM}>3 active instances</text>
     <text x="402" y="102" font-weight="600">Job nightly-report</text>
     <text x="418" y="134" ${ON} font-weight="600">Execution 02:00</text>
     <g text-anchor="middle" ${ON_SM}>
       <text x="444" y="168">task 0</text><text x="502" y="168">task 1</text><text x="560" y="168">task 2</text><text x="618" y="168">task 3</text>
-      <text x="529" y="208">tiap task = 1 container, paralel</text>
-      <text x="529" y="226">sukses jika semua task sukses</text>
+      <text x="529" y="208">each task = 1 container, in parallel</text>
+      <text x="529" y="226">succeeds when every task succeeds</text>
     </g>
   </g>`
 );
 
 const FIG_LIFECYCLE = SVG(
-  'Siklus hidup container: Starting, Serving, Idle, Shutting down, Stopped. Idle setelah 100 ms tanpa request, kembali Serving saat request datang, SIGTERM memberi 10 detik, crash atau memori penuh langsung Stopped',
+  'The container lifecycle: Starting, Serving, Idle, Shutting down, Stopped. Idle after 100 ms with no requests, back to Serving when a request arrives, SIGTERM gives 10 seconds, a crash or full memory stops it at once',
   720,
   240,
   `
@@ -112,24 +112,24 @@ const FIG_LIFECYCLE = SVG(
   </g>
   <g fill="currentColor" text-anchor="middle">
     <text x="80" y="116" font-weight="600">Starting</text>
-    <text x="80" y="134" opacity="0.7" ${SM}>menyalakan app</text>
+    <text x="80" y="134" opacity="0.7" ${SM}>app booting</text>
     <text x="275" y="52" ${ON} font-weight="600">Serving</text>
-    <text x="275" y="70" ${ON_SM}>CPU penuh</text>
+    <text x="275" y="70" ${ON_SM}>full CPU</text>
     <text x="275" y="180" font-weight="600">Idle</text>
-    <text x="275" y="198" opacity="0.7" ${SM}>CPU hampir 0</text>
+    <text x="275" y="198" opacity="0.7" ${SM}>CPU near zero</text>
     <text x="495" y="180" font-weight="600">Shutting down</text>
-    <text x="495" y="198" opacity="0.7" ${SM}>bersih-bersih</text>
+    <text x="495" y="198" opacity="0.7" ${SM}>cleaning up</text>
     <text x="650" y="125" font-weight="600">Stopped</text>
-    <text x="252" y="124" text-anchor="end" ${SM}>sepi 100 ms</text>
-    <text x="298" y="124" text-anchor="start" ${SM}>request masuk</text>
+    <text x="252" y="124" text-anchor="end" ${SM}>quiet 100 ms</text>
+    <text x="298" y="124" text-anchor="start" ${SM}>request arrives</text>
     <text x="384" y="176" ${SM}>SIGTERM</text>
-    <text x="616" y="200" ${SM}>maks 10 detik</text>
-    <text x="490" y="30" ${SM}>crash / memori penuh</text>
+    <text x="616" y="200" ${SM}>10 s at most</text>
+    <text x="490" y="30" ${SM}>crash / memory full</text>
   </g>`
 );
 
 const FIG_IMAGE = SVG(
-  'Saat deploy, Cloud Run menyalin image dari Artifact Registry ke penyimpanan internalnya; setiap instance baru ditarik dari penyimpanan internal itu',
+  'On deploy, Cloud Run copies the image from Artifact Registry into its own internal storage; every new instance pulls from that internal storage',
   720,
   190,
   `
@@ -146,15 +146,15 @@ const FIG_IMAGE = SVG(
   </g>
   <g fill="currentColor" text-anchor="middle">
     <text x="101" y="91" font-weight="600">Artifact Registry</text>
-    <text x="101" y="109" opacity="0.7" ${SM}>image kamu</text>
-    <text x="230" y="84" ${SM}>deploy: disalin</text>
-    <text x="371" y="91" ${ON} font-weight="600">Penyimpanan internal</text>
+    <text x="101" y="109" opacity="0.7" ${SM}>your image</text>
+    <text x="230" y="84" ${SM}>deploy: copied</text>
+    <text x="371" y="91" ${ON} font-weight="600">Internal storage</text>
     <text x="371" y="109" ${ON_SM}>Cloud Run</text>
-    <text x="630" y="47">instance baru</text>
-    <text x="630" y="99">instance baru</text>
-    <text x="630" y="151">instance baru</text>
-    <text x="230" y="150" opacity="0.7" ${SM}>image besar dan kecil</text>
-    <text x="230" y="166" opacity="0.7" ${SM}>dimuat sama cepat</text>
+    <text x="630" y="47">new instance</text>
+    <text x="630" y="99">new instance</text>
+    <text x="630" y="151">new instance</text>
+    <text x="230" y="150" opacity="0.7" ${SM}>large and small images</text>
+    <text x="230" y="166" opacity="0.7" ${SM}>load just as fast</text>
   </g>`
 );
 
@@ -166,7 +166,7 @@ const sq = (x: number, y: number, kind: 'on' | 'idle' | 'off') =>
       : `<rect x="${x}" y="${y}" width="40" height="40" ${BOX} stroke-dasharray="4 4" opacity="0.6"/>`;
 
 const FIG_SCALE = SVG(
-  'Autoscaling: request masuk ke load balancer internal yang membaginya ke instance aktif; instance idle dijaga oleh min instances; instance baru bisa ditambah sampai max instances; request menunggu di antrean saat belum ada instance',
+  'Autoscaling: requests reach an internal load balancer that spreads them across active instances; idle instances are kept by min instances; new instances can be added up to max instances; requests wait in a queue while no instance is ready',
   720,
   230,
   `
@@ -182,19 +182,19 @@ const FIG_SCALE = SVG(
   ${sq(372, 46, 'on')}${sq(420, 46, 'on')}${sq(468, 46, 'on')}${sq(516, 46, 'on')}${sq(564, 46, 'idle')}${sq(612, 46, 'idle')}
   ${sq(372, 118, 'off')}${sq(420, 118, 'off')}${sq(468, 118, 'off')}${sq(516, 118, 'off')}${sq(564, 118, 'off')}${sq(612, 118, 'off')}${sq(660, 118, 'off')}
   <g fill="currentColor">
-    <text x="16" y="62" ${SM}>request</text>
-    <text x="134" y="108" text-anchor="middle" ${SM}>antrean</text>
+    <text x="16" y="62" ${SM}>requests</text>
+    <text x="134" y="108" text-anchor="middle" ${SM}>queue</text>
     <text x="272" y="98" text-anchor="middle" ${ON} font-weight="600">Load balancer</text>
     <text x="272" y="116" text-anchor="middle" ${ON_SM}>internal</text>
-    <text x="372" y="34" ${SM}>aktif (≤ concurrency request masing-masing)</text>
+    <text x="372" y="34" ${SM}>active (≤ concurrency requests each)</text>
     <text x="604" y="104" text-anchor="middle" ${SM}>idle · min instances</text>
-    <text x="372" y="176" ${SM}>belum dinyalakan — bisa ditambah sampai max instances</text>
-    <text x="360" y="212" text-anchor="middle" opacity="0.7">Tanpa request sama sekali, semua instance dimatikan (scale to zero) — kecuali yang dijaga min instances.</text>
+    <text x="372" y="176" ${SM}>not started — can be added up to max instances</text>
+    <text x="360" y="212" text-anchor="middle" opacity="0.7">With no requests at all, every instance is shut down (scale to zero) — except those kept by min instances.</text>
   </g>`
 );
 
 const FIG_TRAFFIC = SVG(
-  'Traffic split: URL service membagi 90 persen ke revision lama dan 10 persen ke revision baru bertag canary; URL tag langsung menuju revision canary',
+  'Traffic splitting: the service URL sends 90 percent to the old revision and 10 percent to the new revision tagged canary; the tag URL goes straight to the canary revision',
   720,
   230,
   `
@@ -209,21 +209,21 @@ const FIG_TRAFFIC = SVG(
     <path d="M600,204 L600,176" stroke-dasharray="5 4" ${A}/>
   </g>
   <g fill="currentColor" text-anchor="middle">
-    <text x="76" y="117" font-weight="600">Pengguna</text>
-    <text x="276" y="108" ${ON} font-weight="600">URL service</text>
+    <text x="76" y="117" font-weight="600">Users</text>
+    <text x="276" y="108" ${ON} font-weight="600">Service URL</text>
     <text x="276" y="126" ${ON_SM}>traffic split</text>
     <text x="410" y="66" ${SM}>90%</text>
     <text x="410" y="160" ${SM}>10%</text>
     <text x="578" y="55" font-weight="600">shop-00007-plq</text>
-    <text x="578" y="73" opacity="0.7" ${SM}>versi stabil</text>
+    <text x="578" y="73" opacity="0.7" ${SM}>stable version</text>
     <text x="578" y="143" font-weight="600">shop-00008-wfx</text>
-    <text x="578" y="161" opacity="0.7" ${SM}>versi baru · tag canary</text>
-    <text x="400" y="218" ${SM}>URL tag langsung ke revisi itu: https://canary---shop-…run.app</text>
+    <text x="578" y="161" opacity="0.7" ${SM}>new version · tag canary</text>
+    <text x="400" y="218" ${SM}>A tag URL goes straight to that revision: https://canary---shop-…run.app</text>
   </g>`
 );
 
 const FIG_VPC = SVG(
-  'Cloud Run keluar ke VPC: Direct VPC egress menaruh antarmuka langsung di subnet (direkomendasikan); connector Serverless VPC Access memakai VM perantara di rentang /28',
+  'Cloud Run reaching a VPC: Direct VPC egress puts an interface straight in a subnet (recommended); a Serverless VPC Access connector uses relay VMs in a /28 range',
   720,
   240,
   `
@@ -244,13 +244,13 @@ const FIG_VPC = SVG(
     <text x="91" y="114" font-weight="600">Cloud Run</text>
     <text x="91" y="132" opacity="0.7" ${SM}>service / job</text>
     <text x="325" y="61" ${ON} font-weight="600">Direct VPC egress</text>
-    <text x="325" y="96" opacity="0.7" ${SM}>direkomendasikan · subnet ≥ /26</text>
+    <text x="325" y="96" opacity="0.7" ${SM}>recommended · subnet ≥ /26</text>
     <text x="325" y="185">Connector</text>
-    <text x="325" y="222" opacity="0.7" ${SM}>cara lama · VM perantara di /28</text>
+    <text x="325" y="222" opacity="0.7" ${SM}>older way · relay VMs in a /28</text>
     <text x="592" y="48" font-weight="600">VPC prod-vpc</text>
     <text x="592" y="86">Memorystore 10.20.0.5</text>
-    <text x="592" y="136">Cloud SQL · IP privat</text>
-    <text x="592" y="186">VM internal</text>
+    <text x="592" y="136">Cloud SQL · private IP</text>
+    <text x="592" y="186">Internal VM</text>
   </g>`
 );
 
@@ -270,114 +270,113 @@ const REGION = '--region=asia-southeast2';
 
 export const lesson: Lesson = {
   id: 'cloud-run',
-  lang: 'id',
+  lang: 'en',
   title: 'Fundamentals of Cloud Run',
   intro:
-    'Cloud Run menjalankan container tanpa server yang harus kamu urus: kamu menyerahkan image, Google menyediakan endpoint HTTPS, menyalakan container saat ada request, menambah dan mematikannya mengikuti traffic. Pelajaran ini mengikuti hidup sebuah container di Cloud Run — dari bentuk resource-nya, siklus hidup dari start sampai berhenti, cara ia di-scale, cara rilis memindahkan traffic, sampai siapa yang boleh memanggilnya. Ada kalkulator autoscaling untuk mencoba sendiri efek concurrency, min dan max instances.',
+    'Cloud Run runs containers with no servers for you to look after: you hand over an image, and Google provides an HTTPS endpoint, starts containers when requests arrive, and adds and removes them as traffic changes. This lesson follows the life of a container on Cloud Run — how its resources are shaped, its lifecycle from start to stop, how it scales, how releases move traffic, and who is allowed to call it. An autoscaling calculator lets you try out concurrency, min and max instances for yourself.',
   practice: [
-    { label: 'Terminal: Cloud Run publik tanpa cold start', href: '#/ace/lab/terminal/cloud-run', note: 'deploy, allow-unauthenticated, min instances' },
-    { label: 'Kuis perintah: Cloud Run, functions dan App Engine', href: '#/ace/lab/cmd/serverless', note: '21 soal gcloud run' },
-    { label: 'Kanvas: toko online serverless', href: '#/ace/lab/canvas/web-serverless', note: 'Cloud Run + database + storage' },
-    { label: 'Kanvas: CI/CD ke Cloud Run', href: '#/ace/lab/canvas/cicd', note: 'Cloud Build → Artifact Registry → Cloud Run' },
-    { label: 'Kanvas: perbaiki push Pub/Sub 403', href: '#/ace/lab/canvas/fix-push-403', note: 'run.invoker untuk akun push' },
-    { label: 'Kanvas: perbaiki timeout ke Cloud SQL', href: '#/ace/lab/canvas/fix-sql-timeout', note: 'Koneksi privat dari Cloud Run' },
-    { label: 'Kanvas: laporan harian terjadwal', href: '#/ace/lab/canvas/cron', note: 'Cloud Scheduler memanggil Cloud Run' }
+    { label: 'Terminal: a public Cloud Run service with no cold starts', href: '#/ace/lab/terminal/cloud-run', note: 'deploy, allow-unauthenticated, min instances' },
+    { label: 'Command quiz: Cloud Run, functions and App Engine', href: '#/ace/lab/cmd/serverless', note: '21 gcloud run questions' },
+    { label: 'Canvas: a serverless online shop', href: '#/ace/lab/canvas/web-serverless', note: 'Cloud Run + database + storage' },
+    { label: 'Canvas: CI/CD to Cloud Run', href: '#/ace/lab/canvas/cicd', note: 'Cloud Build → Artifact Registry → Cloud Run' },
+    { label: 'Canvas: fix a Pub/Sub push 403', href: '#/ace/lab/canvas/fix-push-403', note: 'run.invoker for the push account' },
+    { label: 'Canvas: fix a timeout to Cloud SQL', href: '#/ace/lab/canvas/fix-sql-timeout', note: 'Private connectivity from Cloud Run' },
+    { label: 'Canvas: a scheduled daily report', href: '#/ace/lab/canvas/cron', note: 'Cloud Scheduler calling Cloud Run' }
   ],
   parts: [
     // ── 1 ─────────────────────────────────────────────────────────────────
     {
       id: 'intro',
-      title: 'Apa itu Cloud Run',
+      title: 'What Cloud Run is',
       sections: [
         {
           id: 'what',
-          title: 'Kontraknya sederhana: kamu bawa container, Google bawa sisanya',
+          title: 'A simple contract: you bring a container, Google brings the rest',
           blocks: [
             {
               kind: 'p',
-              text: '**Cloud Run** adalah platform compute terkelola yang menjalankan **container** langsung di infrastruktur Google. Selama aplikasimu bisa dikemas menjadi image container — bahasa apa pun, framework apa pun — ia bisa jalan di Cloud Run. Tidak ada VM, node, atau cluster yang perlu disiapkan, di-patch, atau di-scale.'
+              text: '**Cloud Run** is a managed compute platform that runs **containers** directly on Google\'s infrastructure. As long as your application can be packaged as a container image — any language, any framework — it can run on Cloud Run. There are no VMs, nodes or clusters to provision, patch or scale.'
             },
-            { kind: 'figure', svg: FIG_CONTRACT, caption: 'Pembagian tugasnya jelas: Cloud Run menyediakan endpoint HTTPS dengan sertifikat TLS yang valid, mendekripsi request, dan meneruskannya sebagai HTTP ke container. Tugasmu hanya memastikan aplikasi mendengarkan port yang diberikan dan menjawab request.' },
+            { kind: 'figure', svg: FIG_CONTRACT, caption: 'The split is clear: Cloud Run provides an HTTPS endpoint with a valid TLS certificate, decrypts requests, and forwards them to the container as HTTP. Your only job is making sure the app listens on the port it is given and answers requests.' },
             {
               kind: 'table',
-              columns: ['Diurus Cloud Run', 'Diurus kamu'],
+              columns: ['Cloud Run handles', 'You handle'],
               rows: [
-                ['Endpoint HTTPS unik di `*.run.app` (atau domain sendiri), sertifikat TLS', 'Image container untuk Linux 64-bit'],
-                ['Menyalakan container saat ada request, mematikannya saat sepi', 'Aplikasi yang mendengarkan `$PORT` (default 8080) di `0.0.0.0`'],
-                ['Load balancing dan autoscaling sampai ratusan instance', 'Aplikasi **stateless** — data disimpan di database atau Cloud Storage, bukan di disk container'],
-                ['Menyebar instance ke beberapa zone di satu region', 'Memilih region, memory, CPU, concurrency, dan siapa yang boleh memanggil'],
-                ['Log dan error reporting otomatis ke Cloud Logging', 'Menulis log ke stdout/stderr']
+                ['A unique HTTPS endpoint on `*.run.app` (or your own domain), the TLS certificate', 'A container image built for 64-bit Linux'],
+                ['Starting containers when requests arrive, shutting them down when it is quiet', 'An app that listens on `$PORT` (8080 by default) on `0.0.0.0`'],
+                ['Load balancing and autoscaling to hundreds of instances', 'A **stateless** app — data goes to a database or Cloud Storage, not the container disk'],
+                ['Spreading instances across several zones of a region', 'Choosing the region, memory, CPU, concurrency, and who may call it'],
+                ['Logs and error reporting to Cloud Logging automatically', 'Writing logs to stdout/stderr']
               ]
             },
             {
               kind: 'callout',
               tone: 'analogy',
-              title: 'Analogi',
-              text: 'Cloud Run itu seperti dapur bersama (cloud kitchen). Kamu membawa resep yang sudah dikemas rapi (image). Pengelola menyediakan dapur, kompor, kasir dan kurir. Kompor baru dinyalakan saat ada pesanan, ditambah saat pesanan membludak, dan dimatikan saat sepi — kamu membayar hanya selama kompor menyala.'
+              text: 'Cloud Run is like a shared cloud kitchen. You bring a neatly packed recipe (the image). The operator provides the kitchen, the stoves, the till and the couriers. A stove is only lit when an order comes in, more are lit when orders pile up, and they go out when it is quiet — you pay only while a stove is on.'
             },
             {
               kind: 'list',
               items: [
-                '**Bayar sesuai pemakaian**: dengan pengaturan default, biaya hanya dihitung selama container memproses request.',
-                '**Setiap deploy membuat revision baru** yang tidak bisa diubah — rollback dan pembagian traffic jadi mudah.',
-                'Terintegrasi dengan layanan lain: Cloud SQL, Firestore, Cloud Storage, Pub/Sub, Secret Manager, IAM, Cloud Logging.',
-                'Mendukung continuous deployment dari repositori seperti GitHub lewat Cloud Build.'
+                '**Pay for what you use**: with the default settings, you are only billed while a container is handling requests.',
+                '**Every deployment creates a new revision** that cannot be changed — which makes rollbacks and traffic splitting easy.',
+                'It works with the rest of Google Cloud: Cloud SQL, Firestore, Cloud Storage, Pub/Sub, Secret Manager, IAM, Cloud Logging.',
+                'It supports continuous deployment from repositories such as GitHub through Cloud Build.'
               ]
             }
           ]
         },
         {
           id: 'service-job',
-          title: 'Dua bentuk: service dan job',
+          title: 'Two shapes: services and jobs',
           blocks: [
             {
               kind: 'p',
-              text: 'Kode di Cloud Run berjalan sebagai **service** atau **job**. Keduanya memakai lingkungan yang sama dan bisa memakai integrasi yang sama; bedanya ada pada kapan kode berhenti.'
+              text: 'Code on Cloud Run runs either as a **service** or as a **job**. Both use the same environment and the same integrations; the difference is when the code stops.'
             },
             {
               kind: 'table',
               columns: ['', 'Service', 'Job'],
               rows: [
-                ['Untuk', 'Kode yang **menjawab** request web atau event', 'Kode yang **mengerjakan** sesuatu lalu selesai'],
-                ['Punya URL', 'Ya, HTTPS tetap', 'Tidak'],
-                ['Kapan jalan', 'Saat ada request; di-scale otomatis', 'Saat dieksekusi: manual, terjadwal (Cloud Scheduler), atau dari Workflows'],
-                ['Paralel', 'Banyak instance sesuai traffic', 'Satu atau banyak **task** paralel (array job)'],
-                ['Contoh', 'REST API, website, webhook, microservice gRPC', 'Migrasi database, laporan malam, memproses ribuan gambar di bucket']
+                ['For', 'Code that **answers** web requests or events', 'Code that **does** a piece of work and then finishes'],
+                ['Has a URL', 'Yes, a stable HTTPS URL', 'No'],
+                ['When it runs', 'When requests arrive; scaled automatically', 'When executed: by hand, on a schedule (Cloud Scheduler), or from Workflows'],
+                ['Parallelism', 'Many instances, following traffic', 'One or many parallel **tasks** (an array job)'],
+                ['Examples', 'REST API, website, webhook, gRPC microservice', 'Database migration, nightly report, processing thousands of images in a bucket']
               ]
             },
             {
               kind: 'code',
-              title: 'Job yang memproses gambar dengan 20 task, 5 jalan bersamaan',
+              title: 'A job that processes images with 20 tasks, 5 at a time',
               lines: [
                 `$ gcloud run jobs create resize-images --image=${IMG}/resize:1.0 ${REGION} --tasks=20 --parallelism=5 --max-retries=3 --task-timeout=15m`,
                 `$ gcloud run jobs execute resize-images ${REGION}`,
-                '# di dalam container, CLOUD_RUN_TASK_INDEX (0–19) dan CLOUD_RUN_TASK_COUNT (20)',
-                '# menentukan potongan pekerjaan mana yang diambil task itu'
+                '# inside the container, CLOUD_RUN_TASK_INDEX (0–19) and CLOUD_RUN_TASK_COUNT (20)',
+                '# decide which slice of the work that task takes'
               ]
             }
           ]
         },
         {
           id: 'container',
-          title: 'Syarat container dan cara deploy',
+          title: 'What the container needs, and how to deploy it',
           blocks: [
             {
               kind: 'list',
               items: [
-                'Image harus berisi binary untuk **Linux 64-bit** — semua yang dibutuhkan aplikasi ikut di dalamnya: kode, runtime, library, paket sistem.',
-                'Aplikasi harus **mendengarkan port dari variabel `PORT`** (default 8080) di `0.0.0.0`, bukan `localhost`.',
-                'Buka port itu **hanya setelah aplikasi benar-benar siap** — begitu port menerima koneksi, Cloud Run mulai mengirim request.',
-                'Filesystem container bisa ditulis, tapi isinya **di memori** (ikut menghabiskan memory limit) dan hilang saat instance berhenti.',
-                'Image biasanya disimpan di **Artifact Registry**.'
+                'The image must contain a binary for **64-bit Linux** — and everything the app needs comes with it: code, runtime, libraries, system packages.',
+                'The app must **listen on the port in the `PORT` variable** (8080 by default) on `0.0.0.0`, not `localhost`.',
+                'Open that port **only once the app is really ready** — as soon as the port accepts connections, Cloud Run starts sending requests.',
+                'The container filesystem is writable, but it lives **in memory** (it counts against the memory limit) and is gone when the instance stops.',
+                'Images are usually stored in **Artifact Registry**.'
               ]
             },
             {
               kind: 'code',
-              title: 'Dua cara deploy yang paling sering',
+              title: 'The two most common ways to deploy',
               lines: [
-                '# dari image yang sudah ada di Artifact Registry',
+                '# from an image already in Artifact Registry',
                 `$ gcloud run deploy shop --image=${IMG}/shop:1.4 ${REGION} --allow-unauthenticated`,
-                '# langsung dari source code: Cloud Build membangun image dari Dockerfile atau buildpacks',
+                '# straight from source: Cloud Build builds the image from a Dockerfile or buildpacks',
                 `$ gcloud run deploy shop --source=. ${REGION}`,
                 'Service [shop] revision [shop-00001-x7d] has been deployed and is serving 100 percent of traffic.',
                 'Service URL: https://shop-123456789012.asia-southeast2.run.app'
@@ -386,55 +385,53 @@ export const lesson: Lesson = {
             {
               kind: 'callout',
               tone: 'tip',
-              text: 'Selain gcloud, service bisa dibuat dari Console, dari file YAML (`gcloud run services replace service.yaml`), atau dengan Terraform. **Cloud Run functions** (dulu Cloud Functions) juga berjalan di atas Cloud Run: kamu cukup menulis fungsi, image-nya dibangunkan untukmu.'
+              text: 'Besides gcloud, a service can be created from the Console, from a YAML file (`gcloud run services replace service.yaml`), or with Terraform. **Cloud Run functions** (formerly Cloud Functions) run on Cloud Run too: you just write a function and the image is built for you.'
             }
           ]
         },
         {
           id: 'invoke',
-          title: 'Cara memanggil sebuah service',
+          title: 'Ways to call a service',
           blocks: [
             {
               kind: 'table',
-              columns: ['Cara', 'Cocok untuk'],
+              columns: ['How', 'Good for'],
               rows: [
-                ['**HTTPS** ke URL service', 'REST API, website, webhook, reverse proxy, microservice privat'],
-                ['**gRPC** (HTTP/2)', 'Komunikasi cepat antar microservice internal, streaming'],
-                ['**WebSockets**', 'Chat, notifikasi real-time — tanpa konfigurasi tambahan'],
-                ['**Pub/Sub push**', 'Pesan dikirim sebagai request HTTP: memproses upload, mengolah log yang diekspor, event buatan sendiri'],
-                ['**Cloud Scheduler**', 'Seperti cron: backup rutin, membuat ulang sitemap, menghapus data lama, membuat tagihan'],
-                ['**Cloud Tasks**', 'Antrean tugas asinkron dengan retry dan pembatasan laju'],
-                ['**Eventarc**', 'Event dari layanan Google, misalnya objek baru di Cloud Storage atau job BigQuery selesai']
+                ['**HTTPS** to the service URL', 'REST APIs, websites, webhooks, reverse proxies, private microservices'],
+                ['**gRPC** (HTTP/2)', 'Fast communication between internal microservices, streaming'],
+                ['**WebSockets**', 'Chat, real-time notifications — no extra configuration'],
+                ['**Pub/Sub push**', 'Messages delivered as HTTP requests: processing uploads, handling exported logs, your own events'],
+                ['**Cloud Scheduler**', 'Like cron: regular backups, regenerating a sitemap, deleting old data, producing invoices'],
+                ['**Cloud Tasks**', 'An asynchronous task queue with retries and rate limits'],
+                ['**Eventarc**', 'Events from Google services, for example a new object in Cloud Storage or a finished BigQuery job']
               ]
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"Run a containerized task every night at 2 AM" → Cloud Scheduler memanggil service atau mengeksekusi job. "Process each file uploaded to a bucket" → Eventarc (atau notifikasi Pub/Sub) ke Cloud Run. "Long-running batch that finishes and exits" → Cloud Run job, bukan service.'
+              text: '"Run a containerized task every night at 2 AM" → Cloud Scheduler calls a service or executes a job. "Process each file uploaded to a bucket" → Eventarc (or a Pub/Sub notification) to Cloud Run. "Long-running batch that finishes and exits" → a Cloud Run job, not a service.'
             }
           ]
         },
         {
           id: 'when',
-          title: 'Kapan memilih Cloud Run',
+          title: 'When to choose Cloud Run',
           blocks: [
             {
               kind: 'table',
-              columns: ['Kebutuhan', 'Pilihan yang biasanya tepat'],
+              columns: ['Need', 'Usually the right choice'],
               rows: [
-                ['Container stateless lewat HTTP atau event, traffic naik-turun, ingin scale to zero', '**Cloud Run**'],
-                ['Satu fungsi kecil yang bereaksi pada event, ditulis langsung dari source', '**Cloud Run functions**'],
-                ['Banyak microservice yang butuh Kubernetes API, StatefulSet, kontrol node, atau GPU khusus di node pool', '**GKE**'],
-                ['Kontrol OS dan kernel, software berlisensi per VM, aplikasi lama yang tidak bisa di-container-kan', '**Compute Engine**'],
-                ['Aplikasi web lama yang sudah berjalan di sana', 'App Engine (untuk yang baru, Cloud Run lebih disarankan)']
+                ['Stateless containers over HTTP or events, traffic that rises and falls, scale to zero wanted', '**Cloud Run**'],
+                ['One small function reacting to events, written straight from source', '**Cloud Run functions**'],
+                ['Many microservices that need the Kubernetes API, StatefulSets, node control, or special GPUs in a node pool', '**GKE**'],
+                ['OS and kernel control, per-VM licensed software, old apps that cannot be containerised', '**Compute Engine**'],
+                ['An existing web app that already runs there', 'App Engine (for new work, Cloud Run is preferred)']
               ]
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: 'Kata kunci "containerized", "stateless", "without managing infrastructure", "scale to zero", "pay only when requests are processed" hampir selalu menunjuk Cloud Run. Kalau ada "needs Kubernetes" atau "node-level control", pilih GKE.'
+              text: 'The words "containerized", "stateless", "without managing infrastructure", "scale to zero", "pay only when requests are processed" almost always point to Cloud Run. If you see "needs Kubernetes" or "node-level control", choose GKE.'
             }
           ]
         }
@@ -444,39 +441,39 @@ export const lesson: Lesson = {
     // ── 2 ─────────────────────────────────────────────────────────────────
     {
       id: 'model',
-      title: 'Model resource',
+      title: 'The resource model',
       sections: [
         {
           id: 'resources',
-          title: 'Service, revision, instance — dan job, execution, task',
+          title: 'Service, revision, instance — and job, execution, task',
           blocks: [
-            { kind: 'figure', svg: FIG_MODEL, caption: 'Service adalah resource utama dan bersifat regional. Setiap deploy menambah revision; request dikirim ke revision yang mendapat traffic, dan revision itu di-scale menjadi sejumlah instance. Job punya rantai sendiri: setiap eksekusi menjalankan semua task-nya.' },
+            { kind: 'figure', svg: FIG_MODEL, caption: 'The service is the main resource and it is regional. Every deployment adds a revision; requests go to the revisions that receive traffic, and each is scaled into a number of instances. Jobs have their own chain: every execution runs all of its tasks.' },
             {
               kind: 'terms',
               items: [
                 {
                   term: 'Service',
-                  meaning: 'Resource utama Cloud Run. Tinggal di satu region, punya URL HTTPS yang **tetap** selama service ada. Semua pekerjaan sehari-hari — deploy, rollback, mengubah env var atau scaling — dilakukan terhadap service.',
-                  analogy: 'Nama sebuah warung yang terpasang di papan; isinya boleh berganti, alamatnya tetap.',
-                  example: '`shop` di asia-southeast2 dengan URL `https://shop-123456789012.asia-southeast2.run.app`.'
+                  meaning: 'The main Cloud Run resource. It lives in one region and has an HTTPS URL that **stays the same** for as long as the service exists. Everyday work — deploying, rolling back, changing environment variables or scaling — is done on the service.',
+                  analogy: 'The name over a shop door; what is inside can change, the address does not.',
+                  example: '`shop` in asia-southeast2 with the URL `https://shop-123456789012.asia-southeast2.run.app`.'
                 },
                 {
                   term: 'Revision',
-                  meaning: 'Potret **tidak bisa diubah** dari satu image container plus konfigurasinya: env var, memory, CPU, concurrency, service account. Setiap deploy, dan setiap perubahan konfigurasi, membuat revision baru.',
-                  analogy: 'Edisi buku: edisi 2 tidak mengubah edisi 1, keduanya tetap ada di rak.',
+                  meaning: 'An **unchangeable** snapshot of one container image plus its configuration: environment variables, memory, CPU, concurrency, service account. Every deployment, and every configuration change, creates a new revision.',
+                  analogy: 'A book edition: the 2nd edition does not change the 1st, and both stay on the shelf.',
                   example: '`shop-00001-abc`, `shop-00002-xyz`.'
                 },
                 {
                   term: 'Instance',
-                  meaning: 'Satu container yang sedang berjalan untuk sebuah revision. Satu instance bisa melayani banyak request sekaligus, sampai batas **concurrency**.',
-                  analogy: 'Satu kasir yang bisa melayani beberapa pembeli bergantian.',
-                  example: 'Saat ramai revision `shop-00002-xyz` punya 12 instance; tengah malam nol.'
+                  meaning: 'One running container of a revision. One instance can handle many requests at once, up to its **concurrency** limit.',
+                  analogy: 'One cashier who can serve several customers in turn.',
+                  example: 'At peak, revision `shop-00002-xyz` has 12 instances; at midnight, none.'
                 },
                 {
                   term: 'Job · execution · task',
-                  meaning: 'Job juga regional. Mengeksekusi job membuat **execution**, yang menjalankan semua **task**-nya; tiap task adalah satu container. Execution sukses hanya jika semua task sukses; task yang gagal dicoba ulang sesuai `--max-retries` dan dibatasi `--task-timeout`.',
-                  analogy: 'Satu shift kerja (execution) dengan beberapa pekerja (task) yang membagi tumpukan pekerjaan.',
-                  example: 'Execution `nightly-report-x8k2p` dengan 4 task.'
+                  meaning: 'A job is regional too. Executing a job creates an **execution**, which runs all of its **tasks**; each task is one container. An execution succeeds only if every task succeeds; failed tasks are retried up to `--max-retries` and bounded by `--task-timeout`.',
+                  analogy: 'One shift (the execution) with several workers (the tasks) splitting a pile of work.',
+                  example: 'Execution `nightly-report-x8k2p` with 4 tasks.'
                 }
               ]
             }
@@ -484,55 +481,54 @@ export const lesson: Lesson = {
         },
         {
           id: 'regions',
-          title: 'Regional, tapi tahan gangguan zone',
+          title: 'Regional, but resilient to a zone failure',
           blocks: [
             {
               kind: 'p',
-              text: 'Region adalah lokasi geografis (misalnya `asia-southeast2` di Jakarta atau `us-central1` di Iowa) yang terdiri dari tiga zone atau lebih. Zone adalah satu domain kegagalan. Service Cloud Run dibuat **per region**, dan instance-nya bisa dinyalakan di zone mana pun di region itu — service yang ramai otomatis tersebar ke beberapa zone, sehingga tetap melayani walau satu zone bermasalah.'
+              text: 'A region is a geographic location (for example `asia-southeast2` in Jakarta or `us-central1` in Iowa) made of three or more zones. A zone is one failure domain. Cloud Run services are created **per region**, and their instances can start in any zone of that region — a busy service is spread across several zones automatically, so it keeps serving if one zone has problems.'
             },
             {
               kind: 'list',
               items: [
-                'Satu project boleh punya banyak service di banyak region.',
-                'Ingin melayani dari **beberapa region** sekaligus? Deploy service yang sama ke tiap region, lalu taruh **global external Application Load Balancer** dengan serverless NEG di depannya.',
-                'Pilih region dekat pengguna dan dekat database-nya — latensi ke Cloud SQL di region lain terasa di setiap request.'
+                'One project can have many services in many regions.',
+                'Want to serve from **several regions** at once? Deploy the same service to each region and put a **global external Application Load Balancer** with serverless NEGs in front.',
+                'Pick a region close to your users and to your database — latency to a Cloud SQL instance in another region is felt on every request.'
               ]
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"Cloud Run must survive a zone outage" → tidak perlu apa-apa, sudah multi-zone. "Must survive a region outage / serve users globally with one IP" → beberapa region + global load balancer.'
+              text: '"Cloud Run must survive a zone outage" → nothing to do, it is already multi-zone. "Must survive a region outage / serve users globally with one IP" → several regions + a global load balancer.'
             }
           ]
         },
         {
           id: 'settings',
-          title: 'Pengaturan revision yang paling sering dipakai',
+          title: 'The revision settings you will use most',
           blocks: [
             {
               kind: 'table',
-              columns: ['Flag', 'Default', 'Batas / catatan'],
+              columns: ['Flag', 'Default', 'Limit / notes'],
               mono: [0],
               rows: [
-                ['--memory', '512Mi', 'Sampai 32Gi; termasuk file yang ditulis ke filesystem container'],
-                ['--cpu', '1', 'Sampai 8'],
-                ['--concurrency', '80', '1 sampai 1000 request sekaligus per instance'],
-                ['--timeout', '300s', 'Sampai 3600s per request'],
-                ['--min-instances', '0', 'Instance yang selalu dijaga hidup (ditagih walau idle)'],
-                ['--max-instances', '100', 'Batas atas jumlah instance'],
-                ['--port', '8080', 'Port yang dibuka aplikasi; dikirim ke container sebagai `PORT`'],
-                ['--set-env-vars / --set-secrets', '—', 'Env var biasa, atau nilai dari Secret Manager'],
-                ['--service-account', 'Default compute SA', 'Identitas yang dipakai kode saat memanggil API Google'],
-                ['--cpu-throttling / --no-cpu-throttling', 'throttling', 'Request-based atau instance-based billing'],
-                ['--cpu-boost', 'mati', 'CPU ekstra saat start untuk memperpendek cold start']
+                ['--memory', '512Mi', 'Up to 32Gi; includes files written to the container filesystem'],
+                ['--cpu', '1', 'Up to 8'],
+                ['--concurrency', '80', '1 to 1000 requests at once per instance'],
+                ['--timeout', '300s', 'Up to 3600s per request'],
+                ['--min-instances', '0', 'Instances always kept running (billed even when idle)'],
+                ['--max-instances', '100', 'Upper limit on the number of instances'],
+                ['--port', '8080', 'The port the app opens; passed to the container as `PORT`'],
+                ['--set-env-vars / --set-secrets', '—', 'Plain environment variables, or values from Secret Manager'],
+                ['--service-account', 'Default compute SA', 'The identity the code uses when it calls Google APIs'],
+                ['--cpu-throttling / --no-cpu-throttling', 'throttling', 'Request-based or instance-based billing'],
+                ['--cpu-boost', 'off', 'Extra CPU at startup to shorten cold starts']
               ]
             },
             {
               kind: 'code',
               lines: [
                 `$ gcloud run services update shop ${REGION} --memory=1Gi --cpu=2 --concurrency=40 --set-env-vars=LOG_LEVEL=info`,
-                '# perubahan konfigurasi pun membuat revision baru: shop-00003-...'
+                '# a configuration change creates a new revision too: shop-00003-...'
               ]
             }
           ]
@@ -543,89 +539,89 @@ export const lesson: Lesson = {
     // ── 3 ─────────────────────────────────────────────────────────────────
     {
       id: 'lifecycle',
-      title: 'Siklus hidup container',
+      title: 'The container lifecycle',
       sections: [
         {
           id: 'states',
-          title: 'Lima keadaan sebuah container',
+          title: 'The five states of a container',
           blocks: [
-            { kind: 'figure', svg: FIG_LIFECYCLE, caption: 'Container bisa bolak-balik antara Serving dan Idle berkali-kali. Ia hanya berhenti dari Idle — atau mendadak, kalau aplikasi crash atau memori penuh.' },
+            { kind: 'figure', svg: FIG_LIFECYCLE, caption: 'A container can go back and forth between Serving and Idle many times. It only stops from Idle — or suddenly, if the app crashes or memory fills up.' },
             {
               kind: 'table',
-              columns: ['Keadaan', 'Yang terjadi', 'CPU', 'Ditagih (request-based)'],
+              columns: ['State', 'What happens', 'CPU', 'Billed (request-based)'],
               rows: [
-                ['Starting', 'Image diwujudkan menjadi filesystem, aplikasi dijalankan, Cloud Run menunggu port terbuka', 'Penuh', 'Ya'],
-                ['Serving', 'Memproses request', 'Penuh', 'Ya'],
-                ['Idle', 'Tidak ada request selama 100 ms', 'Ditekan hampir nol', 'Tidak'],
-                ['Shutting down', 'Aplikasi menerima `SIGTERM` dan punya 10 detik untuk bersih-bersih', 'Penuh', 'Ya'],
-                ['Stopped', 'Container hilang', '—', 'Tidak']
+                ['Starting', 'The image becomes a filesystem, the app is started, Cloud Run waits for the port to open', 'Full', 'Yes'],
+                ['Serving', 'Handling requests', 'Full', 'Yes'],
+                ['Idle', 'No requests for 100 ms', 'Throttled to nearly zero', 'No'],
+                ['Shutting down', 'The app receives `SIGTERM` and has 10 seconds to clean up', 'Full', 'Yes'],
+                ['Stopped', 'The container is gone', '—', 'No']
               ]
             }
           ]
         },
         {
           id: 'start',
-          title: 'Starting: dari image sampai request pertama',
+          title: 'Starting: from image to first request',
           blocks: [
             {
               kind: 'steps',
               items: [
-                { title: 'Wujudkan image', text: 'Cloud Run membuat root filesystem container dari image.' },
-                { title: 'Jalankan entrypoint', text: 'Program utama di image — aplikasimu — dijalankan.' },
-                { title: 'Tunggu port terbuka', text: 'Cloud Run terus mencoba port 8080 (atau port yang kamu atur). Bisa juga ditambah **startup probe** HTTP, TCP atau gRPC, dan **liveness probe** untuk memeriksa container yang sudah jalan.' },
-                { title: 'Teruskan request', text: 'Begitu aplikasi menerima koneksi TCP, request mulai dikirim. Karena itu jangan buka port sebelum koneksi database dan cache siap.' }
+                { title: 'Materialise the image', text: 'Cloud Run builds the container\'s root filesystem from the image.' },
+                { title: 'Run the entrypoint', text: 'The image\'s main program — your app — is started.' },
+                { title: 'Wait for the port', text: 'Cloud Run keeps probing port 8080 (or the port you set). You can also add an HTTP, TCP or gRPC **startup probe**, and a **liveness probe** to check containers that are already running.' },
+                { title: 'Forward requests', text: 'As soon as the app accepts TCP connections, requests start flowing. So do not open the port before database connections and caches are ready.' }
               ]
             },
-            { kind: 'figure', svg: FIG_IMAGE, caption: 'Image ditarik dua kali dari dua tempat berbeda: sekali dari Artifact Registry saat deploy, lalu dari penyimpanan internal Cloud Run setiap kali instance baru dinyalakan. Efek sampingnya bagus: menghapus image di Artifact Registry tidak merusak revision yang sudah ada.' },
+            { kind: 'figure', svg: FIG_IMAGE, caption: 'The image is pulled twice, from two different places: once from Artifact Registry at deploy time, then from Cloud Run\'s internal storage every time a new instance starts. A nice side effect: deleting the image from Artifact Registry does not break revisions that already exist.' },
             {
               kind: 'callout',
               tone: 'tip',
-              text: 'Yang membuat cold start lambat biasanya bukan ukuran image, tapi **inisialisasi aplikasi**: memuat framework besar, membuka koneksi, membaca konfigurasi. Inisialisasi secukupnya saat start, sisanya saat dibutuhkan, dan pertimbangkan `--cpu-boost`.'
+              text: 'What makes cold starts slow is usually not the image size but **app initialisation**: loading a large framework, opening connections, reading configuration. Do only what you must at startup, the rest on demand, and consider `--cpu-boost`.'
             }
           ]
         },
         {
           id: 'idle',
-          title: 'Idle: hemat, tapi CPU nyaris berhenti',
+          title: 'Idle: cheap, but the CPU almost stops',
           blocks: [
             {
               kind: 'p',
-              text: 'Setelah 100 ms tanpa request, container masuk keadaan **idle**. Dengan pengaturan default (**request-based billing**), container idle tidak ditagih, tapi CPU-nya ditekan hampir nol, permintaan jaringan ke luar cenderung gagal, dan ia boleh dimatikan kapan saja. Cloud Run bisa menyimpan instance idle sampai sekitar 15 menit untuk menyambut lonjakan berikutnya tanpa cold start; saat request datang, CPU langsung dikembalikan penuh.'
+              text: 'After 100 ms with no requests, a container goes **idle**. With the default settings (**request-based billing**), an idle container is not billed, but its CPU is throttled to almost zero, outbound network calls tend to fail, and it can be shut down at any time. Cloud Run may keep idle instances for up to about 15 minutes to meet the next spike without a cold start; when a request comes, the CPU is given back in full at once.'
             },
             {
               kind: 'table',
-              caption: 'Dua mode penagihan',
+              caption: 'Two billing modes',
               columns: ['', 'Request-based (default)', 'Instance-based'],
               rows: [
                 ['Flag', '`--cpu-throttling`', '`--no-cpu-throttling`'],
-                ['CPU di luar request', 'Hampir nol', 'Tetap tersedia'],
-                ['Ditagih', 'Hanya selama memproses request (plus start dan shutdown)', 'Selama instance hidup'],
-                ['Cocok untuk', 'Traffic jarang, naik-turun, berlonjak', 'Traffic stabil, atau pekerjaan latar belakang setelah response dikirim']
+                ['CPU outside requests', 'Nearly zero', 'Still available'],
+                ['Billed', 'Only while handling requests (plus startup and shutdown)', 'For as long as the instance is running'],
+                ['Good for', 'Rare, bursty or spiky traffic', 'Steady traffic, or background work after the response is sent']
               ]
             },
             {
               kind: 'callout',
               tone: 'warn',
-              text: 'Pola "kirim response dulu, kerjakan sisanya di background" tidak bisa diandalkan dengan request-based billing. Kerjakan sebelum menjawab, lempar ke **Cloud Tasks** atau Pub/Sub, atau pakai instance-based billing.'
+              text: 'The pattern "send the response first, finish the rest in the background" is not reliable with request-based billing. Do the work before answering, hand it to **Cloud Tasks** or Pub/Sub, or use instance-based billing.'
             }
           ]
         },
         {
           id: 'stop',
-          title: 'Berhenti: dengan anggun atau mendadak',
+          title: 'Stopping: gracefully or suddenly',
           blocks: [
             {
               kind: 'p',
-              text: 'Kamu tidak bisa menentukan kapan container dimatikan, tapi bisa bersiap. Sebelum mematikan container idle, Cloud Run mengirim sinyal **`SIGTERM`**. Kalau aplikasi menangkapnya, ia punya **10 detik** untuk menutup koneksi database dan file, mengirim data yang masih ditampung di buffer (misalnya telemetri), dan menulis log terakhir. Kalau tidak ditangkap, prosesnya langsung hilang.'
+              text: 'You cannot decide when a container is shut down, but you can be ready for it. Before shutting down an idle container, Cloud Run sends a **`SIGTERM`** signal. If the app catches it, it has **10 seconds** to close database connections and files, send any data still sitting in buffers (telemetry, for example), and write a final log line. If it does not, the process simply disappears.'
             },
             {
               kind: 'code',
-              title: 'Menangkap SIGTERM di Node.js',
+              title: 'Catching SIGTERM in Node.js',
               lines: [
                 "process.on('SIGTERM', async () => {",
-                "  console.log('SIGTERM diterima, menutup koneksi');",
-                '  await pool.end();      // tutup koneksi database',
-                '  await metrics.flush(); // kirim data yang masih di buffer',
+                "  console.log('SIGTERM received, closing connections');",
+                '  await pool.end();      // close database connections',
+                '  await metrics.flush(); // send data still in the buffer',
                 '  process.exit(0);',
                 '});'
               ]
@@ -633,9 +629,9 @@ export const lesson: Lesson = {
             {
               kind: 'list',
               items: [
-                'Dalam keadaan normal, Cloud Run **tidak pernah mematikan container yang sedang melayani request**.',
-                'Container bisa berhenti mendadak bila **aplikasi keluar** (misalnya error yang tidak ditangani) atau **melebihi memory limit** (default 512 MiB, bisa sampai 32 GiB). Semua request yang sedang diproses gagal, dan request baru mungkin menunggu instance pengganti.',
-                'Menutup koneksi dengan rapi penting: kalau instance sering naik-turun, koneksi yang dibiarkan menggantung di database bisa menghabiskan batas koneksinya.'
+                'Under normal conditions, Cloud Run **never shuts down a container that is handling requests**.',
+                'A container can stop suddenly if **the app exits** (for example, an unhandled error) or **goes over its memory limit** (512 MiB by default, up to 32 GiB). Every request in flight fails, and new requests may wait for a replacement instance.',
+                'Closing connections cleanly matters: if instances scale up and down a lot, connections left dangling on the database can use up its connection limit.'
               ]
             }
           ]
@@ -650,82 +646,82 @@ export const lesson: Lesson = {
       sections: [
         {
           id: 'how',
-          title: 'Cara Cloud Run menambah dan mengurangi instance',
+          title: 'How Cloud Run adds and removes instances',
           blocks: [
-            { kind: 'figure', svg: FIG_SCALE, caption: 'Load balancer internal membagi request ke instance sebuah revision. Kalau semua sibuk, instance ditambah; kalau permintaan turun, sebagian berhenti diberi traffic lalu dimatikan.' },
+            { kind: 'figure', svg: FIG_SCALE, caption: 'An internal load balancer spreads requests across a revision\'s instances. If they are all busy, instances are added; when demand drops, some stop getting traffic and are shut down.' },
             {
               kind: 'list',
               items: [
-                'Jumlah instance dipengaruhi **laju request**, **penggunaan CPU** instance yang ada (targetnya sekitar 60%), **max concurrency**, serta **min dan max instances**.',
-                'Default max instances adalah **100** per service. Batas jumlah instance per region dalam project diatur kuota, yang bisa diajukan kenaikannya.',
-                'Semua ini berlaku per revision: saat traffic dibagi ke dua revision, masing-masing di-scale sendiri.'
+                'The number of instances depends on the **request rate**, the **CPU use** of existing instances (the target is about 60%), **max concurrency**, and **min and max instances**.',
+                'The default max instances is **100** per service. The number of instances per region in a project is limited by quota, which you can ask to raise.',
+                'All of this is per revision: when traffic is split between two revisions, each one scales on its own.'
               ]
             }
           ]
         },
         {
           id: 'zero',
-          title: 'Scale to zero, antrean, dan cold start',
+          title: 'Scale to zero, the queue, and cold starts',
           blocks: [
             {
               kind: 'p',
-              text: 'Tanpa request sama sekali, instance terakhir pun dimatikan — **scale to zero**. Secara biaya ini menarik: tidak ada yang dibayar saat tidak ada yang dipakai. Harganya ada di request pertama setelah sepi: request itu menunggu di **antrean** sampai instance selesai dinyalakan. Inilah **cold start**.'
+              text: 'With no requests at all, even the last instance is shut down — **scale to zero**. Financially that is attractive: nothing is paid when nothing is used. The price is paid by the first request after a quiet spell: it waits in a **queue** until an instance has finished starting. That is a **cold start**.'
             },
             {
               kind: 'p',
-              text: 'Obatnya adalah **min instances**: Cloud Run selalu menjaga sejumlah instance tetap hidup dan siap, walau sedang idle. Saat request datang, instance aktif bertambah dan yang idle berkurang. Instance yang dijaga ini **tetap ditagih**.'
+              text: 'The cure is **min instances**: Cloud Run always keeps that many instances running and ready, even when idle. When requests come, active instances go up and idle ones go down. Instances kept this way **are billed**.'
             },
             { kind: 'code', lines: [`$ gcloud run services update shop ${REGION} --min-instances=1`] }
           ]
         },
         {
           id: 'limits',
-          title: 'Max instances dan concurrency: rem dan kapasitas',
+          title: 'Max instances and concurrency: the brake and the capacity',
           blocks: [
             {
               kind: 'p',
-              text: '**Max instances** membatasi berapa banyak instance yang boleh dinyalakan. Gunanya dua: mengendalikan biaya, dan **melindungi sistem di belakangmu** — database yang hanya menerima sekian koneksi, atau API pihak ketiga yang membatasi laju. Terlalu rendah, dan request yang tidak tertampung akan gagal.'
+              text: '**Max instances** caps how many instances may be started. It does two jobs: it controls cost, and it **protects the systems behind you** — a database that only takes so many connections, or a third-party API with a rate limit. Set it too low, and requests that do not fit will fail.'
             },
             {
               kind: 'p',
-              text: '**Max concurrency** menentukan berapa request yang boleh diproses satu instance sekaligus — default **80**, maksimal **1000**. Concurrency tinggi berarti lebih sedikit instance (lebih murah), tapi setiap request butuh memori tambahan, dan lonjakan bisa langsung diteruskan ke sistem hilir.'
+              text: '**Max concurrency** decides how many requests one instance may handle at the same time — **80** by default, **1000** at most. Higher concurrency means fewer instances (cheaper), but each request needs some extra memory, and a spike can be passed straight on to downstream systems.'
             },
             {
               kind: 'table',
-              caption: 'Kapan menurunkan concurrency sampai 1',
-              columns: ['Tanda', 'Kenapa'],
+              caption: 'When to lower concurrency to 1',
+              columns: ['Sign', 'Why'],
               rows: [
-                ['Satu request memakai hampir semua CPU atau memori instance', 'Request kedua akan membuat keduanya lambat atau kehabisan memori'],
-                ['Kode tidak dirancang untuk banyak request sekaligus', 'Misalnya library yang tidak thread-safe'],
-                ['Kode bergantung pada state global yang tidak boleh dibagi antar request', 'Request saling menimpa data']
+                ['One request uses almost all of the instance\'s CPU or memory', 'A second request would slow both down or run out of memory'],
+                ['The code is not designed to handle many requests at once', 'For example, a library that is not thread-safe'],
+                ['The code relies on global state that must not be shared between requests', 'Requests overwrite each other\'s data']
               ]
             },
             { kind: 'code', lines: [`$ gcloud run services update shop ${REGION} --max-instances=20 --concurrency=80`] },
             {
               kind: 'callout',
               tone: 'tip',
-              text: 'Cari concurrency yang pas dengan **load test** yang bisa mengatur jumlah request paralel. Mulai dari default, naikkan selama latensi dan memori tetap sehat.'
+              text: 'Find the right concurrency with a **load test** that lets you set the number of parallel requests. Start from the default and raise it while latency and memory stay healthy.'
             }
           ]
         },
         {
           id: 'calc',
-          title: 'Coba sendiri: berapa instance yang menyala?',
+          title: 'Try it yourself: how many instances run?',
           blocks: [
             {
               kind: 'p',
-              text: 'Hitungan kasarnya: **request yang sedang diproses = traffic × waktu per request**. 200 request/detik yang masing-masing butuh 0,5 detik berarti sekitar 100 request sedang diproses pada satu saat. Bagi dengan max concurrency, dan kamu dapat jumlah instance minimum yang dibutuhkan. Pilih sebuah situasi, lalu ubah angkanya.'
+              text: 'The rough sum: **requests in flight = traffic × time per request**. 200 requests/second that each take 0.5 seconds means about 100 requests being handled at any moment. Divide by max concurrency and you have the fewest instances needed. Pick a situation, then change the numbers.'
             },
             {
               kind: 'scaling',
               start: S(40, 250, 80, 0, 100, 5),
               presets: [
-                { label: 'Siang biasa', values: S(40, 250, 80, 0, 100, 5), note: '40 request/detik × 0,25 detik = 10 request sedang diproses. Satu instance dengan concurrency 80 sudah cukup.' },
-                { label: 'Lonjakan promo', values: S(2000, 400, 80, 0, 100, 5), note: 'Traffic naik 50 kali lipat. Cloud Run menambah instance sendiri sampai sekitar 10 — tidak ada yang perlu disentuh.' },
-                { label: 'Concurrency 1', values: S(300, 500, 1, 0, 100, 1), note: 'Aplikasi yang hanya sanggup satu request sekaligus butuh satu instance per request. Dengan max 100, kelebihannya ditolak.' },
-                { label: 'Database kecil', values: S(2000, 400, 10, 0, 100, 10), note: 'Cloud SQL kecil ini hanya menerima sekitar 100 koneksi, padahal 80 instance × 10 koneksi = 800. Coba max instances 10 dan concurrency 80.' },
-                { label: 'Malam, min 0', values: S(0, 250, 80, 0, 100, 5), note: 'Tidak ada traffic: semua instance mati, biaya nol, tapi pengunjung pertama besok pagi merasakan cold start.' },
-                { label: 'Malam, min 2', values: S(0, 250, 80, 2, 100, 5), note: 'Dua instance tetap hidup sepanjang malam: tidak ada cold start, tapi keduanya ditagih walau tidak melayani siapa pun.' }
+                { label: 'Ordinary afternoon', values: S(40, 250, 80, 0, 100, 5), note: '40 requests/second × 0.25 seconds = 10 requests in flight. One instance with concurrency 80 is plenty.' },
+                { label: 'Promotion spike', values: S(2000, 400, 80, 0, 100, 5), note: 'Traffic goes up 50 times. Cloud Run adds instances on its own, to about 10 — nothing to touch.' },
+                { label: 'Concurrency 1', values: S(300, 500, 1, 0, 100, 1), note: 'An app that can only take one request at a time needs one instance per request. With max 100, the excess is refused.' },
+                { label: 'Small database', values: S(2000, 400, 10, 0, 100, 10), note: 'This small Cloud SQL instance only takes about 100 connections, but 80 instances × 10 connections = 800. Try max instances 10 and concurrency 80.' },
+                { label: 'Night, min 0', values: S(0, 250, 80, 0, 100, 5), note: 'No traffic: every instance is off and the cost is zero, but tomorrow morning\'s first visitor gets a cold start.' },
+                { label: 'Night, min 2', values: S(0, 250, 80, 2, 100, 5), note: 'Two instances stay up all night: no cold start, but both are billed while serving nobody.' }
               ]
             }
           ]
@@ -736,20 +732,20 @@ export const lesson: Lesson = {
     // ── 5 ─────────────────────────────────────────────────────────────────
     {
       id: 'release',
-      title: 'Rilis dan traffic',
+      title: 'Releases and traffic',
       sections: [
         {
           id: 'revisions',
-          title: 'Revision membuat rilis bisa dibatalkan',
+          title: 'Revisions make releases reversible',
           blocks: [
             {
               kind: 'p',
-              text: 'Karena revision tidak bisa diubah dan revision lama tetap tersimpan, merilis versi baru sebenarnya hanya soal **ke revision mana traffic dikirim**. Secara default, traffic langsung dipindah ke revision terbaru yang sehat. Kamu bisa membaginya ke beberapa revision sekaligus, atau mengembalikannya ke revision lama dalam hitungan detik.'
+              text: 'Because revisions cannot change and old revisions are kept, releasing a new version is really just a matter of **which revision gets the traffic**. By default, traffic moves straight to the newest healthy revision. You can split it across several revisions at once, or send it back to an old revision in seconds.'
             },
-            { kind: 'figure', svg: FIG_TRAFFIC, caption: 'Satu URL service, dua revision. Tag memberi revision URL-nya sendiri, sehingga versi baru bisa dicoba tim sebelum menerima traffic pengguna.' },
+            { kind: 'figure', svg: FIG_TRAFFIC, caption: 'One service URL, two revisions. A tag gives a revision its own URL, so the team can try the new version before it gets user traffic.' },
             {
               kind: 'code',
-              title: 'Melihat revision dan traffic',
+              title: 'Seeing revisions and traffic',
               lines: [
                 `$ gcloud run revisions list --service=shop ${REGION}`,
                 '   REVISION        ACTIVE  SERVICE  DEPLOYED                 DEPLOYED BY',
@@ -762,22 +758,21 @@ export const lesson: Lesson = {
         },
         {
           id: 'canary',
-          title: 'Rilis bertahap (canary) dan rollback',
+          title: 'Gradual (canary) releases and rollbacks',
           blocks: [
             {
               kind: 'steps',
               items: [
-                { title: 'Deploy tanpa traffic, beri tag', text: 'Revision baru dibuat dan bisa dicoba lewat URL tag, tapi pengguna belum melihatnya.', code: [`gcloud run deploy shop --image=${IMG}/shop:1.5 ${REGION} --no-traffic --tag=canary`] },
-                { title: 'Kirim sebagian kecil traffic', text: 'Pantau error rate dan latensi di Cloud Monitoring.', code: [`gcloud run services update-traffic shop ${REGION} --to-tags=canary=10`] },
-                { title: 'Naikkan bertahap', text: '10% → 50% → 100% selama metrik sehat.', code: [`gcloud run services update-traffic shop ${REGION} --to-latest`] },
-                { title: 'Ada masalah? Kembalikan', text: 'Rollback hanyalah memindah traffic ke revision lama — tanpa build ulang.', code: [`gcloud run services update-traffic shop ${REGION} --to-revisions=shop-00007-plq=100`] }
+                { title: 'Deploy with no traffic, add a tag', text: 'The new revision is created and can be tried through its tag URL, but users do not see it yet.', code: [`gcloud run deploy shop --image=${IMG}/shop:1.5 ${REGION} --no-traffic --tag=canary`] },
+                { title: 'Send a small share of traffic', text: 'Watch the error rate and latency in Cloud Monitoring.', code: [`gcloud run services update-traffic shop ${REGION} --to-tags=canary=10`] },
+                { title: 'Raise it gradually', text: '10% → 50% → 100% while the metrics stay healthy.', code: [`gcloud run services update-traffic shop ${REGION} --to-latest`] },
+                { title: 'Trouble? Send it back', text: 'A rollback just moves traffic to the old revision — no rebuild.', code: [`gcloud run services update-traffic shop ${REGION} --to-revisions=shop-00007-plq=100`] }
               ]
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"Test a new version with 5% of users" → `update-traffic` dengan persentase (atau tag). "Roll back quickly after a bad release" → arahkan traffic ke revision sebelumnya; tidak perlu deploy ulang image lama.'
+              text: '"Test a new version with 5% of users" → `update-traffic` with a percentage (or a tag). "Roll back quickly after a bad release" → point traffic at the previous revision; there is no need to redeploy the old image.'
             }
           ]
         }
@@ -787,83 +782,83 @@ export const lesson: Lesson = {
     // ── 6 ─────────────────────────────────────────────────────────────────
     {
       id: 'access',
-      title: 'Akses dan jaringan',
+      title: 'Access and networking',
       sections: [
         {
           id: 'iam',
-          title: 'Semua lewat API, dan IAM yang memutuskan',
+          title: 'Everything is an API call, and IAM decides',
           blocks: [
             {
               kind: 'p',
-              text: 'Google Cloud pada dasarnya kumpulan **API**. Console, gcloud, Terraform dan client library hanyalah cara memanggilnya. `gcloud run deploy` pun hanya sebuah panggilan ke `run.googleapis.com`. Setiap panggilan diperiksa **IAM**: siapa pemanggilnya, dan apakah ia punya izin untuk tindakan itu — sama saja apakah kamu men-deploy revision atau aplikasimu menerbitkan pesan ke Pub/Sub.'
+              text: 'Google Cloud is essentially a set of **APIs**. The Console, gcloud, Terraform and client libraries are just ways of calling them. Even `gcloud run deploy` is just a call to `run.googleapis.com`. **IAM** checks every call: who is calling, and whether they have permission for that action — whether you are deploying a revision or your app is publishing a message to Pub/Sub.'
             },
             {
               kind: 'steps',
               items: [
-                { title: 'Policy menempel di resource', text: 'Setiap resource (project, service Cloud Run, topik Pub/Sub) punya **IAM policy**.' },
-                { title: 'Policy berisi binding', text: 'Satu **binding** memberikan satu **role** kepada satu atau beberapa **member** (user, group, service account, `allUsers`).' },
-                { title: 'Role berisi permission', text: 'Misalnya `roles/run.invoker` berisi permission untuk memanggil service.' },
-                { title: 'Akses diberikan', text: 'Kamu boleh melakukan sesuatu pada resource bila ada binding di policy resource itu (atau di atasnya: project, folder, organisasi) yang memberimu role dengan permission tersebut.' }
+                { title: 'A policy is attached to a resource', text: 'Every resource (a project, a Cloud Run service, a Pub/Sub topic) has an **IAM policy**.' },
+                { title: 'The policy holds bindings', text: 'A **binding** grants one **role** to one or more **members** (users, groups, service accounts, `allUsers`).' },
+                { title: 'A role holds permissions', text: 'For example, `roles/run.invoker` holds the permission to call a service.' },
+                { title: 'Access is granted', text: 'You may do something to a resource when a binding in that resource\'s policy (or one above it: project, folder, organisation) gives you a role with that permission.' }
               ]
             },
             {
               kind: 'table',
-              caption: 'Role Cloud Run yang perlu dikenal',
-              columns: ['Role', 'Untuk'],
+              caption: 'Cloud Run roles to know',
+              columns: ['Role', 'For'],
               mono: [0],
               rows: [
-                ['roles/run.admin', 'Mengelola semuanya, termasuk IAM policy service dan job'],
-                ['roles/run.developer', 'Membuat dan mengubah service dan job, tanpa mengatur IAM'],
-                ['roles/run.invoker', 'Memanggil service'],
-                ['roles/run.viewer', 'Melihat saja'],
-                ['roles/iam.serviceAccountUser', 'Diberikan pada service account yang dipakai service — syarat untuk deploy dengan `--service-account`']
+                ['roles/run.admin', 'Managing everything, including the IAM policies of services and jobs'],
+                ['roles/run.developer', 'Creating and changing services and jobs, without managing IAM'],
+                ['roles/run.invoker', 'Calling a service'],
+                ['roles/run.viewer', 'Viewing only'],
+                ['roles/iam.serviceAccountUser', 'Granted on the service account a service runs as — required to deploy with `--service-account`']
               ]
             }
           ]
         },
         {
           id: 'invoke-auth',
-          title: 'Publik atau privat: siapa boleh memanggil',
+          title: 'Public or private: who may call it',
           blocks: [
             {
               kind: 'p',
-              text: 'Service baru **privat**: hanya identitas dengan permission memanggil (Owner, Editor, atau `roles/run.invoker`) yang diterima. Untuk website publik, berikan `roles/run.invoker` kepada **`allUsers`** — atau pakai `--allow-unauthenticated` saat deploy.'
+              text: 'A new service is **private**: only identities with permission to invoke it (Owner, Editor, or `roles/run.invoker`) get through. For a public website, grant `roles/run.invoker` to **`allUsers`** — or use `--allow-unauthenticated` when deploying.'
             },
             {
               kind: 'code',
-              title: 'Membuka, membatasi, dan memanggil service',
+              title: 'Opening, restricting, and calling a service',
               lines: [
-                '# publik',
+                '# public',
                 `$ gcloud run services add-iam-policy-binding web ${REGION} --member=allUsers --role=roles/run.invoker`,
-                '# hanya service lain, lewat service account-nya',
+                '# only another service, through its service account',
                 `$ gcloud run services add-iam-policy-binding orders ${REGION} --member=serviceAccount:checkout-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/run.invoker`,
-                '# untuk semua service di project',
+                '# for every service in the project',
                 '$ gcloud projects add-iam-policy-binding ace-lab-123 --member=group:qa@example.com --role=roles/run.invoker',
-                '# memanggil service privat dari terminal: sertakan ID token',
+                '# calling a private service from a terminal: include an ID token',
                 '$ curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" https://orders-123456789012.asia-southeast2.run.app'
               ]
             },
             {
               kind: 'list',
               items: [
-                '**Service ke service**: beri service account pemanggil `roles/run.invoker` di service tujuan; pemanggil mengirim ID token di header `Authorization`.',
-                '**Pub/Sub push, Cloud Scheduler, Cloud Tasks**: konfigurasikan mereka dengan service account (token OIDC) yang punya `roles/run.invoker`.',
-                'Mencabut akses: `gcloud run services remove-iam-policy-binding` (atau `gcloud run jobs remove-iam-policy-binding` untuk job).'
+                '**Service to service**: give the calling service\'s service account `roles/run.invoker` on the target service; the caller sends an ID token in the `Authorization` header.',
+                '**Pub/Sub push, Cloud Scheduler, Cloud Tasks**: configure them with a service account (an OIDC token) that has `roles/run.invoker`.',
+                'Removing access: `gcloud run services remove-iam-policy-binding` (or `gcloud run jobs remove-iam-policy-binding` for a job).'
               ]
             }
           ]
         },
         {
           id: 'identity',
-          title: 'Identitas service: siapa aplikasimu di mata Google',
+          title: 'Service identity: who your app is to Google',
           blocks: [
             {
               kind: 'p',
-              text: 'Kebalikan dari siapa yang boleh memanggil service, ada pertanyaan **sebagai siapa service itu memanggil API lain** — membaca bucket, menulis ke Firestore, menerbitkan pesan. Jawabannya adalah **service account** revision. Tanpa diatur, Cloud Run memakai Compute Engine default service account, yang sering punya izin terlalu luas.'
+              text: 'The flip side of who may call a service is **who the service is when it calls other APIs** — reading a bucket, writing to Firestore, publishing a message. The answer is the revision\'s **service account**. If you do not set one, Cloud Run uses the Compute Engine default service account, which often has far too much access.'
             },
             {
               kind: 'code',
-              title: 'Least privilege: service account khusus per service',
+              title: 'Least privilege: a dedicated service account per service',
               lines: [
                 '$ gcloud iam service-accounts create shop-sa --display-name="Cloud Run shop"',
                 '$ gcloud storage buckets add-iam-policy-binding gs://ace-shop-images --member=serviceAccount:shop-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/storage.objectViewer',
@@ -873,64 +868,62 @@ export const lesson: Lesson = {
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"Cloud Run service needs to read from a bucket following least privilege" → service account khusus dengan role sempit di bucket itu, dipasang lewat `--service-account`. Bukan kunci JSON di dalam image, dan bukan default compute SA.'
+              text: '"Cloud Run service needs to read from a bucket following least privilege" → a dedicated service account with a narrow role on that bucket, set with `--service-account`. Not a JSON key inside the image, and not the default compute SA.'
             }
           ]
         },
         {
           id: 'ingress',
-          title: 'Ingress: dari jaringan mana request boleh datang',
+          title: 'Ingress: which networks requests may come from',
           blocks: [
             {
               kind: 'p',
-              text: 'IAM menjawab **siapa**, ingress menjawab **dari mana**. Keduanya independen; pakai bersama untuk pertahanan berlapis. Ingress diatur per service dengan `--ingress`.'
+              text: 'IAM answers **who**, ingress answers **from where**. They are independent; use both for defence in depth. Ingress is set per service with `--ingress`.'
             },
             {
               kind: 'table',
-              columns: ['Sumber request', 'all (default)', 'internal-and-cloud-load-balancing', 'internal'],
+              columns: ['Source of the request', 'all (default)', 'internal-and-cloud-load-balancing', 'internal'],
               rows: [
-                ['Internet langsung ke URL run.app atau domain sendiri', '✓', '✗', '✗'],
-                ['External Application Load Balancer', '✓', '✓', '✗'],
-                ['Internal Application Load Balancer, VPC di project atau perimeter VPC SC yang sama', '✓', '✓', '✓'],
-                ['Pub/Sub, Eventarc, Cloud Tasks, Workflows di project atau perimeter yang sama', '✓', '✓', '✓']
+                ['The internet straight to the run.app URL or a custom domain', '✓', '✗', '✗'],
+                ['An external Application Load Balancer', '✓', '✓', '✗'],
+                ['An internal Application Load Balancer, VPCs in the same project or VPC SC perimeter', '✓', '✓', '✓'],
+                ['Pub/Sub, Eventarc, Cloud Tasks, Workflows in the same project or perimeter', '✓', '✓', '✓']
               ]
             },
             { kind: 'code', lines: [`$ gcloud run services update shop ${REGION} --ingress=internal-and-cloud-load-balancing`] },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
               text: '"Traffic must go through the load balancer (with Cloud Armor), not directly to the run.app URL" → `--ingress=internal-and-cloud-load-balancing`. "Only reachable from inside the VPC" → `--ingress=internal`.'
             }
           ]
         },
         {
           id: 'vpc',
-          title: 'Keluar ke VPC: menjangkau IP privat',
+          title: 'Out to the VPC: reaching private IPs',
           blocks: [
             {
               kind: 'p',
-              text: 'Secara default Cloud Run tidak berada di VPC-mu, jadi tidak bisa menjangkau resource ber-IP privat — Memorystore, Cloud SQL dengan IP privat, VM internal. Untuk itu service atau job perlu jalan **keluar ke VPC**.'
+              text: 'By default Cloud Run is not inside your VPC, so it cannot reach resources with private IPs — Memorystore, Cloud SQL with a private IP, internal VMs. For that a service or job needs a way **out to the VPC**.'
             },
-            { kind: 'figure', svg: FIG_VPC, caption: 'Dua jalan keluar ke VPC. Keduanya hanya untuk trafik keluar; request yang datang dari VPC ke Cloud Run tetap lewat ingress.' },
+            { kind: 'figure', svg: FIG_VPC, caption: 'Two ways out to the VPC. Both are for outbound traffic only; requests coming from the VPC to Cloud Run still go through ingress.' },
             {
               kind: 'table',
               columns: ['', 'Direct VPC egress', 'Serverless VPC Access connector'],
               rows: [
-                ['Status', 'Direkomendasikan', 'Cara lama, masih didukung'],
-                ['Cara kerja', 'Instance mendapat IP langsung dari subnet', 'Trafik lewat VM perantara milik connector'],
-                ['Kebutuhan', 'Subnet di region yang sama, minimal /26', 'Connector di region yang sama, rentang /28 khusus'],
-                ['Biaya', 'Hanya biaya trafik jaringan', 'Ditambah biaya VM connector, walau idle'],
-                ['Flag', '`--network --subnet --vpc-egress`', '`--vpc-connector`']
+                ['Status', 'Recommended', 'The older way, still supported'],
+                ['How it works', 'Instances get an IP straight from the subnet', 'Traffic goes through relay VMs owned by the connector'],
+                ['Needs', 'A subnet in the same region, at least /26', 'A connector in the same region, a dedicated /28 range'],
+                ['Cost', 'Only network traffic', 'Plus the connector VMs, even when idle'],
+                ['Flags', '`--network --subnet --vpc-egress`', '`--vpc-connector`']
               ]
             },
             {
               kind: 'code',
               lines: [
                 `$ gcloud run services update cart ${REGION} --network=prod-vpc --subnet=run-jkt --vpc-egress=private-ranges-only`,
-                '# private-ranges-only: hanya tujuan IP privat yang lewat VPC',
-                '# all-traffic: semua trafik keluar lewat VPC — misalnya agar keluar dengan IP statis Cloud NAT'
+                '# private-ranges-only: only private IP destinations go through the VPC',
+                '# all-traffic: all outbound traffic goes through the VPC — e.g. to leave with a static Cloud NAT IP'
               ]
             }
           ]
@@ -941,213 +934,213 @@ export const lesson: Lesson = {
     // ── 7 ─────────────────────────────────────────────────────────────────
     {
       id: 'scenarios',
-      title: 'Skenario troubleshooting',
+      title: 'Troubleshooting scenarios',
       sections: [
         {
           id: 'sc-port',
-          title: 'Skenario 1 — Deploy gagal: container tidak mendengarkan port',
+          title: 'Scenario 1 — The deploy fails: the container is not listening on the port',
           blocks: [
             {
               kind: 'case',
-              title: 'Revision tidak pernah siap',
-              situation: 'Tim men-deploy API Node.js yang di laptop berjalan di `localhost:3000`.',
+              title: 'The revision never becomes ready',
+              situation: 'The team deploys a Node.js API that runs on `localhost:3000` on a laptop.',
               symptom: [
                 `$ gcloud run deploy orders --image=${IMG}/orders:1.0 ${REGION}`,
                 'Deploying container to Cloud Run service [orders] in project [ace-lab-123] region [asia-southeast2]',
                 "ERROR: (gcloud.run.deploy) Revision 'orders-00001-k2m' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8080 environment variable within the allocated timeout."
               ],
               diagnose: [
-                'Cloud Run menunggu koneksi TCP di port 8080 (`$PORT`), sedangkan aplikasi membuka port 3000 — dan hanya di `localhost`.',
-                'Buka log revision di Cloud Logging: kalau aplikasi crash saat start (env var hilang, gagal konek database), pesannya ada di sana.',
-                'Image dibangun di laptop ARM? Cloud Run butuh image `linux/amd64`; image yang salah arsitektur juga gagal start.'
+                'Cloud Run waits for TCP connections on port 8080 (`$PORT`), but the app opens port 3000 — and only on `localhost`.',
+                'Open the revision logs in Cloud Logging: if the app crashes at startup (a missing environment variable, a failed database connection), the message is there.',
+                'Was the image built on an ARM laptop? Cloud Run needs a `linux/amd64` image; an image for the wrong architecture also fails to start.'
               ],
               fix: [
-                '# di kode: baca PORT dan dengarkan semua interface',
+                '# in the code: read PORT and listen on every interface',
                 'const port = process.env.PORT || 8080;',
                 "app.listen(port, '0.0.0.0');",
-                '# atau beri tahu Cloud Run port yang dipakai aplikasi',
+                '# or tell Cloud Run which port the app uses',
                 `$ gcloud run deploy orders --image=${IMG}/orders:1.0 ${REGION} --port=3000`
               ],
-              why: 'Cloud Run menganggap container siap hanya ketika port yang diatur menerima koneksi. Selama itu belum terjadi, revision tidak menerima traffic dan deploy gagal setelah batas waktu.',
-              exam: 'Pesan "failed to start and listen on the port defined by the PORT environment variable" selalu soal port atau aplikasi yang crash saat start.'
+              why: 'Cloud Run only treats a container as ready once the configured port accepts connections. Until then the revision gets no traffic, and the deploy fails after the timeout.',
+              exam: 'The message "failed to start and listen on the port defined by the PORT environment variable" is always about the port, or an app crashing at startup.'
             }
           ]
         },
         {
           id: 'sc-403',
-          title: 'Skenario 2 — Website publik menjawab 403',
+          title: 'Scenario 2 — A public website answers 403',
           blocks: [
             {
               kind: 'case',
-              title: 'Deploy sukses, pengunjung ditolak',
-              situation: 'Landing page di-deploy tanpa `--allow-unauthenticated`. Tim membuka URL-nya dari browser.',
+              title: 'The deploy succeeded, visitors are refused',
+              situation: 'A landing page is deployed without `--allow-unauthenticated`. The team opens its URL in a browser.',
               symptom: ['$ curl -i https://web-123456789012.asia-southeast2.run.app', 'HTTP/2 403', 'Error: Forbidden', 'Your client does not have permission to get URL / from this server.'],
               diagnose: [
-                'Service baru privat. IAM memeriksa `roles/run.invoker`, dan pengunjung anonim tidak punya.',
-                'Ingress sudah `all` — masalahnya di lapisan IAM, bukan jaringan.',
-                'Kalau menambah `allUsers` justru ditolak dengan pesan anggota tidak diizinkan, organisasi memakai org policy **domain restricted sharing**: perlu pengecualian, atau taruh load balancer + IAP di depan.'
+                'A new service is private. IAM checks for `roles/run.invoker`, and anonymous visitors do not have it.',
+                'Ingress is already `all` — the problem is in the IAM layer, not the network.',
+                'If adding `allUsers` is itself refused with a message about members not being allowed, the organisation uses the **domain restricted sharing** org policy: you need an exception, or a load balancer + IAP in front.'
               ],
               fix: [`$ gcloud run services add-iam-policy-binding web ${REGION} --member=allUsers --role=roles/run.invoker`],
-              why: 'Akses memanggil service adalah IAM biasa: binding role invoker kepada member. `allUsers` berarti siapa pun, tanpa login.',
-              exam: '"Make a Cloud Run service publicly accessible" → `allUsers` + `roles/run.invoker`, atau `--allow-unauthenticated`.'
+              why: 'Permission to call a service is ordinary IAM: a binding of the invoker role to a member. `allUsers` means anyone, without signing in.',
+              exam: '"Make a Cloud Run service publicly accessible" → `allUsers` + `roles/run.invoker`, or `--allow-unauthenticated`.'
             }
           ]
         },
         {
           id: 'sc-cold',
-          title: 'Skenario 3 — Request pertama setiap pagi lambat',
+          title: 'Scenario 3 — The first request every morning is slow',
           blocks: [
             {
               kind: 'case',
-              title: 'Enam detik untuk pengguna pertama',
-              situation: 'API internal dipakai jam kerja saja. Request pertama setiap pagi butuh sekitar 6 detik; berikutnya 80 ms.',
+              title: 'Six seconds for the first user',
+              situation: 'An internal API is only used during working hours. The first request each morning takes about 6 seconds; the next ones 80 ms.',
               symptom: ['$ curl -s -o /dev/null -w "%{time_total}\\n" https://reports-123456789012.asia-southeast2.run.app/health', '6.214', '$ curl -s -o /dev/null -w "%{time_total}\\n" https://reports-123456789012.asia-southeast2.run.app/health', '0.083'],
               diagnose: [
-                'Semalaman tidak ada request → scale to zero. Request pertama menunggu cold start.',
-                'Cold start = menyalakan container + inisialisasi aplikasi. Lihat log start untuk mengetahui bagian mana yang lama: memuat framework, koneksi database, mengunduh konfigurasi.'
+                'No requests all night → scaled to zero. The first request waits for a cold start.',
+                'Cold start = starting the container + initialising the app. Check the startup logs to see which part is slow: loading the framework, connecting to the database, downloading configuration.'
               ],
               fix: [
                 `$ gcloud run services update reports ${REGION} --min-instances=1 --cpu-boost`,
-                '# dan di kode: tunda inisialisasi yang tidak dibutuhkan request pertama'
+                '# and in the code: defer initialisation the first request does not need'
               ],
-              why: 'Min instances menjaga instance tetap hangat sehingga tidak ada cold start (dengan biaya instance idle). Startup CPU boost memberi CPU ekstra saat start sehingga cold start yang tersisa lebih singkat.',
+              why: 'Min instances keeps an instance warm so there is no cold start (at the cost of an idle instance). Startup CPU boost gives extra CPU at startup so the cold starts that remain are shorter.',
               exam: '"Reduce cold start latency for a Cloud Run service" → min instances.'
             }
           ]
         },
         {
           id: 'sc-db',
-          title: 'Skenario 4 — Database kehabisan koneksi saat promo',
+          title: 'Scenario 4 — The database runs out of connections during a promotion',
           blocks: [
             {
               kind: 'case',
-              title: 'Lonjakan traffic, database menolak',
-              situation: 'Service `checkout` memakai Cloud SQL PostgreSQL kecil (sekitar 100 koneksi). Tiap instance membuka pool 10 koneksi, concurrency diatur 10. Saat promo, error 500 berhamburan.',
+              title: 'A traffic spike, and the database refuses',
+              situation: 'The `checkout` service uses a small Cloud SQL PostgreSQL instance (about 100 connections). Each instance opens a pool of 10 connections, and concurrency was set to 10. During a promotion, 500 errors pour in.',
               symptom: ['FATAL:  sorry, too many clients already'],
               diagnose: [
-                'Traffic tinggi + concurrency rendah → Cloud Run menyalakan puluhan instance. 80 instance × 10 koneksi = 800 koneksi.',
-                'Coba situasi "Database kecil" di kalkulator autoscaling di atas.'
+                'High traffic + low concurrency → Cloud Run starts dozens of instances. 80 instances × 10 connections = 800 connections.',
+                'Try the "Small database" situation in the autoscaling calculator above.'
               ],
               fix: [
                 `$ gcloud run services update checkout ${REGION} --max-instances=10 --concurrency=80`,
-                '# kecilkan pool per instance; untuk traffic lebih besar, perbesar database atau pakai connection pooler'
+                '# shrink the pool per instance; for more traffic, grow the database or use a connection pooler'
               ],
-              why: 'Max instances adalah rem untuk melindungi sistem hilir. Concurrency yang lebih tinggi memungkinkan instance yang lebih sedikit menampung traffic yang sama.',
-              exam: '"Cloud Run overwhelms the database during traffic spikes" → batasi max instances.'
+              why: 'Max instances is the brake that protects downstream systems. Higher concurrency lets fewer instances carry the same traffic.',
+              exam: '"Cloud Run overwhelms the database during traffic spikes" → limit max instances.'
             }
           ]
         },
         {
           id: 'sc-background',
-          title: 'Skenario 5 — Email konfirmasi kadang tidak terkirim',
+          title: 'Scenario 5 — Confirmation emails sometimes never arrive',
           blocks: [
             {
               kind: 'case',
-              title: 'Pekerjaan setelah response menghilang',
-              situation: 'Handler pesanan langsung menjawab 200, lalu mengirim email konfirmasi "di belakang" tanpa menunggu.',
-              symptom: ['Order 4812 created', 'Sending confirmation email to customer…', '# tidak ada log "email sent", kadang muncul timeout jaringan'],
+              title: 'Work after the response disappears',
+              situation: 'The order handler answers 200 straight away, then sends the confirmation email "in the background" without waiting.',
+              symptom: ['Order 4812 created', 'Sending confirmation email to customer…', '# no "email sent" log line, sometimes a network timeout'],
               diagnose: [
-                'Dengan request-based billing, CPU ditekan hampir nol begitu tidak ada request yang diproses — pekerjaan latar belakang berjalan sangat lambat.',
-                'Instance idle bisa dimatikan kapan saja, dan permintaan jaringan saat idle cenderung gagal.'
+                'With request-based billing, the CPU is throttled to nearly zero as soon as no request is being handled — background work crawls.',
+                'An idle instance can be shut down at any time, and network calls while idle tend to fail.'
               ],
               fix: [
-                '# pilihan 1: kirim email sebelum menjawab',
-                '# pilihan 2: masukkan ke Cloud Tasks / Pub/Sub, yang memanggil endpoint pengirim email',
-                '# pilihan 3: CPU tetap tersedia (ditagih selama instance hidup)',
+                '# option 1: send the email before answering',
+                '# option 2: put it on Cloud Tasks / Pub/Sub, which calls an email-sending endpoint',
+                '# option 3: keep the CPU available (billed for as long as the instance runs)',
                 `$ gcloud run services update orders ${REGION} --no-cpu-throttling`
               ],
-              why: 'Cloud Run menjamin CPU selama request diproses. Di luar itu, hanya instance-based billing yang menjaga CPU tetap ada.',
-              exam: '"Background processing after the response is unreliable" → Cloud Tasks, atau CPU always allocated (instance-based billing).'
+              why: 'Cloud Run guarantees CPU while a request is being handled. Outside that, only instance-based billing keeps the CPU there.',
+              exam: '"Background processing after the response is unreliable" → Cloud Tasks, or CPU always allocated (instance-based billing).'
             }
           ]
         },
         {
           id: 'sc-oom',
-          title: 'Skenario 6 — Instance mati saat memproses file besar',
+          title: 'Scenario 6 — Instances die while processing large files',
           blocks: [
             {
               kind: 'case',
-              title: 'File kecil lancar, file besar gagal',
-              situation: 'Service mengubah PDF yang diunggah menjadi gambar, memproses semuanya di memori dan menulis file sementara ke filesystem container.',
+              title: 'Small files work, large files fail',
+              situation: 'A service turns uploaded PDFs into images, doing everything in memory and writing temporary files to the container filesystem.',
               symptom: ['Memory limit of 512 MiB exceeded with 731 MiB used. Consider increasing the memory limit, see https://cloud.google.com/run/docs/configuring/memory-limits'],
               diagnose: [
-                'Default memory 512 MiB. File yang ditulis ke filesystem container ikut memakan memori.',
-                'Concurrency 80 berarti beberapa file besar bisa diproses bersamaan di instance yang sama.',
-                'Saat instance dihentikan karena memori, semua request di instance itu ikut gagal.'
+                'The default memory is 512 MiB. Files written to the container filesystem use memory too.',
+                'Concurrency 80 means several large files can be processed at once on the same instance.',
+                'When an instance is stopped for memory, every request on it fails as well.'
               ],
               fix: [
                 `$ gcloud run services update pdf2img ${REGION} --memory=2Gi --cpu=2 --concurrency=4`,
-                '# di kode: proses secara streaming, simpan hasil ke Cloud Storage, bukan filesystem container'
+                '# in the code: process as a stream, save results to Cloud Storage, not the container filesystem'
               ],
-              why: 'Memory limit berlaku per instance untuk semua request yang sedang diprosesnya. Memori lebih besar dan concurrency lebih kecil memberi ruang untuk request berat.',
-              exam: 'Container berhenti dengan "memory limit exceeded" → naikkan `--memory` (sampai 32 GiB), turunkan concurrency.'
+              why: 'The memory limit is per instance, shared by every request it is handling. More memory and lower concurrency leave room for heavy requests.',
+              exam: 'A container stopping with "memory limit exceeded" → raise `--memory` (up to 32 GiB), lower concurrency.'
             }
           ]
         },
         {
           id: 'sc-rollback',
-          title: 'Skenario 7 — Rilis baru menaikkan error',
+          title: 'Scenario 7 — A new release raises the error rate',
           blocks: [
             {
               kind: 'case',
-              title: 'Kembalikan dalam satu perintah',
-              situation: 'Versi 1.5 di-deploy dan langsung menerima 100% traffic. Error rate melonjak ke 20%.',
+              title: 'Back in one command',
+              situation: 'Version 1.5 is deployed and gets 100% of traffic at once. The error rate jumps to 20%.',
               symptom: [
                 `$ gcloud run revisions list --service=shop ${REGION}`,
                 '   REVISION        ACTIVE  SERVICE  DEPLOYED',
                 '✔  shop-00008-wfx  yes     shop     2026-10-18 09:12:40 UTC',
                 '✔  shop-00007-plq          shop     2026-10-17 15:02:11 UTC'
               ],
-              diagnose: ['Revision lama `shop-00007-plq` masih ada dan tidak berubah.', 'Rollback tidak butuh build atau deploy ulang — cukup pindahkan traffic.'],
+              diagnose: ['The old revision `shop-00007-plq` still exists, unchanged.', 'A rollback needs no build or redeploy — just move the traffic.'],
               fix: [
                 `$ gcloud run services update-traffic shop ${REGION} --to-revisions=shop-00007-plq=100`,
-                '# lain kali: --no-traffic --tag=canary, lalu naikkan persentase bertahap'
+                '# next time: --no-traffic --tag=canary, then raise the percentage gradually'
               ],
-              why: 'Revision immutable membuat setiap versi yang pernah di-deploy siap dipakai lagi. Traffic split adalah tombol pengaturnya.',
-              exam: '"Quickly roll back a Cloud Run deployment" → `update-traffic` ke revision sebelumnya.'
+              why: 'Immutable revisions mean every version ever deployed is ready to use again. Traffic splitting is the control for it.',
+              exam: '"Quickly roll back a Cloud Run deployment" → `update-traffic` to the previous revision.'
             }
           ]
         },
         {
           id: 'sc-vpc',
-          title: 'Skenario 8 — Tidak bisa konek ke Redis ber-IP privat',
+          title: 'Scenario 8 — Cannot connect to Redis on a private IP',
           blocks: [
             {
               kind: 'case',
-              title: 'Timeout ke Memorystore',
-              situation: 'Service `cart` butuh Memorystore for Redis di `10.20.0.5`, di jaringan `prod-vpc` region asia-southeast2.',
+              title: 'A timeout to Memorystore',
+              situation: 'The `cart` service needs Memorystore for Redis at `10.20.0.5`, on the `prod-vpc` network in asia-southeast2.',
               symptom: ['Error: connect ETIMEDOUT 10.20.0.5:6379'],
               diagnose: [
-                'Cloud Run tidak berada di VPC; paket ke IP privat tidak punya jalan.',
-                'Butuh Direct VPC egress (atau connector) di region yang sama dengan service.',
-                'Setelah tersambung, firewall VPC juga harus mengizinkan trafik dari subnet yang dipakai Cloud Run.'
+                'Cloud Run is not inside the VPC; packets to a private IP have no path.',
+                'It needs Direct VPC egress (or a connector) in the same region as the service.',
+                'Once connected, the VPC firewall must also allow traffic from the subnet Cloud Run uses.'
               ],
-              fix: [`$ gcloud run services update cart ${REGION} --network=prod-vpc --subnet=run-jkt --vpc-egress=private-ranges-only`, '# subnet run-jkt minimal /26, di region yang sama'],
-              why: 'Direct VPC egress memberi instance alamat di subnet VPC, sehingga ia bisa menjangkau resource internal lewat IP privat tanpa melewati internet.',
-              exam: '"Cloud Run must connect to Memorystore / a VM with an internal IP" → Direct VPC egress atau Serverless VPC Access connector.'
+              fix: [`$ gcloud run services update cart ${REGION} --network=prod-vpc --subnet=run-jkt --vpc-egress=private-ranges-only`, '# the run-jkt subnet must be at least /26, in the same region'],
+              why: 'Direct VPC egress gives instances an address in a VPC subnet, so they can reach internal resources over private IPs without going through the internet.',
+              exam: '"Cloud Run must connect to Memorystore / a VM with an internal IP" → Direct VPC egress or a Serverless VPC Access connector.'
             }
           ]
         },
         {
           id: 'sc-push',
-          title: 'Skenario 9 — Pub/Sub push ke service privat ditolak',
+          title: 'Scenario 9 — Pub/Sub push to a private service is refused',
           blocks: [
             {
               kind: 'case',
-              title: 'Pesan menumpuk, service tidak pernah dipanggil',
-              situation: 'Service `orders-worker` sengaja privat. Subscription push dibuat ke URL-nya tanpa pengaturan autentikasi.',
+              title: 'Messages pile up, the service is never called',
+              situation: 'The `orders-worker` service is deliberately private. A push subscription was created to its URL with no authentication settings.',
               symptom: ['The request was not authenticated. Either allow unauthenticated invocations or set the proper Authorization header.'],
               diagnose: [
-                'Push tanpa token OIDC → request datang tanpa identitas → 403.',
-                'Yang dibutuhkan: service account untuk push, dengan `roles/run.invoker` di service tujuan.'
+                'A push with no OIDC token → the request arrives with no identity → 403.',
+                'What it needs: a service account for the push, with `roles/run.invoker` on the target service.'
               ],
               fix: [
                 '$ gcloud iam service-accounts create push-invoker',
                 `$ gcloud run services add-iam-policy-binding orders-worker ${REGION} --member=serviceAccount:push-invoker@ace-lab-123.iam.gserviceaccount.com --role=roles/run.invoker`,
                 '$ gcloud pubsub subscriptions update orders-push --push-endpoint=https://orders-worker-123456789012.asia-southeast2.run.app --push-auth-service-account=push-invoker@ace-lab-123.iam.gserviceaccount.com'
               ],
-              why: 'Pub/Sub menandatangani token OIDC atas nama service account itu; Cloud Run memeriksa token dan IAM seperti untuk pemanggil lain.',
-              exam: 'Pola yang sama berlaku untuk Cloud Scheduler dan Cloud Tasks: service account dengan `roles/run.invoker`, bukan membuka service ke `allUsers`.'
+              why: 'Pub/Sub signs an OIDC token as that service account; Cloud Run checks the token and IAM just as it does for any other caller.',
+              exam: 'The same pattern applies to Cloud Scheduler and Cloud Tasks: a service account with `roles/run.invoker`, not opening the service to `allUsers`.'
             }
           ]
         }
@@ -1157,24 +1150,24 @@ export const lesson: Lesson = {
     // ── 8 ─────────────────────────────────────────────────────────────────
     {
       id: 'check',
-      title: 'Cek pemahaman',
+      title: 'Check yourself',
       sections: [
         {
           id: 'quiz',
-          title: 'Dua belas soal singkat',
+          title: 'Twelve quick questions',
           blocks: [
-            { kind: 'quiz', q: 'Apa yang terjadi setiap kali kamu men-deploy image baru ke sebuah service Cloud Run?', options: ['Revision yang ada diperbarui di tempat', 'Revision baru yang tidak bisa diubah dibuat', 'Service baru dengan URL baru dibuat', 'Semua instance di-restart dengan image baru'], answer: 1, explain: 'Setiap deploy (dan setiap perubahan konfigurasi) membuat revision baru yang immutable; URL service tetap.' },
-            { kind: 'quiz', q: 'Berapa max concurrency default per instance?', options: ['1', '10', '80', '1000'], answer: 2, explain: 'Default 80, bisa diatur dari 1 sampai 1000.' },
-            { kind: 'quiz', q: 'Deploy gagal dengan pesan container "failed to start and listen on the port defined by the PORT environment variable". Penyebab paling mungkin?', options: ['Service account tidak punya role', 'Aplikasi mendengarkan port lain atau hanya localhost', 'Max instances terlalu kecil', 'Ingress diatur internal'], answer: 1, explain: 'Cloud Run menunggu koneksi TCP di `$PORT` (default 8080) pada semua interface.' },
-            { kind: 'quiz', q: 'Request pertama setelah malam yang sepi butuh beberapa detik. Pengaturan apa yang paling langsung menghilangkannya?', options: ['--max-instances', '--concurrency=1', '--min-instances=1', '--timeout=3600'], answer: 2, explain: 'Min instances menjaga instance tetap hangat sehingga tidak ada cold start — dengan biaya instance idle.' },
-            { kind: 'quiz', q: 'Saat traffic memuncak, Cloud SQL menolak koneksi karena terlalu banyak klien. Pengaturan Cloud Run apa yang membatasinya?', options: ['--min-instances', '--max-instances', '--cpu-boost', '--ingress'], answer: 1, explain: 'Max instances membatasi jumlah instance, sehingga jumlah koneksi ke database ikut terbatas.' },
-            { kind: 'quiz', q: 'Aplikasi tidak aman dipakai banyak request sekaligus karena memakai state global. Apa yang diubah?', options: ['Concurrency menjadi 1', 'Memory menjadi 32Gi', 'Min instances menjadi 0', 'Ingress menjadi internal'], answer: 0, explain: 'Concurrency 1 membuat setiap instance memproses satu request pada satu waktu.' },
-            { kind: 'quiz', q: 'Bagaimana membuat service Cloud Run bisa diakses publik tanpa login?', options: ['Beri roles/run.admin ke allAuthenticatedUsers', 'Beri roles/run.invoker ke allUsers', 'Ubah ingress ke all', 'Matikan IAM di project'], answer: 1, explain: '`allUsers` + `roles/run.invoker`, atau `--allow-unauthenticated` saat deploy.' },
-            { kind: 'quiz', q: 'Service A harus memanggil service B yang privat. Apa yang dibutuhkan?', options: ['Buka B ke allUsers', 'Service account A diberi roles/run.invoker di B, dan A mengirim ID token', 'Taruh keduanya di region yang sama', 'Beri A roles/editor di project'], answer: 1, explain: 'Service-to-service memakai IAM: invoker di service tujuan, ID token di header Authorization.' },
-            { kind: 'quiz', q: 'Skrip yang memproses semua file di bucket setiap malam lalu selesai paling cocok dijalankan sebagai…', options: ['Service Cloud Run dengan min instances 1', 'Cloud Run job yang dipicu Cloud Scheduler', 'Service dengan concurrency 1000', 'VM yang selalu menyala'], answer: 1, explain: 'Job menjalankan task sampai selesai lalu berhenti; Cloud Scheduler menjadwalkannya.' },
-            { kind: 'quiz', q: 'Pekerjaan yang dijalankan setelah response dikirim sering tidak selesai. Kenapa?', options: ['Request timeout terlalu pendek', 'Dengan request-based billing, CPU ditekan hampir nol di luar request', 'Concurrency terlalu tinggi', 'Image terlalu besar'], answer: 1, explain: 'Gunakan Cloud Tasks / Pub/Sub, kerjakan sebelum menjawab, atau pakai instance-based billing (`--no-cpu-throttling`).' },
-            { kind: 'quiz', q: 'Service hanya boleh diakses lewat external Application Load Balancer (dengan Cloud Armor), bukan langsung ke URL run.app. Pengaturannya?', options: ['--ingress=all', '--ingress=internal', '--ingress=internal-and-cloud-load-balancing', '--no-allow-unauthenticated'], answer: 2, explain: 'Pengaturan ini menerima request dari load balancer dan sumber internal, tapi menolak internet langsung.' },
-            { kind: 'quiz', q: 'Kamu ingin 10% pengguna mencoba revision baru sebelum rilis penuh. Perintahnya?', options: ['gcloud run deploy --traffic=10', 'gcloud run services update-traffic … --to-revisions=REV=10', 'gcloud run revisions update REV --percent=10', 'gcloud run services update … --max-instances=10'], answer: 1, explain: '`update-traffic` membagi traffic antar revision (atau tag) dalam persen.' }
+            { kind: 'quiz', q: 'What happens every time you deploy a new image to a Cloud Run service?', options: ['The existing revision is updated in place', 'A new revision that cannot be changed is created', 'A new service with a new URL is created', 'Every instance is restarted with the new image'], answer: 1, explain: 'Every deploy (and every configuration change) creates a new immutable revision; the service URL stays the same.' },
+            { kind: 'quiz', q: 'What is the default max concurrency per instance?', options: ['1', '10', '80', '1000'], answer: 2, explain: '80 by default, settable from 1 to 1000.' },
+            { kind: 'quiz', q: 'A deploy fails with the container "failed to start and listen on the port defined by the PORT environment variable". The most likely cause?', options: ['The service account has no role', 'The app listens on another port, or only on localhost', 'Max instances is too small', 'Ingress is set to internal'], answer: 1, explain: 'Cloud Run waits for TCP connections on `$PORT` (8080 by default) on every interface.' },
+            { kind: 'quiz', q: 'The first request after a quiet night takes several seconds. Which setting removes that most directly?', options: ['--max-instances', '--concurrency=1', '--min-instances=1', '--timeout=3600'], answer: 2, explain: 'Min instances keeps an instance warm so there is no cold start — at the cost of an idle instance.' },
+            { kind: 'quiz', q: 'At peak traffic, Cloud SQL refuses connections because there are too many clients. Which Cloud Run setting limits that?', options: ['--min-instances', '--max-instances', '--cpu-boost', '--ingress'], answer: 1, explain: 'Max instances caps the number of instances, and with it the number of database connections.' },
+            { kind: 'quiz', q: 'An app is not safe with many simultaneous requests because it uses global state. What do you change?', options: ['Concurrency to 1', 'Memory to 32Gi', 'Min instances to 0', 'Ingress to internal'], answer: 0, explain: 'Concurrency 1 makes each instance handle one request at a time.' },
+            { kind: 'quiz', q: 'How do you make a Cloud Run service publicly reachable without signing in?', options: ['Give roles/run.admin to allAuthenticatedUsers', 'Give roles/run.invoker to allUsers', 'Set ingress to all', 'Turn off IAM in the project'], answer: 1, explain: '`allUsers` + `roles/run.invoker`, or `--allow-unauthenticated` when deploying.' },
+            { kind: 'quiz', q: 'Service A must call the private service B. What does it need?', options: ['Open B to allUsers', 'A\'s service account gets roles/run.invoker on B, and A sends an ID token', 'Put both in the same region', 'Give A roles/editor on the project'], answer: 1, explain: 'Service-to-service calls use IAM: invoker on the target service, an ID token in the Authorization header.' },
+            { kind: 'quiz', q: 'A script that processes every file in a bucket each night and then finishes is best run as…', options: ['A Cloud Run service with min instances 1', 'A Cloud Run job triggered by Cloud Scheduler', 'A service with concurrency 1000', 'A VM that is always on'], answer: 1, explain: 'A job runs its tasks to completion and then stops; Cloud Scheduler schedules it.' },
+            { kind: 'quiz', q: 'Work started after the response is sent often never finishes. Why?', options: ['The request timeout is too short', 'With request-based billing, the CPU is throttled to nearly zero outside requests', 'Concurrency is too high', 'The image is too big'], answer: 1, explain: 'Use Cloud Tasks / Pub/Sub, do the work before answering, or use instance-based billing (`--no-cpu-throttling`).' },
+            { kind: 'quiz', q: 'A service may only be reached through an external Application Load Balancer (with Cloud Armor), never straight at the run.app URL. The setting?', options: ['--ingress=all', '--ingress=internal', '--ingress=internal-and-cloud-load-balancing', '--no-allow-unauthenticated'], answer: 2, explain: 'This setting accepts requests from load balancers and internal sources, but refuses the internet directly.' },
+            { kind: 'quiz', q: 'You want 10% of users to try a new revision before the full release. The command?', options: ['gcloud run deploy --traffic=10', 'gcloud run services update-traffic … --to-revisions=REV=10', 'gcloud run revisions update REV --percent=10', 'gcloud run services update … --max-instances=10'], answer: 1, explain: '`update-traffic` splits traffic between revisions (or tags) by percentage.' }
           ]
         }
       ]

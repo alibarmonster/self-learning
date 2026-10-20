@@ -57,15 +57,15 @@ export type CidrInfo =
 
 export function cidrInfo(input: string): CidrInfo {
   const c = parseCidr(input);
-  if (!c) return { ok: false, error: 'Tulis seperti 10.0.1.0/24 — empat angka 0–255, garis miring, lalu panjang prefix 0–32.' };
+  if (!c) return { ok: false, error: 'Write it like 10.0.1.0/24 — four numbers from 0 to 255, a slash, then a prefix length from 0 to 32.' };
   const total = 2 ** (32 - c.bits);
   const last = c.base + total - 1;
   const network = toIp(c.base);
   const rfc1918 = PRIVATE.some((p) => inCidr(network, p) && c.bits >= parseCidr(p)!.bits);
   let subnetProblem: string | undefined;
-  if (c.bits > 29) subnetProblem = 'Subnet IPv4 di VPC paling kecil /29 (8 alamat, 4 bisa dipakai).';
-  else if (c.bits < 8) subnetProblem = 'Rentang sebesar ini tidak dianjurkan untuk subnet; Google menyarankan maksimal /8.';
-  else if (!rfc1918) subnetProblem = 'Bukan rentang privat RFC 1918 (10/8, 172.16/12, 192.168/16) — biasanya bukan yang diinginkan untuk subnet.';
+  if (c.bits > 29) subnetProblem = 'The smallest IPv4 subnet in a VPC is /29 (8 addresses, 4 usable).';
+  else if (c.bits < 8) subnetProblem = 'A range this large is not recommended for a subnet; Google suggests /8 at most.';
+  else if (!rfc1918) subnetProblem = 'Not an RFC 1918 private range (10/8, 172.16/12, 192.168/16) — usually not what you want for a subnet.';
   return {
     ok: true,
     cidr: `${network}/${c.bits}`,
@@ -130,15 +130,15 @@ export function evaluate(vms: FwVm[], rules: FwRule[], p: FwPacket): FwVerdict {
   for (const r of [...rules].sort(byPriority)) {
     const step = (match: boolean, why: string) => steps.push({ rule: r.name, priority: r.priority, action: r.action, match, why });
     if (r.direction !== p.direction) {
-      step(false, `arah ${r.direction}, koneksi ini ${p.direction}`);
+      step(false, `direction ${r.direction}, this connection is ${p.direction}`);
       continue;
     }
     if (r.targetSa && r.targetSa !== vm.sa) {
-      step(false, `target hanya VM dengan service account ${r.targetSa}`);
+      step(false, `targets only VMs running as ${r.targetSa}`);
       continue;
     }
     if (!r.targetSa && r.targetTags?.length && !r.targetTags.some((t) => vm.tags.includes(t))) {
-      step(false, `target tag ${r.targetTags.join(', ')} — ${vm.name} tidak punya`);
+      step(false, `target tag ${r.targetTags.join(', ')} — ${vm.name} does not have it`);
       continue;
     }
     if (p.direction === 'INGRESS') {
@@ -148,21 +148,21 @@ export function evaluate(vms: FwVm[], rules: FwRule[], p: FwPacket): FwVerdict {
       const byRange = anySource || ranges.some((c) => inCidr(peerIp, c));
       const byTag = !!peerVm && tags.some((t) => peerVm.tags.includes(t));
       if (!byRange && !byTag) {
-        step(false, tags.length && !ranges.length ? `sumber hanya VM bertag ${tags.join(', ')}` : `sumber ${peerIp} tidak di ${ranges.join(', ')}`);
+        step(false, tags.length && !ranges.length ? `source is only VMs tagged ${tags.join(', ')}` : `source ${peerIp} is not in ${ranges.join(', ')}`);
         continue;
       }
     } else {
       const dests = r.destinations ?? [];
       if (dests.length && !dests.some((c) => inCidr(peerIp, c))) {
-        step(false, `tujuan ${peerIp} tidak di ${dests.join(', ')}`);
+        step(false, `destination ${peerIp} is not in ${dests.join(', ')}`);
         continue;
       }
     }
     if (!portsCover(r.ports, p.proto, p.port)) {
-      step(false, `${p.proto === 'icmp' ? 'icmp' : `${p.proto}:${p.port}`} tidak termasuk ${r.ports}`);
+      step(false, `${p.proto === 'icmp' ? 'icmp' : `${p.proto}:${p.port}`} is not in ${r.ports}`);
       continue;
     }
-    step(true, 'cocok');
+    step(true, 'matches');
   }
   const matched = steps.filter((s) => s.match);
   if (!matched.length) {

@@ -15,7 +15,7 @@
   const info = $derived(cidrInfo(input));
   const bits = $derived(info.ok ? Number(info.cidr.split('/')[1]) : null);
   const PREFIXES = [29, 28, 26, 24, 22, 20, 16];
-  const n = (x: number) => x.toLocaleString('id-ID');
+  const n = (x: number) => x.toLocaleString('en-US');
 
   function setPrefix(p: number) {
     input = `${input.split('/')[0].trim() || '10.0.0.0'}/${p}`;
@@ -27,17 +27,17 @@
 
 <div class="calc">
   <div class="calc-head">
-    <label for={id}>Kalkulator subnet</label>
+    <label for={id}>Subnet calculator</label>
     <input {id} class="mono" bind:value={input} spellcheck="false" autocomplete="off" autocapitalize="off" />
   </div>
-  <div class="prefixes" role="group" aria-label="Ganti panjang prefix">
+  <div class="prefixes" role="group" aria-label="Change the prefix length">
     {#each PREFIXES as p (p)}
       <button class="mono" class:on={bits === p} aria-pressed={bits === p} onclick={() => setPrefix(p)}>/{p}</button>
     {/each}
   </div>
 
   {#if info.ok && bits !== null}
-    <div class="bits" role="img" aria-label={`${bits} bit network dikunci, ${32 - bits} bit host bebas`}>
+    <div class="bits" role="img" aria-label={`${bits} network bits locked, ${32 - bits} host bits free`}>
       {#each { length: 4 } as _, o (o)}
         <span class="octet">
           {#each { length: 8 } as _, k (k)}
@@ -47,36 +47,36 @@
       {/each}
     </div>
     <p class="legend">
-      <span class="sw net" aria-hidden="true"></span>{bits} bit network (dikunci)
-      <span class="sw" aria-hidden="true"></span>{32 - bits} bit host → 2<sup>{32 - bits}</sup> = {n(info.total)} alamat
+      <span class="sw net" aria-hidden="true"></span>{bits} network bits (locked)
+      <span class="sw" aria-hidden="true"></span>{32 - bits} host bits → 2<sup>{32 - bits}</sup> = {n(info.total)} addresses
     </p>
 
     <dl class="facts">
-      <div><dt>Rentang</dt><dd class="mono">{info.cidr}</dd></div>
+      <div><dt>Range</dt><dd class="mono">{info.cidr}</dd></div>
       <div><dt>Netmask</dt><dd class="mono">{info.mask}</dd></div>
-      <div><dt>Total alamat</dt><dd>{n(info.total)}</dd></div>
-      <div class="hl"><dt>Bisa dipakai VM</dt><dd>{n(info.usable)}</dd></div>
+      <div><dt>Total addresses</dt><dd>{n(info.total)}</dd></div>
+      <div class="hl"><dt>Usable by VMs</dt><dd>{n(info.usable)}</dd></div>
     </dl>
 
     {#if bits <= 30}
       <ul class="reserved">
-        <li><span class="mono">{info.network}</span><span>alamat network</span></li>
+        <li><span class="mono">{info.network}</span><span>network address</span></li>
         <li><span class="mono">{info.gateway}</span><span>default gateway</span></li>
         <li class="use">
-          <span class="mono">{info.usable ? `${info.firstUsable} – ${info.lastUsable}` : 'tidak ada'}</span><span>untuk VM dan resource lain</span>
+          <span class="mono">{info.usable ? `${info.firstUsable} – ${info.lastUsable}` : 'none'}</span><span>for VMs and other resources</span>
         </li>
-        <li><span class="mono">{info.googleReserved}</span><span>dicadangkan Google</span></li>
+        <li><span class="mono">{info.googleReserved}</span><span>reserved by Google</span></li>
         <li><span class="mono">{info.broadcast}</span><span>broadcast</span></li>
       </ul>
     {/if}
 
     {#if info.normalised}
-      <p class="msg warn">Alamat awal rentang ini adalah <span class="mono">{info.network}</span>; saat membuat subnet tulis <span class="mono">{info.cidr}</span>.</p>
+      <p class="msg warn">This range starts at <span class="mono">{info.network}</span>; write <span class="mono">{info.cidr}</span> when you create the subnet.</p>
     {/if}
     {#if info.subnetProblem}
       <p class="msg warn">{info.subnetProblem}</p>
     {:else}
-      <p class="msg ok">Bisa dipakai sebagai rentang primer subnet — asal tidak bertumpuk dengan subnet lain, jaringan yang di-peer, atau jaringan kantor.</p>
+      <p class="msg ok">Usable as the primary range of a subnet — as long as it does not overlap another subnet, a peered network or your office network.</p>
     {/if}
   {:else if !info.ok}
     <p class="msg warn">{info.error}</p>

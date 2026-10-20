@@ -25,7 +25,7 @@ const vm = (x: number, y: number, name: string, ip: string) =>
   `<rect x="${x}" y="${y}" width="118" height="48" rx="6" ${BOX}/><text x="${x + 59}" y="${y + 20}" text-anchor="middle" fill="currentColor" font-weight="600">${name}</text><text x="${x + 59}" y="${y + 38}" text-anchor="middle" fill="currentColor" opacity="0.7" style="font-size: 12px">${ip}</text>`;
 
 const FIG_GLOBAL = SVG(
-  'Satu VPC global berisi subnet regional: subnet di us-central1 dan di asia-southeast2; VM di kedua region berbicara lewat IP internal tanpa VPN',
+  'One global VPC with regional subnets: a subnet in us-central1 and one in asia-southeast2; VMs in both regions talk over internal IPs without a VPN',
   720,
   300,
   `
@@ -45,13 +45,13 @@ const FIG_GLOBAL = SVG(
     <text x="390" y="76" opacity="0.75">Region asia-southeast2</text>
     <text x="66" y="116">subnet web-us · 10.10.0.0/24</text>
     <text x="404" y="116">subnet app-jkt · 10.20.0.0/24</text>
-    <text x="393" y="176" text-anchor="middle" ${ON} style="fill:#1a1a1a; font-size: 12px">IP internal</text>
-    <text x="360" y="290" text-anchor="middle" opacity="0.7">Firewall rule dan route berlaku untuk seluruh VPC; subnet milik satu region; VM milik satu zone.</text>
+    <text x="393" y="176" text-anchor="middle" ${ON} style="fill:#1a1a1a; font-size: 12px">internal IP</text>
+    <text x="360" y="290" text-anchor="middle" opacity="0.7">Firewall rules and routes apply to the whole VPC; a subnet belongs to one region; a VM to one zone.</text>
   </g>`
 );
 
 const FIG_CIDR = SVG(
-  'Subnet 10.0.1.0/24 berisi 256 alamat: .0 alamat network, .1 gateway, .254 dicadangkan Google, .255 broadcast, dan 252 alamat untuk VM',
+  'The subnet 10.0.1.0/24 has 256 addresses: .0 is the network address, .1 the gateway, .254 reserved by Google, .255 broadcast, and 252 addresses are left for VMs',
   720,
   170,
   `
@@ -63,9 +63,9 @@ const FIG_CIDR = SVG(
   </g>
   <rect x="120" y="56" width="480" height="44" ${MINT}/>
   <g fill="currentColor" text-anchor="middle">
-    <text x="360" y="36" font-weight="600">10.0.1.0/24 = 256 alamat · 4 dicadangkan · 252 untuk VM</text>
+    <text x="360" y="36" font-weight="600">10.0.1.0/24 = 256 addresses · 4 reserved · 252 for VMs</text>
     <text x="60" y="83">.0</text><text x="100" y="83">.1</text><text x="620" y="83">.254</text><text x="660" y="83">.255</text>
-    <text x="360" y="83" ${ON}>.2 … .253 — bisa dipakai VM, load balancer internal, dll.</text>
+    <text x="360" y="83" ${ON}>.2 … .253 — usable by VMs, internal load balancers and more</text>
     <g opacity="0.7" style="font-size: 12px">
       <text x="60" y="124">network</text>
       <text x="100" y="144">gateway</text>
@@ -76,7 +76,7 @@ const FIG_CIDR = SVG(
 );
 
 const FIG_ROUTE = SVG(
-  'Tabel route VPC: rute subnet ke VM lain, rute ke tunnel VPN, dan default route 0.0.0.0/0 ke default internet gateway; prefix paling spesifik menang',
+  'A VPC route table: subnet routes to other VMs, a route to a VPN tunnel, and the default route 0.0.0.0/0 to the default internet gateway; the most specific prefix wins',
   720,
   250,
   `
@@ -98,22 +98,22 @@ const FIG_ROUTE = SVG(
   <g fill="currentColor">
     <text x="78" y="122" text-anchor="middle" font-weight="600">VM</text>
     <text x="78" y="139" text-anchor="middle" opacity="0.7" style="font-size: 12px">10.10.0.2</text>
-    <text x="307" y="56" text-anchor="middle" font-weight="600">Tabel route prod-vpc</text>
+    <text x="307" y="56" text-anchor="middle" font-weight="600">prod-vpc route table</text>
     <g class="mono" style="font-size: 12px; font-family: var(--font-mono)">
       <text x="196" y="88">10.10.0.0/24 → subnet</text>
       <text x="196" y="124">10.20.0.0/24 → subnet</text>
       <text x="196" y="162">192.168.0.0/16 → vpn-tunnel</text>
       <text x="196" y="198">0.0.0.0/0 → internet gateway</text>
     </g>
-    <text x="590" y="60" text-anchor="middle">VM lain di VPC</text>
-    <text x="590" y="130" text-anchor="middle">Kantor lewat Cloud VPN</text>
-    <text x="590" y="192" text-anchor="middle">Internet</text>
-    <text x="590" y="209" text-anchor="middle" opacity="0.7" style="font-size: 12px">hanya jika ada IP eksternal / NAT</text>
+    <text x="590" y="60" text-anchor="middle">Other VMs in the VPC</text>
+    <text x="590" y="130" text-anchor="middle">The office over Cloud VPN</text>
+    <text x="590" y="192" text-anchor="middle">The internet</text>
+    <text x="590" y="209" text-anchor="middle" opacity="0.7" style="font-size: 12px">only with an external IP or NAT</text>
   </g>`
 );
 
 const FIG_FW = SVG(
-  'Firewall VPC dijalankan di setiap VM: trafik masuk dicek aturan ingress, trafik keluar dicek aturan egress, balasan koneksi otomatis diizinkan karena stateful',
+  'The VPC firewall is enforced at every VM: incoming traffic is checked against ingress rules, outgoing traffic against egress rules, and replies are allowed automatically because it is stateful',
   720,
   250,
   `
@@ -130,20 +130,20 @@ const FIG_FW = SVG(
     <path d="M562,128 L444,128" stroke-dasharray="4 4" ${A}/>
   </g>
   <g fill="currentColor" text-anchor="middle">
-    <text x="86" y="121" font-weight="600">Klien internet</text>
-    <text x="634" y="121" font-weight="600">API luar</text>
+    <text x="86" y="121" font-weight="600">Internet client</text>
+    <text x="634" y="121" font-weight="600">External API</text>
     <text x="360" y="113" ${ON} font-weight="600">VM web-1</text>
     <text x="360" y="131" ${ON} style="fill:#1a1a1a; font-size: 12px">tag: web</text>
-    <text x="360" y="54" opacity="0.7" style="font-size: 12px">firewall VPC — di setiap VM</text>
-    <text x="216" y="96" style="font-size: 12px">ingress: rule INGRESS</text>
-    <text x="216" y="146" opacity="0.7" style="font-size: 12px">balasan: otomatis</text>
-    <text x="502" y="96" style="font-size: 12px">egress: rule EGRESS</text>
-    <text x="502" y="146" opacity="0.7" style="font-size: 12px">balasan: otomatis</text>
+    <text x="360" y="54" opacity="0.7" style="font-size: 12px">VPC firewall — at every VM</text>
+    <text x="216" y="96" style="font-size: 12px">in: INGRESS rules</text>
+    <text x="216" y="146" opacity="0.7" style="font-size: 12px">replies: automatic</text>
+    <text x="502" y="96" style="font-size: 12px">out: EGRESS rules</text>
+    <text x="502" y="146" opacity="0.7" style="font-size: 12px">replies: automatic</text>
   </g>
   <g ${BOX}><rect x="96" y="196" width="250" height="34" rx="17"/><rect x="374" y="196" width="250" height="34" rx="17"/></g>
   <g fill="currentColor" text-anchor="middle" style="font-size: 12px">
-    <text x="221" y="218">implied: deny semua ingress · 65535</text>
-    <text x="499" y="218">implied: allow semua egress · 65535</text>
+    <text x="221" y="218">implied: deny all ingress · 65535</text>
+    <text x="499" y="218">implied: allow all egress · 65535</text>
   </g>`
 );
 
@@ -156,16 +156,16 @@ const path4 = (y: number, via: string, to: string) => `
   <text x="593" y="${y + 27}" text-anchor="middle" fill="currentColor" style="font-size: 12.5px">${to}</text>`;
 
 const FIG_EGRESS = SVG(
-  'Empat jalan keluar untuk VM tanpa IP eksternal: Cloud NAT ke internet, Private Google Access ke Google API, endpoint Private Service Connect, dan private services access ke Cloud SQL',
+  'Four ways out for a VM without an external IP: Cloud NAT to the internet, Private Google Access to Google APIs, a Private Service Connect endpoint, and private services access to Cloud SQL',
   720,
   290,
   `
   <rect x="16" y="120" width="140" height="60" rx="6" ${BOX}/>
-  <text x="86" y="146" text-anchor="middle" fill="currentColor" font-weight="600">VM privat</text>
-  <text x="86" y="164" text-anchor="middle" fill="currentColor" opacity="0.7" style="font-size: 12px">tanpa IP eksternal</text>
-  ${path4(14, 'Cloud NAT', 'Internet: apt, API pihak ketiga')}
-  ${path4(82, 'Private Google Access', 'Google API: Storage, BigQuery')}
-  ${path4(150, 'Endpoint PSC', 'Google API lewat IP internal')}
+  <text x="86" y="146" text-anchor="middle" fill="currentColor" font-weight="600">Private VM</text>
+  <text x="86" y="164" text-anchor="middle" fill="currentColor" opacity="0.7" style="font-size: 12px">no external IP</text>
+  ${path4(14, 'Cloud NAT', 'Internet: apt, third-party APIs')}
+  ${path4(82, 'Private Google Access', 'Google APIs: Storage, BigQuery')}
+  ${path4(150, 'PSC endpoint', 'Google APIs on an internal IP')}
   ${path4(218, 'Private services access', 'Cloud SQL, Memorystore')}`
 );
 
@@ -173,7 +173,7 @@ const vpcBox = (x: number, name: string, cidr: string) =>
   `<rect x="${x}" y="70" width="160" height="70" rx="10" ${BOX}/><text x="${x + 80}" y="100" text-anchor="middle" fill="currentColor" font-weight="600">${name}</text><text x="${x + 80}" y="120" text-anchor="middle" fill="currentColor" opacity="0.7" style="font-size: 12px">${cidr}</text>`;
 
 const FIG_PEERING = SVG(
-  'Peering tidak transitif: A terhubung ke B dan B ke C, tapi A tidak bisa mencapai C lewat B',
+  'Peering is not transitive: A is peered with B and B with C, but A cannot reach C through B',
   720,
   230,
   `
@@ -188,13 +188,13 @@ const FIG_PEERING = SVG(
   <g fill="currentColor" text-anchor="middle">
     <text x="240" y="94" style="font-size: 12px">peering ✓</text>
     <text x="480" y="94" style="font-size: 12px">peering ✓</text>
-    <text x="360" y="200" style="font-size: 12px">A ↔ C ✗ — tidak lewat B</text>
-    <text x="360" y="36" opacity="0.7">Kedua sisi harus membuat peering · rentang tidak boleh bertumpuk</text>
+    <text x="360" y="200" style="font-size: 12px">A ↔ C ✗ — not through B</text>
+    <text x="360" y="36" opacity="0.7">Both sides must create the peering · ranges must not overlap</text>
   </g>`
 );
 
 const FIG_SHARED = SVG(
-  'Shared VPC: host project memiliki VPC dan subnet; VM di service project memakai subnet itu; jaringan dan firewall diatur tim jaringan di host project',
+  'Shared VPC: the host project owns the VPC and subnets; VMs in service projects use those subnets; the network team manages networking and firewalls in the host project',
   720,
   260,
   `
@@ -214,19 +214,19 @@ const FIG_SHARED = SVG(
   <g fill="currentColor">
     <text x="32" y="52" font-weight="600">Host project · VPC shared-vpc</text>
     <text x="176" y="102" text-anchor="middle" ${ON} style="fill:#1a1a1a">subnet-prod · 10.10.0.0/20</text>
-    <text x="176" y="120" text-anchor="middle" ${ON} style="fill:#1a1a1a; font-size: 12px">firewall & route di sini</text>
+    <text x="176" y="120" text-anchor="middle" ${ON} style="fill:#1a1a1a; font-size: 12px">firewalls & routes live here</text>
     <text x="176" y="174" text-anchor="middle" ${ON} style="fill:#1a1a1a">subnet-dev · 10.20.0.0/20</text>
     <text x="410" y="50" font-weight="600">Service project shop-prod</text>
     <text x="410" y="162" font-weight="600">Service project shop-dev</text>
-    <text x="481" y="89" text-anchor="middle">VM api</text>
+    <text x="481" y="89" text-anchor="middle">api VM</text>
     <text x="625" y="89" text-anchor="middle">GKE node</text>
-    <text x="481" y="201" text-anchor="middle">VM test</text>
-    <text x="176" y="226" text-anchor="middle" opacity="0.7" style="font-size: 12px">tim aplikasi butuh roles/compute.networkUser</text>
+    <text x="481" y="201" text-anchor="middle">test VM</text>
+    <text x="176" y="226" text-anchor="middle" opacity="0.7" style="font-size: 12px">app teams need roles/compute.networkUser</text>
   </g>`
 );
 
 const FIG_HYBRID = SVG(
-  'Hybrid: kantor terhubung ke VPC lewat HA VPN dengan dua tunnel atau lewat Interconnect; Cloud Router bertukar route lewat BGP',
+  'Hybrid: the office connects to the VPC through HA VPN with two tunnels or through Interconnect; Cloud Router exchanges routes over BGP',
   720,
   250,
   `
@@ -246,19 +246,19 @@ const FIG_HYBRID = SVG(
     <path d="M606,122 L634,122" ${A}/>
   </g>
   <g fill="currentColor" text-anchor="middle">
-    <text x="91" y="114" font-weight="600">Kantor / DC</text>
-    <text x="91" y="132" opacity="0.7" style="font-size: 12px">router BGP</text>
+    <text x="91" y="114" font-weight="600">Office / DC</text>
+    <text x="91" y="132" opacity="0.7" style="font-size: 12px">BGP router</text>
     <text x="376" y="70" ${ON} font-weight="600">HA VPN</text>
-    <text x="376" y="88" ${ON} style="fill:#1a1a1a; font-size: 12px">2 tunnel IPsec · 99,99%</text>
+    <text x="376" y="88" ${ON} style="fill:#1a1a1a; font-size: 12px">2 IPsec tunnels · 99.99%</text>
     <text x="376" y="162" font-weight="600">Interconnect</text>
     <text x="376" y="180" opacity="0.7" style="font-size: 12px">Dedicated / Partner</text>
     <text x="551" y="118" font-weight="600">Cloud</text>
     <text x="551" y="136" font-weight="600">Router</text>
     <text x="670" y="126" font-weight="600">VPC</text>
-    <text x="230" y="64" opacity="0.7" style="font-size: 12px">internet, terenkripsi</text>
-    <text x="230" y="184" opacity="0.7" style="font-size: 12px">link privat</text>
+    <text x="230" y="64" opacity="0.7" style="font-size: 12px">internet, encrypted</text>
+    <text x="230" y="184" opacity="0.7" style="font-size: 12px">private link</text>
     <text x="551" y="176" opacity="0.7" style="font-size: 12px">BGP</text>
-    <text x="360" y="232" opacity="0.7">Dynamic routing mode menentukan route kantor sampai ke satu region atau ke semua region.</text>
+    <text x="360" y="232" opacity="0.7">The dynamic routing mode decides whether office routes reach one region or every region.</text>
   </g>`
 );
 
@@ -267,84 +267,82 @@ const SA_BATCH = 'batch-sa@ace-lab-123.iam.gserviceaccount.com';
 
 export const lesson: Lesson = {
   id: 'vpc',
-  lang: 'id',
+  lang: 'en',
   title: 'VPC Networks and Firewall Rules',
   intro:
-    'Jaringan Google Cloud terasa membingungkan karena banyak hal yang di tempat lain terpisah, di sini disatukan — VPC global, firewall yang menempel di setiap VM, route yang berlaku di semua region. Pelajaran ini disusun mengikuti pertanyaan yang dijawab sebuah jaringan: dari mana alamat IP datang, lewat jalan mana paket pergi, siapa boleh masuk dan keluar, dan bagaimana jaringan saling terhubung. Ada kalkulator subnet dan latihan membaca firewall yang bisa kamu coba langsung.',
+    'Google Cloud networking feels confusing because much of what is separate elsewhere is combined here — a global VPC, a firewall attached to every VM, routes that apply in every region. This lesson follows the questions a network answers: where IP addresses come from, which way a packet goes, who may come in and go out, and how networks connect to each other. There is a subnet calculator and firewall-reading exercises to try as you go.',
   practice: [
-    { label: 'Topologi: buka web server ke internet', href: '#/ace/lab/network/web-open', note: 'IP eksternal, firewall, target tag' },
-    { label: 'Topologi: SSH aman lewat IAP', href: '#/ace/lab/network/iap-ssh', note: '35.235.240.0/20, tanpa IP eksternal' },
-    { label: 'Topologi: blokir satu VM dengan priority', href: '#/ace/lab/network/deny-priority', note: 'Priority dan deny vs allow' },
-    { label: 'Topologi: VM privat perlu update OS', href: '#/ace/lab/network/cloud-nat', note: 'Cloud NAT' },
-    { label: 'Topologi: peering tidak transitif', href: '#/ace/lab/network/peering-transitive', note: 'A–B–C' },
-    { label: 'Topologi: hybrid kantor ke dua region', href: '#/ace/lab/network/hybrid-vpn', note: 'HA VPN, dynamic routing global' },
-    { label: 'Kuis perintah: VPC, subnet dan firewall', href: '#/ace/lab/cmd/network', note: '16 soal gcloud compute networks / firewall-rules' },
-    { label: 'Kanvas: perbaiki load balancer 502', href: '#/ace/lab/canvas/fix-lb-502', note: 'Firewall health check' }
+    { label: 'Topology: open a web server to the internet', href: '#/ace/lab/network/web-open', note: 'External IP, firewall, target tags' },
+    { label: 'Topology: secure SSH through IAP', href: '#/ace/lab/network/iap-ssh', note: '35.235.240.0/20, no external IP' },
+    { label: 'Topology: block one VM with priority', href: '#/ace/lab/network/deny-priority', note: 'Priority and deny vs allow' },
+    { label: 'Topology: a private VM needs OS updates', href: '#/ace/lab/network/cloud-nat', note: 'Cloud NAT' },
+    { label: 'Topology: peering is not transitive', href: '#/ace/lab/network/peering-transitive', note: 'A–B–C' },
+    { label: 'Topology: hybrid office to two regions', href: '#/ace/lab/network/hybrid-vpn', note: 'HA VPN, global dynamic routing' },
+    { label: 'Command quiz: VPCs, subnets and firewalls', href: '#/ace/lab/cmd/network', note: '16 questions on gcloud compute networks / firewall-rules' },
+    { label: 'Canvas: fix a load balancer 502', href: '#/ace/lab/canvas/fix-lb-502', note: 'Health check firewall' }
   ],
   parts: [
     // ── 1 ─────────────────────────────────────────────────────────────────
     {
       id: 'map',
-      title: 'Peta besar',
+      title: 'The big picture',
       sections: [
         {
           id: 'what',
-          title: 'VPC: jaringan privat milikmu, berskala global',
+          title: 'A VPC: your own private network, at global scale',
           blocks: [
             {
               kind: 'p',
-              text: '**Virtual Private Cloud (VPC)** adalah jaringan privat yang terisolasi untuk resource-mu: VM, node GKE, load balancer internal, Cloud SQL berIP privat. Bedanya dengan cloud lain yang paling penting: **VPC Google bersifat global**. Satu VPC bisa punya subnet di Jakarta dan di Iowa sekaligus, dan VM di keduanya saling bicara lewat IP internal tanpa VPN atau peering.'
+              text: 'A **Virtual Private Cloud (VPC)** is an isolated private network for your resources: VMs, GKE nodes, internal load balancers, Cloud SQL with a private IP. The biggest difference from other clouds: **a Google VPC is global**. One VPC can have a subnet in Jakarta and one in Iowa at the same time, and VMs in both talk over internal IPs with no VPN or peering.'
             },
-            { kind: 'figure', svg: FIG_GLOBAL, caption: 'VPC global, subnet regional, VM zonal. Trafik antar region di dalam satu VPC tetap di jaringan privat Google.' },
+            { kind: 'figure', svg: FIG_GLOBAL, caption: 'A global VPC, regional subnets, zonal VMs. Traffic between regions inside one VPC stays on Google\'s private network.' },
             {
               kind: 'table',
-              caption: 'Cakupan tiap resource jaringan',
-              columns: ['Resource', 'Cakupan', 'Artinya'],
+              caption: 'The scope of each network resource',
+              columns: ['Resource', 'Scope', 'What it means'],
               rows: [
-                ['VPC network', 'Global', 'Satu jaringan untuk semua region'],
-                ['Route', 'Global (milik VPC)', 'Berlaku untuk semua VM di VPC, bisa dibatasi dengan network tag'],
-                ['Firewall rule', 'Global (milik VPC)', 'Diterapkan ke VM yang menjadi targetnya, di region mana pun'],
-                ['Subnet', 'Regional', 'Satu rentang IP di satu region, melintasi semua zone region itu'],
-                ['Cloud Router, Cloud NAT, IP eksternal regional', 'Regional', 'Perlu satu per region'],
-                ['VM, disk', 'Zonal', 'Hidup di satu zone']
+                ['VPC network', 'Global', 'One network for every region'],
+                ['Route', 'Global (belongs to the VPC)', 'Applies to every VM in the VPC, can be narrowed with network tags'],
+                ['Firewall rule', 'Global (belongs to the VPC)', 'Applied to the VMs it targets, in any region'],
+                ['Subnet', 'Regional', 'One IP range in one region, spanning every zone of that region'],
+                ['Cloud Router, Cloud NAT, regional external IPs', 'Regional', 'You need one per region'],
+                ['VM, disk', 'Zonal', 'Lives in one zone']
               ]
             },
             {
               kind: 'callout',
               tone: 'analogy',
-              title: 'Analogi',
-              text: 'VPC itu kompleks perumahan milik satu pengembang yang punya cabang di beberapa kota. Subnet adalah blok rumah di tiap kota, firewall adalah satpam yang berjaga di depan setiap rumah (bukan di gerbang kompleks), dan route adalah peta jalan yang dibagikan ke semua penghuni.'
+              text: 'A VPC is a housing estate owned by one developer with branches in several cities. Subnets are the blocks of houses in each city, the firewall is a guard at the door of every house (not at the estate gate), and routes are the street map handed to every resident.'
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"VMs in two regions must communicate privately with minimal setup" → taruh di VPC yang sama (subnet berbeda region). Peering atau VPN baru dibutuhkan bila jaringannya berbeda.'
+              text: '"VMs in two regions must communicate privately with minimal setup" → put them in the same VPC (subnets in different regions). Peering or VPN is only needed when the networks are different.'
             }
           ]
         },
         {
           id: 'modes',
-          title: 'Mode subnet: auto vs custom, dan jaringan default',
+          title: 'Subnet modes: auto vs custom, and the default network',
           blocks: [
             {
               kind: 'table',
               columns: ['', 'Auto mode', 'Custom mode'],
               rows: [
-                ['Subnet', 'Dibuat otomatis: satu /20 di setiap region, dari 10.128.0.0/9', 'Kamu yang membuat, di region yang kamu mau'],
-                ['Rentang IP', 'Sama di semua project auto mode', 'Bebas dipilih'],
-                ['Risiko', 'Bentrok saat peering atau VPN antar project auto mode', 'Harus direncanakan'],
-                ['Perubahan', 'Bisa dikonversi ke custom (sekali, tidak bisa balik)', '—'],
-                ['Cocok untuk', 'Coba-coba', 'Produksi']
+                ['Subnets', 'Created automatically: one /20 in every region, from 10.128.0.0/9', 'You create them, in the regions you choose'],
+                ['IP ranges', 'The same in every auto mode project', 'Your choice'],
+                ['Risk', 'Clashes when peering or connecting auto mode projects over VPN', 'Needs planning'],
+                ['Changes', 'Can be converted to custom (once, one way)', '—'],
+                ['Good for', 'Experiments', 'Production']
               ]
             },
             {
               kind: 'p',
-              text: 'Project baru biasanya punya jaringan bernama **default** — auto mode, plus empat firewall rule bawaan berprioritas 65534: `default-allow-internal` (semua protokol dari 10.128.0.0/9), `default-allow-ssh` (tcp:22 dari mana saja), `default-allow-rdp` (tcp:3389 dari mana saja) dan `default-allow-icmp`. Praktis untuk mencoba, tapi SSH dan RDP terbuka ke seluruh internet. Banyak organisasi mematikan pembuatan jaringan default lewat org policy.'
+              text: 'A new project usually has a network called **default** — auto mode, plus four built-in firewall rules at priority 65534: `default-allow-internal` (all protocols from 10.128.0.0/9), `default-allow-ssh` (tcp:22 from anywhere), `default-allow-rdp` (tcp:3389 from anywhere) and `default-allow-icmp`. Handy for trying things, but SSH and RDP are open to the whole internet. Many organisations turn off creation of the default network with an org policy.'
             },
             {
               kind: 'code',
-              title: 'Jaringan produksi: custom mode, subnet sendiri',
+              title: 'A production network: custom mode, your own subnets',
               lines: [
                 '$ gcloud compute networks create prod-vpc --subnet-mode=custom',
                 '$ gcloud compute networks subnets create web-us --network=prod-vpc --region=us-central1 --range=10.10.0.0/24 --enable-private-ip-google-access',
@@ -363,79 +361,79 @@ export const lesson: Lesson = {
     // ── 2 ─────────────────────────────────────────────────────────────────
     {
       id: 'addresses',
-      title: 'Alamat IP',
+      title: 'IP addresses',
       sections: [
         {
           id: 'cidr',
-          title: 'Membaca CIDR tanpa kalkulator',
+          title: 'Reading CIDR without a calculator',
           blocks: [
             {
               kind: 'p',
-              text: 'Rentang IP ditulis dalam notasi **CIDR**: `10.0.1.0/24`. Angka setelah garis miring adalah berapa bit pertama yang dikunci; sisanya bebas. Alamat IPv4 punya 32 bit, jadi `/24` menyisakan 8 bit = 2⁸ = **256 alamat**. Setiap turun satu angka, jumlahnya berlipat dua: `/23` = 512, `/22` = 1.024, `/20` = 4.096. Naik satu angka, jumlahnya separuh: `/25` = 128, `/28` = 16, `/29` = 8.'
+              text: 'IP ranges are written in **CIDR** notation: `10.0.1.0/24`. The number after the slash is how many leading bits are fixed; the rest are free. An IPv4 address has 32 bits, so `/24` leaves 8 bits = 2⁸ = **256 addresses**. Every step down doubles the size: `/23` = 512, `/22` = 1,024, `/20` = 4,096. Every step up halves it: `/25` = 128, `/28` = 16, `/29` = 8.'
             },
-            { kind: 'figure', svg: FIG_CIDR, caption: 'Google mencadangkan empat alamat di setiap subnet: alamat pertama (network), kedua (default gateway), kedua dari terakhir (cadangan Google) dan terakhir (broadcast). Jadi /24 memberi 252 alamat untuk VM, bukan 256.' },
+            { kind: 'figure', svg: FIG_CIDR, caption: 'Google reserves four addresses in every subnet: the first (network), the second (default gateway), the second-to-last (reserved by Google) and the last (broadcast). So a /24 gives 252 addresses for VMs, not 256.' },
             {
               kind: 'table',
-              caption: 'Hafalkan beberapa saja',
-              columns: ['Prefix', 'Total alamat', 'Bisa dipakai di subnet GCP', 'Contoh pemakaian'],
+              caption: 'Worth memorising a few',
+              columns: ['Prefix', 'Total addresses', 'Usable in a GCP subnet', 'Typical use'],
               mono: [0],
               rows: [
-                ['/29', '8', '4', 'Subnet terkecil yang diizinkan'],
-                ['/28', '16', '12', 'Rentang control plane GKE privat'],
-                ['/26', '64', '60', 'Minimal untuk Direct VPC egress Cloud Run'],
-                ['/24', '256', '252', 'Subnet aplikasi kecil'],
-                ['/20', '4.096', '4.092', 'Subnet auto mode per region'],
-                ['/16', '65.536', '65.532', 'Rentang satu lingkungan besar'],
-                ['/8', '16.777.216', '—', 'Seluruh 10.0.0.0/8']
+                ['/29', '8', '4', 'The smallest subnet allowed'],
+                ['/28', '16', '12', 'Private GKE control plane range'],
+                ['/26', '64', '60', 'Minimum for Cloud Run Direct VPC egress'],
+                ['/24', '256', '252', 'A small application subnet'],
+                ['/20', '4,096', '4,092', 'An auto mode subnet per region'],
+                ['/16', '65,536', '65,532', 'The range for one large environment'],
+                ['/8', '16,777,216', '—', 'All of 10.0.0.0/8']
               ]
             },
-            { kind: 'cidr', value: '10.10.0.0/24', note: 'Coba ganti: 10.10.0.0/20, 192.168.5.77/27, 172.16.0.0/29, atau 10.0.0.0/30 (terlalu kecil untuk subnet).' }
+            { kind: 'cidr', value: '10.10.0.0/24', note: 'Try: 10.10.0.0/20, 192.168.5.77/27, 172.16.0.0/29, or 10.0.0.0/30 (too small for a subnet).' }
           ]
         },
         {
           id: 'plan',
-          title: 'Merencanakan rentang supaya tidak menyesal',
+          title: 'Planning ranges you will not regret',
           blocks: [
             {
               kind: 'list',
               items: [
-                'Pakai rentang privat **RFC 1918**: `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`.',
-                'Rentang subnet **tidak boleh bertumpuk** di dalam satu VPC, dan juga dengan jaringan yang di-peer atau terhubung lewat VPN — termasuk jaringan kantor. Rencanakan dari awal untuk semua lingkungan.',
-                'Subnet bisa **diperbesar** tanpa downtime (`expand-ip-range`, prefix makin kecil), tapi **tidak bisa diperkecil**. Mulai secukupnya, sisakan ruang di sebelahnya untuk tumbuh.',
-                'Subnet bisa punya **rentang sekunder** (alias IP) — dipakai GKE untuk IP Pod dan Service.',
-                'Ukuran minimum subnet IPv4 adalah **/29**.'
+                'Use the **RFC 1918** private ranges: `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`.',
+                'Subnet ranges **must not overlap** inside one VPC, nor with networks you peer with or connect over VPN — including the office network. Plan every environment up front.',
+                'A subnet can be **expanded** with no downtime (`expand-ip-range`, a smaller prefix), but **never shrunk**. Start with what you need and leave room next to it to grow.',
+                'A subnet can have **secondary ranges** (alias IPs) — GKE uses them for Pod and Service IPs.',
+                'The minimum IPv4 subnet size is **/29**.'
               ]
             },
             {
               kind: 'code',
-              title: 'Subnet hampir penuh: perbesar dari /24 ke /22',
+              title: 'A subnet is nearly full: expand it from /24 to /22',
               lines: [
                 '$ gcloud compute networks subnets expand-ip-range web-us --region=us-central1 --prefix-length=22',
                 'Updated [https://www.googleapis.com/compute/v1/projects/ace-lab-123/regions/us-central1/subnetworks/web-us].',
-                '# 10.10.0.0/24 → 10.10.0.0/22: rentang baru harus tetap tidak bertumpuk dengan subnet lain'
+                '# 10.10.0.0/24 → 10.10.0.0/22: the new range still must not overlap any other subnet'
               ]
             }
           ]
         },
         {
           id: 'ips',
-          title: 'IP internal dan IP eksternal',
+          title: 'Internal and external IPs',
           blocks: [
             {
               kind: 'table',
-              columns: ['Jenis', 'Dari mana', 'Ephemeral', 'Statis'],
+              columns: ['Kind', 'Comes from', 'Ephemeral', 'Static'],
               rows: [
-                ['IP internal', 'Rentang subnet', 'Dipilih otomatis, bisa berganti saat VM dibuat ulang', '`gcloud compute addresses create NAME --region=R --subnet=S --addresses=10.10.0.10`'],
-                ['IP eksternal regional', 'Pool Google di region itu', 'Berganti saat VM berhenti lalu jalan lagi', '`gcloud compute addresses create NAME --region=R` — untuk VM dan Network LB'],
-                ['IP eksternal global', 'Anycast Google', '—', '`gcloud compute addresses create NAME --global` — untuk Application LB global']
+                ['Internal IP', 'The subnet range', 'Picked automatically, can change when the VM is recreated', '`gcloud compute addresses create NAME --region=R --subnet=S --addresses=10.10.0.10`'],
+                ['Regional external IP', 'Google\'s pool in that region', 'Changes when the VM is stopped and started', '`gcloud compute addresses create NAME --region=R` — for VMs and Network LBs'],
+                ['Global external IP', 'Google anycast', '—', '`gcloud compute addresses create NAME --global` — for global Application LBs']
               ]
             },
             {
               kind: 'list',
               items: [
-                'IP eksternal VM sebenarnya tidak terlihat di dalam OS: VM hanya tahu IP internalnya, dan Google menerjemahkan (1:1 NAT) di batas jaringan.',
-                'IP statis yang dipesan tapi tidak dipakai tetap ditagih — hapus kalau tidak perlu.',
-                'Praktik yang dianjurkan: VM **tanpa IP eksternal**; keluar lewat Cloud NAT, masuk lewat load balancer, admin lewat IAP.'
+                'A VM\'s external IP is not visible inside the OS: the VM only knows its internal IP, and Google translates it (1:1 NAT) at the network edge.',
+                'A reserved static IP that is not in use is still billed — release it if you do not need it.',
+                'The recommended pattern: VMs **with no external IP**; out through Cloud NAT, in through a load balancer, admin access through IAP.'
               ]
             }
           ]
@@ -450,48 +448,47 @@ export const lesson: Lesson = {
       sections: [
         {
           id: 'routes',
-          title: 'Bagaimana paket memilih jalan',
+          title: 'How a packet picks its path',
           blocks: [
             {
               kind: 'p',
-              text: 'Setiap VPC punya **tabel route** yang dipakai semua VM di dalamnya. Saat VM mengirim paket, Google mencari route yang tujuannya mencakup alamat tujuan; bila lebih dari satu cocok, **prefix paling spesifik menang** (`/24` mengalahkan `/16`, yang mengalahkan `/0`), dan bila sama spesifiknya, **priority** terkecil menang.'
+              text: 'Every VPC has a **route table** shared by all of its VMs. When a VM sends a packet, Google looks for routes whose destination covers the target address; if more than one matches, **the most specific prefix wins** (`/24` beats `/16`, which beats `/0`), and if they are equally specific, the lowest **priority** wins.'
             },
-            { kind: 'figure', svg: FIG_ROUTE, caption: 'Paket ke 10.20.0.5 cocok dengan route subnet; ke 192.168.3.4 cocok dengan route VPN; ke 8.8.8.8 hanya cocok dengan 0.0.0.0/0. Route default saja tidak cukup untuk internet — VM juga butuh IP eksternal atau Cloud NAT.' },
+            { kind: 'figure', svg: FIG_ROUTE, caption: 'A packet to 10.20.0.5 matches a subnet route; to 192.168.3.4 the VPN route; to 8.8.8.8 only 0.0.0.0/0. The default route alone is not enough for the internet — the VM also needs an external IP or Cloud NAT.' },
             {
               kind: 'table',
-              columns: ['Jenis route', 'Dibuat oleh', 'Catatan'],
+              columns: ['Route type', 'Created by', 'Notes'],
               rows: [
-                ['Subnet route', 'Otomatis, satu per rentang subnet', 'Tidak bisa dihapus selama subnet ada; membuat semua subnet saling terhubung'],
-                ['Default route 0.0.0.0/0 → default internet gateway', 'Otomatis saat VPC dibuat', 'Bisa dihapus untuk memutus akses internet total (lalu PGA butuh route khusus ke VIP Google)'],
-                ['Static route', 'Kamu', 'Next hop: VM (mis. appliance firewall), IP, tunnel VPN, internal LB; bisa dibatasi dengan network tag'],
-                ['Dynamic route', 'Cloud Router lewat BGP', 'Dipelajari dari VPN atau Interconnect; berubah otomatis saat jaringan kantor berubah'],
-                ['Peering route', 'Peering VPC', 'Subnet route jaringan tetangga']
+                ['Subnet route', 'Automatically, one per subnet range', 'Cannot be deleted while the subnet exists; connects every subnet to every other'],
+                ['Default route 0.0.0.0/0 → default internet gateway', 'Automatically when the VPC is created', 'Can be deleted to cut internet access entirely (then PGA needs a route to the Google VIPs)'],
+                ['Static route', 'You', 'Next hop: a VM (e.g. a firewall appliance), an IP, a VPN tunnel, an internal LB; can be limited by network tag'],
+                ['Dynamic route', 'Cloud Router over BGP', 'Learned from VPN or Interconnect; changes automatically when the office network changes'],
+                ['Peering route', 'VPC peering', 'The neighbouring network\'s subnet routes']
               ]
             }
           ]
         },
         {
           id: 'dynamic',
-          title: 'Route dinamis: Cloud Router, BGP dan dynamic routing mode',
+          title: 'Dynamic routes: Cloud Router, BGP and the dynamic routing mode',
           blocks: [
             {
               kind: 'p',
-              text: '**Cloud Router** adalah layanan terkelola yang berbicara **BGP** dengan router di kantor atau data center. Ia mengumumkan rentang subnet VPC ke sana dan mempelajari rentang kantor dari sana, jadi kamu tidak perlu mengetik static route setiap kali ada jaringan baru. Cloud Router bersifat regional.'
+              text: '**Cloud Router** is a managed service that speaks **BGP** with the router in your office or data centre. It advertises the VPC subnet ranges there and learns the office ranges from there, so you do not have to type a static route for every new network. Cloud Router is regional.'
             },
             {
               kind: 'table',
-              columns: ['Dynamic routing mode', 'Route dari kantor sampai ke…', 'Kapan dipilih'],
+              columns: ['Dynamic routing mode', 'Office routes reach…', 'When to choose it'],
               rows: [
-                ['`regional` (default)', 'Hanya subnet di region tempat Cloud Router berada', 'Semua workload yang perlu ke kantor ada di satu region'],
-                ['`global`', 'Semua subnet di semua region VPC', 'Satu koneksi hybrid melayani beberapa region']
+                ['`regional` (default)', 'Only subnets in the Cloud Router\'s region', 'Every workload that needs the office is in one region'],
+                ['`global`', 'Every subnet in every region of the VPC', 'One hybrid connection serves several regions']
               ]
             },
             { kind: 'code', lines: ['$ gcloud compute networks update prod-vpc --bgp-routing-mode=global', '$ gcloud compute routers create hub-router --network=prod-vpc --region=us-central1 --asn=65010'] },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"On-premises can reach VMs in us-central1 over VPN but not VMs in europe-west1 in the same VPC" → ubah dynamic routing mode VPC menjadi global.'
+              text: '"On-premises can reach VMs in us-central1 over VPN but not VMs in europe-west1 in the same VPC" → change the VPC dynamic routing mode to global.'
             }
           ]
         }
@@ -505,77 +502,77 @@ export const lesson: Lesson = {
       sections: [
         {
           id: 'how',
-          title: 'Cara kerja firewall VPC',
+          title: 'How the VPC firewall works',
           blocks: [
             {
               kind: 'p',
-              text: 'Firewall VPC bukan satu kotak di gerbang jaringan. Ia **terdistribusi**: aturannya ditegakkan di setiap VM, sehingga dua VM di subnet yang sama pun saling diperiksa. Dan ia **stateful**: kalau koneksi keluar diizinkan, balasannya otomatis boleh masuk (dan sebaliknya), tanpa rule terpisah.'
+              text: 'The VPC firewall is not a box at the edge of the network. It is **distributed**: its rules are enforced at every VM, so even two VMs on the same subnet are checked against each other. And it is **stateful**: if an outgoing connection is allowed, its replies may come back in automatically (and the other way round), with no separate rule.'
             },
-            { kind: 'figure', svg: FIG_FW, caption: 'Setiap VPC selalu punya dua implied rule di priority terendah yang tidak bisa dihapus: tolak semua ingress, izinkan semua egress. Semua rule-mu berada di atasnya.' },
+            { kind: 'figure', svg: FIG_FW, caption: 'Every VPC always has two implied rules at the lowest priority that cannot be deleted: deny all ingress, allow all egress. All of your rules sit above them.' },
             {
               kind: 'list',
               items: [
-                '**Ingress** = trafik masuk ke VM; dicocokkan dengan **sumber** (source). **Egress** = trafik keluar dari VM; dicocokkan dengan **tujuan** (destination).',
-                'Tanpa rule apa pun, VM tidak bisa dihubungi dari mana pun, tapi bebas keluar.',
-                'Beberapa trafik selalu diizinkan apa pun rule-nya (DHCP, DNS dan metadata server di 169.254.169.254), dan beberapa selalu diblokir (misalnya egress tcp:25 ke luar Google).'
+                '**Ingress** = traffic into a VM; matched on its **source**. **Egress** = traffic out of a VM; matched on its **destination**.',
+                'With no rules at all, a VM cannot be reached from anywhere, but can go out freely.',
+                'Some traffic is always allowed whatever the rules (DHCP, DNS and the metadata server at 169.254.169.254), and some is always blocked (for example egress tcp:25 outside Google).'
               ]
             }
           ]
         },
         {
           id: 'anatomy',
-          title: 'Anatomi sebuah firewall rule',
+          title: 'Anatomy of a firewall rule',
           blocks: [
             {
               kind: 'table',
-              columns: ['Bagian', 'Nilai', 'Catatan'],
+              columns: ['Part', 'Value', 'Notes'],
               rows: [
-                ['Network', 'Satu VPC', 'Rule milik satu jaringan'],
-                ['Direction', '`INGRESS` atau `EGRESS`', 'Default INGRESS'],
-                ['Priority', '0–65535, default 1000', '**Angka kecil = didahulukan**'],
-                ['Action', '`allow` atau `deny`', 'Lewat `--allow` atau `--action` + `--rules`'],
-                ['Target', 'Semua instance, **target tag**, atau **target service account**', 'Ke VM mana rule diterapkan'],
-                ['Source (ingress)', 'Rentang IP, source tag, source service account', 'Rentang dan tag digabung dengan OR'],
-                ['Destination (egress)', 'Rentang IP', '—'],
-                ['Protokol & port', '`tcp:80`, `tcp:8000-8100`, `udp:53`, `icmp`, `all`', 'Satu rule bisa berisi beberapa'],
-                ['Logging', 'On/off', 'Firewall Rules Logging ke Cloud Logging']
+                ['Network', 'One VPC', 'A rule belongs to one network'],
+                ['Direction', '`INGRESS` or `EGRESS`', 'INGRESS by default'],
+                ['Priority', '0–65535, default 1000', '**Lower number = evaluated first**'],
+                ['Action', '`allow` or `deny`', 'Through `--allow`, or `--action` + `--rules`'],
+                ['Target', 'All instances, **target tags**, or a **target service account**', 'Which VMs the rule applies to'],
+                ['Source (ingress)', 'IP ranges, source tags, source service accounts', 'Ranges and tags are combined with OR'],
+                ['Destination (egress)', 'IP ranges', '—'],
+                ['Protocols & ports', '`tcp:80`, `tcp:8000-8100`, `udp:53`, `icmp`, `all`', 'One rule can list several'],
+                ['Logging', 'On/off', 'Firewall Rules Logging to Cloud Logging']
               ]
             },
             {
               kind: 'code',
-              title: 'Tiga rule yang hampir selalu ada',
+              title: 'Three rules you will almost always have',
               lines: [
-                '# web publik, hanya ke VM bertag web',
+                '# public web, only to VMs tagged web',
                 '$ gcloud compute firewall-rules create allow-http --network=prod-vpc --allow=tcp:80,tcp:443 --source-ranges=0.0.0.0/0 --target-tags=web',
-                '# SSH hanya lewat IAP',
+                '# SSH only through IAP',
                 '$ gcloud compute firewall-rules create allow-iap-ssh --network=prod-vpc --allow=tcp:22 --source-ranges=35.235.240.0/20',
-                '# web boleh ke database, selain itu tidak',
+                '# web may reach the database, nothing else',
                 '$ gcloud compute firewall-rules create allow-web-to-db --network=prod-vpc --allow=tcp:5432 --source-tags=web --target-tags=db'
               ]
             },
             {
               kind: 'callout',
               tone: 'tip',
-              text: 'Kalau `--source-ranges` dan `--source-tags` sama-sama tidak ditulis pada rule ingress, sumbernya dianggap `0.0.0.0/0` — seluruh internet. Selalu tulis sumber dengan sengaja.'
+              text: 'If an ingress rule has neither `--source-ranges` nor `--source-tags`, the source is taken to be `0.0.0.0/0` — the whole internet. Always write the source on purpose.'
             }
           ]
         },
         {
           id: 'order',
-          title: 'Urutan evaluasi: siapa yang menang',
+          title: 'Evaluation order: who wins',
           blocks: [
             {
               kind: 'steps',
               items: [
-                { title: 'Saring yang relevan', text: 'Ambil rule dengan arah yang sama, target yang mengenai VM itu, sumber/tujuan yang cocok, dan port yang tercakup. Rule lain diabaikan.' },
-                { title: 'Ambil priority terkecil', text: 'Dari yang cocok, angka priority paling kecil yang menang. Rule priority 900 mengalahkan 1000, apa pun action-nya.' },
-                { title: 'Seri? deny menang', text: 'Bila deny dan allow cocok di priority yang sama, **deny** yang berlaku.' },
-                { title: 'Tidak ada yang cocok? implied rule', text: 'Ingress ditolak, egress diizinkan.' }
+                { title: 'Keep the relevant ones', text: 'Take the rules with the same direction, a target that covers the VM, a matching source/destination, and covered ports. Ignore the rest.' },
+                { title: 'Take the lowest priority', text: 'Of those that match, the lowest priority number wins. A rule at priority 900 beats one at 1000, whatever its action.' },
+                { title: 'A tie? Deny wins', text: 'When a deny and an allow match at the same priority, the **deny** applies.' },
+                { title: 'Nothing matches? Implied rules', text: 'Ingress is denied, egress is allowed.' }
               ]
             },
             {
               kind: 'firewall',
-              title: 'Latihan 1 — tebak: diizinkan atau ditolak?',
+              title: 'Exercise 1 — guess: allowed or denied?',
               vms: [
                 { name: 'web-1', ip: '10.10.0.2', tags: ['web'], sa: SA_API },
                 { name: 'db-1', ip: '10.10.1.5', tags: ['db'], sa: SA_BATCH }
@@ -595,77 +592,76 @@ export const lesson: Lesson = {
                 { direction: 'INGRESS', peer: '203.0.113.7', vm: 'db-1', proto: 'tcp', port: 22, expect: 'deny' },
                 { direction: 'EGRESS', peer: '8.8.8.8', vm: 'web-1', proto: 'udp', port: 53, expect: 'allow' }
               ],
-              after: 'Perhatikan baris kedua: allow-http cocok, tapi deny-bad-ip priority 900 lebih dulu. Dan baris terakhir: tidak ada rule egress sama sekali, jadi implied allow egress yang berlaku.'
+              after: 'Look at the second row: allow-http matches, but deny-bad-ip at priority 900 comes first. And the last row: there are no egress rules at all, so the implied allow egress applies.'
             }
           ]
         },
         {
           id: 'targets',
-          title: 'Target: network tag atau service account?',
+          title: 'Targets: network tag or service account?',
           blocks: [
             {
               kind: 'table',
-              columns: ['', 'Network tag', 'Service account', 'Secure tag (tag Resource Manager)'],
+              columns: ['', 'Network tag', 'Service account', 'Secure tag (Resource Manager tag)'],
               rows: [
-                ['Dipakai di', 'VPC firewall rule', 'VPC firewall rule', 'Network firewall policy'],
-                ['Siapa bisa mengubah', 'Siapa pun yang boleh mengedit VM (`compute.instances.setTags`)', 'Butuh `iam.serviceAccountUser` pada SA, dan VM harus berhenti', 'Dikendalikan IAM per tag'],
-                ['Kekuatan kontrol', 'Lemah — label bebas', 'Kuat — terikat identitas', 'Kuat dan terpusat'],
-                ['Cocok untuk', 'Lab, tim kecil', 'Produksi, pemisahan tugas', 'Organisasi besar']
+                ['Used in', 'VPC firewall rules', 'VPC firewall rules', 'Network firewall policies'],
+                ['Who can change it', 'Anyone allowed to edit the VM (`compute.instances.setTags`)', 'Needs `iam.serviceAccountUser` on the SA, and the VM must be stopped', 'Controlled by IAM per tag'],
+                ['Strength of control', 'Weak — a free-form label', 'Strong — tied to an identity', 'Strong and central'],
+                ['Good for', 'Labs, small teams', 'Production, separation of duties', 'Large organisations']
               ]
             },
             {
               kind: 'list',
               items: [
-                'Satu rule **tidak boleh mencampur** tag dan service account (misalnya target tag dengan source service account).',
-                'Source tag dan source service account hanya mencocokkan trafik dari **IP internal VM di VPC yang sama** — tidak berlaku lewat peering atau dari IP eksternal.'
+                'One rule **cannot mix** tags and service accounts (for example a target tag with a source service account).',
+                'Source tags and source service accounts only match traffic from **the internal IPs of VMs in the same VPC** — not across peering and not from external IPs.'
               ]
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"Ensure only the security team can control which VMs a firewall rule applies to" → target service account (atau secure tags), bukan network tag yang bisa diubah setiap pemilik VM.'
+              text: '"Ensure only the security team can control which VMs a firewall rule applies to" → a target service account (or secure tags), not a network tag that any VM owner can change.'
             }
           ]
         },
         {
           id: 'ranges',
-          title: 'Rentang khusus yang harus dihafal',
+          title: 'Special ranges to memorise',
           blocks: [
             {
               kind: 'table',
-              columns: ['Rentang', 'Siapa', 'Rule yang dibutuhkan'],
+              columns: ['Range', 'Who', 'Rule needed'],
               mono: [0],
               rows: [
-                ['35.235.240.0/20', 'Identity-Aware Proxy (TCP forwarding)', 'Ingress tcp:22 (SSH) / tcp:3389 (RDP) ke VM tanpa IP eksternal'],
-                ['130.211.0.0/22 dan 35.191.0.0/16', 'Health check dan proxy load balancer Google', 'Ingress ke port backend; tanpa ini backend UNHEALTHY → 502'],
-                ['199.36.153.8/30', 'private.googleapis.com', 'Egress tcp:443 bila egress ke internet ditutup tapi Google API harus tetap bisa'],
-                ['199.36.153.4/30', 'restricted.googleapis.com', 'Sama, untuk API yang didukung VPC Service Controls'],
-                ['169.254.169.254', 'Metadata server', 'Selalu diizinkan — tidak perlu rule']
+                ['35.235.240.0/20', 'Identity-Aware Proxy (TCP forwarding)', 'Ingress tcp:22 (SSH) / tcp:3389 (RDP) to VMs without an external IP'],
+                ['130.211.0.0/22 and 35.191.0.0/16', 'Google load balancer health checks and proxies', 'Ingress to the backend port; without it backends are UNHEALTHY → 502'],
+                ['199.36.153.8/30', 'private.googleapis.com', 'Egress tcp:443 when internet egress is closed but Google APIs must still work'],
+                ['199.36.153.4/30', 'restricted.googleapis.com', 'The same, for APIs supported by VPC Service Controls'],
+                ['169.254.169.254', 'Metadata server', 'Always allowed — no rule needed']
               ]
             }
           ]
         },
         {
           id: 'policies',
-          title: 'Firewall policy hierarkis: aturan dari atas',
+          title: 'Hierarchical firewall policies: rules from above',
           blocks: [
             {
               kind: 'p',
-              text: 'Di organisasi besar, tim keamanan ingin aturan yang tidak bisa dilangkahi tim project — misalnya "jangan pernah buka RDP ke internet" atau "selalu izinkan scanner keamanan". Untuk itu ada **hierarchical firewall policy** di level organisasi dan folder, dan **network firewall policy** di level VPC. Action-nya `allow`, `deny`, atau **`goto_next`** (serahkan keputusan ke level di bawahnya).'
+              text: 'In a large organisation the security team wants rules project teams cannot step around — for example "never open RDP to the internet" or "always allow the security scanner". For that there are **hierarchical firewall policies** at organisation and folder level, and **network firewall policies** at VPC level. Their actions are `allow`, `deny`, or **`goto_next`** (hand the decision to the level below).'
             },
             {
               kind: 'steps',
               items: [
-                { title: 'Policy organisasi', text: 'Dievaluasi paling awal. Deny di sini tidak bisa dibuka oleh project mana pun.' },
-                { title: 'Policy folder', text: 'Untuk koneksi yang di-goto_next oleh organisasi.' },
-                { title: 'Aturan VPC dan network firewall policy', text: 'Firewall rule biasa milik project, plus policy jaringan (yang bisa memakai secure tag dan FQDN).' },
-                { title: 'Implied rule', text: 'Tolak ingress, izinkan egress.' }
+                { title: 'Organisation policy', text: 'Evaluated first. A deny here cannot be opened by any project.' },
+                { title: 'Folder policy', text: 'For connections the organisation passed on with goto_next.' },
+                { title: 'VPC rules and network firewall policies', text: 'The project\'s ordinary firewall rules, plus network policies (which can use secure tags and FQDNs).' },
+                { title: 'Implied rules', text: 'Deny ingress, allow egress.' }
               ]
             },
             {
               kind: 'firewall',
-              title: 'Latihan 2 — jebakan priority yang sama',
+              title: 'Exercise 2 — the same-priority trap',
               vms: [
                 { name: 'api-1', ip: '10.30.0.4', tags: ['api'], sa: SA_API },
                 { name: 'batch-1', ip: '10.30.0.9', tags: ['api'], sa: SA_BATCH }
@@ -686,7 +682,7 @@ export const lesson: Lesson = {
                 { direction: 'EGRESS', peer: '93.184.216.34', vm: 'api-1', proto: 'tcp', port: 443, expect: 'deny' }
               ],
               after:
-                'Baris pertama adalah jebakannya: allow-lb-hc dan deny-8080 sama-sama priority 1000, jadi deny menang dan health check gagal. Perbaikannya: beri allow-lb-hc priority lebih kecil, misalnya 900. Pola egress di dua baris terakhir — tutup semua di 65000, buka yang perlu di atasnya — adalah cara standar mengunci egress.'
+                'The first row is the trap: allow-lb-hc and deny-8080 are both at priority 1000, so the deny wins and the health check fails. The fix: give allow-lb-hc a lower number, for example 900. The egress pattern in the last two rows — close everything at 65000, open what you need above it — is the standard way to lock down egress.'
             }
           ]
         }
@@ -696,39 +692,38 @@ export const lesson: Lesson = {
     // ── 5 ─────────────────────────────────────────────────────────────────
     {
       id: 'egress',
-      title: 'Keluar dari VPC',
+      title: 'Leaving the VPC',
       sections: [
         {
           id: 'paths',
-          title: 'Empat jalan keluar untuk VM privat',
+          title: 'Four ways out for a private VM',
           blocks: [
-            { kind: 'figure', svg: FIG_EGRESS, caption: 'VM tanpa IP eksternal tetap bisa bekerja — asal jalan keluarnya dipilih sesuai tujuan.' },
+            { kind: 'figure', svg: FIG_EGRESS, caption: 'A VM with no external IP can still do its job — as long as you pick the way out that suits the destination.' },
             {
               kind: 'table',
-              columns: ['Tujuan', 'Pakai', 'Diatur di', 'Catatan'],
+              columns: ['Destination', 'Use', 'Set up in', 'Notes'],
               rows: [
-                ['Internet (update OS, API pihak ketiga)', '**Cloud NAT**', 'Cloud Router per region per VPC', 'Hanya keluar; tidak pernah menerima koneksi masuk'],
-                ['Google API publik (Storage, BigQuery, Pub/Sub)', '**Private Google Access**', 'Per subnet', 'Tanpa NAT dan tanpa IP eksternal; tetap butuh route ke default internet gateway (atau ke VIP private/restricted)'],
-                ['Google API lewat alamat internal pilihanmu', '**Private Service Connect** endpoint', 'Per VPC', 'Cocok untuk on-premises yang mengakses Google API lewat VPN/Interconnect'],
-                ['Layanan terkelola berIP privat (Cloud SQL, Memorystore)', '**Private services access**', 'Rentang dialokasikan + peering servicenetworking', 'Satu kali per VPC']
+                ['The internet (OS updates, third-party APIs)', '**Cloud NAT**', 'A Cloud Router per region per VPC', 'Outbound only; never accepts incoming connections'],
+                ['Public Google APIs (Storage, BigQuery, Pub/Sub)', '**Private Google Access**', 'Per subnet', 'No NAT and no external IP; still needs a route to the default internet gateway (or to the private/restricted VIPs)'],
+                ['Google APIs on an internal address you choose', 'A **Private Service Connect** endpoint', 'Per VPC', 'Good for on-premises reaching Google APIs over VPN/Interconnect'],
+                ['Managed services with private IPs (Cloud SQL, Memorystore)', '**Private services access**', 'An allocated range + servicenetworking peering', 'Once per VPC']
               ]
             },
             {
               kind: 'code',
-              title: 'Membuka dua jalan untuk VM privat di us-central1',
+              title: 'Opening two ways out for private VMs in us-central1',
               lines: [
-                '# internet keluar',
+                '# out to the internet',
                 '$ gcloud compute routers create nat-router --network=prod-vpc --region=us-central1',
                 '$ gcloud compute routers nats create prod-nat --router=nat-router --region=us-central1 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges',
-                '# Google API tanpa internet',
+                '# Google APIs without the internet',
                 '$ gcloud compute networks subnets update web-us --region=us-central1 --enable-private-ip-google-access'
               ]
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"VMs without external IPs must download OS patches" → Cloud NAT. "VMs without external IPs must access Cloud Storage / BigQuery" → Private Google Access. Jangan tertukar: PGA tidak membuka internet, dan NAT tidak dibutuhkan untuk Google API bila PGA aktif.'
+              text: '"VMs without external IPs must download OS patches" → Cloud NAT. "VMs without external IPs must access Cloud Storage / BigQuery" → Private Google Access. Do not mix them up: PGA does not open the internet, and NAT is not needed for Google APIs when PGA is on.'
             }
           ]
         }
@@ -738,7 +733,7 @@ export const lesson: Lesson = {
     // ── 6 ─────────────────────────────────────────────────────────────────
     {
       id: 'connect',
-      title: 'Menghubungkan jaringan',
+      title: 'Connecting networks',
       sections: [
         {
           id: 'peering',
@@ -746,16 +741,16 @@ export const lesson: Lesson = {
           blocks: [
             {
               kind: 'p',
-              text: '**Peering** menghubungkan dua VPC (di project atau organisasi yang sama maupun berbeda) sehingga VM-nya saling bicara lewat IP internal dengan latensi dan biaya seperti di satu jaringan. Setiap VPC tetap dikelola sendiri: firewall, route, dan admin-nya terpisah.'
+              text: '**Peering** connects two VPCs (in the same or different projects or organisations) so their VMs talk over internal IPs with the latency and cost of a single network. Each VPC is still managed on its own: firewalls, routes and admins stay separate.'
             },
-            { kind: 'figure', svg: FIG_PEERING, caption: 'Tiga aturan peering yang paling sering diuji: dibuat dari kedua sisi, rentang tidak boleh bertumpuk, dan tidak transitif.' },
+            { kind: 'figure', svg: FIG_PEERING, caption: 'The three peering rules tested most: created from both sides, ranges must not overlap, and not transitive.' },
             {
               kind: 'list',
               items: [
-                'Peering baru `ACTIVE` setelah **kedua** sisi membuatnya (`gcloud compute networks peerings create` di masing-masing VPC).',
-                'Rentang subnet kedua VPC **tidak boleh bertumpuk** — alasan utama untuk tidak memakai auto mode.',
-                '**Tidak transitif**: A–B dan B–C tidak membuat A bisa ke C. Untuk hub-and-spoke pakai peering langsung, VPN, atau Network Connectivity Center.',
-                'Firewall rule tidak ikut tersebar: tiap VPC harus mengizinkan rentang tetangganya sendiri. Source tag dan service account tidak berlaku lintas peering — pakai rentang IP.'
+                'A peering only becomes `ACTIVE` once **both** sides create it (`gcloud compute networks peerings create` in each VPC).',
+                'The subnet ranges of the two VPCs **must not overlap** — the main reason not to use auto mode.',
+                '**Not transitive**: A–B and B–C does not let A reach C. For hub-and-spoke, use direct peerings, VPN, or Network Connectivity Center.',
+                'Firewall rules are not shared: each VPC must allow its neighbour\'s ranges itself. Source tags and service accounts do not work across peering — use IP ranges.'
               ]
             }
           ]
@@ -766,51 +761,50 @@ export const lesson: Lesson = {
           blocks: [
             {
               kind: 'p',
-              text: '**Shared VPC** memungkinkan satu **host project** memiliki VPC, subnet dan firewall, sementara banyak **service project** menaruh VM dan cluster-nya di subnet itu. Hasilnya: tim jaringan mengatur jaringan di satu tempat, tim aplikasi mengurus aplikasinya di project masing-masing (dengan billing dan IAM terpisah).'
+              text: '**Shared VPC** lets one **host project** own the VPC, subnets and firewalls, while many **service projects** put their VMs and clusters in those subnets. The result: the network team runs the network in one place, and app teams run their apps in their own projects (with separate billing and IAM).'
             },
-            { kind: 'figure', svg: FIG_SHARED, caption: 'Resource-nya tinggal di service project, tapi NIC-nya ada di subnet host project.' },
+            { kind: 'figure', svg: FIG_SHARED, caption: 'The resources live in the service projects, but their NICs sit in the host project\'s subnets.' },
             {
               kind: 'table',
-              columns: ['Peran', 'Role', 'Diberikan di'],
+              columns: ['Role', 'IAM role', 'Granted on'],
               rows: [
-                ['Mengaktifkan Shared VPC, menghubungkan service project', '`roles/compute.xpnAdmin` (Shared VPC Admin)', 'Organisasi atau folder'],
-                ['Tim aplikasi yang membuat VM di subnet bersama', '`roles/compute.networkUser`', 'Host project, atau per subnet (lebih sempit)'],
-                ['Tim jaringan mengatur subnet, route, firewall', '`roles/compute.networkAdmin` / `securityAdmin`', 'Host project']
+                ['Turn on Shared VPC, attach service projects', '`roles/compute.xpnAdmin` (Shared VPC Admin)', 'The organisation or a folder'],
+                ['App teams creating VMs in shared subnets', '`roles/compute.networkUser`', 'The host project, or per subnet (narrower)'],
+                ['The network team managing subnets, routes, firewalls', '`roles/compute.networkAdmin` / `securityAdmin`', 'The host project']
               ]
             },
             {
               kind: 'table',
-              caption: 'Peering atau Shared VPC?',
-              columns: ['Situasi', 'Pilih'],
+              caption: 'Peering or Shared VPC?',
+              columns: ['Situation', 'Choose'],
               rows: [
-                ['Satu organisasi, ingin jaringan diatur terpusat oleh satu tim', 'Shared VPC'],
-                ['Dua organisasi berbeda, atau dua tim yang ingin admin jaringan terpisah', 'Peering'],
-                ['Menghubungkan ke jaringan produsen layanan (Cloud SQL, partner SaaS)', 'Peering / private services access / PSC']
+                ['One organisation that wants the network run centrally by one team', 'Shared VPC'],
+                ['Two different organisations, or two teams that want separate network admins', 'Peering'],
+                ['Connecting to a service producer\'s network (Cloud SQL, a SaaS partner)', 'Peering / private services access / PSC']
               ]
             }
           ]
         },
         {
           id: 'hybrid',
-          title: 'Hybrid: Cloud VPN dan Cloud Interconnect',
+          title: 'Hybrid: Cloud VPN and Cloud Interconnect',
           blocks: [
-            { kind: 'figure', svg: FIG_HYBRID, caption: 'Keduanya memakai Cloud Router dan BGP; bedanya di jalur fisik, kapasitas dan biaya.' },
+            { kind: 'figure', svg: FIG_HYBRID, caption: 'Both use Cloud Router and BGP; they differ in the physical path, the capacity and the cost.' },
             {
               kind: 'table',
               columns: ['', 'HA VPN', 'Dedicated Interconnect', 'Partner Interconnect'],
               rows: [
-                ['Jalur', 'Internet publik, terenkripsi IPsec', 'Sambungan fisik langsung di fasilitas colocation', 'Lewat penyedia layanan'],
-                ['Kapasitas', 'Sekitar 3 Gbps per tunnel; tambah tunnel', 'Sirkuit 10 atau 100 Gbps', '50 Mbps sampai 50 Gbps'],
-                ['SLA', '99,99% dengan 2 interface dan 2 tunnel', 'Hingga 99,99% dengan topologi yang disarankan', 'Hingga 99,99%'],
-                ['Enkripsi', 'Selalu', 'Tidak default (bisa MACsec atau HA VPN over Interconnect)', 'Tidak default'],
-                ['Cocok untuk', 'Cepat, murah, trafik sedang', 'Trafik besar, latensi stabil, dekat colocation Google', 'Tidak dekat colocation atau butuh kapasitas kecil']
+                ['Path', 'The public internet, encrypted with IPsec', 'A direct physical connection in a colocation facility', 'Through a service provider'],
+                ['Capacity', 'About 3 Gbps per tunnel; add tunnels', '10 or 100 Gbps circuits', '50 Mbps to 50 Gbps'],
+                ['SLA', '99.99% with 2 interfaces and 2 tunnels', 'Up to 99.99% with the recommended topology', 'Up to 99.99%'],
+                ['Encryption', 'Always', 'Not by default (MACsec or HA VPN over Interconnect are options)', 'Not by default'],
+                ['Good for', 'Fast, cheap, moderate traffic', 'Heavy traffic, stable latency, near a Google colocation', 'Not near a colocation, or a small capacity']
               ]
             },
             {
               kind: 'callout',
               tone: 'exam',
-              title: 'Di soal ujian',
-              text: '"Encrypted connection quickly and at low cost" → HA VPN. "10 Gbps or more, private, low latency" → Dedicated Interconnect. "Not near a colocation facility" atau "less than 10 Gbps" → Partner Interconnect. Classic VPN dengan static routing adalah jawaban lama.'
+              text: '"Encrypted connection quickly and at low cost" → HA VPN. "10 Gbps or more, private, low latency" → Dedicated Interconnect. "Not near a colocation facility" or "less than 10 Gbps" → Partner Interconnect. Classic VPN with static routing is the old answer.'
             }
           ]
         }
@@ -820,46 +814,46 @@ export const lesson: Lesson = {
     // ── 7 ─────────────────────────────────────────────────────────────────
     {
       id: 'ops',
-      title: 'Akses dan observasi',
+      title: 'Access and observability',
       sections: [
         {
           id: 'access',
-          title: 'Masuk ke VM dengan aman',
+          title: 'Getting into a VM safely',
           blocks: [
             {
               kind: 'steps',
               items: [
-                { title: 'VM tanpa IP eksternal', text: 'Permukaan serangan dari internet hilang.' },
-                { title: 'Firewall dari rentang IAP saja', text: 'Ingress tcp:22 (dan tcp:3389 untuk Windows) dari 35.235.240.0/20.', code: ['gcloud compute firewall-rules create allow-iap-ssh --network=prod-vpc --allow=tcp:22 --source-ranges=35.235.240.0/20'] },
-                { title: 'Izin lewat IAM', text: 'Pengguna butuh `roles/iap.tunnelResourceAccessor`; dengan **OS Login**, akses SSH juga diatur role `roles/compute.osLogin` atau `osAdminLogin` — bukan kunci di metadata.' },
-                { title: 'Masuk', text: 'gcloud membuka terowongan lewat IAP.', code: ['gcloud compute ssh db-1 --zone=us-central1-a --tunnel-through-iap'] }
+                { title: 'No external IP on the VM', text: 'The attack surface from the internet is gone.' },
+                { title: 'Firewall from the IAP range only', text: 'Ingress tcp:22 (and tcp:3389 for Windows) from 35.235.240.0/20.', code: ['gcloud compute firewall-rules create allow-iap-ssh --network=prod-vpc --allow=tcp:22 --source-ranges=35.235.240.0/20'] },
+                { title: 'Permission through IAM', text: 'Users need `roles/iap.tunnelResourceAccessor`; with **OS Login**, SSH access is also controlled by `roles/compute.osLogin` or `osAdminLogin` — not by keys in metadata.' },
+                { title: 'Connect', text: 'gcloud opens a tunnel through IAP.', code: ['gcloud compute ssh db-1 --zone=us-central1-a --tunnel-through-iap'] }
               ]
             },
             {
               kind: 'callout',
               tone: 'tip',
-              text: 'Bastion host (VM loncatan ber-IP publik) masih sering muncul di soal lama. IAP TCP forwarding mencapai hal yang sama tanpa VM yang harus dipatch dan tanpa port SSH terbuka ke internet.'
+              text: 'A bastion host (a jump VM with a public IP) still shows up in older questions. IAP TCP forwarding achieves the same with no VM to patch and no SSH port open to the internet.'
             }
           ]
         },
         {
           id: 'tools',
-          title: 'Alat troubleshooting jaringan',
+          title: 'Network troubleshooting tools',
           blocks: [
             {
               kind: 'table',
-              columns: ['Alat', 'Menjawab', 'Catatan'],
+              columns: ['Tool', 'Answers', 'Notes'],
               rows: [
-                ['**Connectivity Tests** (Network Intelligence Center)', '"Apakah A bisa ke B, dan kalau tidak, di mana berhentinya?"', 'Menganalisis konfigurasi: route, firewall, NAT; menyebut rule yang memblokir'],
-                ['**Firewall Rules Logging**', '"Rule mana yang mengizinkan/menolak koneksi ini?"', 'Diaktifkan per rule; masuk ke Cloud Logging'],
-                ['**Firewall Insights**', '"Rule mana yang tidak pernah kena atau tertutup rule lain?"', 'Menemukan shadowed rule dan rule terlalu longgar'],
-                ['**VPC Flow Logs**', '"Siapa bicara dengan siapa, berapa banyak?"', 'Per subnet, berbasis sampel; untuk analisis trafik dan forensik'],
-                ['**Packet Mirroring**', '"Isi paketnya apa?"', 'Menyalin trafik ke appliance analisis']
+                ['**Connectivity Tests** (Network Intelligence Center)', '"Can A reach B, and if not, where does it stop?"', 'Analyses configuration: routes, firewalls, NAT; names the rule that blocks'],
+                ['**Firewall Rules Logging**', '"Which rule allowed/denied this connection?"', 'Turned on per rule; goes to Cloud Logging'],
+                ['**Firewall Insights**', '"Which rules are never hit, or shadowed by others?"', 'Finds shadowed and overly permissive rules'],
+                ['**VPC Flow Logs**', '"Who talks to whom, and how much?"', 'Per subnet, sampled; for traffic analysis and forensics'],
+                ['**Packet Mirroring**', '"What is inside the packets?"', 'Copies traffic to an analysis appliance']
               ]
             },
             {
               kind: 'code',
-              title: 'Perintah yang sering dipakai',
+              title: 'Commands you will use often',
               lines: [
                 '$ gcloud compute firewall-rules list --filter="network:prod-vpc" --sort-by=priority',
                 'NAME             NETWORK   DIRECTION  PRIORITY  ALLOW           DENY  DISABLED',
@@ -879,60 +873,60 @@ export const lesson: Lesson = {
     // ── 8 ─────────────────────────────────────────────────────────────────
     {
       id: 'scenarios',
-      title: 'Skenario troubleshooting',
+      title: 'Troubleshooting scenarios',
       sections: [
         {
           id: 'sc-ssh',
-          title: 'Skenario 1 — SSH gagal ke VM tanpa IP eksternal',
+          title: 'Scenario 1 — SSH fails to a VM with no external IP',
           blocks: [
             {
               kind: 'case',
-              title: 'Admin tidak bisa masuk ke db-1',
-              situation: 'VM db-1 sengaja dibuat tanpa IP eksternal di prod-vpc (custom mode, tanpa rule SSH). Admin menjalankan gcloud compute ssh dan gagal.',
+              title: 'The admin cannot get into db-1',
+              situation: 'The VM db-1 was deliberately created with no external IP in prod-vpc (custom mode, no SSH rule). The admin runs gcloud compute ssh and it fails.',
               symptom: ['$ gcloud compute ssh db-1 --zone=us-central1-a', 'External IP address was not found; defaulting to using IAP tunneling.', 'ERROR: (gcloud.compute.start-iap-tunnel) Error while connecting [4003: \'failed to connect to backend\'].'],
               diagnose: [
-                'gcloud otomatis memakai IAP karena VM tidak punya IP eksternal — bagus.',
-                'Error 4003 = IAP tidak bisa mencapai port 22 VM: tidak ada firewall ingress dari 35.235.240.0/20.',
-                'Kalau error-nya 4033, masalahnya di IAM: pengguna tidak punya `roles/iap.tunnelResourceAccessor`.'
+                'gcloud switches to IAP automatically because the VM has no external IP — good.',
+                'Error 4003 = IAP cannot reach port 22 on the VM: there is no ingress firewall rule from 35.235.240.0/20.',
+                'If the error is 4033, the problem is IAM: the user does not have `roles/iap.tunnelResourceAccessor`.'
               ],
               fix: ['$ gcloud compute firewall-rules create allow-iap-ssh --network=prod-vpc --allow=tcp:22 --source-ranges=35.235.240.0/20 --target-tags=db', '$ gcloud compute ssh db-1 --zone=us-central1-a --tunnel-through-iap'],
-              why: 'IAP datang dari rentang tetap milik Google. Membuka tcp:22 hanya ke rentang itu memberi akses SSH tanpa membuka port ke internet.',
-              exam: '"Connect to VMs that have no external IP without a bastion host" → IAP TCP forwarding + firewall 35.235.240.0/20.'
+              why: 'IAP comes from a fixed Google range. Opening tcp:22 to that range only gives SSH access without opening the port to the internet.',
+              exam: '"Connect to VMs that have no external IP without a bastion host" → IAP TCP forwarding + a firewall rule for 35.235.240.0/20.'
             }
           ]
         },
         {
           id: 'sc-web',
-          title: 'Skenario 2 — Web server tidak bisa dibuka',
+          title: 'Scenario 2 — The web server will not open',
           blocks: [
             {
               kind: 'case',
-              title: 'Rule sudah ada, tapi browser tetap timeout',
-              situation: 'VM web-2 punya IP eksternal dan nginx jalan di port 80. Ada rule allow-http (tcp:80, 0.0.0.0/0, target tag web). Browser tetap timeout.',
+              title: 'The rule exists, but the browser still times out',
+              situation: 'The VM web-2 has an external IP and nginx runs on port 80. There is an allow-http rule (tcp:80, 0.0.0.0/0, target tag web). The browser still times out.',
               symptom: ['$ gcloud compute instances describe web-2 --zone=us-central1-a --format="value(tags.items)"', 'http-server'],
               diagnose: [
-                'Rule allow-http hanya berlaku untuk VM bertag `web`, sedangkan VM ini bertag `http-server` (tag dari checkbox "Allow HTTP traffic" di Console untuk jaringan default).',
-                'Tidak ada rule lain yang cocok → implied deny ingress.',
-                'Connectivity Test dari 0.0.0.0/0 ke web-2:80 akan menyebut "dropped by implied rule".'
+                'allow-http only applies to VMs tagged `web`, but this VM is tagged `http-server` (the tag the Console\'s "Allow HTTP traffic" checkbox sets on the default network).',
+                'No other rule matches → implied deny ingress.',
+                'A Connectivity Test from 0.0.0.0/0 to web-2:80 would say "dropped by implied rule".'
               ],
-              fix: ['$ gcloud compute instances add-tags web-2 --zone=us-central1-a --tags=web', '# atau ubah target rule agar cocok dengan tag yang dipakai'],
-              why: 'Firewall dicocokkan per VM lewat target. Rule yang "terlihat benar" tidak berpengaruh kalau targetnya tidak mengenai VM itu.',
-              exam: 'Soal yang menyebut "rule exists but traffic is still blocked" sering soal target tag yang tidak cocok atau priority.'
+              fix: ['$ gcloud compute instances add-tags web-2 --zone=us-central1-a --tags=web', '# or change the rule\'s target to match the tag in use'],
+              why: 'Firewall rules are matched per VM through their target. A rule that "looks right" has no effect if its target does not cover that VM.',
+              exam: 'Questions that say "rule exists but traffic is still blocked" are often about a target tag that does not match, or about priority.'
             }
           ]
         },
         {
           id: 'sc-isolate',
-          title: 'Skenario 3 — Isolasi satu VM yang dicurigai',
+          title: 'Scenario 3 — Isolating one suspicious VM',
           blocks: [
             {
               kind: 'case',
-              title: 'Putus semua trafik VM app-7 tanpa mengganggu yang lain',
-              situation: 'VM app-7 terindikasi malware. Tim ingin memutus semua trafik masuk dan keluar VM itu untuk forensik, tanpa menghapusnya dan tanpa mengubah rule yang dipakai VM lain.',
+              title: 'Cut all traffic to app-7 without affecting anything else',
+              situation: 'The VM app-7 shows signs of malware. The team wants to cut all its traffic in and out for forensics, without deleting it and without changing the rules other VMs use.',
               diagnose: [
-                'Butuh rule **deny** yang hanya mengenai app-7 dengan priority **lebih kecil** dari semua allow yang ada (misalnya 100).',
-                'Targetkan dengan service account khusus atau tag unik (`quarantine`) — bukan semua instance.',
-                'Ingress dan egress adalah rule terpisah; butuh keduanya. Tetap izinkan IAP bila tim perlu masuk (priority lebih kecil lagi).'
+                'You need a **deny** rule that only hits app-7, at a **lower** priority number than every existing allow (for example 100).',
+                'Target it with a dedicated service account or a unique tag (`quarantine`) — not all instances.',
+                'Ingress and egress are separate rules; you need both. Still allow IAP if the team needs to get in (at an even lower number).'
               ],
               fix: [
                 '$ gcloud compute instances add-tags app-7 --zone=us-central1-a --tags=quarantine',
@@ -940,126 +934,126 @@ export const lesson: Lesson = {
                 '$ gcloud compute firewall-rules create q-deny-in --network=prod-vpc --priority=100 --action=DENY --rules=all --source-ranges=0.0.0.0/0 --target-tags=quarantine',
                 '$ gcloud compute firewall-rules create q-deny-out --network=prod-vpc --priority=100 --direction=EGRESS --action=DENY --rules=all --destination-ranges=0.0.0.0/0 --target-tags=quarantine'
               ],
-              why: 'Priority kecil membuat deny dievaluasi sebelum allow apa pun; target tag membatasi efeknya ke satu VM. Ingat bahwa tag bisa dicabut siapa pun yang boleh mengedit VM — untuk karantina yang tidak boleh dilepas sembarang orang, pakai target service account atau secure tag.',
-              exam: '"Block traffic to one VM while keeping other rules" → rule deny priority lebih tinggi (angka lebih kecil) dengan target spesifik.'
+              why: 'A low priority number makes the deny evaluated before any allow; the target tag limits it to one VM. Remember that a tag can be removed by anyone allowed to edit the VM — for a quarantine nobody may lift casually, use a target service account or a secure tag.',
+              exam: '"Block traffic to one VM while keeping other rules" → a deny rule with a higher priority (lower number) and a specific target.'
             }
           ]
         },
         {
           id: 'sc-private',
-          title: 'Skenario 4 — VM privat tidak bisa update dan tidak bisa baca bucket',
+          title: 'Scenario 4 — A private VM cannot update or read a bucket',
           blocks: [
             {
               kind: 'case',
-              title: 'Dua gejala, dua obat',
-              situation: 'VM batch-1 tanpa IP eksternal di subnet batch (us-central1). `apt-get update` timeout, dan `gcloud storage ls gs://ace-data-123` juga timeout.',
+              title: 'Two symptoms, two cures',
+              situation: 'The VM batch-1 has no external IP and sits in the batch subnet (us-central1). `apt-get update` times out, and so does `gcloud storage ls gs://ace-data-123`.',
               symptom: ['$ sudo apt-get update', "Err:1 https://deb.debian.org/debian bookworm InRelease  Could not connect to deb.debian.org:443 (151.101.2.132). - connect (110: Connection timed out)", '$ gcloud storage ls gs://ace-data-123', 'ERROR: … Max retries exceeded … Connection timed out'],
               diagnose: [
-                'Tanpa IP eksternal, VM tidak punya jalan ke internet: butuh **Cloud NAT** di us-central1.',
-                'Untuk Cloud Storage tidak perlu internet: aktifkan **Private Google Access** di subnet itu.',
-                'Kalau setelah PGA aktif masih timeout: cek apakah default route 0.0.0.0/0 pernah dihapus — PGA ke VIP publik Google tetap butuh route itu (atau route khusus ke 199.36.153.8/30).',
-                'Kalau timeout berubah menjadi 403: jaringannya sudah beres, sekarang masalah IAM atau access scope VM.'
+                'With no external IP the VM has no way to the internet: it needs **Cloud NAT** in us-central1.',
+                'Cloud Storage does not need the internet: turn on **Private Google Access** on that subnet.',
+                'Still timing out after PGA is on? Check whether the default route 0.0.0.0/0 was deleted — PGA to Google\'s public VIPs still needs that route (or a dedicated route to 199.36.153.8/30).',
+                'If the timeout turns into a 403, the network is fixed; now it is IAM or the VM\'s access scopes.'
               ],
               fix: [
                 '$ gcloud compute routers create nat-router --network=prod-vpc --region=us-central1',
                 '$ gcloud compute routers nats create batch-nat --router=nat-router --region=us-central1 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges',
                 '$ gcloud compute networks subnets update batch --region=us-central1 --enable-private-ip-google-access'
               ],
-              why: 'NAT dan PGA menyelesaikan masalah yang berbeda: NAT untuk tujuan di internet, PGA untuk API Google. Banyak desain memakai keduanya.',
-              exam: 'Pilihan "assign external IPs to the VMs" hampir selalu salah bila soal menekankan keamanan.'
+              why: 'NAT and PGA solve different problems: NAT for internet destinations, PGA for Google APIs. Many designs use both.',
+              exam: 'The option "assign external IPs to the VMs" is almost always wrong when the question stresses security.'
             }
           ]
         },
         {
           id: 'sc-peering',
-          title: 'Skenario 5 — Peering yang tidak sampai',
+          title: 'Scenario 5 — A peering that does not reach',
           blocks: [
             {
               kind: 'case',
-              title: 'A bisa ke B, B bisa ke C, A tidak bisa ke C',
-              situation: 'Tim membuat peering vpc-a ↔ vpc-shared dan vpc-shared ↔ vpc-c, berharap vpc-shared menjadi hub. VM di vpc-a tidak bisa menjangkau VM di vpc-c.',
+              title: 'A reaches B, B reaches C, A cannot reach C',
+              situation: 'The team peered vpc-a ↔ vpc-shared and vpc-shared ↔ vpc-c, hoping vpc-shared would act as a hub. VMs in vpc-a cannot reach VMs in vpc-c.',
               symptom: ['$ gcloud compute networks peerings list', 'NAME          NETWORK     PEER_NETWORK  STATE   STATE_DETAILS', 'a-to-shared   vpc-a       vpc-shared    ACTIVE  [2026-10-18]: Connected.', 'shared-to-c   vpc-shared  vpc-c         ACTIVE  [2026-10-18]: Connected.'],
-              diagnose: ['Peering **tidak transitif**: route vpc-c tidak diteruskan ke vpc-a lewat vpc-shared.', 'Kalau peering baru langsung gagal dengan pesan rentang bertumpuk, cek subnet kedua VPC — tidak boleh overlap.'],
+              diagnose: ['Peering **is not transitive**: vpc-c\'s routes are not passed to vpc-a through vpc-shared.', 'If a new peering fails straight away with an overlapping-range message, check both VPCs\' subnets — they must not overlap.'],
               fix: [
-                '# Peering langsung A ↔ C (dibuat di kedua sisi)',
+                '# A direct A ↔ C peering (created on both sides)',
                 '$ gcloud compute networks peerings create a-to-c --network=vpc-a --peer-network=vpc-c',
                 '$ gcloud compute networks peerings create c-to-a --network=vpc-c --peer-network=vpc-a',
-                '# Untuk banyak spoke: pertimbangkan Shared VPC, HA VPN antar VPC, atau Network Connectivity Center'
+                '# For many spokes: consider Shared VPC, HA VPN between VPCs, or Network Connectivity Center'
               ],
-              why: 'Tiap peering hanya bertukar route kedua VPC itu. Jaringan hub-and-spoke butuh mekanisme yang memang meneruskan route.',
-              exam: 'Soal "three VPCs peered in a chain" selalu menguji sifat non-transitif.'
+              why: 'Each peering only exchanges the routes of its two VPCs. A hub-and-spoke network needs a mechanism that actually forwards routes.',
+              exam: 'A question about "three VPCs peered in a chain" always tests non-transitivity.'
             }
           ]
         },
         {
           id: 'sc-ip',
-          title: 'Skenario 6 — Subnet kehabisan IP',
+          title: 'Scenario 6 — The subnet runs out of IPs',
           blocks: [
             {
               kind: 'case',
-              title: 'MIG tidak bisa menambah VM',
-              situation: 'Autoscaler ingin menambah VM, tapi operasi gagal. Subnet app-us berukuran /26.',
+              title: 'The MIG cannot add VMs',
+              situation: 'The autoscaler wants to add VMs, but the operation fails. The app-us subnet is a /26.',
               symptom: ["ERROR: (gcloud.compute.instances.create) Could not fetch resource:", " - IP space of 'projects/ace-lab-123/regions/us-central1/subnetworks/app-us' is exhausted."],
-              diagnose: ['/26 = 64 alamat, 60 bisa dipakai. Semua sudah terpakai.', 'Cek rentang di sebelahnya kosong (tidak dipakai subnet lain, peering, atau jaringan kantor) supaya bisa diperbesar.'],
+              diagnose: ['/26 = 64 addresses, 60 usable. All are taken.', 'Check that the range next to it is free (not used by another subnet, a peering, or the office network) so it can grow.'],
               fix: ['$ gcloud compute networks subnets expand-ip-range app-us --region=us-central1 --prefix-length=24'],
-              why: 'Memperbesar subnet tidak mengganggu VM yang ada dan tidak butuh downtime. Kebalikannya — memperkecil — tidak mungkin, jadi rencanakan ruang tumbuh dari awal.',
+              why: 'Expanding a subnet does not disturb existing VMs and needs no downtime. The opposite — shrinking — is impossible, so plan room to grow from the start.',
               exam: '"Subnet needs more IP addresses without downtime" → `expand-ip-range`.'
             }
           ]
         },
         {
           id: 'sc-shared',
-          title: 'Skenario 7 — Tidak bisa membuat VM di subnet Shared VPC',
+          title: 'Scenario 7 — Cannot create a VM in a Shared VPC subnet',
           blocks: [
             {
               kind: 'case',
-              title: 'Developer di service project ditolak',
-              situation: 'Developer punya roles/compute.instanceAdmin di service project shop-dev, tapi saat membuat VM di subnet-dev milik host project, operasinya ditolak.',
+              title: 'A developer in a service project is refused',
+              situation: 'A developer has roles/compute.instanceAdmin in the service project shop-dev, but creating a VM in subnet-dev, which belongs to the host project, is refused.',
               symptom: ["ERROR: (gcloud.compute.instances.create) Could not fetch resource:", " - Required 'compute.subnetworks.use' permission for 'projects/net-host/regions/us-central1/subnetworks/subnet-dev'"],
-              diagnose: ['Membuat VM cukup diizinkan di service project, tapi **memakai subnet** adalah izin di host project.', 'Izin `compute.subnetworks.use` ada di `roles/compute.networkUser`.'],
+              diagnose: ['Creating the VM is allowed in the service project, but **using the subnet** is a permission in the host project.', 'The `compute.subnetworks.use` permission is in `roles/compute.networkUser`.'],
               fix: ['$ gcloud compute networks subnets add-iam-policy-binding subnet-dev --region=us-central1 --project=net-host \\', '    --member=user:dev@example.com --role=roles/compute.networkUser'],
-              why: 'Shared VPC sengaja memisahkan izin: jaringan milik host, workload milik service project. Memberi networkUser per subnet adalah versi least privilege-nya.',
+              why: 'Shared VPC deliberately splits permissions: the network belongs to the host, the workloads to the service projects. Granting networkUser per subnet is the least-privilege version.',
               exam: '"Users in a service project cannot create VMs in the shared subnet" → `roles/compute.networkUser`.'
             }
           ]
         },
         {
           id: 'sc-hybrid',
-          title: 'Skenario 8 — Kantor hanya bisa ke satu region',
+          title: 'Scenario 8 — The office can only reach one region',
           blocks: [
             {
               kind: 'case',
-              title: 'VPN tersambung, tapi region kedua tidak terjangkau',
-              situation: 'HA VPN dan Cloud Router ada di us-central1. Server kantor bisa menjangkau VM di us-central1, tapi tidak bisa menjangkau VM di europe-west1 pada VPC yang sama.',
+              title: 'The VPN is up, but the second region is unreachable',
+              situation: 'HA VPN and Cloud Router are in us-central1. Office servers can reach VMs in us-central1, but not VMs in europe-west1 in the same VPC.',
               symptom: ['$ gcloud compute networks describe prod-vpc --format="value(routingConfig.routingMode)"', 'REGIONAL'],
               diagnose: [
-                'Dengan dynamic routing **regional**, Cloud Router hanya mengumumkan subnet di region-nya ke kantor, dan route kantor hanya dipasang di region itu.',
-                'Tunnel dan BGP sehat — ini soal cakupan route, bukan konektivitas.'
+                'With **regional** dynamic routing, Cloud Router only advertises subnets in its own region to the office, and office routes are only installed in that region.',
+                'The tunnels and BGP are healthy — this is about route scope, not connectivity.'
               ],
               fix: ['$ gcloud compute networks update prod-vpc --bgp-routing-mode=global'],
-              why: 'Mode global membuat satu Cloud Router melayani semua region VPC. Alternatifnya, pasang VPN dan Cloud Router di setiap region.',
-              exam: 'Kata kunci "routes learned via VPN only in one region" → dynamic routing mode global.'
+              why: 'Global mode lets one Cloud Router serve every region of the VPC. The alternative is a VPN and Cloud Router in every region.',
+              exam: 'The phrase "routes learned via VPN only in one region" → global dynamic routing mode.'
             }
           ]
         },
         {
           id: 'sc-shadow',
-          title: 'Skenario 9 — Rule baru tidak berpengaruh',
+          title: 'Scenario 9 — A new rule has no effect',
           blocks: [
             {
               kind: 'case',
-              title: 'Allow sudah dibuat, koneksi tetap ditolak',
-              situation: 'Tim membuat allow-metrics (tcp:9100 dari 10.0.0.0/8, priority 1000) agar Prometheus bisa scrape VM. Koneksi tetap ditolak.',
+              title: 'The allow is there, but the connection is still refused',
+              situation: 'The team created allow-metrics (tcp:9100 from 10.0.0.0/8, priority 1000) so Prometheus can scrape the VMs. Connections are still refused.',
               symptom: [
                 '$ gcloud compute firewall-rules list --filter="network:prod-vpc" --sort-by=priority',
                 'NAME           DIRECTION  PRIORITY  ALLOW     DENY  DISABLED',
                 'deny-internal  INGRESS    500                 all   False',
                 'allow-metrics  INGRESS    1000      tcp:9100        False'
               ],
-              diagnose: ['deny-internal (priority 500) mencakup trafik yang sama dan dievaluasi lebih dulu → allow-metrics tidak pernah kena (shadowed).', 'Firewall Insights menandai rule seperti ini; Firewall Rules Logging di deny-internal menunjukkan koneksinya ditolak di sana.'],
+              diagnose: ['deny-internal (priority 500) covers the same traffic and is evaluated first → allow-metrics is never hit (shadowed).', 'Firewall Insights flags rules like this; Firewall Rules Logging on deny-internal shows the connections being denied there.'],
               fix: ['$ gcloud compute firewall-rules update allow-metrics --priority=400'],
-              why: 'Tidak ada "rule yang lebih spesifik menang" di firewall VPC — yang menentukan hanya priority (lalu deny saat seri). Ini berbeda dari route.',
-              exam: 'Jebakan klasik: mengira rule dengan port lebih spesifik akan menang.'
+              why: 'In the VPC firewall there is no "the more specific rule wins" — only priority decides (then deny on a tie). That is different from routes.',
+              exam: 'The classic trap: thinking a rule with more specific ports will win.'
             }
           ]
         }
@@ -1069,24 +1063,24 @@ export const lesson: Lesson = {
     // ── 9 ─────────────────────────────────────────────────────────────────
     {
       id: 'check',
-      title: 'Cek pemahaman',
+      title: 'Check yourself',
       sections: [
         {
           id: 'quiz',
-          title: 'Dua belas soal singkat',
+          title: 'Twelve quick questions',
           blocks: [
-            { kind: 'quiz', q: 'Berapa alamat yang bisa dipakai VM di subnet `10.1.0.0/24`?', options: ['256', '254', '252', '250'], answer: 2, explain: 'Google mencadangkan 4 alamat di setiap subnet (network, gateway, cadangan Google, broadcast): 256 − 4 = 252.' },
-            { kind: 'quiz', q: 'Apa cakupan sebuah VPC network dan subnet di Google Cloud?', options: ['VPC regional, subnet zonal', 'VPC global, subnet regional', 'VPC global, subnet global', 'VPC zonal, subnet zonal'], answer: 1, explain: 'VPC global; subnet milik satu region dan melintasi semua zone-nya.' },
-            { kind: 'quiz', q: 'Rule allow dan rule deny sama-sama cocok dengan sebuah koneksi, keduanya priority 1000. Hasilnya?', options: ['Diizinkan', 'Ditolak', 'Rule yang dibuat terakhir menang', 'Rule dengan port lebih spesifik menang'], answer: 1, explain: 'Pada priority yang sama, deny menang.' },
-            { kind: 'quiz', q: 'Cara paling aman memberi admin SSH ke VM tanpa IP eksternal?', options: ['Buka tcp:22 dari 0.0.0.0/0', 'Bastion host ber-IP publik', 'IAP TCP forwarding dengan firewall dari 35.235.240.0/20', 'Beri VM IP eksternal sementara'], answer: 2, explain: 'IAP tidak butuh IP publik atau bastion; aksesnya diatur IAM dan port 22 hanya terbuka untuk rentang IAP.' },
-            { kind: 'quiz', q: 'VM tanpa IP eksternal harus mengunduh patch OS dari internet. Pakai apa?', options: ['Private Google Access', 'Cloud NAT', 'VPC peering', 'Private services access'], answer: 1, explain: 'Cloud NAT memberi akses keluar ke internet. PGA hanya untuk API Google.' },
-            { kind: 'quiz', q: 'VM tanpa IP eksternal harus membaca bucket Cloud Storage tanpa akses internet. Pakai apa?', options: ['Cloud NAT', 'Private Google Access di subnet', 'IP eksternal statis', 'Cloud VPN'], answer: 1, explain: 'Private Google Access diaktifkan per subnet dan membuka jalan ke API Google tanpa internet.' },
-            { kind: 'quiz', q: 'VPC A di-peer ke B, dan B di-peer ke C. Bisakah VM di A menjangkau VM di C?', options: ['Ya, lewat B', 'Ya, bila custom routes diekspor', 'Tidak — peering tidak transitif', 'Ya, bila ketiganya auto mode'], answer: 2, explain: 'Peering tidak transitif; A butuh peering langsung ke C atau mekanisme lain.' },
-            { kind: 'quiz', q: 'Satu organisasi ingin tim jaringan mengatur subnet dan firewall terpusat untuk puluhan project aplikasi. Pilihan terbaik?', options: ['VPC peering di setiap pasangan project', 'Shared VPC', 'Cloud VPN antar project', 'Auto mode di setiap project'], answer: 1, explain: 'Shared VPC: host project memiliki jaringan, service project memakainya.' },
-            { kind: 'quiz', q: 'Semua backend load balancer UNHEALTHY padahal aplikasinya jalan. Firewall apa yang kurang?', options: ['Ingress dari 35.235.240.0/20', 'Ingress dari 130.211.0.0/22 dan 35.191.0.0/16 ke port backend', 'Egress ke 0.0.0.0/0', 'Ingress dari 199.36.153.8/30'], answer: 1, explain: 'Health check dan proxy load balancer datang dari 130.211.0.0/22 dan 35.191.0.0/16.' },
-            { kind: 'quiz', q: 'Hanya tim keamanan yang boleh menentukan VM mana yang terkena sebuah firewall rule. Target yang tepat?', options: ['Network tag', 'Semua instance', 'Target service account', 'Rentang IP sumber'], answer: 2, explain: 'Mengganti service account VM butuh izin IAM dan VM berhenti; network tag bisa diubah siapa pun yang boleh mengedit VM.' },
-            { kind: 'quiz', q: 'Lewat VPN, kantor hanya bisa menjangkau subnet di region tempat Cloud Router berada. Apa yang diubah?', options: ['Tambah IP eksternal ke VM', 'Ubah dynamic routing mode VPC ke global', 'Buat peering', 'Ganti ke Classic VPN'], answer: 1, explain: 'Mode global menyebarkan route dinamis ke semua region VPC.' },
-            { kind: 'quiz', q: 'Subnet /24 hampir penuh dan tidak boleh ada downtime. Langkahnya?', options: ['Buat ulang subnet dengan /22', 'gcloud compute networks subnets expand-ip-range … --prefix-length=22', 'Tambah rentang sekunder lalu pindahkan VM', 'Ubah VPC ke auto mode'], answer: 1, explain: 'Subnet bisa diperbesar di tempat tanpa downtime (tapi tidak bisa diperkecil).' }
+            { kind: 'quiz', q: 'How many addresses can VMs use in the subnet `10.1.0.0/24`?', options: ['256', '254', '252', '250'], answer: 2, explain: 'Google reserves 4 addresses in every subnet (network, gateway, Google reserved, broadcast): 256 − 4 = 252.' },
+            { kind: 'quiz', q: 'What is the scope of a VPC network and of a subnet in Google Cloud?', options: ['VPC regional, subnet zonal', 'VPC global, subnet regional', 'VPC global, subnet global', 'VPC zonal, subnet zonal'], answer: 1, explain: 'The VPC is global; a subnet belongs to one region and spans all of its zones.' },
+            { kind: 'quiz', q: 'An allow rule and a deny rule both match a connection, both at priority 1000. The result?', options: ['Allowed', 'Denied', 'The rule created last wins', 'The rule with more specific ports wins'], answer: 1, explain: 'At the same priority, deny wins.' },
+            { kind: 'quiz', q: 'The safest way to give admins SSH to VMs with no external IP?', options: ['Open tcp:22 from 0.0.0.0/0', 'A bastion host with a public IP', 'IAP TCP forwarding with a firewall rule for 35.235.240.0/20', 'Give the VM a temporary external IP'], answer: 2, explain: 'IAP needs no public IP or bastion; access is controlled by IAM and port 22 is only open to the IAP range.' },
+            { kind: 'quiz', q: 'VMs with no external IP must download OS patches from the internet. What do you use?', options: ['Private Google Access', 'Cloud NAT', 'VPC peering', 'Private services access'], answer: 1, explain: 'Cloud NAT gives outbound internet access. PGA is only for Google APIs.' },
+            { kind: 'quiz', q: 'VMs with no external IP must read a Cloud Storage bucket without internet access. What do you use?', options: ['Cloud NAT', 'Private Google Access on the subnet', 'A static external IP', 'Cloud VPN'], answer: 1, explain: 'Private Google Access is turned on per subnet and opens a path to Google APIs without the internet.' },
+            { kind: 'quiz', q: 'VPC A is peered with B, and B with C. Can VMs in A reach VMs in C?', options: ['Yes, through B', 'Yes, if custom routes are exported', 'No — peering is not transitive', 'Yes, if all three are auto mode'], answer: 2, explain: 'Peering is not transitive; A needs a direct peering to C or another mechanism.' },
+            { kind: 'quiz', q: 'One organisation wants a network team to run subnets and firewalls centrally for dozens of application projects. The best choice?', options: ['VPC peering between every pair of projects', 'Shared VPC', 'Cloud VPN between projects', 'Auto mode in every project'], answer: 1, explain: 'Shared VPC: the host project owns the network, service projects use it.' },
+            { kind: 'quiz', q: 'Every load balancer backend is UNHEALTHY although the app is running. Which firewall rule is missing?', options: ['Ingress from 35.235.240.0/20', 'Ingress from 130.211.0.0/22 and 35.191.0.0/16 to the backend port', 'Egress to 0.0.0.0/0', 'Ingress from 199.36.153.8/30'], answer: 1, explain: 'Load balancer health checks and proxies come from 130.211.0.0/22 and 35.191.0.0/16.' },
+            { kind: 'quiz', q: 'Only the security team may decide which VMs a firewall rule applies to. The right target?', options: ['A network tag', 'All instances', 'A target service account', 'A source IP range'], answer: 2, explain: 'Changing a VM\'s service account needs IAM permission and a stopped VM; a network tag can be changed by anyone who may edit the VM.' },
+            { kind: 'quiz', q: 'Over VPN, the office can only reach subnets in the Cloud Router\'s region. What do you change?', options: ['Add external IPs to the VMs', 'Change the VPC dynamic routing mode to global', 'Create a peering', 'Switch to Classic VPN'], answer: 1, explain: 'Global mode spreads dynamic routes to every region of the VPC.' },
+            { kind: 'quiz', q: 'A /24 subnet is nearly full and there must be no downtime. The step?', options: ['Recreate the subnet as a /22', 'gcloud compute networks subnets expand-ip-range … --prefix-length=22', 'Add a secondary range and move the VMs', 'Switch the VPC to auto mode'], answer: 1, explain: 'A subnet can be expanded in place with no downtime (but never shrunk).' }
           ]
         }
       ]

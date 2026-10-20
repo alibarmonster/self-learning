@@ -48,7 +48,7 @@
   }
 
   const short = (sa: string) => sa.split('@')[0];
-  const target = (r: FwRule) => (r.targetSa ? `SA ${short(r.targetSa)}` : r.targetTags?.length ? `tag ${r.targetTags.join(', ')}` : 'semua VM');
+  const target = (r: FwRule) => (r.targetSa ? `SA ${short(r.targetSa)}` : r.targetTags?.length ? `tag ${r.targetTags.join(', ')}` : 'all VMs');
   const peerOf = (r: FwRule) =>
     r.direction === 'INGRESS'
       ? [...(r.sources ?? []), ...(r.sourceTags ?? []).map((t) => `tag ${t}`)].join(', ') || '0.0.0.0/0'
@@ -62,9 +62,9 @@
   /** How a rule's line in the trace reads, given which rule won. */
   function stepNote(v: FwVerdict, s: FwVerdict['steps'][number]) {
     if (!s.match) return s.why;
-    if (s.rule === v.rule) return 'cocok → dipakai';
+    if (s.rule === v.rule) return 'matches → applied';
     const win = v.steps.find((x) => x.rule === v.rule)!;
-    return win.priority === s.priority ? 'cocok, tapi seri — deny menang' : 'cocok, tapi kalah priority';
+    return win.priority === s.priority ? 'matches, but tied — deny wins' : 'matches, but loses on priority';
   }
 
   const tie = (v: FwVerdict) => {
@@ -78,8 +78,8 @@
   <div class="drill-head">
     <p class="drill-title">{title}</p>
     <p class="score mono">
-      {answered}/{packets.length} dijawab · {right} benar
-      {#if answered}<button class="link" onclick={reset}>ulangi</button>{/if}
+      {answered}/{packets.length} answered · {right} right
+      {#if answered}<button class="link" onclick={reset}>reset</button>{/if}
     </p>
   </div>
 
@@ -94,11 +94,11 @@
     {/each}
   </ul>
 
-  <p class="label">Firewall rule, urut seperti dievaluasi</p>
+  <p class="label">Firewall rules, in evaluation order</p>
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Rule</th><th>Arah</th><th>Priority</th><th>Action</th><th>Berlaku untuk</th><th>Sumber / tujuan</th><th>Port</th></tr>
+        <tr><th>Rule</th><th>Direction</th><th>Priority</th><th>Action</th><th>Applies to</th><th>Source / destination</th><th>Ports</th></tr>
       </thead>
       <tbody>
         {#each sorted as r (r.name)}
@@ -108,7 +108,7 @@
             <td class="mono">{r.priority}</td>
             <td><span class={`act ${r.action}`}>{r.action}</span></td>
             <td class="mono small">{target(r)}</td>
-            <td class="mono small">{r.direction === 'INGRESS' ? 'dari' : 'ke'} {peerOf(r)}</td>
+            <td class="mono small">{r.direction === 'INGRESS' ? 'from' : 'to'} {peerOf(r)}</td>
             <td class="mono small">{r.ports}</td>
           </tr>
         {/each}
@@ -118,8 +118,8 @@
             <td class="mono small">{r.direction}</td>
             <td class="mono">65535</td>
             <td><span class={`act ${r.action}`}>{r.action}</span></td>
-            <td class="mono small">semua VM</td>
-            <td class="mono small">{r.direction === 'INGRESS' ? 'dari' : 'ke'} 0.0.0.0/0</td>
+            <td class="mono small">all VMs</td>
+            <td class="mono small">{r.direction === 'INGRESS' ? 'from' : 'to'} 0.0.0.0/0</td>
             <td class="mono small">all</td>
           </tr>
         {/each}
@@ -127,17 +127,17 @@
     </table>
   </div>
 
-  <p class="label">Koneksi — diizinkan atau ditolak?</p>
+  <p class="label">Connections — allowed or denied?</p>
   <ol class="packets">
     {#each packets as p, i (i)}
       {@const v = verdicts[i]}
       {@const c = calls[i]}
       <li class:done={!!c} class:ok={c === v.action} class:bad={!!c && c !== v.action}>
         <div class="pk-row">
-          <span class="dir mono">{p.direction === 'INGRESS' ? 'masuk' : 'keluar'}</span>
+          <span class="dir mono">{p.direction === 'INGRESS' ? 'ingress' : 'egress'}</span>
           <span class="flow mono">
             {p.direction === 'INGRESS' ? label(p.peer) : label(p.vm)}
-            <span aria-hidden="true">→</span><span class="sr">ke</span>
+            <span aria-hidden="true">→</span><span class="sr">to</span>
             {p.direction === 'INGRESS' ? label(p.vm) : label(p.peer)}
             <span class="port">{port(p)}</span>
           </span>
@@ -147,18 +147,18 @@
               <button class="btn sm btn-secondary" onclick={() => call(i, 'deny')}>Deny</button>
             </span>
           {:else}
-            <span class={`verdict ${c === v.action ? 'ok' : 'bad'}`}>{c === v.action ? '✓ ' : '✗ Seharusnya '}{v.action === 'allow' ? 'diizinkan' : 'ditolak'}</span>
+            <span class={`verdict ${c === v.action ? 'ok' : 'bad'}`}>{c === v.action ? '✓ ' : '✗ Should be '}{v.action === 'allow' ? 'allowed' : 'denied'}</span>
           {/if}
         </div>
         {#if c}
           <p class="why">
-            <strong>{c === v.action ? 'Benar.' : 'Belum tepat.'}</strong>
+            <strong>{c === v.action ? 'Correct.' : 'Not quite.'}</strong>
             {#if v.implied}
-              Tidak ada rule yang cocok, jadi <span class="mono">{v.rule}</span> yang berlaku.
+              No rule matches, so <span class="mono">{v.rule}</span> applies.
             {:else}
-              Diputuskan oleh <span class="mono">{v.rule}</span> (priority {v.steps.find((x) => x.rule === v.rule)?.priority}){#if tie(v)}{' — ada allow dan deny seri di priority itu, deny menang'}{/if}.
+              Decided by <span class="mono">{v.rule}</span> (priority {v.steps.find((x) => x.rule === v.rule)?.priority}){#if tie(v)}{' — an allow and a deny tie at that priority, and deny wins'}{/if}.
             {/if}
-            <button class="link" aria-expanded={open === i} onclick={() => (open = open === i ? null : i)}>{open === i ? 'Tutup jejak' : 'Lihat jejak evaluasi'}</button>
+            <button class="link" aria-expanded={open === i} onclick={() => (open = open === i ? null : i)}>{open === i ? 'Hide the trace' : 'Show the evaluation trace'}</button>
           </p>
           {#if open === i}
             <ol class="trace">
@@ -175,7 +175,7 @@
                   <span class="mono">65535</span>
                   <span class="mono">implied</span>
                   <span class={`act ${v.action}`}>{v.action}</span>
-                  <span>tidak ada yang cocok → dipakai</span>
+                  <span>nothing matched → applied</span>
                 </li>
               {/if}
             </ol>
@@ -186,7 +186,7 @@
   </ol>
 
   {#if after && answered === packets.length}
-    <aside class="after"><p class="label">Pembahasan</p><p>{after}</p></aside>
+    <aside class="after"><p class="label">Discussion</p><p>{after}</p></aside>
   {/if}
 </div>
 

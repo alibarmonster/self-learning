@@ -16,7 +16,7 @@
 
   const problem = $derived(scaleProblem(v));
   const plan = $derived(problem ? null : scalePlan(v));
-  const n = (x: number, digits = 0) => x.toLocaleString('id-ID', { maximumFractionDigits: digits });
+  const n = (x: number, digits = 0) => x.toLocaleString('en-US', { maximumFractionDigits: digits });
 
   function load(i: number) {
     v = { ...presets[i].values };
@@ -30,13 +30,13 @@
   }
 
   const FIELDS: { key: keyof ScaleInput; label: string; unit: string }[] = [
-    { key: 'rps', label: 'Traffic', unit: 'request/detik' },
-    { key: 'latencyMs', label: 'Waktu per request', unit: 'ms' },
-    { key: 'concurrency', label: 'Max concurrency', unit: 'request/instance' },
-    { key: 'min', label: 'Min instances', unit: 'instance' },
-    { key: 'max', label: 'Max instances', unit: 'instance' },
-    { key: 'pool', label: 'Koneksi DB', unit: 'per instance' },
-    { key: 'dbMax', label: 'Batas koneksi DB', unit: 'total' }
+    { key: 'rps', label: 'Traffic', unit: 'requests/second' },
+    { key: 'latencyMs', label: 'Time per request', unit: 'ms' },
+    { key: 'concurrency', label: 'Max concurrency', unit: 'requests/instance' },
+    { key: 'min', label: 'Min instances', unit: 'instances' },
+    { key: 'max', label: 'Max instances', unit: 'instances' },
+    { key: 'pool', label: 'DB connections', unit: 'per instance' },
+    { key: 'dbMax', label: 'DB connection limit', unit: 'total' }
   ];
 
   /** At most this many squares are drawn; the rest is a count. */
@@ -45,9 +45,9 @@
 </script>
 
 <div class="calc">
-  <p class="calc-title">Kalkulator autoscaling</p>
+  <p class="calc-title">Autoscaling calculator</p>
 
-  <div class="presets" role="group" aria-label="Situasi contoh">
+  <div class="presets" role="group" aria-label="Example situations">
     {#each presets as p, i (p.label)}
       <button class:on={chosen === i} aria-pressed={chosen === i} onclick={() => load(i)}>{p.label}</button>
     {/each}
@@ -76,52 +76,52 @@
   {#if problem || !plan}
     <p class="msg warn">{problem}</p>
   {:else}
-    <div class="fleet" role="img" aria-label={`${plan.active} instance melayani request, ${plan.idle} instance idle`}>
+    <div class="fleet" role="img" aria-label={`${plan.active} instances serving requests, ${plan.idle} idle`}>
       {#each { length: Math.min(plan.running, SHOWN) } as _, k (k)}
         <span class="inst" class:idle={k >= plan.active}></span>
       {/each}
       {#if plan.running > SHOWN}<span class="more mono">+{n(plan.running - SHOWN)}</span>{/if}
-      {#if plan.running === 0}<span class="none">tidak ada instance — scale to zero</span>{/if}
+      {#if plan.running === 0}<span class="none">no instances — scaled to zero</span>{/if}
     </div>
     <p class="legend">
-      <span class="sw" aria-hidden="true"></span>melayani request: {n(plan.active)}
-      <span class="sw idle" aria-hidden="true"></span>idle karena min instances: {n(plan.idle)}
+      <span class="sw" aria-hidden="true"></span>serving requests: {n(plan.active)}
+      <span class="sw idle" aria-hidden="true"></span>idle, kept by min instances: {n(plan.idle)}
     </p>
 
     <dl class="facts">
-      <div><dt>Request sedang diproses</dt><dd>{n(plan.inflight, 1)}</dd></div>
-      <div><dt>Instance dibutuhkan</dt><dd>{n(plan.needed)}</dd></div>
-      <div class="hl"><dt>Instance berjalan</dt><dd>{n(plan.running)}</dd></div>
-      <div><dt>Kapasitas di max</dt><dd>{n(plan.capacityRps)} <small>req/s</small></dd></div>
-      <div class:over={plan.dbOver}><dt>Koneksi database</dt><dd>{n(plan.connections)} <small>/ {n(v.dbMax)}</small></dd></div>
+      <div><dt>Requests in flight</dt><dd>{n(plan.inflight, 1)}</dd></div>
+      <div><dt>Instances needed</dt><dd>{n(plan.needed)}</dd></div>
+      <div class="hl"><dt>Instances running</dt><dd>{n(plan.running)}</dd></div>
+      <div><dt>Capacity at max</dt><dd>{n(plan.capacityRps)} <small>req/s</small></dd></div>
+      <div class:over={plan.dbOver}><dt>Database connections</dt><dd>{n(plan.connections)} <small>/ {n(v.dbMax)}</small></dd></div>
     </dl>
 
     {#if plan.overflowRps > 0}
       <p class="msg bad">
-        Melebihi kapasitas sekitar <strong>{n(plan.overflowRps)} request/detik</strong>: max instances sudah tercapai, request menunggu di antrean lalu gagal
-        dengan <span class="mono">429</span>. Naikkan max instances atau concurrency, atau percepat request.
+        About <strong>{n(plan.overflowRps)} requests/second</strong> over capacity: max instances is reached, so requests wait in the queue and then fail
+        with <span class="mono">429</span>. Raise max instances or concurrency, or make requests faster.
       </p>
     {/if}
     {#if plan.dbOver}
       <p class="msg bad">
-        {n(plan.running)} instance × {n(v.pool)} koneksi = <strong>{n(plan.connections)} koneksi</strong>, melebihi batas database {n(v.dbMax)}. Database mulai
-        menolak (<span class="mono">too many connections</span>). Turunkan max instances, naikkan concurrency, atau kecilkan pool.
+        {n(plan.running)} instances × {n(v.pool)} connections = <strong>{n(plan.connections)} connections</strong>, over the database limit of {n(v.dbMax)}. The
+        database starts refusing them (<span class="mono">too many connections</span>). Lower max instances, raise concurrency, or shrink the pool.
       </p>
     {/if}
     {#if plan.coldStart}
-      <p class="msg warn">Tidak ada instance yang hidup. Request berikutnya menunggu container dinyalakan (cold start). Biayanya nol selama sepi.</p>
+      <p class="msg warn">No instance is running. The next request waits while a container starts — a cold start. While it is quiet, the cost is zero.</p>
     {/if}
     {#if plan.idle > 0}
-      <p class="msg warn">{n(plan.idle)} instance tetap hidup tanpa request karena min instances — tidak ada cold start, tapi tetap ditagih.</p>
+      <p class="msg warn">{n(plan.idle)} instances stay up without requests because of min instances — no cold start, but they are billed.</p>
     {/if}
     {#if plan.needed > 0 && plan.needed === plan.running && plan.overflowRps === 0 && plan.idle === 0 && !plan.dbOver}
-      <p class="msg ok">Semua request tertampung. Cloud Run menambah dan mengurangi instance sendiri mengikuti traffic.</p>
+      <p class="msg ok">Every request fits. Cloud Run adds and removes instances on its own as traffic changes.</p>
     {/if}
   {/if}
 
   <p class="foot">
-    Rumusnya: request sedang diproses = traffic × waktu per request (Little's law), lalu dibagi max concurrency. Angka ini batas bawah — Cloud Run juga menjaga
-    CPU sekitar 60%, jadi biasanya menyalakan sedikit lebih banyak.
+    The formula: requests in flight = traffic × time per request (Little's law), divided by max concurrency. That is a floor — Cloud Run also keeps CPU
+    near 60%, so it usually runs a few more.
   </p>
 </div>
 
