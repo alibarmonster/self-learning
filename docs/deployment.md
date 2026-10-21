@@ -3,15 +3,21 @@
 The app is a static site: `bun run build` writes `dist/`, and `dist/` is the
 whole thing — one JS file, one CSS file, the self-hosted font files and a
 favicon, about 1.2 MB before compression. It makes **no request to any other
-origin** once loaded: no API, no database, no font CDN, no analytics. Anything
-that can serve files can host it.
+origin** once loaded: no font CDN, no analytics. Anything that can serve files
+can host it, and then progress stays in each browser.
+
+On Vercel there is optionally more: a small same-origin API (`/api/*`, three
+Vercel Functions) and a SQLite database on Turso, so several people can each
+have an account and their progress follows them across devices. See
+*Accounts and a database* below.
 
 Two things make this easier than a typical SPA deploy:
 
 - **Hash routing.** Every route is `#/cdl`, `#/ace/cheatsheet` and so on, so the
   server only ever serves `/index.html`. You do **not** need SPA rewrite rules,
   and a refresh on a deep link cannot 404.
-- **No backend.** There is nothing to provision, scale or pay for.
+- **No backend needed.** As a static site there is nothing to provision, scale
+  or pay for; the API and database are an add-on, not a requirement.
 
 ## Protecting it with a password
 
@@ -87,6 +93,42 @@ with scope **All Deployments** is free too, but it is a Vercel-account login
 rather than a password. Both would sit in front of this sign-in page, not
 replace it, so pick one.
 
+### Accounts and a database (Vercel + Turso)
+
+With only the steps above, there is one sign-in (yours) and progress stays in
+each browser. Add a database and you can create accounts for other people,
+each with their own saved answers, history and lesson progress, synced across
+their devices. The database is SQLite on [Turso](https://turso.tech) — Vercel
+Functions keep no files between requests, so a SQLite file on Vercel itself
+would be lost.
+
+1. Create a Turso account (free tier), then a database — in the dashboard, or
+   with the CLI:
+   ```bash
+   turso db create exam-prep
+   turso db show --url exam-prep        # libsql://exam-prep-<you>.turso.io
+   turso db tokens create exam-prep     # the auth token
+   ```
+2. Vercel → **Settings → Environment Variables**, for Production and Preview:
+   - `TURSO_DATABASE_URL` — the `libsql://…` URL
+   - `TURSO_AUTH_TOKEN` — the token
+   - `SESSION_SECRET` — recommended now: any long random string
+3. **Redeploy.** The tables are created on the first request.
+4. Sign in as yourself (the `BASIC_AUTH_*` account — the **owner**). Your
+   existing progress in that browser is uploaded as yours on the first sign-in.
+5. Open your name in the header → **Account** → **Add a person**: a name and a
+   password (there is a Generate button). Give them both; they sign in on the
+   same page and can change the password on their own Account page.
+
+The owner's password stays in `BASIC_AUTH_PASSWORD` and is never stored in the
+database. Other passwords are stored as scrypt hashes. A wrong password waits
+0.8 s; a removed person's session stops working at the next request.
+
+To try all of this locally first, copy `.env.example` to `.env.local` and set
+`BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD`; `bun run dev` then uses a SQLite file
+at `data/exam-prep.db`. Leave the Turso variables empty for that, or point them
+at a Turso database to test against it.
+
 ### Netlify
 
 1. Import the repo; build `bun run build`, publish `dist`.
@@ -112,22 +154,19 @@ costs nothing and matters if the site is ever reachable without the lock.
 
 ## Where your progress lives
 
-In your browser, not on the server — see *Storage* in `README.md`. Two
-consequences worth knowing before you rely on this:
-
-- Clearing site data for the domain erases attempt history, saved papers and
-  the resumable session. There is no copy anywhere else.
-- Your phone and your laptop keep separate histories. The question banks and
-  cheat sheets are identical; only progress differs.
-
-Both are fixable later by adding a backend, which this app does not have and
-does not need for one person on one browser.
+Always in your browser first. With a database (Vercel + Turso, above) it is
+also saved to your account a moment after each change, so clearing site data
+or switching devices loses nothing — sign in and it comes back. Without one,
+see *Storage and accounts* in `README.md`: clearing site data erases attempt
+history, saved papers and the resumable session, and each device keeps its own
+history.
 
 ## Updating
 
 Push to the branch the host watches. The build runs there, `index.html` is
 never cached, so a refresh picks up the new version. Nothing to migrate —
-localStorage keys are versioned (`-v1`) and unchanged by a deploy.
+localStorage keys are versioned (`-v1`) and unchanged by a deploy, and the
+database tables are created with `IF NOT EXISTS` on the first request.
 
 ## Checking a build before you ship it
 

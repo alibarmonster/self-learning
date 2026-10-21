@@ -6,6 +6,8 @@
   import FirewallDrill from './learn/FirewallDrill.svelte';
   import ScaleCalc from './learn/ScaleCalc.svelte';
   import LbPicker from './learn/LbPicker.svelte';
+  import GuideList from './learn/GuideList.svelte';
+  import { fmt } from './learn/inline';
 
   const exam = $derived(quiz.activeExam);
   const metas = $derived<LessonMeta[]>(exam.lessons ?? []);
@@ -99,12 +101,6 @@
   }
   let tocOpen = $state(false);
 
-  // ── inline formatting: `code` and **bold**, everything else escaped ───
-  const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const fmt = (s: string) =>
-    esc(s)
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
-      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
   const lineKind = (l: string) => (l.startsWith('$ ') ? 'cmd' : l.startsWith('# ') ? 'note' : 'out');
   const TONE: Record<string, string> = { analogy: 'Analogy', exam: 'On the exam', tip: 'Tip', warn: 'Watch out' };
@@ -276,6 +272,8 @@
                   <ScaleCalc start={b.start} presets={b.presets} />
                 {:else if b.kind === 'lbpicker'}
                   <LbPicker title={b.title} />
+                {:else if b.kind === 'guide'}
+                  <GuideList ref={b.ref} items={b.items} />
                 {:else if isQuiz(b)}
                   {@const key = `${s.id}:${bi}`}
                   {@const chosen = picks[key]}
@@ -585,6 +583,7 @@
     font-size: 0.88em;
     padding: 1px 4px;
     background: var(--bg-sunken);
+    overflow-wrap: anywhere;
   }
 
   .list {
@@ -716,6 +715,7 @@
   }
 
   .callout {
+    overflow-wrap: anywhere;
     margin-top: 18px;
     padding: 14px 16px;
     border-left: 3px solid var(--line-strong);

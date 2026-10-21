@@ -7,6 +7,8 @@
   import Results from '@/views/Results.svelte';
   import Review from '@/views/Review.svelte';
   import Cheatsheet from '@/views/Cheatsheet.svelte';
+  import Account from '@/views/Account.svelte';
+  import { sync, signOut } from '@/state/sync.svelte';
 
   quiz.init();
 
@@ -19,6 +21,7 @@
   );
 
   // ── Hash routing ──
+  // `#/account` is the signed-in user's page (and, for admins, everyone's).
   // `#/` is the exam picker, `#/apple` an exam's start page, `#/apple/about`
   // its background page, `#/ace/cheatsheet[/<sheet>]` one of its cheat
   // sheets, `#/ace/lab[/<mode>/<scenario>]` the simulated lab,
@@ -30,8 +33,17 @@
     return { examId, sub, sheet, extra };
   }
 
+  let accountOpen = $state(false);
+
   function applyHash() {
     const { examId, sub, sheet, extra } = parseHash();
+    if (examId === 'account') {
+      if (quiz.view === 'quiz') return;
+      if (quiz.exam) quiz.leaveExam();
+      accountOpen = true;
+      return;
+    }
+    accountOpen = false;
     const exam = EXAM_BY_ID[examId];
     if (!exam) {
       if (quiz.exam) quiz.leaveExam();
@@ -83,7 +95,9 @@
     const sheet = quiz.sheetId;
     const labPath = quiz.labPath;
     const lessonId = quiz.lessonId;
-    const target = !exam
+    const target = accountOpen
+      ? '#/account'
+      : !exam
       ? '#/'
       : view === 'lab'
         ? `#/${exam.id}/lab${labPath ? `/${labPath}` : ''}`
@@ -99,7 +113,9 @@
       if (!location.hash) history.replaceState(null, '', target);
       else history.pushState(null, '', target);
     }
-    document.title = exam
+    document.title = accountOpen
+      ? 'Account — Exam Prep'
+      : exam
       ? `${exam.name} — ${exam.subtitle}`
       : 'Exam Prep — practice tests';
   });
@@ -129,6 +145,10 @@
   }
 
   function toPicker() {
+    if (accountOpen) {
+      location.hash = '#/';
+      return;
+    }
     if (quiz.view === 'quiz') quiz.exitToHome();
     quiz.leaveExam();
   }
@@ -138,7 +158,7 @@
   <header class="topbar">
     <div class="page bar">
       <div class="brand-group">
-        {#if quiz.exam}
+        {#if quiz.exam || accountOpen}
           <button class="btn btn-ghost back" onclick={toPicker} title="All exams">
             <span aria-hidden="true">‹</span> Exams
           </button>
@@ -195,7 +215,16 @@
             </button>
           {/if}
         {/if}
-        {#if signedIn}
+        {#if sync.user}
+          {#if quiz.view !== 'quiz'}
+            <a class="btn btn-ghost account" class:active={accountOpen} href="#/account" title={sync.error ? 'Progress not saved yet' : 'Your account'}>
+              <span class="sync" class:busy={sync.saving || sync.pending > 0} class:bad={!!sync.error} aria-hidden="true"></span>
+              <span class="who">{sync.user.name}</span>
+            </a>
+          {/if}
+          <!-- On phones, Sign out lives on the account page; the header has no room for both. -->
+          <button class="btn btn-ghost signout with-account" onclick={signOut}>Sign out</button>
+        {:else if signedIn}
           <a class="btn btn-ghost signout" href="/__logout">Sign out</a>
         {/if}
         <button class="btn btn-ghost theme" onclick={() => quiz.cycleTheme()}>
@@ -207,7 +236,9 @@
   </header>
 
   <main>
-    {#if !quiz.exam}
+    {#if accountOpen}
+      <Account />
+    {:else if !quiz.exam}
       <Picker />
     {:else if quiz.view === 'home'}
       <Home />
@@ -384,6 +415,43 @@
 
   .signout {
     text-decoration: none;
+  }
+
+  .account {
+    text-decoration: none;
+    gap: 7px;
+  }
+
+  .account .sync {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+
+  .account .sync.busy {
+    background: var(--amber);
+  }
+
+  .account .sync.bad {
+    background: var(--red);
+  }
+
+  .account .who {
+    max-width: 12ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .signout.with-account {
+      display: none;
+    }
+
+    .account .who {
+      max-width: 7ch;
+    }
   }
 
   @media (max-width: 900px) {

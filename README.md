@@ -34,7 +34,13 @@ bun run preview   # serve the production bundle
 bun run check     # svelte-check + tsc — zero type errors expected
 bun run validate  # sanity-check every exam's question bank
 bun run lab       # every lab scenario starts unsolved and its reference solution solves it
+bun run api       # sign-in, accounts and sync API against an in-memory SQLite database
 ```
+
+`bun run dev` is open and keeps progress in the browser, as a static site. To try accounts locally,
+copy `.env.example` to `.env.local` (git-ignored) and set `BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD`:
+dev then shows the same sign-in page as production and stores accounts and progress in a SQLite file
+at `data/exam-prep.db` (also git-ignored).
 
 ## Deploying
 
@@ -43,19 +49,21 @@ needed. **Put the password on the host, never in the app** — everything in `di
 definition. The repo is set up for **Vercel**: `vercel.json` holds the build and security headers, and
 `middleware.ts` shows a sign-in page (username and password from the `BASIC_AUTH_USER` /
 `BASIC_AUTH_PASSWORD` Vercel environment variables) before any file is served, with a 30-day session
-cookie and a Sign out button — free on the Hobby plan. See
-[docs/deployment.md](docs/deployment.md) for the steps, and for Cloudflare Pages + Access as the
-alternative.
+cookie and a Sign out button — free on the Hobby plan. Add a free **Turso** database
+(`TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`) and the same sign-in also accepts the accounts the owner
+creates, each with their own saved progress. See [docs/deployment.md](docs/deployment.md) for the
+steps, and for Cloudflare Pages + Access as the alternative.
 
-## Storage — why there is no database
+## Storage and accounts
 
-There is no database, no server and no API. The app is a static site: `bun run build`
-produces one JS file, one CSS file and an `index.html`, and once that is loaded it makes **no
-network requests at all**. The question banks are plain JavaScript modules compiled into the
-bundle, so a paper is drawn in the browser from data that is already there.
+The question banks are plain JavaScript modules compiled into the bundle, so a paper is drawn in the
+browser from data that is already there — that never needs a server. What *you* generate is
+different: answers, history, finished papers, lesson and lab progress. It is always written to
+`localStorage` first (so the app is instant and works offline), and — when there is an account
+database — also saved to **SQLite** on the server, per user.
 
-Everything you generate is kept in `localStorage`, four keys per exam, namespaced by the exam's
-`storagePrefix` (`ada-`, `cdl-`, `ace-`):
+The keys, four per exam namespaced by the exam's `storagePrefix` (`ada-`, `cdl-`, `ace-`), plus the
+lesson and lab ones (`ep-learn-…`, `ep-lab-…`):
 
 | Key | Holds |
 | --- | ----- |
@@ -64,26 +72,42 @@ Everything you generate is kept in `localStorage`, four keys per exam, namespace
 | `<prefix>-quiz-papers-v1` | the last 6 finished papers in full, so they can be reviewed again |
 | `<prefix>-quiz-picks-v1` | how you have answered each question across sittings |
 
-Why this is the right shape here, not a shortcut:
+### Why a database now
 
-- **One person, one browser.** A database earns its place when several people share data, or one
-  person needs the same data on several devices. Neither is true: this is a study tool for one
-  person, and the data is small — six CDL papers come to roughly 250 KB against a 5 MB quota.
-- **The expensive part is already static.** The 923 questions never change at runtime. Putting
-  them in a database would mean a server, a schema, a query layer and a deploy pipeline to serve
-  content that a CDN serves for free.
-- **It stays free and cannot break.** No backend means nothing to pay for, patch, back up or wake
-  up. The site works offline once loaded.
+The first version had none, on purpose: one person, one browser, and a database only earns its
+place when several people share data or one person uses several devices. That changed — friends use
+the site too, each with their own progress — so accounts and a database were added, but only for the
+part that is personal. The questions are still static.
 
-What you give up, stated plainly:
+- **SQLite, through libSQL.** In production it is a [Turso](https://turso.tech) database (hosted
+  SQLite, free tier): Vercel Functions keep no files between requests, so a SQLite file on Vercel
+  would vanish. Locally the very same code uses a plain file, `data/exam-prep.db`. Same SQL, same
+  client (`@libsql/client`).
+- **Three tables** (`server/db/client.ts`): `users` (name, scrypt password hash, admin/owner
+  flags), `kv` (one row per user and localStorage key, the JSON string as stored by the browser,
+  with `updated_at`), and `attempts` (every finished paper, kept forever — the browser key keeps
+  only the last 25 — and what the account page reports).
+- **Sync** (`src/state/sync.svelte.ts`): on load the app asks `/api/me` who is signed in, scopes
+  localStorage to that user (`u<id>:` in front of every key, so two people on one browser never
+  see each other's progress), pulls their saved keys, and from then on pushes every write a moment
+  later, batched. Unsaved keys survive a reload or an offline spell and go up when the server can
+  be reached; the newest write wins. Signing out saves what is left and clears that user's copy
+  from the browser.
+- **Accounts** (`server/auth/accounts.ts`): the **owner** is the `BASIC_AUTH_USER` /
+  `BASIC_AUTH_PASSWORD` from the environment — always an admin, no password stored. On
+  `#/account` the owner adds people (name + password), resets passwords, makes them admin or
+  removes them with everything they saved; everyone can change their own password and see their
+  stats. All of them sign in on the same page, before any app file is served.
+- **The API** (`api/*.ts` → `server/api/handlers.ts`): `GET /api/me`, `GET`/`PUT /api/state`,
+  and `/api/users` (`GET`, `POST`, `PATCH`, `DELETE`). Writes must come from the app's own origin;
+  sessions are HttpOnly, signed cookies that carry the user id. `bun run api` checks all of it.
 
-- **Clearing site data erases your progress.** There is no copy anywhere else.
-- **Devices do not sync.** Your phone and your laptop keep separate histories.
-- **Private windows forget everything** when closed.
+Without a database (no `TURSO_DATABASE_URL`, or a plain static host) the app behaves exactly as it
+always did: everything stays in this browser. Every read and write is wrapped in try/catch, so it
+still works when storage is unavailable — it simply cannot resume or remember.
 
-Every read and write is wrapped in try/catch, so the app still works when storage is unavailable —
-it simply cannot resume or remember. If cross-device sync ever matters, that is the point at which
-a backend and a database become worth adding; nothing in the current design blocks it.
+The first time the owner signs in on a browser that already holds progress from before accounts,
+that progress is uploaded as the owner's, so nothing is lost in the switch.
 
 ## Project layout
 
@@ -100,7 +124,8 @@ src/
     index.ts                 re-exports the above as `@/core`
   state/
     quiz.svelte.ts           the Quiz store: current exam, paper, timer, scoring, review
-    storage.ts               localStorage keys and safe read/write per exam
+    storage.ts               localStorage keys and safe read/write per exam (scoped per user when signed in)
+    sync.svelte.ts           the signed-in account, and syncing storage with the database
   utils/format.ts            clock, duration and date formatting, option letters
   types/                     the domain model: Question, Section, Mode, Exam, Cheatsheet, saved sessions
   components/
@@ -114,7 +139,8 @@ src/
     Cheatsheet.svelte        the per-exam cheat sheet with filter and jump nav
     Learn.svelte             the deep-dive lessons: list, table of contents, blocks, quiz
     learn/                   interactive lesson blocks: subnet calculator, firewall exercise, autoscaling calculator,
-                             load balancer picker
+                             load balancer picker, exam guide list
+    Account.svelte           #/account — your account, password and stats; admins manage people
     lab/                     the lab: hub, command quiz, terminal, topology canvas, service canvas, architecture board
   lab/                       the lab's simulators — plain TypeScript, no Svelte (see docs/lab.md)
     net/                     VPC model, reachability engine, canvas layout, topology scenarios
@@ -123,8 +149,8 @@ src/
     cmd/                     CLI grammars, a parser that prints the real CLI errors, grader, quiz bank
     canvas/                  service catalog, connection rules, deploy and request simulation, scenarios
   sheets/                    Commands and Concepts sheets shared by the Google Cloud exams
-  lessons/                   deep-dive lessons shared by the Google Cloud exams (gke.ts, vpc.ts,
-                             cloudrun.ts, loadbalancing.ts; net.ts, scaling.ts and lb.ts hold the
+  lessons/                   deep-dive lessons shared by the Google Cloud exams (aceguide.ts, gke.ts,
+                             vpc.ts, cloudrun.ts, loadbalancing.ts; net.ts, scaling.ts and lb.ts hold the
                              logic and data behind their interactive blocks)
   exams/
     registry.ts              the list of exams (plain data — loadable by the validator)
@@ -138,7 +164,12 @@ scripts/
   importers/examtopics/      the CDL community-bank importer (one parse per dump, one merge)
   tools/rebalance-options.py one-off option-length rebalancer for the CDL bank
 middleware.ts                Vercel sign-in in front of the whole site (never bundled by Vite)
-server/auth/                 session cookies and the sign-in page it serves
+api/                         Vercel Functions: me, state, users — thin wrappers over server/api
+server/auth/                 session cookies, accounts, password hashing, the sign-in page
+server/api/                  the API handlers, shared by Vercel and the dev server
+server/db/                   the libSQL client and the schema
+server/dev.ts                Vite plugin: runs middleware.ts and the API inside `bun run dev`
+.env.example                 the environment variables, to copy to .env.local
 vercel.json                  Vercel build settings and security headers
 docs/
   deployment.md              hosting and password protection
@@ -278,7 +309,12 @@ also set `filterHint` for the search placeholder.
 
 Cheat sheets are shorthand for remembering; a deep dive is for understanding. `#/<exam>/learn`
 (button **Deep dive** in the header, on ACE) lists lessons that teach one service from the ground up,
-in English (the lab they link to is in Indonesian). The first is **Getting Started with Google Kubernetes Engine**:
+in English (the lab they link to is in Indonesian). It opens with **The ACE Exam Guide, Explained**:
+every consideration in Google's current guide — all four sections, twelve subsections, 94 items, with
+the headings in our own words — each opening to what it means, the gcloud commands, how the exam asks
+it, and links to the deep dive or lab exercise that goes further (`kind: 'guide'` blocks).
+
+The first service lesson is **Getting Started with Google Kubernetes Engine**:
 why containers need Kubernetes, the core objects and workload types, Services and storage, the
 cluster's components, node pools, regional clusters and upgrades, networking, IAM vs RBAC vs
 Workload Identity, Autopilot against Standard, kubectl, introspection (reading Pod phase, container

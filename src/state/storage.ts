@@ -2,6 +2,12 @@
  * Everything the app keeps lives in localStorage, namespaced per exam by its
  * `storagePrefix`. Every access is wrapped: private windows and full quotas
  * throw, and the app must keep working without persistence.
+ *
+ * When someone is signed in to an account with a database (see sync.ts), keys
+ * are scoped to that user (`u<id>:` in front) so two people on one browser
+ * never see each other's progress, and every write is also handed to the sync
+ * layer to be saved on the server. The theme is the one key that stays per
+ * browser.
  */
 import type { Attempt, Exam, SavedSession } from '@/types';
 
@@ -30,9 +36,21 @@ export function storageKeys(exam: Pick<Exam, 'storagePrefix'>) {
  */
 export const REVIEWABLE_ATTEMPTS = 6;
 
+let scope = '';
+let onChange: ((key: string, raw: string | null) => void) | null = null;
+
+/** Called by sync.ts once it knows who is signed in. An empty scope is the old, unsynced behaviour. */
+export function setStorageScope(prefix: string, changed: ((key: string, raw: string | null) => void) | null) {
+  scope = prefix;
+  onChange = changed;
+}
+
+/** The localStorage key a logical key is stored under right now. */
+export const scoped = (key: string) => (key === THEME_KEY ? key : scope + key);
+
 export function read<T>(key: string, fallback: T): T {
   try {
-    const raw = localStorage.getItem(key);
+    const raw = localStorage.getItem(scoped(key));
     return raw ? (JSON.parse(raw) as T) : fallback;
   } catch {
     return fallback;
@@ -40,8 +58,10 @@ export function read<T>(key: string, fallback: T): T {
 }
 
 export function write(key: string, value: unknown): boolean {
+  const raw = JSON.stringify(value);
+  if (key !== THEME_KEY) onChange?.(key, raw);
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    localStorage.setItem(scoped(key), raw);
     return true;
   } catch {
     /* storage unavailable or full — the app still works, it just cannot resume */
@@ -50,8 +70,9 @@ export function write(key: string, value: unknown): boolean {
 }
 
 export function remove(key: string): void {
+  if (key !== THEME_KEY) onChange?.(key, null);
   try {
-    localStorage.removeItem(key);
+    localStorage.removeItem(scoped(key));
   } catch {
     /* ignore */
   }

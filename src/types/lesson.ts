@@ -71,6 +71,20 @@ export interface ScaleInput {
   dbMax: number;
 }
 
+/** One "consideration" of an exam guide subsection, explained. */
+export interface GuideItem {
+  /** The consideration, in our own words. */
+  topic: string;
+  /** What it means and why it matters. */
+  what: string;
+  /** How it is done — usually commands. */
+  how?: string[];
+  /** How the exam tends to ask about it. */
+  exam?: string;
+  /** Where to go deeper in the app. */
+  see?: LessonLink[];
+}
+
 export type LessonBlock =
   | { kind: 'p'; text: string }
   | { kind: 'list'; items: string[]; ordered?: boolean }
@@ -101,7 +115,9 @@ export type LessonBlock =
   /** Play with traffic, latency, concurrency and min/max instances; presets load a situation. */
   | { kind: 'scaling'; start: ScaleInput; presets: { label: string; values: ScaleInput; note: string }[] }
   /** Answer the questions that pick a load balancer; shows today's name, the old one, and what it needs. */
-  | { kind: 'lbpicker'; title: string };
+  | { kind: 'lbpicker'; title: string }
+  /** The considerations of one exam guide subsection (`ref` like "1.1"), each opening to an explanation. */
+  | { kind: 'guide'; ref: string; items: GuideItem[] };
 
 export interface LessonSection {
   id: string;

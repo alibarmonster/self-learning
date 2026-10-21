@@ -6,6 +6,15 @@ import type { LessonMeta } from '@/types';
  */
 export const GOOGLE_CLOUD_LESSONS: LessonMeta[] = [
   {
+    id: 'ace-guide',
+    title: 'The ACE Exam Guide, Explained',
+    summary: 'Every consideration in Google’s current Associate Cloud Engineer guide — all four sections, 94 items — explained with the commands, how the exam asks it, and where to go deeper.',
+    minutes: 90,
+    level: 'All levels',
+    topics: ['Exam guide', 'Section 1–4', 'gcloud', 'Exam cues'],
+    load: () => import('./aceguide')
+  },
+  {
     id: 'gke',
     title: 'Getting Started with Google Kubernetes Engine',
     summary: 'From zero: Kubernetes concepts, cluster components, Autopilot vs Standard, kubectl, introspection, and the 9 case studies that come up most.',

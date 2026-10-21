@@ -90,7 +90,7 @@ export function loginPage({ next, error, notice, user = '', hash = '' }: LoginPa
   <section class="panel" aria-labelledby="title">
     <p class="eyebrow">Private study site</p>
     <h1 id="title">Sign in to <mark>practise</mark></h1>
-    <p class="lede">This site is for its owner only. Sign in once and this browser stays signed in for ${SESSION_DAYS} days.</p>
+    <p class="lede">Sign in with the account you were given. This browser then stays signed in for ${SESSION_DAYS} days, and your progress is saved to your account.</p>
     ${message}
     <form method="post" action="/__login" autocomplete="on">
       <input type="hidden" name="next" value="${escapeHtml(next)}">
@@ -103,7 +103,7 @@ export function loginPage({ next, error, notice, user = '', hash = '' }: LoginPa
       </label>
       <button type="submit">Sign in</button>
     </form>
-    <p class="foot">Forgot it? The username and password are the project's environment variables on Vercel.</p>
+    <p class="foot">Forgot your password? Ask the owner to reset it. The owner's own sign-in is the project's environment variables on Vercel.</p>
   </section>
 </main>
 <script src="/__login.js"></script>

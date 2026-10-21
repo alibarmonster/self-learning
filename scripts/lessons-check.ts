@@ -33,12 +33,26 @@ const balanced = (svg: string) => {
   return stack.length === 0;
 };
 
+const LESSON_IDS = new Set(GOOGLE_CLOUD_LESSONS.map((m) => m.id));
+
+/** Whether an in-app link (#/ace/lab/…, #/ace/learn/…, #/ace/cheatsheet) goes somewhere real. */
+function linkKnown(href: string): boolean {
+  const [, , area, mode, id] = href.split('/');
+  if (area === 'cheatsheet') return true;
+  if (area === 'learn') return LESSON_IDS.has(mode);
+  if (area !== 'lab') return false;
+  return Boolean(
+    mode === 'cmd' ? CMD_BY_ID[id] : mode === 'terminal' ? TERM_BY_ID[id] : mode === 'canvas' ? CANVAS_BY_ID[id] : mode === 'network' ? NET_BY_ID[id] : undefined
+  );
+}
+
 for (const meta of GOOGLE_CLOUD_LESSONS) {
   const { lesson } = await meta.load();
   if (lesson.id !== meta.id) fail(`${meta.id}: lesson id is ${lesson.id}`);
   const ids = new Set<string>();
   let quizzes = 0;
   let packets = 0;
+  let considerations = 0;
   for (const part of lesson.parts)
     for (const s of part.sections) {
       if (ids.has(s.id)) fail(`${meta.id}: duplicate section id ${s.id}`);
@@ -57,6 +71,12 @@ for (const meta of GOOGLE_CLOUD_LESSONS) {
             const problem = scaleProblem(v);
             if (problem) fail(`${meta.id}/${s.id}: calculator ${label}: ${problem}`);
           }
+        if (b.kind === 'guide') {
+          considerations += b.items.length;
+          if (!/^\d+\.\d+$/.test(b.ref)) fail(`${meta.id}/${s.id}: guide ref ${b.ref} is not like 1.1`);
+          if (new Set(b.items.map((i) => i.topic)).size !== b.items.length) fail(`${meta.id}/${s.id}: duplicate guide topics`);
+          for (const it of b.items) for (const l of it.see ?? []) if (!linkKnown(l.href)) fail(`${meta.id}/${s.id}: "${it.topic}" links to ${l.href}, which points nowhere`);
+        }
         if (b.kind === 'lbpicker') {
           const paths = lbPaths();
           for (const p of paths) if (!p.product) fail(`${meta.id}/${s.id}: picker answers ${JSON.stringify(p.answers)} lead nowhere`);
@@ -83,12 +103,7 @@ for (const meta of GOOGLE_CLOUD_LESSONS) {
         }
       }
     }
-  for (const l of lesson.practice) {
-    const [, , , mode, id] = l.href.split('/');
-    const known =
-      mode === 'cmd' ? CMD_BY_ID[id] : mode === 'terminal' ? TERM_BY_ID[id] : mode === 'canvas' ? CANVAS_BY_ID[id] : mode === 'network' ? NET_BY_ID[id] : undefined;
-    if (!known) fail(`${meta.id}: practice link ${l.href} points nowhere`);
-  }
-  if (!failed) console.log(`✓ ${meta.id}: ${ids.size} sections, ${quizzes} quiz questions${packets ? `, ${packets} firewall verdicts` : ''}`);
+  for (const l of lesson.practice) if (!linkKnown(l.href)) fail(`${meta.id}: practice link ${l.href} points nowhere`);
+  if (!failed) console.log(`✓ ${meta.id}: ${ids.size} sections, ${quizzes} quiz questions${packets ? `, ${packets} firewall verdicts` : ''}${considerations ? `, ${considerations} guide considerations` : ''}`);
 }
 if (failed) process.exit(1);

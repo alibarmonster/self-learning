@@ -6,25 +6,28 @@
  * The credentials live in the project's Environment Variables, never in the
  * bundle:
  *
- *   BASIC_AUTH_USER       the username
- *   BASIC_AUTH_PASSWORD   the password
+ *   BASIC_AUTH_USER       the owner's username
+ *   BASIC_AUTH_PASSWORD   the owner's password
  *   SESSION_SECRET        optional; signs the session cookie instead of the
  *                         credentials, so a password change no longer signs
  *                         everyone out
+ *   TURSO_DATABASE_URL    optional; with a database, the owner can add more
+ *   TURSO_AUTH_TOKEN      users, who sign in here too (see server/auth/accounts.ts)
  *
  * Signing in sets an HttpOnly, Secure session cookie for 30 days. /__logout
  * clears it. If the variables are missing the site refuses every request rather
  * than opening up, so a forgotten variable can never publish the app.
  *
- * Vite never sees this file; it is only picked up by Vercel.
+ * Vite never bundles this file. On Vercel it runs as Routing Middleware; in
+ * `bun run dev` the dev server (server/dev.ts) runs it in front of Vite.
  */
 import { next } from '@vercel/functions';
 import { LOGIN_SCRIPT, loginPage } from './server/auth/login-page.js';
+import { authenticate } from './server/auth/accounts.js';
 import {
   FLAG_COOKIE,
   SESSION_COOKIE,
   SESSION_DAYS,
-  checkLogin,
   credentialsFromEnv,
   issueToken,
   readCookie,
@@ -86,7 +89,7 @@ export default async function middleware(request: Request): Promise<Response> {
   }
 
   const url = new URL(request.url);
-  const signedIn = verifyToken(creds, readCookie(request.headers.get('cookie'), SESSION_COOKIE));
+  const signedIn = verifyToken(creds, readCookie(request.headers.get('cookie'), SESSION_COOKIE)) !== null;
 
   if (PUBLIC.has(url.pathname)) return next();
 
@@ -110,9 +113,10 @@ export default async function middleware(request: Request): Promise<Response> {
       const password = String(form.get('password') ?? '');
       const nextPath = safeNext(String(form.get('next') ?? '/'));
       const hash = String(form.get('hash') ?? '');
-      if (checkLogin(creds, user, password)) {
+      const uid = await authenticate(creds, user, password);
+      if (uid !== false) {
         return redirect(nextPath + appRoute(hash), [
-          ['Set-Cookie', cookie(SESSION_COOKIE, issueToken(creds), MAX_AGE)],
+          ['Set-Cookie', cookie(SESSION_COOKIE, issueToken(creds, uid), MAX_AGE)],
           ['Set-Cookie', cookie(FLAG_COOKIE, '1', MAX_AGE, false)]
         ]);
       }

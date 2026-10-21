@@ -1,8 +1,10 @@
 /**
- * Signed session cookies for the login page. A token is `<expiry>.<signature>`,
- * where the signature is an HMAC over the expiry. The key is derived from the
- * configured username and password (or SESSION_SECRET when it is set), so
- * changing the password signs everyone out.
+ * Signed session cookies for the login page. A token is
+ * `u<user id>.<expiry>.<signature>` — or, when no database is configured and
+ * there are no user ids, the older `<expiry>.<signature>` — where the
+ * signature is an HMAC over everything before it. The key is derived from the
+ * owner's username and password (or SESSION_SECRET when it is set), so
+ * changing that password signs everyone out.
  */
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 
@@ -48,19 +50,27 @@ function sign(creds: Credentials, payload: string): string {
   return createHmac('sha256', key(creds)).update(payload).digest('base64url');
 }
 
-export function issueToken(creds: Credentials, now = Date.now()): string {
-  const expires = String(now + SESSION_DAYS * 24 * 60 * 60 * 1000);
-  return `${expires}.${sign(creds, expires)}`;
+/** Who a valid token belongs to; `uid` is null for a token issued with no database. */
+export interface Session {
+  uid: number | null;
 }
 
-export function verifyToken(creds: Credentials, token: string | undefined, now = Date.now()): boolean {
-  if (!token) return false;
-  const dot = token.indexOf('.');
-  if (dot <= 0) return false;
-  const expires = token.slice(0, dot);
-  const signature = token.slice(dot + 1);
-  if (!/^\d+$/.test(expires) || Number(expires) < now) return false;
-  return same(signature, sign(creds, expires));
+export function issueToken(creds: Credentials, uid: number | null = null, now = Date.now()): string {
+  const expires = String(now + SESSION_DAYS * 24 * 60 * 60 * 1000);
+  const payload = uid === null ? expires : `u${uid}.${expires}`;
+  return `${payload}.${sign(creds, payload)}`;
+}
+
+export function verifyToken(creds: Credentials, token: string | undefined, now = Date.now()): Session | null {
+  if (!token) return null;
+  const parts = token.split('.');
+  const [uidPart, expires, signature] = parts.length === 3 ? parts : [undefined, parts[0], parts[1]];
+  if (parts.length < 2 || parts.length > 3 || !expires || !signature) return null;
+  if (uidPart !== undefined && !/^u\d{1,12}$/.test(uidPart)) return null;
+  if (!/^\d+$/.test(expires) || Number(expires) < now) return null;
+  const payload = uidPart === undefined ? expires : `${uidPart}.${expires}`;
+  if (!same(signature, sign(creds, payload))) return null;
+  return { uid: uidPart === undefined ? null : Number(uidPart.slice(1)) };
 }
 
 export function readCookie(header: string | null, name: string): string | undefined {

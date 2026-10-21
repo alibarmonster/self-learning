@@ -25,3 +25,6 @@ dist-ssr
 
 # Claude workspace data
 .claude/
+
+# Local SQLite database used by `bun run dev`
+data/

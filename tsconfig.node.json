@@ -24,6 +24,7 @@
   "include": [
     "vite.config.ts",
     "middleware.ts",
+    "api/**/*.ts",
     "server/**/*.ts",
     "scripts/**/*.ts"
   ]

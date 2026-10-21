@@ -896,7 +896,7 @@ export const lesson: Lesson = {
           blocks: [
             {
               kind: 'p',
-              text: '"Introspection" means looking inside: gathering information about running objects to understand why they behave the way they do. It always starts with the Pod status, which has three layers: the Pod **phase**, the **state** of each container (with a *reason*), and the **conditions**.'
+              text: '"Introspection" means looking inside: gathering information about running objects to understand why they behave the way they do. It always starts with the Pod status, which has three layers: the Pod **phase**, the **state** of each container (with a **reason**), and the **conditions**.'
             },
             { kind: 'figure', svg: FIG_LIFECYCLE, caption: 'There are only five Pod phases. The most useful detail is in the container state and its reason.' },
             {
