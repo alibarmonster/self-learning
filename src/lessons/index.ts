@@ -6,6 +6,15 @@ import type { LessonMeta } from '@/types';
  */
 export const GOOGLE_CLOUD_LESSONS: LessonMeta[] = [
   {
+    id: 'tryout',
+    title: 'Tryout Prep: Modules MD1–MD2',
+    summary: 'The course modules one by one — hierarchy, projects, IAM, billing, Compute Engine, disks and MIGs, GKE, Cloud Run and events, GPUs and Workstations — with the cue that points at each answer. Then sit Tryout 1–4: four sets of 50 different questions, 60 minutes each.',
+    minutes: 60,
+    level: 'Exam eve',
+    topics: ['MD1', 'MD2', 'IAM', 'Compute Engine', 'GKE', 'Cloud Run', 'Pub/Sub'],
+    load: () => import('./tryout')
+  },
+  {
     id: 'ace-guide',
     title: 'The ACE Exam Guide, Explained',
     summary: 'Every consideration in Google’s current Associate Cloud Engineer guide — all four sections, 94 items — explained with the commands, how the exam asks it, and where to go deeper.',

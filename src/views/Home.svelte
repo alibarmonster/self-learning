@@ -192,11 +192,13 @@
         {#each exam.sets as set (set.id)}
           {@const stat = setStats[set.id]}
           {@const count = set.questionIds.length}
+          {@const minutes = set.minutes ?? setMinutes(count)}
           <article class="set card" class:done={stat && stat.best >= 70}>
             <div class="set-head">
               <h3>{set.name}</h3>
               <span class="mono">{count} q</span>
             </div>
+            {#if set.note}<p class="set-note">{set.note}</p>{/if}
             <p class="set-meta">
               {#if stat}
                 Best <strong>{stat.best}%</strong> · sat {stat.sat}×
@@ -205,8 +207,8 @@
               {/if}
             </p>
             <div class="set-actions">
-              <button class="btn btn-primary sm" onclick={() => quiz.startSet(set.id, setMinutes(count))}>
-                Timed · {setMinutes(count)} min
+              <button class="btn btn-primary sm" onclick={() => quiz.startSet(set.id, minutes)}>
+                Timed · {minutes} min
               </button>
               <button class="btn btn-ghost sm" onclick={() => quiz.startSet(set.id, 0)}>Study</button>
             </div>
@@ -848,6 +850,12 @@
   .set-meta strong {
     color: var(--ink);
     font-weight: 600;
+  }
+
+  .set-note {
+    margin-top: -4px;
+    font-size: var(--type-small);
+    color: var(--text-secondary);
   }
 
   .set-actions {

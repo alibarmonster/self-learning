@@ -3,10 +3,43 @@
  * no question in two sets, every section spread across them. Written by
  * scripts/tools/make-sets.ts (seed 2026); this file is now the source, so the
  * sets stay the same when the bank is edited.
+ *
+ * The four Tryout sets come first: 200 questions written for the course modules
+ * (questions/tryout*.ts), 50 per set, every set mixing all four sections, on the
+ * tryout's own clock of 60 minutes. Tryout 1 is questions/tryout.ts; Tryout 2–4
+ * deal the other 150 out section by section, so each gets an even share.
  */
 import type { PaperSet } from '@/types';
 
 export const sets: PaperSet[] = [
+  {
+    id: 'tryout-1',
+    name: 'Tryout 1',
+    note: 'Modules MD1–MD2 · 60 min',
+    minutes: 60,
+    questionIds: ['ace-t01', 'ace-t02', 'ace-t03', 'ace-t04', 'ace-t05', 'ace-t06', 'ace-t07', 'ace-t08', 'ace-t09', 'ace-t10', 'ace-t11', 'ace-t12', 'ace-t13', 'ace-t14', 'ace-t15', 'ace-t16', 'ace-t17', 'ace-t18', 'ace-t19', 'ace-t20', 'ace-t21', 'ace-t22', 'ace-t23', 'ace-t24', 'ace-t25', 'ace-t26', 'ace-t27', 'ace-t28', 'ace-t29', 'ace-t30', 'ace-t31', 'ace-t32', 'ace-t33', 'ace-t34', 'ace-t35', 'ace-t36', 'ace-t37', 'ace-t38', 'ace-t39', 'ace-t40', 'ace-t41', 'ace-t42', 'ace-t43', 'ace-t44', 'ace-t45', 'ace-t46', 'ace-t47', 'ace-t48', 'ace-t49', 'ace-t50']
+  },
+  {
+    id: 'tryout-2',
+    name: 'Tryout 2',
+    note: 'Modules MD1–MD2 · 60 min',
+    minutes: 60,
+    questionIds: ['ace-t51', 'ace-t54', 'ace-t57', 'ace-t60', 'ace-t63', 'ace-t66', 'ace-t69', 'ace-t72', 'ace-t75', 'ace-t78', 'ace-t81', 'ace-t84', 'ace-t87', 'ace-t90', 'ace-t93', 'ace-t96', 'ace-t99', 'ace-t102', 'ace-t105', 'ace-t108', 'ace-t111', 'ace-t114', 'ace-t117', 'ace-t120', 'ace-t123', 'ace-t126', 'ace-t129', 'ace-t132', 'ace-t135', 'ace-t138', 'ace-t141', 'ace-t144', 'ace-t147', 'ace-t150', 'ace-t153', 'ace-t156', 'ace-t159', 'ace-t162', 'ace-t165', 'ace-t168', 'ace-t171', 'ace-t174', 'ace-t177', 'ace-t180', 'ace-t183', 'ace-t186', 'ace-t189', 'ace-t192', 'ace-t195', 'ace-t198']
+  },
+  {
+    id: 'tryout-3',
+    name: 'Tryout 3',
+    note: 'Modules MD1–MD2 · 60 min',
+    minutes: 60,
+    questionIds: ['ace-t52', 'ace-t55', 'ace-t58', 'ace-t61', 'ace-t64', 'ace-t67', 'ace-t70', 'ace-t73', 'ace-t76', 'ace-t79', 'ace-t82', 'ace-t85', 'ace-t88', 'ace-t91', 'ace-t94', 'ace-t97', 'ace-t100', 'ace-t103', 'ace-t106', 'ace-t109', 'ace-t112', 'ace-t115', 'ace-t118', 'ace-t121', 'ace-t124', 'ace-t127', 'ace-t130', 'ace-t133', 'ace-t136', 'ace-t139', 'ace-t142', 'ace-t145', 'ace-t148', 'ace-t151', 'ace-t154', 'ace-t157', 'ace-t160', 'ace-t163', 'ace-t166', 'ace-t169', 'ace-t172', 'ace-t175', 'ace-t178', 'ace-t181', 'ace-t184', 'ace-t187', 'ace-t190', 'ace-t193', 'ace-t196', 'ace-t199']
+  },
+  {
+    id: 'tryout-4',
+    name: 'Tryout 4',
+    note: 'Modules MD1–MD2 · 60 min',
+    minutes: 60,
+    questionIds: ['ace-t53', 'ace-t56', 'ace-t59', 'ace-t62', 'ace-t65', 'ace-t68', 'ace-t71', 'ace-t74', 'ace-t77', 'ace-t80', 'ace-t83', 'ace-t86', 'ace-t89', 'ace-t92', 'ace-t95', 'ace-t98', 'ace-t101', 'ace-t104', 'ace-t107', 'ace-t110', 'ace-t113', 'ace-t116', 'ace-t119', 'ace-t122', 'ace-t125', 'ace-t128', 'ace-t131', 'ace-t134', 'ace-t137', 'ace-t140', 'ace-t143', 'ace-t146', 'ace-t149', 'ace-t152', 'ace-t155', 'ace-t158', 'ace-t161', 'ace-t164', 'ace-t167', 'ace-t170', 'ace-t173', 'ace-t176', 'ace-t179', 'ace-t182', 'ace-t185', 'ace-t188', 'ace-t191', 'ace-t194', 'ace-t197', 'ace-t200']
+  },
   {
     id: 'set-01',
     name: 'Set 01',

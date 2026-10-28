@@ -9,6 +9,11 @@ import { planning } from './questions/planning';
 import { deploying } from './questions/deploying';
 import { operating } from './questions/operating';
 import { access } from './questions/access';
+import { tryout } from './questions/tryout';
+import { tryoutSetup } from './questions/tryout-setup';
+import { tryoutPlanning } from './questions/tryout-planning';
+import { tryoutOperating } from './questions/tryout-operating';
+import { tryoutAccess } from './questions/tryout-access';
 
 /**
  * Associate Cloud Engineer. The four sections and their weights are Google's
@@ -20,7 +25,8 @@ import { access } from './questions/access';
  * files stay; the planning section holds them together, and the retired
  * `deploying` id is aliased to it so papers saved before the change still open.
  *
- * The bank is 666 questions from a community dump, each assigned to the section
+ * The bank is 666 questions from a community dump, plus 200 written for the
+ * course tryout (questions/tryout*.ts, 50 per section), each assigned to the section
  * its decision belongs to, with every key reviewed — see questions/*.ts. The
  * real paper interleaves the sections, so the exam is `mixed`.
  */
@@ -33,7 +39,7 @@ const SECTIONS: Section[] = [
     weight: 20,
     blurb:
       'Projects, the resource hierarchy and organization policies, IAM roles in a project, users and groups in Cloud Identity, enabling APIs, quotas and regional availability, first networking and Cloud Observability setup, Cloud Asset Inventory with Gemini Cloud Assist, Workforce Identity Federation, and billing accounts, budgets, alerts and exports.',
-    questions: setup
+    questions: [...setup, ...tryout.setup, ...tryoutSetup]
   },
   {
     id: 'planning',
@@ -43,7 +49,7 @@ const SECTIONS: Section[] = [
     weight: 30,
     blurb:
       'Choosing and building, now one section. Compute — Compute Engine, GKE, Cloud Run and Cloud Run functions, Agent Runtime — with disks, managed instance groups, OS Login, Spot VMs, GPUs or TPUs, Autopilot and private clusters, and event-driven deploys; data and storage products, storage classes and loading data; VPCs, firewall rules and Cloud NGFW policies, VPN, peering and Interconnect, load balancers and network tiers; Terraform, Config Connector and Helm, and AI-assisted tools such as Gemini CLI.',
-    questions: [...planning, ...deploying]
+    questions: [...planning, ...deploying, ...tryout.planning, ...tryoutPlanning]
   },
   {
     id: 'operating',
@@ -53,7 +59,7 @@ const SECTIONS: Section[] = [
     weight: 30,
     blurb:
       'Day-two work: connecting to and managing VMs, snapshots and images, GKE inventory, node pools and Pod autoscaling, Cloud Run revisions, traffic splitting and scaling; securing and expiring Cloud Storage objects, querying and backing up databases, CMEK; resizing subnets, static IPs, custom routes, Cloud DNS and Cloud NAT; and Cloud Monitoring alerts, custom metrics, audit and flow logs, log routing and buckets, Ops Agent and diagnostic tools.',
-    questions: operating
+    questions: [...operating, ...tryout.operating, ...tryoutOperating]
   },
   {
     id: 'access',
@@ -63,7 +69,7 @@ const SECTIONS: Section[] = [
     weight: 20,
     blurb:
       'Viewing and creating IAM policies, inheritance down the hierarchy, role types and custom roles; creating service accounts and granting them the least they need, assigning and impersonating them, short-lived credentials, service accounts for GKE workloads, and Workload Identity Federation.',
-    questions: access
+    questions: [...access, ...tryout.access, ...tryoutAccess]
   }
 ];
 
@@ -123,7 +129,7 @@ export const ace = defineExam({
   short: 'ACE',
   tagline: 'Google Cloud · associate certification',
   blurb:
-    'A timed simulator for Google\'s hands-on cloud certification: 50–60 questions in two hours about deploying, operating and securing real projects, from a 666-question bank with a reviewed key and an explanation on every question.',
+    'A timed simulator for Google\'s hands-on cloud certification: 50–60 questions in two hours about deploying, operating and securing real projects, from an 866-question bank with a reviewed key and an explanation on every question.',
   icon: 'AC',
   fullModeId: 'full',
   mixed: true,
@@ -131,7 +137,7 @@ export const ace = defineExam({
   sections: SECTIONS,
   sectionAliases: { deploying: 'planning' },
   modes: MODES,
-  /** The whole bank split into 13 fixed sets of 50 and a final 16 — see sets.ts. */
+  /** Four tryout sets first, then the community bank in 13 fixed sets of 50 and a final 16 — see sets.ts. */
   sets,
   setMinutesPerQuestion: 2.4,
   home: {

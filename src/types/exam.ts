@@ -49,6 +49,10 @@ export interface PaperSet {
   name: string;
   /** Question ids from any section of the exam. */
   questionIds: string[];
+  /** Time allowed when sat timed; defaults to the exam's minutes per question. */
+  minutes?: number;
+  /** A line under the name, e.g. what the set covers. */
+  note?: string;
 }
 
 export interface ExamHome {
