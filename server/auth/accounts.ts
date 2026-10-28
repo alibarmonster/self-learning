@@ -54,8 +54,17 @@ export async function ensureOwner(db: Client, creds: Credentials): Promise<Accou
  * owner when there is no database (the old single-user mode), or `false`.
  */
 export async function authenticate(creds: Credentials, name: string, password: string): Promise<number | null | false> {
-  const db = await getDb();
-  if (checkLogin(creds, name, password)) return db ? (await ensureOwner(db, creds)).id : null;
+  const isOwner = checkLogin(creds, name, password);
+  let db: Client | null;
+  try {
+    db = await getDb();
+    if (isOwner) return db ? (await ensureOwner(db, creds)).id : null;
+  } catch (e) {
+    // A broken database (bad token, outage) must not lock the owner out: they get the
+    // browser-only mode, as if there were no database, and the error goes to the logs.
+    console.error('database unavailable at sign-in:', e);
+    return isOwner ? null : false;
+  }
   if (!db) return false;
   const row = (await db.execute({ sql: 'SELECT id, password_hash FROM users WHERE name = ? AND is_owner = 0', args: [name] })).rows[0];
   const ok = await verifyPassword(password, row?.password_hash ? String(row.password_hash) : DUMMY_HASH);

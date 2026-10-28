@@ -14,7 +14,10 @@ import type { Client } from '@libsql/client';
 
 type Env = Record<string, string | undefined>;
 
-export const databaseUrl = (env: Env = process.env) => env.TURSO_DATABASE_URL || undefined;
+/** Values pasted into a dashboard often carry spaces, newlines or quotes; strip them. */
+const clean = (v: string | undefined) => v?.trim().replace(/^(['"])(.*)\1$/, '$2').trim() || undefined;
+
+export const databaseUrl = (env: Env = process.env) => clean(env.TURSO_DATABASE_URL);
 
 /**
  * Tables, created if missing. Rows are deleted by hand rather than with
@@ -68,7 +71,7 @@ export async function getDb(env: Env = process.env): Promise<Client | null> {
   const url = databaseUrl(env);
   if (!url) return null;
   // The promise is cached, not the client, so requests that arrive together share one connection.
-  if (!cached || cached.url !== url) cached = { url, client: open(url, env.TURSO_AUTH_TOKEN || undefined) };
+  if (!cached || cached.url !== url) cached = { url, client: open(url, clean(env.TURSO_AUTH_TOKEN)) };
   const mine = cached;
   try {
     return await mine.client;

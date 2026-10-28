@@ -39,7 +39,13 @@ export async function signedIn(request: Request): Promise<Signed> {
   if (!sameOrigin(request)) return { ok: false, response: fail(403, 'cross-origin') };
   const session = verifyToken(creds, readCookie(request.headers.get('cookie'), SESSION_COOKIE));
   if (!session) return { ok: false, response: fail(401, 'signed-out') };
-  const db = await getDb();
+  let db: Client | null;
+  try {
+    db = await getDb();
+  } catch (e) {
+    console.error('database unavailable:', e);
+    return { ok: false, response: json({ user: null, sync: false, reason: 'database-error' }, 503) };
+  }
   if (!db) return { ok: false, response: json({ user: null, sync: false, reason: 'no-database' }) };
   // A session from before the database existed carries no user id: sign in again.
   if (session.uid === null) return { ok: false, response: fail(401, 'signed-out') };

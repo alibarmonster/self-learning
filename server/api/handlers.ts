@@ -29,7 +29,7 @@ const SEEN_EVERY = 5 * 60 * 1000;
 
 export async function me(request: Request): Promise<Response> {
   const s = await signedIn(request);
-  if (!s.ok) return s.response;
+  if ('response' in s) return s.response;
   const now = Date.now();
   await s.db.execute({ sql: 'UPDATE users SET last_seen = ? WHERE id = ? AND (last_seen IS NULL OR last_seen < ?)', args: [now, s.account.id, now - SEEN_EVERY] });
   return json({ user: s.account, sync: true });
@@ -37,7 +37,7 @@ export async function me(request: Request): Promise<Response> {
 
 export async function getState(request: Request): Promise<Response> {
   const s = await signedIn(request);
-  if (!s.ok) return s.response;
+  if ('response' in s) return s.response;
   const rows = await s.db.execute({ sql: 'SELECT key, value, updated_at FROM kv WHERE user_id = ?', args: [s.account.id] });
   return json({ items: rows.rows.map((r) => ({ key: String(r.key), value: String(r.value), updatedAt: Number(r.updated_at) })) });
 }
@@ -59,7 +59,7 @@ interface Attempt {
 
 export async function putState(request: Request): Promise<Response> {
   const s = await signedIn(request);
-  if (!s.ok) return s.response;
+  if ('response' in s) return s.response;
   const data = await body<{ items?: Item[] }>(request);
   const items = data?.items;
   if (!Array.isArray(items) || items.length > MAX_ITEMS) return fail(400, 'bad-request');
@@ -101,7 +101,7 @@ export async function putState(request: Request): Promise<Response> {
 
 export async function listUsers(request: Request): Promise<Response> {
   const s = await signedIn(request);
-  if (!s.ok) return s.response;
+  if ('response' in s) return s.response;
   const where = s.account.admin ? '' : 'WHERE u.id = ?';
   const args = s.account.admin ? [] : [s.account.id];
   const users = await s.db.execute({
@@ -130,7 +130,7 @@ export async function listUsers(request: Request): Promise<Response> {
 
 export async function createUser(request: Request): Promise<Response> {
   const s = await signedIn(request);
-  if (!s.ok) return s.response;
+  if ('response' in s) return s.response;
   if (!s.account.admin) return fail(403, 'admin-only');
   const data = await body<{ name?: string; password?: string; admin?: boolean }>(request, 10_000);
   const name = String(data?.name ?? '').trim();
@@ -148,7 +148,7 @@ export async function createUser(request: Request): Promise<Response> {
 
 export async function updateUser(request: Request): Promise<Response> {
   const s = await signedIn(request);
-  if (!s.ok) return s.response;
+  if ('response' in s) return s.response;
   const data = await body<{ id?: number; password?: string; current?: string; admin?: boolean }>(request, 10_000);
   const id = Number(data?.id);
   if (!Number.isInteger(id)) return fail(400, 'bad-request');
@@ -177,7 +177,7 @@ export async function updateUser(request: Request): Promise<Response> {
 
 export async function deleteUser(request: Request): Promise<Response> {
   const s = await signedIn(request);
-  if (!s.ok) return s.response;
+  if ('response' in s) return s.response;
   if (!s.account.admin) return fail(403, 'admin-only');
   const id = Number(new URL(request.url).searchParams.get('id'));
   if (!Number.isInteger(id)) return fail(400, 'bad-request');
