@@ -44,7 +44,7 @@ export const cheatsheet: Cheatsheet = {
         ['Needs a specific OS, kernel, licence, GPU or full control', 'Compute Engine'],
         ['Existing containers, needs the Kubernetes API, node-level control', 'GKE'],
         ['A container, scale to zero, no cluster to run', 'Cloud Run'],
-        ['A single function reacting to an event (Pub/Sub, Cloud Storage, HTTP)', 'Cloud Functions'],
+        ['A single function reacting to an event (Pub/Sub, Cloud Storage, HTTP)', 'Cloud Run functions'],
         ['Web app from source, versions and traffic splitting, no containers named', 'App Engine'],
         ['Batch work that tolerates being interrupted, cheapest possible', 'Preemptible / Spot VMs'],
         ['Licensing needs a whole physical host to itself', 'Sole-tenant nodes']
@@ -54,7 +54,7 @@ export const cheatsheet: Cheatsheet = {
         ['Compute Engine', 'IaaS VMs', 'OS-level control, legacy or licensed software, GPUs, lift and shift', 'Anything worded "without managing servers"'],
         ['GKE', 'Managed Kubernetes (CaaS)', 'Container orchestration, node pools, autoscaling, hybrid portability', 'A single small service — Cloud Run is less work'],
         ['Cloud Run', 'Serverless containers', 'Any container, HTTP or event driven, scales to zero, per-request billing', 'Long-lived stateful processes'],
-        ['Cloud Functions', 'FaaS', 'One small function per event; Python, Node, Go, Java, .NET', 'Whole applications; long-running jobs'],
+        ['Cloud Run functions', 'FaaS', 'One small function per event; Python, Node, Go, Java, .NET', 'Whole applications; long-running jobs'],
         ['App Engine Standard', 'PaaS sandbox', 'Sudden spiky traffic, free tier, instance-hour pricing', 'Custom runtimes or native libraries'],
         ['App Engine Flexible', 'PaaS on containers', 'Steady traffic, any runtime version, background processes', 'No free quota; slower to scale']
       ]
@@ -69,7 +69,7 @@ export const cheatsheet: Cheatsheet = {
         ['A filesystem several VMs mount at once (NFS)', 'Filestore'],
         ['A disk attached to one VM', 'Persistent Disk (or Local SSD for scratch)'],
         ['Relational, one region, ordinary scale, MySQL / PostgreSQL / SQL Server', 'Cloud SQL'],
-        ['Relational, global, horizontally scalable, strong consistency', 'Cloud Spanner'],
+        ['Relational, global, horizontally scalable, strong consistency', 'Spanner'],
         ['NoSQL wide-column, huge write throughput, time series or IoT', 'Bigtable'],
         ['NoSQL documents for a web or mobile app, live sync, offline', 'Firestore'],
         ['Cache or session store in memory', 'Memorystore (Redis / Memcached)'],
@@ -81,7 +81,7 @@ export const cheatsheet: Cheatsheet = {
         ['Filestore', 'File (NFS)', 'Managed NAS shared across instances or GKE pods', 'Object data; single-VM disks'],
         ['Persistent Disk', 'Block', 'Boot and data disks; zonal or regional; standard, balanced or SSD', 'Sharing one disk read-write across many VMs'],
         ['Cloud SQL', 'Managed relational', 'Existing relational app, read replicas, HA, point-in-time recovery', 'Global writes; petabyte analytics; 30 TB ceiling'],
-        ['Cloud Spanner', 'Distributed relational', 'Global ACID and SQL together; up to 99.999% availability', 'Small apps — Cloud SQL is far cheaper'],
+        ['Spanner', 'Distributed relational', 'Global ACID and SQL together; up to 99.999% availability', 'Small apps — Cloud SQL is far cheaper'],
         ['Bigtable', 'NoSQL wide-column', 'Terabytes to petabytes, low latency, single-keyed rows, regional', 'Joins, SQL, multi-row transactions'],
         ['Firestore', 'NoSQL document', 'Mobile and web app data, realtime updates, offline support', 'Heavy analytics; wide-column throughput'],
         ['Memorystore', 'In-memory', 'Caching, leaderboards, sessions', 'A durable system of record'],
@@ -128,23 +128,23 @@ export const cheatsheet: Cheatsheet = {
       title: 'Which load balancer?',
       note: 'Answer three questions in order: internal or external, which protocol, and global or regional. That combination names the balancer.',
       path: [
-        ['External HTTP or HTTPS traffic, global, URL-based routing', 'HTTP(S) Load Balancing — global, Layer 7, proxy'],
-        ['External SSL/TLS that is not HTTP', 'SSL Proxy — global'],
-        ['External plain TCP that is not HTTP', 'TCP Proxy — global'],
-        ['External TCP or UDP, keep the client IP, no proxy', 'Network Load Balancing — regional, pass-through'],
-        ['Traffic between your own services inside the VPC', 'Internal TCP/UDP Load Balancing — regional'],
-        ['Internal HTTP routing between services', 'Internal HTTP(S) Load Balancing — regional']
+        ['External HTTP or HTTPS traffic, global, URL-based routing', 'external Application Load Balancing — global, Layer 7, proxy'],
+        ['External SSL/TLS that is not HTTP', 'SSL proxy Network Load Balancer — global'],
+        ['External plain TCP that is not HTTP', 'TCP proxy Network Load Balancer — global'],
+        ['External TCP or UDP, keep the client IP, no proxy', 'passthrough Network Load Balancing — regional, pass-through'],
+        ['Traffic between your own services inside the VPC', 'internal passthrough Network Load Balancing — regional'],
+        ['Internal HTTP routing between services', 'internal Application Load Balancing — regional']
       ],
       columns: ['Balancer', 'Layer', 'Scope', 'Traffic'],
       rows: [
-        ['HTTP(S)', '7 (proxy)', 'Global', 'HTTP, HTTPS; one anycast IP; URL maps, Cloud CDN, Cloud Armor'],
-        ['SSL Proxy', '4 (proxy)', 'Global', 'Encrypted non-HTTP TCP'],
-        ['TCP Proxy', '4 (proxy)', 'Global', 'Unencrypted non-HTTP TCP'],
-        ['Network', '4 (pass-through)', 'Regional', 'TCP and UDP, client IP preserved'],
-        ['Internal TCP/UDP', '4 (pass-through)', 'Regional', 'Private traffic inside the VPC'],
-        ['Internal HTTP(S)', '7 (proxy)', 'Regional', 'Private HTTP between services']
+        ['External Application LB', '7 (proxy)', 'Global', 'HTTP, HTTPS; one anycast IP; URL maps, Cloud CDN, Cloud Armor'],
+        ['Proxy Network LB (SSL)', '4 (proxy)', 'Global', 'Encrypted non-HTTP TCP'],
+        ['Proxy Network LB (TCP)', '4 (proxy)', 'Global', 'Unencrypted non-HTTP TCP'],
+        ['External passthrough Network LB', '4 (pass-through)', 'Regional', 'TCP and UDP, client IP preserved'],
+        ['Internal passthrough Network LB', '4 (pass-through)', 'Regional', 'Private traffic inside the VPC'],
+        ['Internal Application LB', '7 (proxy)', 'Regional', 'Private HTTP between services']
       ],
-      tip: 'Only the proxy balancers are global. If the question says UDP, or says the backend must see the real client IP, it is Network Load Balancing and therefore regional.'
+      tip: 'Only the proxy balancers are global. If the question says UDP, or says the backend must see the real client IP, it is passthrough Network Load Balancing and therefore regional.'
     },
     {
       id: 'connectivity',
@@ -279,7 +279,7 @@ export const cheatsheet: Cheatsheet = {
         ['Short-lived credentials', 'Prefer tokens over downloaded keys wherever a question offers both'],
         ['Access scopes', 'The legacy per-VM limit on which APIs the default service account may reach; they cap what IAM allows, so a wrong scope blocks access even with the right role'],
         ['Scopes vs IAM', 'Scopes are set on the instance and need a stop/start to change; IAM roles are the real permission model — new work should rely on IAM with the cloud-platform scope'],
-        ['Workload Identity (GKE)', 'The supported way to give pods a Google service account, instead of mounting keys as Secrets']
+        ['Workload Identity Federation for GKE', 'The supported way to give pods a Google service account, instead of mounting keys as Secrets']
       ],
       tip: 'If a VM cannot reach an API even though the service account has the role, look at the access scopes. If a person needs to run something "as" the application, look at impersonation.'
     },
@@ -471,8 +471,8 @@ export const cheatsheet: Cheatsheet = {
     {
       id: 'serverless-ops',
       part: 'reference',
-      title: 'App Engine, Cloud Run and Cloud Functions',
-      note: 'Versions and traffic splitting are the App Engine answers; triggers and scaling are the Cloud Functions and Cloud Run ones.',
+      title: 'App Engine, Cloud Run and Cloud Run functions',
+      note: 'Versions and traffic splitting are the App Engine answers; triggers and scaling are the Cloud Run functions and Cloud Run ones.',
       columns: ['', 'App Engine Standard', 'App Engine Flexible'],
       rows: [
         ['Runs in', 'A sandbox', 'Docker containers on managed VMs'],
@@ -485,8 +485,8 @@ export const cheatsheet: Cheatsheet = {
         ['App Engine scaling', 'Automatic (by request rate and latency), basic (spin up on request), or manual (a fixed number of instances)'],
         ['Versions and traffic', 'Deploy a new version, then migrate traffic or split it by percentage — this is how App Engine does canaries and rollbacks'],
         ['Deploying', 'gcloud app deploy; one App Engine application per project and its region is permanent'],
-        ['Cloud Functions triggers', 'HTTP, Pub/Sub, Cloud Storage object changes, Firestore and Firebase events'],
-        ['Cloud Functions billing', 'Invocations plus time and provisioned memory; free tier available'],
+        ['Cloud Run functions triggers', 'HTTP, Pub/Sub, Cloud Storage object changes, Firestore and Firebase events'],
+        ['Cloud Run functions billing', 'Invocations plus time and provisioned memory; free tier available'],
         ['Cloud Run', 'Any container, any language; set concurrency, CPU, memory and min/max instances; revisions carry traffic splits just like App Engine versions']
       ]
     },
@@ -513,7 +513,7 @@ export const cheatsheet: Cheatsheet = {
       note: 'Know which tool answers which question, and which log types exist. Sinks and custom metrics are the configuration details the exam asks about.',
       tables: [
         {
-          caption: 'The Operations suite',
+          caption: 'The Google Cloud Observability',
           columns: ['Tool', 'Answers'],
           rows: [
             ['Cloud Monitoring', 'Is it healthy? Metrics, dashboards, uptime checks, alerting policies'],
@@ -585,13 +585,13 @@ export const cheatsheet: Cheatsheet = {
             ['Set a lifecycle policy', 'gsutil lifecycle set config.json gs://BUCKET'],
             ['Make an object public', 'gsutil iam ch allUsers:objectViewer gs://BUCKET'],
             ['Deploy an App Engine app', 'gcloud app deploy'],
-            ['Deploy infrastructure as code', 'gcloud deployment-manager deployments create NAME --config=config.yaml']
+            ['Deploy infrastructure as code', 'gcloud infra-manager deployments apply projects/P/locations/L/deployments/NAME --service-account=projects/P/serviceAccounts/SA --local-source=./infra']
           ]
         }
       ],
       bullets: [
         ['Cloud Shell', 'A browser VM with the SDK already installed and authenticated, 5 GB of persistent home directory'],
-        ['Deployment Manager', 'Google’s own IaC: a configuration must have a resources section, each with name, type and properties; a manifest is the read-only record of a deployment'],
+        ['Infrastructure Manager', 'Google’s managed Terraform: preview runs terraform plan, apply runs terraform apply, and the state is kept for you (it replaced Deployment Manager, end of support 2026)'],
         ['Config Connector', 'Manages Google Cloud resources as Kubernetes objects from inside GKE']
       ]
     },
@@ -633,7 +633,7 @@ export const cheatsheet: Cheatsheet = {
         ['Compute and data', 'Hyperdisk, VM Manager, GPUs vs TPUs, Eventarc, AlloyDB, Managed Service for Apache Kafka, NetApp Volumes, Managed Lustre, Database Center'],
         ['Networking', 'Cloud NGFW policies with secure tags and service accounts, Network Service Tiers, Fabric FAST for IaC'],
         ['Operations', 'Personalized Service Health, Managed Service for Prometheus, Active Assist, Cloud Hub, Query Insights, log analytics'],
-        ['Renamed', 'Cloud Functions is Cloud Run functions; Vertex AI Agent Engine is Agent Runtime']
+        ['Renamed', 'Cloud Functions → Cloud Run functions; Vertex AI → Gemini Enterprise Agent Platform (Agent Engine → Agent Runtime); Deployment Manager → Infrastructure Manager; Container Registry → Artifact Registry; Anthos → GKE fleets; Data Catalog → Knowledge Catalog; preemptible → Spot VMs']
       ]
     },
     {

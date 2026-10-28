@@ -457,14 +457,14 @@ const G: Record<string, Gen> = {
   'gcloud secrets create': (p) => [`Created version [1] of the secret [${p.pos[0]}].`],
   'gcloud secrets versions access': () => ['s3cr3t-Pa55w0rd'],
   'gcloud secrets add-iam-policy-binding': (p) => [`Updated IAM policy for secret [${p.pos[0]}].`, ...binding(one(p, 'role')!, one(p, 'member')!)],
-  'gcloud deployment-manager deployments create': (p, e) => [
-    'WARNING: Cloud Deployment Manager reached end of support on March 31, 2026. (catatan lab)',
-    `The fingerprint of the deployment is b'8XhOAqk3Jq…'`,
-    `Waiting for create [operation-1760755000123-6412f-${e.project}]...done.`,
-    `Create operation operation-1760755000123-6412f completed successfully.`,
-    ...table(['NAME', 'TYPE', 'STATE', 'ERRORS', 'INTENT'], [[`${p.pos[0]}-vm`, 'compute.v1.instance', on(p, 'preview') ? 'IN_PREVIEW' : 'COMPLETED', '[]', on(p, 'preview') ? 'CREATE_OR_ACQUIRE' : '']])
+  'gcloud infra-manager previews create': (p) => [
+    `Creating the preview [${p.pos[0]}]...done.`,
+    'Preview completed (terraform plan): 3 to add, 0 to change, 0 to destroy. Nothing was created.'
   ],
-  'gcloud deployment-manager deployments update': (p) => [`Waiting for update [operation-1760755111222-6412f]...done.`, 'Update operation operation-1760755111222-6412f completed successfully.', ...table(['NAME', 'TYPE', 'STATE', 'ERRORS', 'INTENT'], [[`${p.pos[0]}-vm`, 'compute.v1.instance', 'COMPLETED', '[]', '']])],
+  'gcloud infra-manager deployments apply': (p) => [
+    `Creating or updating the deployment [${p.pos[0]}]...done.`,
+    'Apply completed (terraform apply): 1 added, 2 changed, 0 destroyed. State: ACTIVE'
+  ],
 
   // ── gcloud storage ──
   'gcloud storage buckets create': (p) => p.pos.map((b) => `Creating ${b.replace(/\/?$/, '/')}...`),

@@ -29,7 +29,7 @@ export const GOOGLE_CLOUD_LESSONS: LessonMeta[] = [
     summary: 'From zero: Kubernetes concepts, cluster components, Autopilot vs Standard, kubectl, introspection, and the 9 case studies that come up most.',
     minutes: 45,
     level: 'Beginner → Intermediate',
-    topics: ['GKE', 'Kubernetes', 'kubectl', 'Autopilot', 'Workload Identity'],
+    topics: ['GKE', 'Kubernetes', 'kubectl', 'Autopilot', 'Workload Identity Federation for GKE'],
     load: () => import('./gke')
   },
   {

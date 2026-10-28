@@ -66,13 +66,13 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'You need a dynamic way of provisioning VMs on Compute Engine. The exact specifications will be in a dedicated configuration file. You want to follow Google\'s recommended practices. Which method should you use?',
     options: [
-      'Deployment Manager',
+      'Infrastructure Manager',
       'Cloud Composer',
       'Managed Instance Group',
       'Unmanaged Instance Group'
     ],
     answer: 0,
-    explanation: 'Defining VM specifications in a configuration file and provisioning from it is infrastructure as code, which in this question is Deployment Manager (Terraform or Infrastructure Manager would be today\'s choice). Cloud Composer is workflow orchestration, and instance groups manage VMs but are not a configuration-file-driven provisioning tool.'
+    explanation: 'Defining VM specifications in a configuration file and provisioning from it is infrastructure as code: Infrastructure Manager, Google’s managed Terraform service. Cloud Composer is workflow orchestration, and instance groups manage VMs but are not a configuration-file-driven provisioning tool. Current names: Infrastructure Manager reached end of support in 2026; Infrastructure Manager (managed Terraform) replaces it.'
   },
   {
     id: 'ace-012',
@@ -83,11 +83,11 @@ export const deploying: Question[] = [
     options: [
       'Use kubectl app deploy <dockerfilename>.',
       'Use gcloud app deploy <dockerfilename>.',
-      'Create a docker image from the Dockerfile and upload it to Container Registry. Create a Deployment YAML file to point to that image. Use kubectl to create the deployment with that file.',
+      'Create a docker image from the Dockerfile and upload it to Artifact Registry. Create a Deployment YAML file to point to that image. Use kubectl to create the deployment with that file.',
       'Create a docker image from the Dockerfile and upload it to Cloud Storage. Create a Deployment YAML file to point to that image. Use kubectl to create the deployment with that file.'
     ],
     answer: 2,
-    explanation: 'GKE runs container images, so you build the image from the Dockerfile, push it to a registry (Container Registry in the question, Artifact Registry today), reference it in a Deployment manifest, and apply it with kubectl. There is no kubectl app deploy command, gcloud app deploy targets App Engine, and Kubernetes cannot pull images from a Cloud Storage bucket.'
+    explanation: 'GKE runs container images, so you build the image from the Dockerfile, push it to Artifact Registry, reference it in a Deployment manifest, and apply it with kubectl. There is no kubectl app deploy command, gcloud app deploy targets App Engine, and Kubernetes cannot pull images from a Cloud Storage bucket. Current names: Container Registry was shut down in 2025; Artifact Registry replaces it.'
   },
   {
     id: 'ace-013',
@@ -99,7 +99,7 @@ export const deploying: Question[] = [
       'Download and deploy the Jenkins Java WAR to App Engine Standard.',
       'Create a new Compute Engine instance and install Jenkins through the command line interface.',
       'Create a Kubernetes cluster on Compute Engine and create a deployment with the Jenkins Docker image.',
-      'Use GCP Marketplace to launch the Jenkins solution.'
+      'Use Google Cloud Marketplace to launch the Jenkins solution.'
     ],
     answer: 3,
     explanation: 'Cloud Marketplace offers a ready-made Jenkins deployment that launches in a few clicks, which is the fewest steps. Installing Jenkins on a VM or building a cluster and deployment by hand takes more work, and App Engine standard is not a suitable host for the Jenkins WAR.'
@@ -109,27 +109,27 @@ export const deploying: Question[] = [
     topic: 'Infrastructure as code',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You need to update a deployment in Deployment Manager without any resource downtime in the deployment. Which command should you use?',
+    prompt: 'You manage infrastructure with Infrastructure Manager. You changed the Terraform configuration of an existing deployment and need to apply the change to the same deployment, updating resources in place instead of creating a second deployment. Which command should you use?',
     options: [
-      'gcloud deployment-manager deployments create --config <deployment-config-path>',
-      'gcloud deployment-manager deployments update --config <deployment-config-path>',
-      'gcloud deployment-manager resources create --config <deployment-config-path>',
-      'gcloud deployment-manager resources update --config <deployment-config-path>'
+      'gcloud infra-manager previews create projects/PROJECT/locations/REGION/previews/web --local-source=./infra',
+      'gcloud infra-manager deployments apply projects/PROJECT/locations/REGION/deployments/web --local-source=./infra',
+      'gcloud infra-manager deployments create projects/PROJECT/locations/REGION/deployments/web-v2 --local-source=./infra',
+      'gcloud infra-manager resources update projects/PROJECT/locations/REGION/deployments/web --local-source=./infra'
     ],
     answer: 1,
-    explanation: 'gcloud deployment-manager deployments update applies a changed configuration to an existing deployment, modifying resources in place where possible. deployments create would try to make a new deployment, and there are no resources create or resources update commands for applying a config.'
+    explanation: '`gcloud infra-manager deployments apply` creates a deployment or, when it exists, applies the changed Terraform configuration to it, so Terraform updates resources in place where it can. A preview only shows the plan; a deployment under a new name would create a second copy of everything; there is no resources update command. Current names: Deployment Manager reached end of support in 2026; Infrastructure Manager (managed Terraform) replaces it.'
   },
   {
     id: 'ace-016',
     topic: 'Compute Engine',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You have a single binary application that you want to run on Google Cloud Platform. You decided to automatically scale the application based on underlying infrastructure CPU usage. Your organizational policies require you to use virtual machines directly. You need to ensure that the application scaling is operationally efficient and completed as quickly as possible. What should you do?',
+    prompt: 'You have a single binary application that you want to run on Google Cloud. You decided to automatically scale the application based on underlying infrastructure CPU usage. Your organizational policies require you to use virtual machines directly. You need to ensure that the application scaling is operationally efficient and completed as quickly as possible. What should you do?',
     options: [
       'Create a Google Kubernetes Engine cluster, and use horizontal pod autoscaling to scale the application.',
       'Create an instance template, and use the template in a managed instance group with autoscaling configured.',
       'Create an instance template, and use the template in a managed instance group that scales up and down based on the time of day.',
-      'Use a set of third-party tools to build automation around scaling the application up and down, based on Stackdriver CPU usage monitoring.'
+      'Use a set of third-party tools to build automation around scaling the application up and down, based on Cloud Monitoring CPU usage metrics.'
     ],
     answer: 1,
     explanation: 'An instance template used by a managed instance group with CPU-based autoscaling scales VMs directly and quickly with no extra tooling. GKE violates the requirement to use VMs directly, schedule-based scaling does not follow actual CPU load, and third-party automation is less operationally efficient than the built-in autoscaler.'
@@ -139,15 +139,15 @@ export const deploying: Question[] = [
     topic: 'Infrastructure as code',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You significantly changed a complex Deployment Manager template and want to confirm that the dependencies of all defined resources are properly met before committing it to the project. You want the most rapid feedback on your changes. What should you do?',
+    prompt: 'You significantly changed a complex Terraform configuration that Infrastructure Manager deploys, and want to confirm that the dependencies of all defined resources are properly met before applying it to the project. You want the most rapid feedback on your changes. What should you do?',
     options: [
-      'Use granular logging statements within a Deployment Manager template authored in Python.',
-      'Monitor activity of the Deployment Manager execution on the Stackdriver Logging page of the GCP Console.',
-      'Execute the Deployment Manager template against a separate project with the same configuration, and monitor for failures.',
-      'Execute the Deployment Manager template using the --preview option in the same project, and observe the state of interdependent resources.'
+      'Add detailed output values to the Terraform configuration and read them after the next apply.',
+      'Apply the configuration and monitor the Infrastructure Manager run on the Cloud Logging page.',
+      'Apply the configuration to a separate project with the same settings, and monitor for failures.',
+      'Create an Infrastructure Manager preview (terraform plan) in the same project and review the planned changes.'
     ],
     answer: 3,
-    explanation: 'Running the deployment with --preview validates the configuration and shows the planned resources and dependencies without actually creating them, which is the fastest feedback. Deploying to a separate project or watching logs only reveals problems after real resources are built, and logging statements in a Python template do not validate dependencies.'
+    explanation: 'An Infrastructure Manager preview runs `terraform plan`: it resolves dependencies and shows what would be created, changed or destroyed without touching any resource — the quickest check. Applying anywhere, even in a copy project, provisions real resources and takes longer; outputs and logs only help after a run. Current names: Deployment Manager reached end of support in 2026; Infrastructure Manager (managed Terraform) replaces it.'
   },
   {
     id: 'ace-024',
@@ -158,11 +158,11 @@ export const deploying: Question[] = [
     options: [
       'Use gcloud to create the new project, and then deploy your application to the new project.',
       'Use gcloud to create the new project and to copy the deployed application to the new project.',
-      'Create a Deployment Manager configuration file that copies the current App Engine deployment into a new project.',
+      'Create an Infrastructure Manager (Terraform) configuration that copies the current App Engine deployment into a new project.',
       'Deploy your application again using gcloud and specify the project parameter with the new project name to create the new project.'
     ],
     answer: 0,
-    explanation: 'An App Engine app belongs to one project, so you create the production project and deploy the application to it with gcloud app deploy. There is no gcloud or Deployment Manager feature that copies a deployed App Engine app between projects, and gcloud app deploy does not create projects.'
+    explanation: 'An App Engine app belongs to one project, so you create the production project and deploy the application to it with gcloud app deploy. There is no gcloud or Infrastructure Manager feature that copies a deployed App Engine app between projects, and gcloud app deploy does not create projects.'
   },
   {
     id: 'ace-030',
@@ -205,10 +205,10 @@ export const deploying: Question[] = [
       'Run a Kubernetes job to scan the bucket regularly for incoming files, and call the Speech-to-Text API for each unprocessed file.',
       'Create an App Engine standard environment triggered by Cloud Storage bucket events to submit the file URI to the Google Speech-to-Text API.',
       'Run a Python script by using a Linux cron job in Compute Engine to scan the bucket regularly for incoming files, and call the Speech-to-Text API for each unprocessed file.',
-      'Create a Cloud Function triggered by Cloud Storage bucket events to submit the file URI to the Google Speech-to-Text API.'
+      'Create a Cloud Run function triggered by Cloud Storage bucket events to submit the file URI to the Google Speech-to-Text API.'
     ],
     answer: 3,
-    explanation: 'A Cloud Function (Cloud Run functions today) triggered by Cloud Storage object finalize events is fully managed, serverless and reacts to each file as it arrives. Polling with a Kubernetes job or a cron job on a VM is neither serverless nor event-driven, and App Engine standard has no native Cloud Storage event trigger.'
+    explanation: 'A Cloud Run function (Cloud Run functions today) triggered by Cloud Storage object finalize events is fully managed, serverless and reacts to each file as it arrives. Polling with a Kubernetes job or a cron job on a VM is neither serverless nor event-driven, and App Engine standard has no native Cloud Storage event trigger. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-049',
@@ -292,7 +292,7 @@ export const deploying: Question[] = [
     topic: 'Data products',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'A client has asked for your advice about building a data transformation pipeline. The pipeline will read data from Cloud Storage and Cloud Spanner, merge data from the two sources, and write the data to a BigQuery data set. The client does not want to manage servers or other infrastructure, if possible. What Google Cloud service would you recommend?',
+    prompt: 'A client has asked for your advice about building a data transformation pipeline. The pipeline will read data from Cloud Storage and Spanner, merge data from the two sources, and write the data to a BigQuery data set. The client does not want to manage servers or other infrastructure, if possible. What Google Cloud service would you recommend?',
     options: [
       'Compute Engine',
       'Cloud Data Fusion',
@@ -354,13 +354,13 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'You will be running an application that requires high levels of security. You want to ensure the application does not run on a server that has been compromised by a rootkit or other kernel-level malware. What kind of virtual machine would you use?',
     options: [
-      'Preemptible VM',
+      'Spot VM',
       'Shielded VM',
       'Hardened VM',
       'GPU-enabled VM'
     ],
     answer: 1,
-    explanation: 'Shielded VMs use Secure Boot, vTPM-based Measured Boot and integrity monitoring to verify the boot chain and detect rootkits and bootkits. Preemptible and GPU VMs are about cost and hardware, and Hardened VM is not a Compute Engine offering.'
+    explanation: 'Shielded VMs use Secure Boot, vTPM-based Measured Boot and integrity monitoring to verify the boot chain and detect rootkits and bootkits. Preemptible and GPU VMs are about cost and hardware, and Hardened VM is not a Compute Engine offering. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'ace-092',
@@ -370,9 +370,9 @@ export const deploying: Question[] = [
     prompt: 'Your company has an on-premises Spark cluster that is to be migrated to Google Cloud. The CFO wants to minimize operational overhead. What Google Cloud service would you recommend?',
     options: [
       'Bigtable',
-      'Cloud Dataflow',
-      'Cloud Pub/Sub',
-      'Cloud Dataproc'
+      'Dataflow',
+      'Pub/Sub',
+      'Dataproc'
     ],
     answer: 3,
     explanation: 'Dataproc is Google Cloud\'s managed Spark and Hadoop service, so existing Spark jobs can move with minimal changes and low operational overhead. Dataflow runs Apache Beam pipelines and would require rewriting jobs, while Bigtable and Pub/Sub are a database and a messaging service.',
@@ -387,11 +387,11 @@ export const deploying: Question[] = [
     options: [
       'Managed instance groups (MIGs)',
       'Unmanaged instance group',
-      'Network load balancer',
+      'passthrough Network Load Balancer',
       'Autoscaler'
     ],
     answer: 1,
-    explanation: 'Unmanaged instance groups can hold VMs with different machine types and configurations, which suits a heterogeneous legacy cluster. Managed instance groups require identical VMs built from a single instance template, and a load balancer or autoscaler is not a way to host the nodes.',
+    explanation: 'Unmanaged instance groups can hold VMs with different machine types and configurations, which suits a heterogeneous legacy cluster. Managed instance groups require identical VMs built from a single instance template, and a load balancer or autoscaler is not a way to host the nodes. Current names: Network Load Balancing → passthrough Network Load Balancer.',
     tip: 'Heterogeneous VMs mean unmanaged instance groups; identical, autoscaled VMs mean MIGs.'
   },
   {
@@ -432,9 +432,9 @@ export const deploying: Question[] = [
     prompt: 'A startup is implementing an IoT application that will ingest data at high speeds. The architect for the startup has decided that data should be ingested in a queue that can store the data until the processing application is able to process it. The architect also wants to use a managed service in Google Cloud. What service would you recommend?',
     options: [
       'Bigtable',
-      'Cloud Pub/Sub',
-      'Cloud Dataflow',
-      'Cloud Dataproc'
+      'Pub/Sub',
+      'Dataflow',
+      'Dataproc'
     ],
     answer: 1,
     explanation: 'Pub/Sub is a managed messaging service that buffers messages (retaining unacknowledged ones for up to 7 days by default) until subscribers process them, decoupling fast ingestion from processing. Dataflow processes data rather than queuing it, Bigtable is a database, and Dataproc runs Spark and Hadoop.'
@@ -475,7 +475,7 @@ export const deploying: Question[] = [
     topic: 'Data products',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'A distributed application uses Cloud Pub/Sub to send messages to a service that analyzes the data. Each message should only be sent once but for some reason, messages are sent repeatedly. What configuration parameter would you investigate in order to correct this problem?',
+    prompt: 'A distributed application uses Pub/Sub to send messages to a service that analyzes the data. Each message should only be sent once but for some reason, messages are sent repeatedly. What configuration parameter would you investigate in order to correct this problem?',
     options: [
       '--dead-letter-topic',
       '--ack-deadline',
@@ -491,15 +491,15 @@ export const deploying: Question[] = [
     topic: 'Data products',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'A team of data scientists wants to migrate an on premises Spark cluster to Google Cloud. They would like to use a managed service. What GCP service would you recommend?',
+    prompt: 'A team of data scientists wants to migrate an on premises Spark cluster to Google Cloud. They would like to use a managed service. What Google Cloud service would you recommend?',
     options: [
-      'Cloud Data Studio',
-      'Cloud Dataproc',
-      'Cloud Dataflow',
-      'Cloud Bigtable'
+      'Cloud Looker Studio',
+      'Dataproc',
+      'Dataflow',
+      'Bigtable'
     ],
     answer: 1,
-    explanation: 'Dataproc is Google\'s managed Spark and Hadoop service, so existing Spark jobs move over with minimal changes. Dataflow runs Apache Beam pipelines rather than Spark, Bigtable is a NoSQL database, and Data Studio (now Looker Studio) is a reporting tool.',
+    explanation: 'Dataproc is Google\'s managed Spark and Hadoop service, so existing Spark jobs move over with minimal changes. Dataflow runs Apache Beam pipelines rather than Spark, Bigtable is a NoSQL database, and Looker Studio is a reporting tool. Current names: Data Studio → Looker Studio.',
     tip: 'Existing Spark or Hadoop means Dataproc; new streaming or batch pipelines with Beam mean Dataflow.'
   },
   {
@@ -507,22 +507,22 @@ export const deploying: Question[] = [
     topic: 'GKE',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your team has created a set of Docker images. You want to be able to better manage groups of containers. What could you do to images to enable grouping by environment, installed component, etc?',
+    prompt: 'Your team keeps a set of Docker images in Artifact Registry. You want to be able to better identify images by environment, installed component, and so on. What could you do to the images?',
     options: [
-      'Add tags with the gcloud container images add-tag command',
+      'Add tags with the gcloud artifacts docker tags add command',
       'Set the account parameter when creating the images',
-      'Set the billing account parameter when creating the image',
-      'Add configurations with the gcloud container images add-configuration command'
+      'Set the billing account parameter when creating the images',
+      'Add configurations with the gcloud artifacts docker images add-configuration command'
     ],
     answer: 0,
-    explanation: 'Adding tags with gcloud container images add-tag lets you attach several meaningful names to the same image digest, which is the only option that applies metadata to images. Account and billing account settings have nothing to do with image grouping, and there is no add-configuration command. This is debatable because tags are really version names and Container Registry is replaced by Artifact Registry, where you would use gcloud artifacts docker tags add or labels.'
+    explanation: '`gcloud artifacts docker tags add` attaches extra, meaningful names to the same image digest (labels on the image are another option). Account and billing account settings have nothing to do with images, and there is no add-configuration command. Current names: Container Registry was shut down in 2025; Artifact Registry replaces it.'
   },
   {
     id: 'ace-137',
     topic: 'Compute Engine',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are considering running a Windows server in GCP. You would like to review a list of Windows Server images available. What command would you use?',
+    prompt: 'You are considering running a Windows server in Google Cloud. You would like to review a list of Windows Server images available. What command would you use?',
     options: [
       'gcloud compute list windows-cloud',
       'gcloud compute instances describe windows-cloud',
@@ -629,30 +629,30 @@ export const deploying: Question[] = [
     topic: 'Infrastructure as code',
     difficulty: 'hard',
     verbatim: true,
-    prompt: 'You are working at ByteShift, a company that provides a ride-sharing app called RideRunner. You are tasked with deploying a Google Kubernetes Engine (GKE) cluster to handle the app’s back-end services. As part of this deployment, you also need to ensure that a DaemonSet runs in the kube-system namespace of the GKE cluster to monitor the nodes. You want to accomplish this in the simplest way possible using the fewest services. What should you do?',
+    prompt: 'You are working at ByteShift, a company that provides a ride-sharing app called RideRunner. You manage infrastructure with Terraform and are deploying a Google Kubernetes Engine (GKE) cluster for the app’s back-end services. A DaemonSet must also run in the kube-system namespace to monitor the nodes. You want the simplest approach with the fewest services. What should you do?',
     options: [
-      'Add the cluster\'s API as a new Type Provider in Deployment Manager, and use the new type to create the DaemonSet.',
-      'Use the Deployment Manager Runtime Configurator to create a new Config resource that contains the DaemonSet definition.',
-      'With Deployment Manager, create a Compute Engine instance with a startup script that uses kubectl to create the DaemonSet.',
-      'In the cluster\'s definition in Deployment Manager, add a metadata that has kube-system as key and the DaemonSet manifest as value.'
+      'In the same Terraform configuration, use the Kubernetes provider pointed at the new cluster to create the DaemonSet.',
+      'Store the DaemonSet manifest in Secret Manager and have the cluster read it on start-up.',
+      'Create a Compute Engine instance with a startup script that uses kubectl to create the DaemonSet.',
+      'Add cluster metadata with kube-system as key and the DaemonSet manifest as value.'
     ],
     answer: 0,
-    explanation: 'Registering the GKE cluster\'s Kubernetes API as a Deployment Manager type provider lets the same deployment create Kubernetes objects such as a DaemonSet in kube-system without extra services. Runtime Configurator stores configuration values, a VM with a startup script adds an extra service to manage, and cluster metadata does not create Kubernetes objects. Deployment Manager has reached end of support, so today you would use Terraform\'s Kubernetes provider or Config Connector.'
+    explanation: 'Terraform’s Kubernetes provider, configured with the new cluster’s endpoint and credentials, lets the same configuration create Kubernetes objects such as a DaemonSet — no extra service. Secret Manager stores secrets, a VM with a startup script adds something else to run, and cluster metadata does not create Kubernetes objects. (This question used Deployment Manager type providers; Deployment Manager reached end of support in 2026.)'
   },
   {
     id: 'ace-168',
     topic: 'Cloud Run, App Engine & Functions',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are managing a new microservices-based application for a social media platform called SnapWave, which allows users to upload and share audio clips. You want to deploy a service on Cloud Run that processes user activity messages from a Cloud Pub/Sub topic. You aim to follow Google\'s recommended best practices. What should you do?',
+    prompt: 'You are managing a new microservices-based application for a social media platform called SnapWave, which allows users to upload and share audio clips. You want to deploy a service on Cloud Run that processes user activity messages from a Pub/Sub topic. You aim to follow Google\'s recommended best practices. What should you do?',
     options: [
-      'i. Create a Cloud Function that uses a Cloud Pub/Sub trigger on that topic. ii. Call your SnapWave application on Cloud Run from the Cloud Function for every message.',
-      'i. Grant the Pub/Sub Subscriber role to the service account used by Cloud Run.\n\nii. Create a Cloud Pub/Sub subscription for that topic. iii. Make your SnapWave application pull messages from that subscription.',
-      'i. Create a service account. ii. Give the Cloud Run Invoker role to that service account for your SnapWave application. iii. Create a Cloud Pub/Sub subscription that uses that service account and uses your SnapWave application as the push endpoint.',
-      'i. Deploy your SnapWave application on Cloud Run on GKE with the connectivity set to Internal. ii. Create a Cloud Pub/Sub subscription for that topic. iii. In the same Google Kubernetes Engine cluster as your application, deploy a container that takes the messages and sends them to your application.'
+      'i. Create a Cloud Run function that uses a Pub/Sub trigger on that topic. ii. Call your SnapWave application on Cloud Run from the Cloud Run function for every message.',
+      'i. Grant the Pub/Sub Subscriber role to the service account used by Cloud Run.\n\nii. Create a Pub/Sub subscription for that topic. iii. Make your SnapWave application pull messages from that subscription.',
+      'i. Create a service account. ii. Give the Cloud Run Invoker role to that service account for your SnapWave application. iii. Create a Pub/Sub subscription that uses that service account and uses your SnapWave application as the push endpoint.',
+      'i. Deploy your SnapWave application on Cloud Run on GKE with the connectivity set to Internal. ii. Create a Pub/Sub subscription for that topic. iii. In the same Google Kubernetes Engine cluster as your application, deploy a container that takes the messages and sends them to your application.'
     ],
     answer: 2,
-    explanation: 'Google\'s recommended pattern is a Pub/Sub push subscription that targets the Cloud Run URL and authenticates with a service account holding the Cloud Run Invoker role, so the service stays private and scales on demand. A pull subscriber does not fit Cloud Run\'s request-driven model, a Cloud Function relay adds an unnecessary hop, and Cloud Run on GKE with a forwarding container adds cluster overhead.'
+    explanation: 'Google\'s recommended pattern is a Pub/Sub push subscription that targets the Cloud Run URL and authenticates with a service account holding the Cloud Run Invoker role, so the service stays private and scales on demand. A pull subscriber does not fit Cloud Run\'s request-driven model, a Cloud Run function relay adds an unnecessary hop, and Cloud Run on GKE with a forwarding container adds cluster overhead. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-169',
@@ -757,7 +757,7 @@ export const deploying: Question[] = [
       'Download and deploy the Jenkins Java WAR to App Launch Standard.',
       'Create a new Compute Engine instance and install Jenkins via the command line.',
       'Set up a Kubernetes cluster on Compute Engine and create a deployment using the Jenkins Docker image.',
-      'Use GCP Marketplace to launch a pre-configured Jenkins solution.'
+      'Use Google Cloud Marketplace to launch a pre-configured Jenkins solution.'
     ],
     answer: 3,
     explanation: 'Cloud Marketplace has a pre-configured Jenkins solution that deploys in a few clicks, which is the least effort. Installing Jenkins manually on a VM or building a Kubernetes deployment around the Jenkins image both take more setup and ongoing work. \'App Launch Standard\' is not a Google Cloud product.'
@@ -767,27 +767,27 @@ export const deploying: Question[] = [
     topic: 'Infrastructure as code',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'ByteCrafters, a company that develops an e-commerce platform called ShopStream, needs to update the configuration of its infrastructure using Deployment Manager. They want to ensure that there is no downtime for any resources while performing the update. Which command should their DevOps team use to achieve this?',
+    prompt: 'ByteCrafters, a company that develops an e-commerce platform called ShopStream, manages its infrastructure with Terraform in Infrastructure Manager. They changed the configuration and want the existing deployment updated in place, without recreating everything. Which command should their DevOps team use?',
     options: [
-      'gcloud deployment-manager deployments create --config <deployment-config-path>',
-      'gcloud deployment-manager deployments update --config <deployment-config-path>',
-      'gcloud deployment-manager resources create --config <deployment-config-path>',
-      'gcloud deployment-manager resources update --config <deployment-config-path>'
+      'gcloud infra-manager deployments apply projects/PROJECT/locations/REGION/deployments/shopstream --local-source=./infra',
+      'gcloud infra-manager deployments create projects/PROJECT/locations/REGION/deployments/shopstream-new --local-source=./infra',
+      'gcloud infra-manager previews create projects/PROJECT/locations/REGION/previews/shopstream --local-source=./infra',
+      'gcloud infra-manager deployments delete projects/PROJECT/locations/REGION/deployments/shopstream, then apply it again'
     ],
-    answer: 1,
-    explanation: 'gcloud deployment-manager deployments update applies a changed configuration to an existing deployment, modifying resources in place rather than recreating everything. deployments create starts a new deployment, and there are no resources create or resources update commands that take a config file. Deployment Manager is being retired in favour of Infrastructure Manager and Terraform, but the command is still correct for this question.'
+    answer: 0,
+    explanation: '`deployments apply` against the existing deployment runs Terraform on the changed configuration, updating what changed and leaving the rest. A new deployment name duplicates the infrastructure, a preview changes nothing, and delete-then-apply causes exactly the downtime they want to avoid. Current names: Deployment Manager reached end of support in 2026; Infrastructure Manager (managed Terraform) replaces it.'
   },
   {
     id: 'ace-205',
     topic: 'Compute Engine',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'A tech startup called TechSpire has developed a performance-monitoring app that needs to run on Google Cloud Platform. The app is a single binary application, and they want to automatically scale it based on the CPU usage of the underlying infrastructure. Due to their company policies, they are required to directly use virtual machines. TechSpire wants to ensure that the scaling process is operationally efficient and happens as quickly as possible. What should they do? (Note: Stackdriver is now called \'Google Cloud\'s Operation Suite\')',
+    prompt: 'A tech startup called TechSpire has developed a performance-monitoring app that needs to run on Google Cloud. The app is a single binary application, and they want to automatically scale it based on the CPU usage of the underlying infrastructure. Due to their company policies, they are required to directly use virtual machines. TechSpire wants to ensure that the scaling process is operationally efficient and happens as quickly as possible. What should they do?',
     options: [
       'Create a Google Kubernetes Engine cluster, and use horizontal pod autoscaling to scale the application.',
       'Create an instance template, and use the template in a managed instance group with autoscaling configured.',
       'Create an instance template, and use the template in a managed instance group that scales up and down based on the time of day.',
-      'Use a set of third-party tools to build automation around scaling the application up and down, based on Stackdriver CPU usage monitoring.'
+      'Use a set of third-party tools to build automation around scaling the application up and down, based on Cloud Monitoring CPU usage metrics.'
     ],
     answer: 1,
     explanation: 'An instance template used by a managed instance group with CPU-based autoscaling runs directly on VMs and adds or removes instances automatically and quickly as load changes. GKE with HPA does not satisfy the policy of using VMs directly. Time-of-day schedules do not react to actual CPU usage, and third-party automation around Cloud Monitoring is more work than the built-in autoscaler.'
@@ -799,13 +799,13 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'A startup called RepliNet needs a scalable solution to automatically provision virtual machines (VMs) on Google Compute Engine. The configuration for these VMs, including specifications like CPU, memory, and storage, is stored in a separate configuration file. They want to use a method that aligns with Google\'s best practices. Which method should RepliNet use?',
     options: [
-      'Deployment Manager',
+      'Infrastructure Manager',
       'Cloud Composer',
       'Managed Instance Group',
       'Unmanaged Instance Group'
     ],
     answer: 0,
-    explanation: 'Deployment Manager provisions VMs from declarative configuration files that specify machine type, disks and other properties, which is infrastructure as code. Cloud Composer is a workflow orchestrator, and instance groups manage VMs from a template but do not provision infrastructure from a separate configuration file. Deployment Manager is reaching end of support, and Infrastructure Manager or Terraform would be the choice today.'
+    explanation: 'Infrastructure Manager provisions VMs from declarative Terraform configuration that specifies machine type, disks and other properties, which is infrastructure as code. Cloud Composer is a workflow orchestrator, and instance groups manage VMs from a template but do not provision infrastructure from a separate configuration file. Current names: Infrastructure Manager reached end of support in 2026; Infrastructure Manager (managed Terraform) replaces it.'
   },
   {
     id: 'ace-213',
@@ -816,11 +816,11 @@ export const deploying: Question[] = [
     options: [
       'Use “kubectl app deploy ”.',
       'Use “gcloud app deploy ”.',
-      'Create a docker image from the Dockerfile and upload it to the Container Registry. Create a Deployment YAML file to point to that image. Use kubectl to create the deployment with that file.',
+      'Create a docker image from the Dockerfile and upload it to Artifact Registry. Create a Deployment YAML file to point to that image. Use kubectl to create the deployment with that file.',
       'Create a docker image from the Dockerfile and upload it to Cloud Storage. Create a Deployment YAML file to point to that image. Use kubectl to create the deployment with that file.'
     ],
     answer: 2,
-    explanation: 'You build the image from the Dockerfile, push it to a registry (Container Registry in the question, Artifact Registry today), write a Deployment manifest that references the image and apply it with kubectl. gcloud app deploy targets App Engine, kubectl has no app deploy command, and GKE cannot pull images from a Cloud Storage bucket.'
+    explanation: 'You build the image from the Dockerfile, push it to Artifact Registry, write a Deployment manifest that references the image and apply it with kubectl. gcloud app deploy targets App Engine, kubectl has no app deploy command, and GKE cannot pull images from a Cloud Storage bucket. Current names: Container Registry was shut down in 2025; Artifact Registry replaces it.'
   },
   {
     id: 'ace-216',
@@ -857,10 +857,10 @@ export const deploying: Question[] = [
     topic: 'VPC, DNS & connectivity',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are responsible for connecting two different teams within your organization that manage two distinct applications. Each application is running on its own group of Compute Engine instances across two separate GCP projects. Each group of instances resides in its own VPC, and now these instances need to communicate with each other. What should you do?',
+    prompt: 'You are responsible for connecting two different teams within your organization that manage two distinct applications. Each application is running on its own group of Compute Engine instances across two separate Google Cloud projects. Each group of instances resides in its own VPC, and now these instances need to communicate with each other. What should you do?',
     options: [
-      'Verify that both projects are part of a GCP Organization. Create a new VPC and add all instances.',
-      'Verify that both projects are part of a GCP Organization. Share the VPC from one project and allow the Compute Engine instances in the other project to use this shared VPC.',
+      'Verify that both projects are part of a Google Cloud Organization. Create a new VPC and add all instances.',
+      'Verify that both projects are part of a Google Cloud Organization. Share the VPC from one project and allow the Compute Engine instances in the other project to use this shared VPC.',
       'Verify that you are the Project Administrator of both projects. Create two new VPCs and add all instances.',
       'Verify that you are the Project Administrator of both projects. Create a new VPC and add all instances.'
     ],
@@ -876,11 +876,11 @@ export const deploying: Question[] = [
     options: [
       'Upload the image to Cloud Storage and create a Kubernetes Service referencing the image.',
       'Upload the image to Cloud Storage and create a Kubernetes Deployment referencing the image.',
-      'Upload the image to the Container Registry and create a Kubernetes Service referencing the image.',
-      'Upload the image to the Container Registry and create a Kubernetes Deployment referencing the image.'
+      'Upload the image to Artifact Registry and create a Kubernetes Service referencing the image.',
+      'Upload the image to Artifact Registry and create a Kubernetes Deployment referencing the image.'
     ],
     answer: 3,
-    explanation: 'GKE pulls images from a container registry (today Artifact Registry, the successor to Container Registry), and a Deployment is the object that runs and manages replicated Pods from that image. Cloud Storage is not an image registry the kubelet can pull from, and a Service only exposes Pods on the network; it does not run an image.'
+    explanation: 'GKE pulls images from a container registry (Artifact Registry), and a Deployment is the object that runs and manages replicated Pods from that image. Cloud Storage is not an image registry the kubelet can pull from, and a Service only exposes Pods on the network; it does not run an image. Current names: Container Registry was shut down in 2025; Artifact Registry replaces it.'
   },
   {
     id: 'ace-234',
@@ -933,15 +933,15 @@ export const deploying: Question[] = [
     topic: 'Infrastructure as code',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You have made extensive changes to the infrastructure automation script for your company’s event ticketing app "EventHorizon," which uses Deployment Manager for provisioning resources on GCP. Before committing the changes, you want to verify that all resource dependencies are correctly defined. You need the quickest possible validation. What should you do?',
+    prompt: 'You have made extensive changes to the Terraform configuration for your company’s event ticketing app "EventHorizon", which uses Infrastructure Manager to provision resources on Google Cloud. Before applying the changes, you want to verify that all resource dependencies are correctly defined. You need the quickest possible validation. What should you do?',
     options: [
-      'Add detailed logging statements within the Deployment Manager template written in Python.',
-      'Track the Deployment Manager execution activity in the Google Cloud Console\'s Logging section.',
-      'Run the Deployment Manager template on a different project with identical settings and check for errors.',
-      'Use the "--preview" flag to execute the Deployment Manager template in the same project, then review the status of dependent resources.'
+      'Add detailed output values to the Terraform configuration and inspect them after applying.',
+      'Track the Infrastructure Manager run in the Google Cloud console’s Logging section.',
+      'Apply the configuration in a different project with identical settings and check for errors.',
+      'Create an Infrastructure Manager preview in the same project, then review the planned changes.'
     ],
     answer: 3,
-    explanation: 'Deployment Manager\'s --preview flag expands the configuration and shows what would be created, updated, or deleted without actually provisioning resources, which is the quickest check of dependencies. Running it in a separate project creates real resources and takes longer, while added logging or reading logs afterwards only helps once the deployment has run. Deployment Manager has reached end of support, and terraform plan is today\'s equivalent.'
+    explanation: 'A preview runs `terraform plan`, showing what would be created, updated or deleted without provisioning anything, which is the quickest check of dependencies. Applying in a separate project creates real resources and takes longer, while outputs or logs only help once the deployment has run. Current names: Deployment Manager reached end of support in 2026; Infrastructure Manager (managed Terraform) replaces it.'
   },
   {
     id: 'ace-260',
@@ -981,13 +981,13 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'Your company, DataPro Insights, has a massive 7-TB AVRO file stored in a Cloud Storage bucket. The data scientists on your team, who are only familiar with SQL, need to access and analyze the data from this file. You are tasked with finding a cost-efficient solution that will allow them to use SQL to query the data as quickly as possible. What should you do?',
     options: [
-      'Load the data into Cloud Datastore and run SQL queries against it.',
+      'Load the data into Firestore in Datastore mode and run SQL queries against it.',
       'Create a BigQuery table and load the data into BigQuery. Run SQL queries on the table, then delete the table after completing the analysis.',
       'Create external tables in BigQuery that reference the Cloud Storage bucket. Run SQL queries directly on these external tables.',
       'Set up a Hadoop cluster, compress the AVRO file, transfer it to NDFS, load it into a Hive table, and provide access to your team so they can run SQL queries.'
     ],
     answer: 2,
-    explanation: 'A BigQuery external table over the Avro file in Cloud Storage lets the team run SQL right away, with no load step and no duplicate storage cost. Loading 7 TB first delays the start and pays for storage, though native tables would query faster if used repeatedly. Datastore does not support full SQL, and building a Hadoop and Hive cluster is slow and expensive by comparison.',
+    explanation: 'A BigQuery external table over the Avro file in Cloud Storage lets the team run SQL right away, with no load step and no duplicate storage cost. Loading 7 TB first delays the start and pays for storage, though native tables would query faster if used repeatedly. Datastore does not support full SQL, and building a Hadoop and Hive cluster is slow and expensive by comparison. Current names: Cloud Datastore → Firestore in Datastore mode.',
     tip: 'One-off SQL over files in Cloud Storage: BigQuery external table.'
   },
   {
@@ -999,11 +999,11 @@ export const deploying: Question[] = [
     options: [
       'Use gcloud to create the new project, and then deploy your application to the new project.',
       'Use gcloud to create the new project and copy the deployed application to the new project.',
-      'Create a Deployment Manager configuration file that copies the current App Engine deployment into a new project.',
+      'Create an Infrastructure Manager (Terraform) configuration that copies the current App Engine deployment into a new project.',
       'Deploy your application again using gcloud and specify the project parameter with the new project name to create the new project.'
     ],
     answer: 0,
-    explanation: 'Each App Engine app belongs to one project, so you create the production project, then deploy the same code to it with gcloud app deploy --project. There is no copy of a deployed app between projects, Deployment Manager cannot clone an App Engine deployment, and gcloud app deploy does not create a project.'
+    explanation: 'Each App Engine app belongs to one project, so you create the production project, then deploy the same code to it with gcloud app deploy --project. There is no copy of a deployed app between projects, Infrastructure Manager cannot clone an App Engine deployment, and gcloud app deploy does not create a project.'
   },
   {
     id: 'ace-267',
@@ -1043,20 +1043,20 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'Your team manages the infrastructure for a mobile app called QuickPark, which helps users find parking spots in real-time. The app\'s infrastructure requires some changes to improve performance. You need to share the proposed changes with your team in a way that aligns with Google\'s recommended best practices. What should you do?',
     options: [
-      'Use Deployment Manager templates to describe the proposed changes and store them in a Cloud Storage bucket.',
-      'Use Deployment Manager templates to describe the proposed changes and store them in Cloud Source Repositories.',
+      'Use Terraform configurations to describe the proposed changes and store them in a Cloud Storage bucket.',
+      'Use Terraform configurations to describe the proposed changes and store them in a Git repository, such as Secure Source Manager.',
       'Apply the changes in a development environment, run “gcloud compute instances list”, and then save the output in a shared Storage bucket.',
-      'Apply the changes in a development environment, run “gcloud compute instances list”, and then save the output in Cloud Source Repositories.'
+      'Apply the changes in a development environment, run “gcloud compute instances list”, and then save the output in a Git repository.'
     ],
     answer: 1,
-    explanation: 'Google recommends describing infrastructure as code and keeping it in version control so the team can review and track changes, which in this question means templates in Cloud Source Repositories. A Cloud Storage bucket has no review or diff workflow, and saving instance list output records the result of changes, not the proposed changes. Today you would use Terraform in a Git repo such as GitHub, since Deployment Manager has reached end of support and Cloud Source Repositories is closed to new customers.'
+    explanation: 'Google recommends describing infrastructure as code and keeping it in version control so the team can review and track changes: Terraform in a Git repository (Secure Source Manager, GitHub or GitLab). A Cloud Storage bucket has no review or diff workflow, and saving instance list output records the result of changes, not the proposed changes. Cloud Source Repositories is closed to new customers; Secure Source Manager is Google’s hosted Git today.'
   },
   {
     id: 'ace-275',
     topic: 'Compute Engine',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Imagine that a popular online data analysis tool, DataDive Inc., is migrating its on-premises data processing application to Google Cloud Platform. The app processes large datasets and requires 96 vCPUs to ensure optimal performance. DataDive Inc. needs to recreate a similar environment on GCP to maintain smooth data processing. What should they do?',
+    prompt: 'Imagine that a popular online data analysis tool, DataDive Inc., is migrating its on-premises data processing application to Google Cloud. The app processes large datasets and requires 96 vCPUs to ensure optimal performance. DataDive Inc. needs to recreate a similar environment on Google Cloud to maintain smooth data processing. What should they do?',
     options: [
       'When creating the VM, use machine type n1-standard-96.',
       'When creating the VM, specify Intel Skylake as the CPU platform.',
@@ -1075,11 +1075,11 @@ export const deploying: Question[] = [
     options: [
       '- Create Compute Engine resources in us-central1-b.\n- Balance the load across both us-central1-a and us-central1-b.',
       '- Create a Managed Instance Group and specify us-central1-a as the zone.\n- Configure the Health Check with a short Health Interval.',
-      '- Create an HTTP(S) Load Balancer.\n- Create one or more global forwarding rules to direct traffic to your VMs.',
+      '- Create an external Application Load Balancer.\n- Create one or more global forwarding rules to direct traffic to your VMs.',
       '- Perform regular backups of your application.\n- Create a Cloud Monitoring Alert and be notified if your application becomes unavailable.\n- Restore from backups when notified.'
     ],
     answer: 0,
-    explanation: 'Surviving a zone failure requires capacity in a second zone with load balancing across both, so traffic keeps flowing when one zone goes down; a regional managed instance group behind a load balancer is how you would build it. A MIG pinned to us-central1-a is still a single zone, and adding a load balancer without spreading VMs across zones leaves the same weak point. Restoring from backups after an alert means downtime.'
+    explanation: 'Surviving a zone failure requires capacity in a second zone with load balancing across both, so traffic keeps flowing when one zone goes down; a regional managed instance group behind a load balancer is how you would build it. A MIG pinned to us-central1-a is still a single zone, and adding a load balancer without spreading VMs across zones leaves the same weak point. Restoring from backups after an alert means downtime. Current names: HTTP(S) Load Balancing → Application Load Balancer.'
   },
   {
     id: 'ace-282',
@@ -1135,13 +1135,13 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'Your team is developing an app called "QuickVote" that manages real-time votes from a large community of users. The voting activity will vary in intensity, sometimes generating a high number of votes in a short period of time. You need to streamline the storage and processing of these votes. What should you do?',
     options: [
-      '- Store the incoming votes in Firestore.\n- Use Cloud Scheduler to trigger a Cloud Functions instance to periodically process the votes.',
+      '- Store the incoming votes in Firestore.\n- Use Cloud Scheduler to trigger a Cloud Run functions instance to periodically process the votes.',
       '- Utilize a dedicated compute instance to handle the incoming votes.\n- Send the votes directly to this instance for processing.',
       '- Store the incoming votes in a JSON file on Cloud Storage.\n- Process all the votes in a batch at the end of each day.',
-      '- Store the incoming votes in Pub/Sub.\n- Use a Pub/Sub topic to trigger a Cloud Functions instance to process the votes.'
+      '- Store the incoming votes in Pub/Sub.\n- Use a Pub/Sub topic to trigger a Cloud Run functions instance to process the votes.'
     ],
     answer: 3,
-    explanation: 'Pub/Sub absorbs bursty, high-volume event streams and can push each message to a Cloud Function that scales automatically, so votes are processed in near real time. Firestore plus scheduled processing or a daily batch on a JSON file adds delay and contention, and a single dedicated VM becomes a bottleneck during spikes.'
+    explanation: 'Pub/Sub absorbs bursty, high-volume event streams and can push each message to a Cloud Run function that scales automatically, so votes are processed in near real time. Firestore plus scheduled processing or a daily batch on a JSON file adds delay and contention, and a single dedicated VM becomes a bottleneck during spikes. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-294',
@@ -1184,10 +1184,10 @@ export const deploying: Question[] = [
       'Create an App Engine standard environment triggered by Cloud Storage bucket events to submit the file URI to the Google Speech-to-Text API.',
       '- Run a Kubernetes job to scan the bucket regularly for incoming files\n- Call the Speech-to-Text API for each unprocessed file.',
       '- Run a Python script by using a Linux cron job in Compute Engine to scan the bucket regularly for incoming files\n- Call the Speech-to-Text API for each unprocessed file.',
-      'Create a Cloud Function triggered by Cloud Storage bucket events to submit the file URI to the Google Speech-to-Text API.'
+      'Create a Cloud Run function triggered by Cloud Storage bucket events to submit the file URI to the Google Speech-to-Text API.'
     ],
     answer: 3,
-    explanation: 'A Cloud Function (now Cloud Run functions) triggered by Cloud Storage object finalize events is fully managed, event-driven, and runs with its service account identity to call Speech-to-Text. App Engine standard cannot be triggered directly by bucket events, and polling with a Kubernetes job or a cron script on a VM is neither serverless nor immediate.'
+    explanation: 'A Cloud Run function triggered by Cloud Storage object finalize events is fully managed, event-driven, and runs with its service account identity to call Speech-to-Text. App Engine standard cannot be triggered directly by bucket events, and polling with a Kubernetes job or a cron script on a VM is neither serverless nor immediate. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-301',
@@ -1242,10 +1242,10 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'Your company, QuickBites, has a web app that helps users order food from local restaurants. The app is hosted using Google Cloud\'s App Engine, and it was originally configured to run in the us-central1 region. However, due to increasing demand from users in Asia, you now want the app to be served from the asia-northeast1 region. What should you do?',
     options: [
-      'Change the default region property setting in the existing GCP project to asia-northeast1.',
+      'Change the default region property setting in the existing Google Cloud project to asia-northeast1.',
       'Change the region property setting in the existing App Engine application from us-central1 to asia- northeast1.',
-      '- Create a second App Engine application in the existing GCP project.\n- Specify asia-northeast1 as the region to serve your application.',
-      '- Create a new GCP project and create an App Engine application inside this new project.\n- Specify asia-northeast1 as the region to serve your application.'
+      '- Create a second App Engine application in the existing Google Cloud project.\n- Specify asia-northeast1 as the region to serve your application.',
+      '- Create a new Google Cloud project and create an App Engine application inside this new project.\n- Specify asia-northeast1 as the region to serve your application.'
     ],
     answer: 3,
     explanation: 'An App Engine application\'s region is permanent and each project can have only one App Engine app, so serving from asia-northeast1 requires a new project with a new App Engine app in that region. There is no setting to change an existing app\'s region, and a second App Engine app in the same project is not allowed.',
@@ -1256,7 +1256,7 @@ export const deploying: Question[] = [
     topic: 'Compute Engine',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are deploying a file-sharing application called ShareSync to a Compute Engine VM within a managed instance group. The ShareSync app must be available at all times to users, but only one instance of the VM should be active across the entire GCP project. How would you configure the instance group for this requirement?',
+    prompt: 'You are deploying a file-sharing application called ShareSync to a Compute Engine VM within a managed instance group. The ShareSync app must be available at all times to users, but only one instance of the VM should be active across the entire Google Cloud project. How would you configure the instance group for this requirement?',
     options: [
       '- Set autoscaling to On\n- Set the minimum number of instances to 1\n- Set the maximum number of instances to 1',
       '- Set autoscaling to Off\n- set the minimum number of instances to 1\n- set the maximum number of instances to 1',
@@ -1306,12 +1306,12 @@ export const deploying: Question[] = [
     prompt: 'Your team at TrendyPix, a fictional photo-sharing app, is working on a new feature that should automatically process images whenever a user uploads a file to your Cloud Storage bucket. You have written a code snippet that will handle this image processing, and now you need to deploy it to ensure it gets triggered every time a new image is uploaded. What should you do?',
     options: [
       'Use App Engine and configure Cloud Scheduler to trigger the application using Pub/Sub.',
-      'Use Cloud Functions and configure the bucket as a trigger resource.',
+      'Use Cloud Run functions and configure the bucket as a trigger resource.',
       'Use Google Kubernetes Engine and configure a CronJob to trigger the application using Pub/Sub.',
       'Use Dataflow as a batch job, and configure the bucket as a data source.'
     ],
     answer: 1,
-    explanation: 'A Cloud Function (Cloud Run functions) with the bucket\'s object finalize event as its trigger runs the processing code on every upload with no infrastructure to manage. Scheduled triggers through Cloud Scheduler or a Kubernetes CronJob are not event-driven, and a Dataflow batch job does not react to individual uploads.'
+    explanation: 'A Cloud Run function (Cloud Run functions) with the bucket\'s object finalize event as its trigger runs the processing code on every upload with no infrastructure to manage. Scheduled triggers through Cloud Scheduler or a Kubernetes CronJob are not event-driven, and a Dataflow batch job does not react to individual uploads. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-332',
@@ -1337,11 +1337,11 @@ export const deploying: Question[] = [
     options: [
       '- Create a Pub/Sub topic, and enable a Cloud Storage trigger for the Pub/Sub topic.\n- Create an application that sends all workout videos to the Pub/Sub topic.',
       '- Create a script that uses the gcloud storage command to synchronize the on-premises storage with Cloud Storage.\n- Schedule the script as a cron job.',
-      '- Create a Pub/Sub topic, and create a Cloud Function connected to the topic that writes data to Cloud Storage.\n- Create an application that sends all workout videos to the Pub/Sub topic.',
+      '- Create a Pub/Sub topic, and create a Cloud Run function connected to the topic that writes data to Cloud Storage.\n- Create an application that sends all workout videos to the Pub/Sub topic.',
       '- In the Google Cloud console, go to Cloud Storage.\n- Upload the relevant videos to the appropriate bucket.'
     ],
     answer: 1,
-    explanation: 'A script running gcloud storage rsync on a cron schedule automatically keeps Cloud Storage in sync with new on-premises files with minimal effort. Sending large video files through Pub/Sub is not viable because messages are limited to 10 MB, and manual uploads in the console are not automated.'
+    explanation: 'A script running gcloud storage rsync on a cron schedule automatically keeps Cloud Storage in sync with new on-premises files with minimal effort. Sending large video files through Pub/Sub is not viable because messages are limited to 10 MB, and manual uploads in the console are not automated. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-334',
@@ -1350,13 +1350,13 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'Your startup, "EcoTech Innovations," is building a platform to monitor and optimize energy usage across multiple facilities. You want to streamline the process of deploying and managing numerous Google Cloud resources in a standardized way using Infrastructure as Code. The goal is to reduce redundant code and simplify the maintenance of your cloud environment. What should you do?',
     options: [
-      'Develop templates for the environment using Cloud Deployment Manager.',
+      'Write Terraform configurations for the environment and deploy them with Infrastructure Manager.',
       'Use curl in a terminal to send a REST request to the relevant Google API for each individual resource.',
       'Use the Cloud Console interface to provision and manage all related resources.',
       'Create a bash script that contains all requirement steps as gcloud commands.'
     ],
     answer: 0,
-    explanation: 'Deployment Manager templates provide declarative, reusable Infrastructure as Code that reduces repetition across many resources. Raw REST calls, console clicks, or bash scripts of gcloud commands are imperative and hard to maintain. Deployment Manager reached end of support in 2026 and Terraform (or Infrastructure Manager) is today\'s recommendation, but it is the only IaC option offered here.'
+    explanation: 'Terraform configurations, deployed and stored by Infrastructure Manager, are declarative, reusable infrastructure as code that reduces repetition across many resources. Raw REST calls, console clicks, or bash scripts of gcloud commands are imperative and hard to maintain. Current names: Deployment Manager reached end of support in 2026; Infrastructure Manager (managed Terraform) replaces it.'
   },
   {
     id: 'ace-338',
@@ -1382,11 +1382,11 @@ export const deploying: Question[] = [
     options: [
       'Deploy the application on a managed instance group and configure autoscaling.',
       'Deploy the application on a Kubernetes Engine cluster and configure node pool autoscaling.',
-      'Deploy the application on Cloud Functions and configure the maximum number of instances.',
+      'Deploy the application on Cloud Run functions and configure the maximum number of instances.',
       'Deploy the application on Cloud Run and configure autoscaling.'
     ],
     answer: 0,
-    explanation: 'Because the app must run directly on virtual machines and is stateless, a managed instance group with an autoscaling policy is the right fit: it adds and removes identical VMs from a template as load changes. GKE node pool autoscaling, Cloud Functions, and Cloud Run all move the app off plain VMs onto containers or functions, which contradicts the stated requirement.'
+    explanation: 'Because the app must run directly on virtual machines and is stateless, a managed instance group with an autoscaling policy is the right fit: it adds and removes identical VMs from a template as load changes. GKE node pool autoscaling, Cloud Run functions, and Cloud Run all move the app off plain VMs onto containers or functions, which contradicts the stated requirement. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-350',
@@ -1411,13 +1411,13 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'A new online art gallery platform, Artiverse, has 35 GB of high-resolution digital art stored in a single file that needs to be uploaded to their Nearline Storage bucket on Google Cloud. The team is working with a WAN connection rated at 1 Gbps, and there is no other traffic on this connection. To maximize the upload speed and utilize as much of the available 1 Gbps bandwidth as possible, what should Artiverse do to transfer the file efficiently?',
     options: [
-      'Use the GCP Console to transfer the file instead of gsutil.',
-      'Enable parallel composite uploads using gsutil on the file transfer.',
+      'Use the Google Cloud console to transfer the file instead of the gcloud CLI.',
+      'Enable parallel composite uploads for the file transfer with gcloud storage cp.',
       'Decrease the TCP window size on the machine initiating the transfer.',
       'Change the storage class of the bucket from Nearline to Multi-Regional.'
     ],
     answer: 1,
-    explanation: 'Parallel composite uploads split one large file into chunks that upload simultaneously and are then composed into a single object, which is how you saturate a fast link with a single 35 GB file. The console upload is not faster, shrinking the TCP window would reduce throughput, and the storage class has nothing to do with upload speed. Today the gcloud storage cp command performs parallel composite uploads automatically, but the principle is the same as the gsutil option named here.'
+    explanation: 'Parallel composite uploads split one large file into chunks that upload simultaneously and are then composed into a single object, which is how you saturate a fast link with a single 35 GB file. The console upload is not faster, shrinking the TCP window would reduce throughput, and the storage class has nothing to do with upload speed. Today the gcloud storage cp command performs parallel composite uploads automatically, but the principle is the same as the gsutil option named here. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.'
   },
   {
     id: 'ace-356',
@@ -1504,11 +1504,11 @@ export const deploying: Question[] = [
     options: [
       '- Create a Pub/Sub topic and enable a Cloud Storage trigger for the Pub/Sub topic.\n- Develop an application that sends all new scans to the Pub/Sub topic.',
       '- Deploy a Dataflow job using the batch template "Datastore to Cloud Storage”.\n- Schedule the batch job to run at the desired interval.',
-      '- Write a script that uses the gsutil command line tool to synchronize the on-premises storage with Cloud Storage.\n- Schedule this script to run as a cron job.',
+      '- Write a script that uses gcloud storage rsync to synchronize the on-premises storage with Cloud Storage.\n- Schedule this script to run as a cron job.',
       'In the Cloud Console, manually upload the scans to the appropriate Cloud Storage bucket.'
     ],
     answer: 2,
-    explanation: 'A scheduled gsutil rsync (today gcloud storage rsync) job copies new files from the on-prem server to Cloud Storage automatically with little effort. Pub/Sub messages are limited to 10 MB and are not a file transport, the Datastore to Cloud Storage template reads Datastore rather than an on-prem file server, and manual console uploads are the opposite of automated. It is slightly debatable because Storage Transfer Service with on-premises agents is now Google\'s preferred managed option, but it is not offered.'
+    explanation: 'A scheduled gcloud storage rsync job copies new files from the on-prem server to Cloud Storage automatically with little effort. Pub/Sub messages are limited to 10 MB and are not a file transport, the Datastore to Cloud Storage template reads Datastore rather than an on-prem file server, and manual console uploads are the opposite of automated. It is slightly debatable because Storage Transfer Service with on-premises agents is now Google\'s preferred managed option, but it is not offered. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.'
   },
   {
     id: 'ace-392',
@@ -1520,7 +1520,7 @@ export const deploying: Question[] = [
       '- Send orders to BigQuery.\n- On the VMs, poll for orders that do not have the ‘processed’ key, and mark them ‘processed’ when done.',
       '- Set up Cloud SQL with a memory cache for speed.\n- On your multiple servers, poll for orders that do not have the ‘processed’ key, and mark them ‘processed’ when done.',
       '- Send orders to Pub/Sub.\n- Process them in VMs in a managed instance group.',
-      'Record orders in Cloud Bigtable, and poll for new orders from the VMs.'
+      'Record orders in Bigtable, and poll for new orders from the VMs.'
     ],
     answer: 2,
     explanation: 'Pub/Sub decouples order intake from processing and delivers messages to multiple subscribers in real time, and a managed instance group of workers can autoscale on the backlog. Polling BigQuery, Cloud SQL, or Bigtable for unprocessed rows is slow, costly, and prone to two workers grabbing the same order, and BigQuery is not built for row-level transactional updates.',
@@ -1567,7 +1567,7 @@ export const deploying: Question[] = [
       'Upload the data to BigQuery using the bq command line tool.',
       'Upload the data to Cloud Storage using the gcloud storage command.',
       'Upload the data into Cloud SQL using the import function in the Google Cloud console.',
-      'Upload the data into Cloud Spanner using the import function in the Google Cloud console.'
+      'Upload the data into Spanner using the import function in the Google Cloud console.'
     ],
     answer: 1,
     explanation: 'Cloud Storage holds unstructured files in any format cheaply and is the standard source for Dataflow pipelines, and gcloud storage cp uploads it in bulk. BigQuery, Cloud SQL and Spanner all need structured, schema-bound data, so loading raw mixed-format files into them before the ETL step does not work.'
@@ -1595,12 +1595,12 @@ export const deploying: Question[] = [
     prompt: 'Your company, SwiftCart, runs an online marketplace platform that uses Cloud Storage for storing user-uploaded product images and Firestore to store product listings and customer data. You are responsible for monitoring all changes in both the product images and listings. For each change, you need to invoke a verification action that ensures compliance of the new data in near real-time. You want to implement this with minimal configuration. What should you do?',
     options: [
       'Use the trigger mechanism in each datastore to invoke the compliance script.',
-      'Use Cloud Function events, and call the compliance script from the Cloud Function triggers.',
+      'Use Cloud Run function events, and call the compliance script from the Cloud Run function triggers.',
       'Use a Python script to get logs of the datastores, analyze them, and invoke the compliance script.',
       'Redirect your data-changing queries to an App Engine application, and call the compliance script from the application.'
     ],
     answer: 1,
-    explanation: 'Cloud Functions (now Cloud Run functions) natively trigger on Cloud Storage object events and Firestore document changes, so each change can call the compliance check in near real time with almost no setup. Neither datastore has a built-in trigger mechanism of its own outside this eventing, parsing logs with a script is slow and fragile, and routing all writes through an App Engine app requires rewriting the application.'
+    explanation: 'Cloud Run functions natively trigger on Cloud Storage object events and Firestore document changes, so each change can call the compliance check in near real time with almost no setup. Neither datastore has a built-in trigger mechanism of its own outside this eventing, parsing logs with a script is slow and fragile, and routing all writes through an App Engine app requires rewriting the application. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-409',
@@ -1656,12 +1656,12 @@ export const deploying: Question[] = [
     prompt: 'Which of the following command is used to create buckets in Cloud Storage?',
     options: [
       'gcloud storage buckets mb',
-      'gsutil storage buckets create',
-      'gsutil mb',
+      'gcloud storage buckets create',
+      'gsutil buckets create',
       'gcloud mb'
     ],
-    answer: 2,
-    explanation: 'gsutil mb gs://BUCKET creates a bucket with the legacy gsutil tool. Today the preferred equivalent is gcloud storage buckets create; the gcloud variant shown with mb is not a real command, and neither are gsutil storage buckets create or gcloud mb.',
+    answer: 1,
+    explanation: '`gcloud storage buckets create gs://BUCKET` creates a bucket. `gsutil mb` did the same with the legacy tool, but there is no `gcloud storage buckets mb`, `gsutil buckets create` or `gcloud mb`. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.',
     tip: 'gsutil is legacy; know both gsutil mb and gcloud storage buckets create.'
   },
   {
@@ -1718,12 +1718,12 @@ export const deploying: Question[] = [
     prompt: 'You are about to start working on a micro-service deployment project using Google Kubernetes Engine service. The client needs everything on Google and want you to maintain both frontend and backend code on Google Cloud as well. Which service best suites this case?',
     options: [
       'Cloud Storage',
-      'Cloud Source Repository',
-      'Google Container Registry',
+      'Secure Source Manager',
+      'Artifact Registry',
       'GitHub'
     ],
     answer: 1,
-    explanation: 'Cloud Source Repositories was Google Cloud\'s hosted private Git service, keeping both frontend and backend code on Google as the client asks. Cloud Storage and Container Registry store objects and images rather than source code, and GitHub is not a Google service. It is debatable today because Cloud Source Repositories is closed to new customers, and Secure Source Manager is now Google\'s hosted Git option.'
+    explanation: 'Secure Source Manager is Google Cloud’s managed private Git service, keeping both frontend and backend code on Google as the client asks. Cloud Storage and Artifact Registry store objects and images rather than source code, and GitHub is not a Google service. Cloud Source Repositories is closed to new customers; Secure Source Manager is Google’s hosted Git today.'
   },
   {
     id: 'ace-426',
@@ -1745,15 +1745,15 @@ export const deploying: Question[] = [
     topic: 'Infrastructure as code',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You have been asked to automate the infrastructure deployment using Google Deployment Manager service. Which all formats do Deployment manager template supports?',
+    prompt: 'You have been asked to automate infrastructure deployment with Infrastructure Manager, Google Cloud’s managed infrastructure-as-code service. In which language do you write the configuration it deploys?',
     options: [
-      'JSON',
-      'Jinja2',
-      'Powershell',
-      'Python'
+      'Terraform (HashiCorp Configuration Language)',
+      'Jinja2 templates',
+      'PowerShell scripts',
+      'Python templates'
     ],
-    answer: [1, 3],
-    explanation: 'Deployment Manager templates are written in Jinja2 or Python, while the top-level configuration is YAML. JSON is not a template language for it, and PowerShell is not supported. Deployment Manager is being deprecated, with Infrastructure Manager and Terraform as Google\'s recommended replacements.'
+    answer: 0,
+    explanation: 'Infrastructure Manager runs Terraform: you give it a Terraform configuration from a local folder, a Git repository or Cloud Storage, and it plans and applies it. Jinja2 and Python templates belonged to Deployment Manager, which reached end of support in 2026, and PowerShell is not an infrastructure-as-code format here.'
   },
   {
     id: 'ace-430',
@@ -1778,7 +1778,7 @@ export const deploying: Question[] = [
     prompt: 'As per your manager’s instruction, you created a custom VPC with a subnet mask of 24 which provides 256 IP addresses but are only able to use 252 addresses out of it. Your manager is trying to figure out what’s going wrong and approaches you for the answer. What will you answer to your manager?',
     options: [
       'Inform manager that you will recreate the VPC because you feel something went wrong while creating a subnet.',
-      'GCP reserves four IP addresses in each primary subnet range, because of which the usable IP count is 252.',
+      'Google Cloud reserves four IP addresses in each primary subnet range, because of which the usable IP count is 252.',
       'It’s because your account has reached a soft limit for the number of private IP address space. Raise a request for a quota increase.',
       'It’s because you have created a subnet with overlapping IP addresses'
     ],
@@ -1900,13 +1900,13 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'When managing a customer-facing website, the frontend domain is configured with Cloud CDN for faster content delivery, and Compute Engine Instance groups are configured to support the backend functionality. There is a need to enforce visitors of the application who request through HTTP must be redirected to more secure HTTPS pages and essentially allow both HTTP and HTTPS traffic inside the same domain name of the website. Which of the following approaches should be followed to accomplish it?',
     options: [
-      'Reserve an IP address and bind it to both the HTTP and HTTPS frontend configuration in the TCP Proxy load balancer',
-      'Reserve an IP address and bind it to both the HTTP and HTTPS frontend configuration in the external HTTP(S) load balancer',
-      'Dynamically assign an ephemeral IP address and add the HTTP and HTTPS configurations separately in the external HTTP(S) load balancer',
-      'Dynamically assign a temporary IP address and update the HTTP and HTTPS configurations separately in SSL Proxy Load Balancer'
+      'Reserve an IP address and bind it to both the HTTP and HTTPS frontend configuration in the TCP proxy Network Load Balancer',
+      'Reserve an IP address and bind it to both the HTTP and HTTPS frontend configuration in the external Application Load Balancer',
+      'Dynamically assign an ephemeral IP address and add the HTTP and HTTPS configurations separately in the external Application Load Balancer',
+      'Dynamically assign a temporary IP address and update the HTTP and HTTPS configurations separately in SSL proxy Network Load Balancer'
     ],
     answer: 1,
-    explanation: 'An external Application Load Balancer (HTTP(S)) can have an HTTP forwarding rule and an HTTPS forwarding rule that share one reserved static IP, so the domain resolves to a single address. The HTTP frontend can then use a URL map that redirects to HTTPS. An ephemeral IP can change and can\'t easily be shared between the two forwarding rules. TCP Proxy and SSL Proxy load balancers work at layer 4, so they can\'t do HTTP redirects or work with Cloud CDN.'
+    explanation: 'An external Application Load Balancer (HTTP(S)) can have an HTTP forwarding rule and an HTTPS forwarding rule that share one reserved static IP, so the domain resolves to a single address. The HTTP frontend can then use a URL map that redirects to HTTPS. An ephemeral IP can change and can\'t easily be shared between the two forwarding rules. TCP proxy Network Load Balancer and SSL proxy Network Load Balancers work at layer 4, so they can\'t do HTTP redirects or work with Cloud CDN. Current names: SSL/TCP Proxy → proxy Network Load Balancer; HTTP(S) Load Balancing → Application Load Balancer.'
   },
   {
     id: 'ace-482',
@@ -1933,10 +1933,10 @@ export const deploying: Question[] = [
       'Implement Docker containerization technology to package code and related dependencies and adopt Cloud Run to run these containers',
       'Use an IaC tool like Pulumi to create, change, improve and standardize infrastructure requirements',
       'Create Startup scripts consisting of commands that run when a virtual machine (VM) instance boots and enable step-by-step automation',
-      'Use Cloud Foundation Toolkit that provides reference templates for Deployment Manager'
+      'Use Cloud Foundation Toolkit that provides reference blueprints for Terraform'
     ],
     answer: 3,
-    explanation: 'The Cloud Foundation Toolkit gives Google-maintained, enterprise-ready reference templates, so teams can standardize repeatable deployments quickly instead of writing everything from scratch. Containers and Cloud Run package applications rather than infrastructure, startup scripts only configure single VMs, and Pulumi is a third-party tool without Google\'s reference blueprints. This is debatable because Deployment Manager is now deprecated and the toolkit\'s current blueprints are Terraform modules, so today\'s answer would point to Terraform with the toolkit.'
+    explanation: 'The Cloud Foundation Toolkit gives Google-maintained, enterprise-ready Terraform blueprints, so teams can standardize repeatable deployments quickly instead of writing everything from scratch. Containers and Cloud Run package applications rather than infrastructure, startup scripts only configure single VMs, and Pulumi is a third-party tool without Google’s reference blueprints.'
   },
   {
     id: 'ace-484',
@@ -1947,12 +1947,12 @@ export const deploying: Question[] = [
     options: [
       'Check if the Config Connector was installed using the ‘namespaced’ mode',
       'Use the default service account and add it to the Config Connector',
-      'Disable the Workload Identity on your GKE cluster',
-      'Enable the Workload Identity on your GKE cluster',
+      'Disable the Workload Identity Federation for GKE on your GKE cluster',
+      'Enable the Workload Identity Federation for GKE on your GKE cluster',
       'Check if the Config Connector propagates labels found in the metadata'
     ],
     answer: [0, 3],
-    explanation: 'Config Connector authenticates to Google Cloud through Workload Identity Federation for GKE. If Workload Identity isn\'t enabled, the controller falls back to node credentials and access scopes, which causes the 403 insufficient authentication scopes error. Google\'s troubleshooting guide says to enable Workload Identity and, in namespaced mode, to check that each namespace\'s ConfigConnectorContext and Google service account binding are set up correctly. Disabling Workload Identity or using the default service account makes things worse, and label propagation has nothing to do with authentication. This is debatable because the install-mode check is less obviously tied to the scopes error than enabling Workload Identity is.'
+    explanation: 'Config Connector authenticates to Google Cloud through Workload Identity Federation for GKE. If Workload Identity Federation for GKE isn\'t enabled, the controller falls back to node credentials and access scopes, which causes the 403 insufficient authentication scopes error. Google\'s troubleshooting guide says to enable Workload Identity Federation for GKE and, in namespaced mode, to check that each namespace\'s ConfigConnectorContext and Google service account binding are set up correctly. Disabling Workload Identity Federation for GKE or using the default service account makes things worse, and label propagation has nothing to do with authentication. This is debatable because the install-mode check is less obviously tied to the scopes error than enabling Workload Identity Federation for GKE is. Current names: Workload Identity → Workload Identity Federation for GKE.'
   },
   {
     id: 'ace-489',
@@ -1974,7 +1974,7 @@ export const deploying: Question[] = [
     topic: 'VPC, DNS & connectivity',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'In your Company, two teams are working on their respective GCP projects with similar cloud resources. Due to time constraints and minimizing the work of creating separate VPC networks, they have a requirement of using the same subnet. Which of the following would enable both teams while maintaining centralized control over network resources like subnets, routes, and firewalls?',
+    prompt: 'In your Company, two teams are working on their respective Google Cloud projects with similar cloud resources. Due to time constraints and minimizing the work of creating separate VPC networks, they have a requirement of using the same subnet. Which of the following would enable both teams while maintaining centralized control over network resources like subnets, routes, and firewalls?',
     options: [
       'Create a Shared VPC and designate a project as a host project and attach the other service projects to it to use the same subnet',
       'Create a Shared VPC and attach service projects to it to use the same subnet',
@@ -2070,7 +2070,7 @@ export const deploying: Question[] = [
     options: [
       'Use the bq command-line tool with a cron job to schedule daily uploads',
       'Manually upload the files each day using the BigQuery web UI',
-      'Use Cloud Dataflow to transform and load the data into BigQuery',
+      'Use Dataflow to transform and load the data into BigQuery',
       'Set up a scheduled query in BigQuery to fetch the data from Cloud Storage'
     ],
     answer: 0,
@@ -2082,15 +2082,15 @@ export const deploying: Question[] = [
     topic: 'Cloud Run, App Engine & Functions',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are deploying a Cloud Function to process images uploaded to Cloud Storage. The function should automatically trigger whenever a new object is created. Which event type should you use?',
+    prompt: 'You are deploying a Cloud Run function to process images uploaded to Cloud Storage. The function should automatically trigger whenever a new object is created. Which event type should you use?',
     options: [
-      'Google Cloud Pub/Sub message event',
+      'Google Pub/Sub message event',
       'HTTP request event',
       'Cloud Storage object change notification event',
       'Firebase Authentication user event'
     ],
     answer: 2,
-    explanation: 'A Cloud Storage trigger on the object finalized event fires the function every time a new object is created in the bucket. A Pub/Sub trigger would need you to set up bucket notifications separately, an HTTP trigger requires a caller, and Firebase Authentication events have nothing to do with uploads.',
+    explanation: 'A Cloud Storage trigger on the object finalized event fires the function every time a new object is created in the bucket. A Pub/Sub trigger would need you to set up bucket notifications separately, an HTTP trigger requires a caller, and Firebase Authentication events have nothing to do with uploads. Current names: Cloud Functions → Cloud Run functions.',
     tip: 'New object in a bucket = google.cloud.storage.object.v1.finalized.'
   },
   {
@@ -2118,10 +2118,10 @@ export const deploying: Question[] = [
       'Create an instance template, then create a managed instance group using the template, and finally configure autoscaling policies based on CPU utilization',
       'Launch individual instances with autoscaling enabled, manually add them to a managed instance group, and configure autoscaling based on disk usage',
       'Create a managed instance group without an instance template, manually add instances to the group, and configure autoscaling based on network traffic',
-      'Use preemptible VMs in a managed instance group with no instance template and manually adjust the number of instances based on traffic patterns'
+      'Use Spot VMs in a managed instance group with no instance template and manually adjust the number of instances based on traffic patterns'
     ],
     answer: 0,
-    explanation: 'A managed instance group is built from an instance template, and the autoscaler then adds and removes identical instances from that template based on a signal such as CPU utilization. MIGs cannot be created without a template, and manually adding instances or manually resizing defeats the purpose of autoscaling.'
+    explanation: 'A managed instance group is built from an instance template, and the autoscaler then adds and removes identical instances from that template based on a signal such as CPU utilization. MIGs cannot be created without a template, and manually adding instances or manually resizing defeats the purpose of autoscaling. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'ace-545',
@@ -2143,7 +2143,7 @@ export const deploying: Question[] = [
     topic: 'Cloud Run, App Engine & Functions',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'A development team works with two Cloud Functions using node.js code. Each function corresponds to environments for development and production. The code is same except for the Cloud SQL database values used in each function. Team wants to maintain code in a clean and reusable fashion and decides to pass the database value during function execution. Which feature will allow you to do this?',
+    prompt: 'A development team works with two Cloud Run functions using node.js code. Each function corresponds to environments for development and production. The code is same except for the Cloud SQL database values used in each function. Team wants to maintain code in a clean and reusable fashion and decides to pass the database value during function execution. Which feature will allow you to do this?',
     options: [
       'Timeouts',
       'Service Accounts',
@@ -2151,7 +2151,7 @@ export const deploying: Question[] = [
       'Metadata'
     ],
     answer: 2,
-    explanation: 'Environment variables let the same function code read a different database connection value per deployment, keeping one clean codebase for dev and prod. Timeouts control execution length, service accounts control identity, and metadata is not a mechanism for injecting per-deployment configuration. For actual passwords, Secret Manager referenced from the function is the better practice.',
+    explanation: 'Environment variables let the same function code read a different database connection value per deployment, keeping one clean codebase for dev and prod. Timeouts control execution length, service accounts control identity, and metadata is not a mechanism for injecting per-deployment configuration. For actual passwords, Secret Manager referenced from the function is the better practice. Current names: Cloud Functions → Cloud Run functions.',
     tip: 'Config in environment variables, credentials in Secret Manager.'
   },
   {
@@ -2208,13 +2208,13 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'You are tasked with launching a Compute Engine instance with a non-boot persistent disk for data storage, and the instance should automatically restart if it crashes but not migrate if the host fails. What configuration should you apply?',
     options: [
-      'Attach a persistent disk during instance creation and set the availability policy to “Preemptible”',
+      'Attach a persistent disk during instance creation and set the availability policy to “Spot”',
       'Configure the persistent disk in the instance template and set the availability policy to “Terminate”',
       'Attach a persistent disk, configure automatic restart to “on”, and set the availability policy to “Host maintenance: Migrate”',
       'Attach a persistent disk, configure automatic restart to “on”, and set the availability policy to “Host maintenance: Terminate”'
     ],
     answer: 3,
-    explanation: 'Automatic restart set to on brings the VM back after a crash, and setting host maintenance behaviour to Terminate stops it rather than live-migrating it during host events. Migrate is the opposite of the requirement, Preemptible/Spot VMs cannot restart automatically, and Terminate alone without automatic restart does not cover crash recovery.'
+    explanation: 'Automatic restart set to on brings the VM back after a crash, and setting host maintenance behaviour to Terminate stops it rather than live-migrating it during host events. Migrate is the opposite of the requirement, Spot VMs cannot restart automatically, and Terminate alone without automatic restart does not cover crash recovery. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'ace-573',
@@ -2223,13 +2223,13 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'You have built a containerized web application and need to deploy it to a GKE cluster. Which steps should you follow to ensure the application is deployed correctly and accessible via a public IP?',
     options: [
-      'Build the container image, push it to Google Container Registry, create a Kubernetes Deployment and Service, and expose it using a LoadBalancer type Service',
+      'Build the container image, push it to Artifact Registry, create a Kubernetes Deployment and Service, and expose it using a LoadBalancer type Service',
       'Push the container image to Docker Hub, manually SSH into each node, and run the container',
       'Build the container image, deploy it using a Kubernetes Pod, and access the application via the pod IP',
       'Use kubectl to deploy the container directly without a Deployment resource and access it through the ClusterIP Service'
     ],
     answer: 0,
-    explanation: 'The standard flow is to build the image, push it to a registry, create a Deployment for the Pods, and expose it with a Service of type LoadBalancer to get an external IP. Container Registry has been shut down, so today you would push to Artifact Registry, but the steps are the same. Running containers by SSH on nodes bypasses Kubernetes, Pod IPs are internal and change, and a ClusterIP Service is only reachable inside the cluster.',
+    explanation: 'The standard flow is to build the image, push it to a registry, create a Deployment for the Pods, and expose it with a Service of type LoadBalancer to get an external IP. Running containers by SSH on nodes bypasses Kubernetes, Pod IPs are internal and change, and a ClusterIP Service is only reachable inside the cluster. Current names: Container Registry was shut down in 2025; Artifact Registry replaces it.',
     tip: 'Service type LoadBalancer gives an external IP; ClusterIP is internal only.'
   },
   {
@@ -2256,12 +2256,12 @@ export const deploying: Question[] = [
     prompt: 'You need to load a large dataset (in CSV format) from Cloud Storage into BigQuery. What is the most efficient way to accomplish this?',
     options: [
       'Use the `bq` command-line tool with the `bq load` command to load the CSV file directly from Cloud Storage into BigQuery',
-      'Use a Google Cloud Function that triggers when a new file is uploaded to Cloud Storage, and then writes the data into BigQuery using the BigQuery API',
+      'Use a Google Cloud Run function that triggers when a new file is uploaded to Cloud Storage, and then writes the data into BigQuery using the BigQuery API',
       'Create a Dataflow pipeline to process and load the CSV file from Cloud Storage into BigQuery',
       'Use a custom Python script that reads the data from Cloud Storage and uses the BigQuery API to insert it into a BigQuery table'
     ],
     answer: 0,
-    explanation: 'bq load with a gs:// source URI loads the CSV directly into BigQuery as a free batch load job, with no extra code or infrastructure. A Cloud Function, a Dataflow pipeline or a custom Python insert script all add components to build and run, and only make sense when data needs transformation or event-driven ingestion.'
+    explanation: 'bq load with a gs:// source URI loads the CSV directly into BigQuery as a free batch load job, with no extra code or infrastructure. A Cloud Run function, a Dataflow pipeline or a custom Python insert script all add components to build and run, and only make sense when data needs transformation or event-driven ingestion. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-585',
@@ -2407,12 +2407,12 @@ export const deploying: Question[] = [
     prompt: 'Your startup, “Flixly,” has accumulated a massive amount of unstructured data, including video files, text documents, and images in various formats. You are planning to run ETL transformations on this data and need to make it accessible on Google Cloud so that it can be processed by a Dataflow job. What should you do?',
     options: [
       'Upload the data to BigQuery using the bq command line tool.',
-      'Upload the data to Cloud Storage using the gsutil command line tool.',
+      'Upload the data to Cloud Storage using the gcloud storage command line tool.',
       'Upload the data into Cloud SQL using the import function in the console.',
-      'Upload the data into Cloud Spanner using the import function in the console.'
+      'Upload the data into Spanner using the import function in the console.'
     ],
     answer: 1,
-    explanation: 'Cloud Storage is the right home for large unstructured files like videos, documents and images, and Dataflow reads from it directly. BigQuery, Cloud SQL and Spanner are built for structured data and cannot sensibly store raw video or image files. Today you would upload with gcloud storage, and gsutil still works.'
+    explanation: 'Cloud Storage is the right home for large unstructured files like videos, documents and images, and Dataflow reads from it directly. BigQuery, Cloud SQL and Spanner are built for structured data and cannot sensibly store raw video or image files. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.'
   },
   {
     id: 'ace-641',
@@ -2436,7 +2436,7 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'A growing e-commerce platform, ShopMingle, is building a new inventory management system that will run on Google Kubernetes Engine. The team has determined that MongoDB is the ideal database solution for this system and needs to deploy a managed MongoDB environment that comes with a support Service Level Agreement (SLA). What should the team do?',
     options: [
-      'Set up a Cloud Bigtable cluster and interact with it using the HBase API.',
+      'Set up a Bigtable cluster and interact with it using the HBase API.',
       'Deploy MongoDB Atlas through the Google Cloud Marketplace.',
       'Install MongoDB by downloading the package and running it on Compute Engine instances.',
       'Install MongoDB by downloading the package and running it on a Managed Instance Group.'

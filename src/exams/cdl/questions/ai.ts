@@ -122,14 +122,14 @@ export const ai: Question[] = [
     prompt:
       'A small company with no data scientists wants to detect common objects and text in product photos. Which approach is fastest and simplest?',
     options: [
-      'Train a custom image model in Vertex AI using their product photos.',
+      'Train a custom image model in Gemini Enterprise Agent Platform using their product photos.',
       'Use a pre-trained API such as the Vision API.',
-      'Use AutoML in Vertex AI with a small set of labelled photos.',
+      'Use AutoML in Gemini Enterprise Agent Platform with a small set of labelled photos.',
       'Use BigQuery ML on the product catalogue data.'
     ],
     answer: 1,
     explanation:
-      'Pre-trained APIs are already trained on Google\'s data for common tasks. You send an image and get labels back — no training, no ML expertise. They are the right choice when the task is generic.'
+      'Pre-trained APIs are already trained on Google\'s data for common tasks. You send an image and get labels back — no training, no ML expertise. They are the right choice when the task is generic. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'ai-09',
@@ -139,13 +139,13 @@ export const ai: Question[] = [
       'A manufacturer needs to spot defects specific to its own products, which a generic image model does not recognise. It has thousands of labelled photos but no ML engineers. Which option fits?',
     options: [
       'The pre-trained Vision API, with the defect categories passed as parameters.',
-      'AutoML in Vertex AI, trained on its own labelled images without writing model code.',
-      'A custom model in Vertex AI, written in TensorFlow by a contracted data scientist.',
+      'AutoML in Gemini Enterprise Agent Platform, trained on its own labelled images without writing model code.',
+      'A custom model in Gemini Enterprise Agent Platform, written in TensorFlow by a contracted data scientist.',
       'BigQuery ML, with the photos loaded into a table as binary columns.'
     ],
     answer: 1,
     explanation:
-      'AutoML (now part of Vertex AI) is the middle road: your own data, so the model learns your domain, but Google handles model architecture and tuning. It sits between pre-trained APIs and fully custom models.'
+      'AutoML (now part of Gemini Enterprise Agent Platform) is the middle road: your own data, so the model learns your domain, but Google handles model architecture and tuning. It sits between pre-trained APIs and fully custom models. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'ai-10',
@@ -201,13 +201,13 @@ export const ai: Question[] = [
     prompt: 'What does BigQuery ML allow analysts to do?',
     options: [
       'Create and run machine learning models using standard SQL directly inside BigQuery.',
-      'Export BigQuery tables to Vertex AI notebooks and train models in Python there.',
+      'Export BigQuery tables to Gemini Enterprise Agent Platform notebooks and train models in Python there.',
       'Call pre-trained Vision and Natural Language models on data stored in BigQuery.',
       'Schedule BigQuery queries so that model features are refreshed every night.'
     ],
     answer: 0,
     explanation:
-      'CREATE MODEL ... is a SQL statement in BigQuery ML. It lets people who already know SQL build forecasting, classification and recommendation models where the data already lives.'
+      'CREATE MODEL ... is a SQL statement in BigQuery ML. It lets people who already know SQL build forecasting, classification and recommendation models where the data already lives. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'ai-14',
@@ -253,7 +253,7 @@ export const ai: Question[] = [
     id: 'ai-18',
     topic: 'Building with Google Cloud AI',
     difficulty: 'medium',
-    prompt: 'What is Vertex AI?',
+    prompt: 'What is Gemini Enterprise Agent Platform?',
     options: [
       'Google Cloud\'s unified platform for building, training, deploying and managing ML models, from AutoML to custom training.',
       'Google Cloud\'s collection of pre-trained APIs for vision, speech, language and translation, called through a single endpoint.',
@@ -262,7 +262,7 @@ export const ai: Question[] = [
     ],
     answer: 0,
     explanation:
-      'Vertex AI brings the whole ML workflow together: datasets, AutoML and custom training, model registry, deployment endpoints and monitoring. It is where a company builds the models that differentiate it.'
+      'Gemini Enterprise Agent Platform brings the whole ML workflow together: datasets, AutoML and custom training, model registry, deployment endpoints and monitoring. It is where a company builds the models that differentiate it. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'ai-19',
@@ -272,12 +272,12 @@ export const ai: Question[] = [
     options: [
       'TensorFlow is an open source ML framework created by Google; Cloud TPUs are Google-designed hardware accelerators for ML.',
       'TensorFlow is Google-designed hardware for ML; Cloud TPUs are the open source framework that runs on it.',
-      'TensorFlow is a managed training service in Vertex AI; Cloud TPUs are the notebooks used to write the training code.',
+      'TensorFlow is a managed training service in Gemini Enterprise Agent Platform; Cloud TPUs are the notebooks used to write the training code.',
       'TensorFlow is a proprietary Google framework; Cloud TPUs are commodity GPUs rented by the hour.'
     ],
     answer: 0,
     explanation:
-      'TensorFlow is the software (open source, runs anywhere). A TPU — Tensor Processing Unit — is a custom chip Google offers in its cloud to speed up training and inference. The exam guide wants you to keep the two straight.'
+      'TensorFlow is the software (open source, runs anywhere). A TPU — Tensor Processing Unit — is a custom chip Google offers in its cloud to speed up training and inference. The exam guide wants you to keep the two straight. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'ai-20',
@@ -308,7 +308,7 @@ export const ai: Question[] = [
     ],
     answer: 1,
     explanation:
-      'Responsible AI in a regulated setting means being able to explain outcomes and to detect unfair treatment of groups. Vertex AI includes explanation and model-monitoring tools for exactly this.'
+      'Responsible AI in a regulated setting means being able to explain outcomes and to detect unfair treatment of groups. Gemini Enterprise Agent Platform includes explanation and model-monitoring tools for exactly this. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
 
   {
@@ -319,13 +319,13 @@ export const ai: Question[] = [
       'A marketing team wants to draft product descriptions and summarise customer feedback using a large language model, without training anything themselves. Which Google Cloud offering fits?',
     options: [
       'Custom training of a large language model on Cloud TPUs using the company\'s own text.',
-      'Generative AI models such as Gemini through Vertex AI, used as a managed foundation model.',
-      'AutoML text classification in Vertex AI trained on the company\'s past product descriptions.',
+      'Generative AI models such as Gemini through Gemini Enterprise Agent Platform, used as a managed foundation model.',
+      'AutoML text classification in Gemini Enterprise Agent Platform trained on the company\'s past product descriptions.',
       'The Natural Language API called on existing descriptions to generate new ones by entity.'
     ],
     answer: 1,
     explanation:
-      'Foundation models in Vertex AI are the generative-AI equivalent of a pre-trained API: a ready-made model you prompt, optionally tune, and integrate — no training pipeline required. The trade-off logic is the same: speed and low effort versus differentiation.'
+      'Foundation models in Gemini Enterprise Agent Platform are the generative-AI equivalent of a pre-trained API: a ready-made model you prompt, optionally tune, and integrate — no training pipeline required. The trade-off logic is the same: speed and low effort versus differentiation. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'ai-23',
@@ -351,11 +351,11 @@ export const ai: Question[] = [
       'Document AI',
       'Natural Language API',
       'Vision API',
-      'AutoML Tables'
+      'Agent Platform AutoML (tabular)'
     ],
     answer: 0,
     explanation:
-      'Document AI combines OCR with pre-trained and custom processors for forms, invoices, receipts and contracts. It is the pre-trained-API answer for "we have a mountain of paperwork".'
+      'Document AI combines OCR with pre-trained and custom processors for forms, invoices, receipts and contracts. It is the pre-trained-API answer for "we have a mountain of paperwork". Current names: AutoML Vision, Tables and Video are now Agent Platform AutoML (image, tabular, video) in Gemini Enterprise Agent Platform.'
   },
 
 
@@ -368,13 +368,13 @@ export const ai: Question[] = [
       'A national bank receives 20,000 customer support calls a day. Management wants to know which topics drive complaints and how sentiment changes week by week, but reviewing recordings manually covers less than 1% of calls. The bank has no ML engineers. Which combination should it use?',
     options: [
       'Speech-to-Text to transcribe the calls, then the Natural Language API for sentiment and entities.',
-      'Speech-to-Text to transcribe the calls, then a custom sentiment model trained on Vertex AI.',
+      'Speech-to-Text to transcribe the calls, then a custom sentiment model trained on Gemini Enterprise Agent Platform.',
       'The Natural Language API on the call recordings directly, since it accepts audio input.',
       'Text-to-Speech to normalise the recordings, then the Natural Language API for sentiment.'
     ],
     answer: 0,
     explanation:
-      'Two pre-trained APIs chained: audio → text, then text → sentiment and topics. No training, no ML staff, deployable in days. A custom model is unwarranted for a generic task, and the other two options confuse the direction of the data.'
+      'Two pre-trained APIs chained: audio → text, then text → sentiment and topics. No training, no ML staff, deployable in days. A custom model is unwarranted for a generic task, and the other two options confuse the direction of the data. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'ai-26',
@@ -383,14 +383,14 @@ export const ai: Question[] = [
     prompt:
       'A fashion retailer wants to tag product photos with its own internal categories — "boho", "athleisure", "capsule" — which the generic Vision API labels do not match. It has 50,000 photos already tagged by merchandisers and two analysts who know no ML code. What should it use?',
     options: [
-      'AutoML image classification in Vertex AI, trained on the tagged photos.',
+      'AutoML image classification in Gemini Enterprise Agent Platform, trained on the tagged photos.',
       'The pre-trained Vision API with the internal categories added as labels.',
       'A custom convolutional network built by a contracted data scientist.',
       'The Vision API for labels, mapped to internal categories with a lookup table.'
     ],
     answer: 0,
     explanation:
-      'Own labelled data, own categories, no ML engineers: AutoML. The generic API cannot learn "boho"; a from-scratch model needs expertise they lack; BigQuery ML works on tabular data in BigQuery, not images.'
+      'Own labelled data, own categories, no ML engineers: AutoML. The generic API cannot learn "boho"; a from-scratch model needs expertise they lack; BigQuery ML works on tabular data in BigQuery, not images. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'ai-27',
@@ -400,13 +400,13 @@ export const ai: Question[] = [
       'A supermarket chain\'s analysts live in BigQuery, where five years of sales data already sit. They want weekly demand forecasts per store and product to cut waste, and they want to iterate themselves without waiting for the data science team. What is the most appropriate tool?',
     options: [
       'BigQuery ML',
-      'AutoML Tables in Vertex AI',
+      'Agent Platform AutoML (tabular)',
       'Custom TensorFlow on Cloud TPUs',
       'Looker forecasting'
     ],
     answer: 0,
     explanation:
-      'The data is in BigQuery, the people speak SQL, and forecasting is a standard model type — BigQuery ML (ARIMA_PLUS) lets them build and run it with CREATE MODEL. Moving the data out to a custom TPU pipeline adds cost and dependency for no gain.'
+      'The data is in BigQuery, the people speak SQL, and forecasting is a standard model type — BigQuery ML (ARIMA_PLUS) lets them build and run it with CREATE MODEL. Moving the data out to a custom TPU pipeline adds cost and dependency for no gain. Current names: Vertex AI → Gemini Enterprise Agent Platform; AutoML Vision, Tables and Video are now Agent Platform AutoML (image, tabular, video) in Gemini Enterprise Agent Platform.'
   },
   {
     id: 'ai-28',
@@ -431,14 +431,14 @@ export const ai: Question[] = [
     prompt:
       'A legal-services firm wants a tool that drafts first versions of standard contracts from a short brief and summarises long case files. It wants results this quarter and has no data science team, but the documents are confidential and must not train a public model. What should it use?',
     options: [
-      'A Gemini foundation model through Vertex AI, grounded on its own documents, under Google Cloud\'s data-use terms.',
+      'A Gemini foundation model through Gemini Enterprise Agent Platform, grounded on its own documents, under Google Cloud\'s data-use terms.',
       'A large language model trained from scratch on its own documents using Cloud TPUs, so no data leaves the firm.',
-      'AutoML text classification in Vertex AI trained on labelled clauses from past contracts, with templates for drafting.',
+      'AutoML text classification in Gemini Enterprise Agent Platform trained on labelled clauses from past contracts, with templates for drafting.',
       'The Natural Language API for entity extraction from case files, combined with document templates for drafting.'
     ],
     answer: 0,
     explanation:
-      'Generative text tasks with speed and no ML team point to a managed foundation model. Vertex AI lets enterprises use Gemini with their data under contractual terms that keep customer data out of Google\'s training — the trade-off logic of "pre-trained beats custom when the task is generic" applied to generative AI.'
+      'Generative text tasks with speed and no ML team point to a managed foundation model. Gemini Enterprise Agent Platform lets enterprises use Gemini with their data under contractual terms that keep customer data out of Google\'s training — the trade-off logic of "pre-trained beats custom when the task is generic" applied to generative AI. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'ai-30',

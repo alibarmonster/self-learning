@@ -548,14 +548,14 @@ const gcloudSpecs: Spec[] = [
   cmd('gcloud', 'secrets versions access', 'VERSION', '*secret'),
   cmd('gcloud', 'secrets list', '', GCLOUD_LIST),
   cmd('gcloud', 'secrets add-iam-policy-binding', 'SECRET', '*member *role'),
-  cmd('gcloud', 'deployment-manager deployments create', 'DEPLOYMENT_NAME', 'config template composite-type !preview properties description labels~list !async !automatic-rollback-on-error', {
-    oneOf: [['config', 'template', 'composite-type']]
+  cmd('gcloud', 'infra-manager previews create', 'PREVIEW', '*service-account local-source gcs-source git-source-repo git-source-directory git-source-ref input-values~list deployment location', {
+    oneOf: [['local-source', 'gcs-source', 'git-source-repo']]
   }),
-  cmd('gcloud', 'deployment-manager deployments update', 'DEPLOYMENT_NAME', 'config template composite-type !preview create-policy delete-policy~lower:abandon,delete', {
-    atMostOne: [['config', 'template', 'composite-type']]
+  cmd('gcloud', 'infra-manager deployments apply', 'DEPLOYMENT', '*service-account local-source gcs-source git-source-repo git-source-directory git-source-ref input-values~list location', {
+    oneOf: [['local-source', 'gcs-source', 'git-source-repo']]
   }),
-  cmd('gcloud', 'deployment-manager deployments delete', 'DEPLOYMENT_NAME'),
-  cmd('gcloud', 'deployment-manager deployments list', '', GCLOUD_LIST),
+  cmd('gcloud', 'infra-manager deployments describe', 'DEPLOYMENT', 'location'),
+  cmd('gcloud', 'infra-manager deployments delete', 'DEPLOYMENT', 'location'),
   cmd('gcloud', 'pubsub topics create', 'TOPIC...', 'labels~list message-retention-duration schema kms-key-name'),
   cmd('gcloud', 'pubsub topics list', '', GCLOUD_LIST),
   cmd('gcloud', 'pubsub topics delete', 'TOPIC...'),

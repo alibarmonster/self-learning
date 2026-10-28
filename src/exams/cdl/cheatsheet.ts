@@ -48,7 +48,7 @@ export const cheatsheet: Cheatsheet = {
         ['Lift-and-shift VMware estate as-is', 'Google Cloud VMware Engine'],
         ['Containers + microservices, team can run a cluster', 'GKE (Standard, or Autopilot if they want no node management)'],
         ['A container, scale to zero, no cluster, pay per request', 'Cloud Run'],
-        ['Small piece of code triggered by an event (file upload, Pub/Sub message, HTTP)', 'Cloud Functions (Cloud Run functions)'],
+        ['Small piece of code triggered by an event (file upload, Pub/Sub message, HTTP)', 'Cloud Run functions (Cloud Run functions)'],
         ['Web app from source code, classic PaaS, no containers mentioned', 'App Engine'],
         ['Batch job that can be interrupted and restarted, cost matters most', 'Spot / preemptible VMs']
       ],
@@ -58,7 +58,7 @@ export const cheatsheet: Cheatsheet = {
         ['GKE', 'Managed Kubernetes', 'Containerised microservices at scale, portability, the team already speaks Kubernetes', 'A single small service; a team with no ops capacity (use Cloud Run)'],
         ['GKE Autopilot', 'GKE with Google-managed nodes', 'Kubernetes API without node sizing, upgrades or patching; pay per pod', 'Workloads that need custom node configuration'],
         ['Cloud Run', 'Serverless containers', 'Any container, HTTP or event driven, scale to zero, no cluster', 'Long-running stateful servers; workloads that cannot tolerate cold starts'],
-        ['Cloud Functions', 'Serverless functions (FaaS)', 'Glue code: react to an event, run briefly, exit', 'Whole applications; long jobs'],
+        ['Cloud Run functions', 'Serverless functions (FaaS)', 'Glue code: react to an event, run briefly, exit', 'Whole applications; long jobs'],
         ['App Engine', 'Serverless PaaS for apps', 'Deploy source for a web app or API, standard runtimes, versioning and traffic splitting', 'Custom OS-level needs'],
         ['Spot VMs', 'Discounted, reclaimable VMs', 'Fault-tolerant batch: rendering, simulations, data crunching', 'Databases, anything customer-facing']
       ]
@@ -71,7 +71,7 @@ export const cheatsheet: Cheatsheet = {
       path: [
         ['Files, images, video, backups, any blob', 'Cloud Storage'],
         ['Relational (tables, SQL, transactions), one region, ordinary scale', 'Cloud SQL (MySQL, PostgreSQL, SQL Server)'],
-        ['Relational but global, horizontally scalable, strong consistency', 'Cloud Spanner'],
+        ['Relational but global, horizontally scalable, strong consistency', 'Spanner'],
         ['NoSQL, enormous throughput, low latency, time series / IoT / ad-tech', 'Bigtable'],
         ['NoSQL documents for a mobile or web app, real-time sync, offline', 'Firestore'],
         ['In-memory cache or session store', 'Memorystore (Redis / Memcached)'],
@@ -82,7 +82,7 @@ export const cheatsheet: Cheatsheet = {
       rows: [
         ['Cloud Storage', 'Object storage (buckets)', 'Unstructured files of any size; static website assets; archives; data lake landing zone', 'Row-level queries or transactions'],
         ['Cloud SQL', 'Managed relational', 'Existing MySQL/PostgreSQL/SQL Server app; transactional web backends; modest scale', 'Global writes; petabyte analytics'],
-        ['Cloud Spanner', 'Distributed relational', 'Global users, unlimited horizontal scale, SQL and ACID together (banking, inventory, gaming)', 'Small apps where Cloud SQL is cheaper and simpler'],
+        ['Spanner', 'Distributed relational', 'Global users, unlimited horizontal scale, SQL and ACID together (banking, inventory, gaming)', 'Small apps where Cloud SQL is cheaper and simpler'],
         ['Bigtable', 'NoSQL wide-column', 'Millions of writes per second, single-digit-millisecond reads, sparse tables, time series', 'Joins, SQL, transactions across rows'],
         ['Firestore', 'NoSQL document', 'Consumer app data, hierarchical documents, live sync to clients, Firebase', 'Heavy analytics; wide-column throughput'],
         ['BigQuery', 'Serverless data warehouse', 'Analytics and BI on structured data at any scale; streaming inserts; BigQuery ML', 'Serving an app\'s transactions'],
@@ -140,17 +140,17 @@ export const cheatsheet: Cheatsheet = {
       note: 'The guide frames this as four trade-offs: speed, effort, differentiation and expertise. Pre-trained wins the first two, custom wins the third and costs the fourth.',
       path: [
         ['Common task (label an image, transcribe audio, translate), no ML team', 'Pre-trained API — call it today'],
-        ['Generic model is not accurate enough on YOUR products / documents, you have labelled data, still no ML engineers', 'AutoML in Vertex AI — your data, Google\'s modelling'],
-        ['The problem is unique or the model itself is the competitive advantage, and you have ML expertise', 'Custom model on Vertex AI (TensorFlow, PyTorch, TPUs)'],
+        ['Generic model is not accurate enough on YOUR products / documents, you have labelled data, still no ML engineers', 'AutoML in Gemini Enterprise Agent Platform — your data, Google\'s modelling'],
+        ['The problem is unique or the model itself is the competitive advantage, and you have ML expertise', 'Custom model on Gemini Enterprise Agent Platform (TensorFlow, PyTorch, TPUs)'],
         ['Analysts want predictions with SQL, data already in BigQuery', 'BigQuery ML'],
-        ['Generate or summarise text, images, code; chat over documents', 'Gemini foundation models in Vertex AI (prompt, then tune if needed)'],
+        ['Generate or summarise text, images, code; chat over documents', 'Gemini foundation models in Gemini Enterprise Agent Platform (prompt, then tune if needed)'],
         ['Extract fields from invoices, forms, contracts', 'Document AI']
       ],
       columns: ['Approach', 'Speed', 'Effort & expertise', 'Differentiation'],
       rows: [
         ['Pre-trained API', 'Minutes', 'Lowest — an API call', 'None; everyone gets the same model'],
-        ['AutoML (Vertex AI)', 'Days', 'Low — supply labelled data, no model code', 'Medium; the model knows your domain'],
-        ['Custom model (Vertex AI)', 'Weeks to months', 'High — data scientists, pipelines, tuning', 'Highest; the model is yours'],
+        ['AutoML (Gemini Enterprise Agent Platform)', 'Days', 'Low — supply labelled data, no model code', 'Medium; the model knows your domain'],
+        ['Custom model (Gemini Enterprise Agent Platform)', 'Weeks to months', 'High — data scientists, pipelines, tuning', 'Highest; the model is yours'],
         ['BigQuery ML', 'Hours', 'Low — SQL only', 'Medium; standard model types on your data'],
         ['Foundation models (Gemini)', 'Minutes', 'Low to medium — prompt design, optional tuning', 'Medium; grounded on your data']
       ]

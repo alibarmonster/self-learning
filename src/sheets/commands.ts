@@ -322,7 +322,7 @@ export const commands: Cheatsheet = {
     {
       id: 'gcloud-misc',
       part: 'gcloud',
-      title: 'Logging, Cloud SQL, KMS and Deployment Manager',
+      title: 'Logging, Cloud SQL, KMS and Infrastructure Manager',
       tables: [
         {
           mono: true,
@@ -336,8 +336,8 @@ export const commands: Cheatsheet = {
             ['Show a backup', 'gcloud sql backups describe BACKUP_ID --instance=NAME'],
             ['Export to a SQL file in a bucket', 'gcloud sql export sql NAME gs://BUCKET/dump.sql --database=DB'],
             ['Decrypt with a KMS key', 'gcloud kms decrypt --key=KEY --keyring=RING --location=LOC --ciphertext-file=in --plaintext-file=out'],
-            ['Preview a Deployment Manager change', 'gcloud deployment-manager deployments create NAME --config=config.yaml --preview'],
-            ['Update a deployment in place', 'gcloud deployment-manager deployments update NAME --config=config.yaml']
+            ['Preview a Terraform change (Infrastructure Manager)', 'gcloud infra-manager previews create projects/P/locations/L/previews/NAME --service-account=projects/P/serviceAccounts/SA --local-source=./infra'],
+            ['Create or update a deployment', 'gcloud infra-manager deployments apply projects/P/locations/L/deployments/NAME --service-account=projects/P/serviceAccounts/SA --local-source=./infra']
           ]
         }
       ]
@@ -519,7 +519,7 @@ export const commands: Cheatsheet = {
           ]
         }
       ],
-      tip: 'For Google-recommended infrastructure as code, the answer is Terraform; Deployment Manager is legacy and Config Connector is for teams that live in Kubernetes.'
+      tip: 'For Google-recommended infrastructure as code, the answer is Terraform (run by Infrastructure Manager, which replaced Deployment Manager) and Config Connector is for teams that live in Kubernetes.'
     },
     {
       id: 'docker',

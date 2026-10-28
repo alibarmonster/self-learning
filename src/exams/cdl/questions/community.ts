@@ -134,13 +134,13 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'You are a program manager within a Software as a Service (SaaS) company that offers rendering software for animation studios. Your team needs the ability to allow scenes to be scheduled at will and to be interrupted at any time to restart later. Any individual scene rendering takes less than 12 hours to complete, and there is no service-level agreement (SLA) for the completion time for all scenes. Results will be stored in a global Cloud Storage bucket. The compute resources are not bound to any single geographical location. This software needs to run on Google Cloud in a cost-optimized way. What should you do?',
     options: [
-      'Deploy the application on Compute Engine using preemptible instances',
+      'Deploy the application on Compute Engine using Spot instances',
       'Develop the application so it can run in an unmanaged instance group',
       'Create a reservation for the minimum number of Compute Engine instances you will use',
-      'Start more instances with fewer virtual centralized processing units (vCPUs) instead of fewer instances with more vCPUs',
+      'Start more instances with fewer virtual centralized processing units (vCPUs) instead of fewer instances with more vCPUs'
     ],
     answer: 0,
-    explanation: 'Interruptible, restartable work with no completion SLA is the textbook preemptible (Spot) case — a large discount in exchange for a risk the workload already tolerates. Reservations and instance shape do not reduce the rate.',
+    explanation: 'Interruptible, restartable work with no completion SLA is the textbook Spot VM case — a large discount in exchange for a risk the workload already tolerates. Reservations and instance shape do not reduce the rate. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.',
     votes: [{ pick: [0], pct: 100 }]
   },
   {
@@ -198,12 +198,12 @@ export const community: Question[] = [
     prompt: 'Your company\'s development team is building an application that will be deployed on Cloud Run. You are designing a CI/CD pipeline so that any new version of the application can be deployed in the fewest number of steps possible using the CI/CD pipeline you are designing. You need to select a storage location for the images of the application after the CI part of your pipeline has built them. What should you do?',
     options: [
       'Create a Compute Engine image containing the application',
-      'Store the images in Container Registry',
+      'Store the images in Artifact Registry',
       'Store the images in Cloud Storage',
-      'Create a Compute Engine disk containing the application',
+      'Create a Compute Engine disk containing the application'
     ],
     answer: 1,
-    explanation: 'Cloud Run deploys container images, and Container Registry (now Artifact Registry) is the image store the pipeline pushes to and Cloud Run pulls from. Compute Engine images and disks are for VMs.',
+    explanation: 'Cloud Run deploys container images, and Artifact Registry is the image store the pipeline pushes to and Cloud Run pulls from. Compute Engine images and disks are for VMs. Current names: Container Registry was shut down in 2025; Artifact Registry replaces it.',
     votes: [{ pick: [1], pct: 75 }, { pick: [2], pct: 25 }]
   },
   {
@@ -310,12 +310,12 @@ export const community: Question[] = [
     prompt: 'You are a program manager for a team of developers who are building an event-driven application to allow users to follow one another\'s activities in the app. Each time a user adds himself as a follower of another user, a write occurs in the real-time database. The developers will develop a lightweight piece of code that can respond to database writes and generate a notification to let the appropriate users know that they have gained new followers. The code should integrate with other cloud services such as Pub/Sub, Firebase, and Cloud APIs to streamline the orchestration process. The application requires a platform that automatically manages underlying infrastructure and scales to zero when there is no activity. Which primary compute resource should your developers select, given these requirements?',
     options: [
       'Google Kubernetes Engine',
-      'Cloud Functions',
+      'Cloud Run functions',
       'App Engine flexible environment',
       'Compute Engine',
     ],
     answer: 1,
-    explanation: 'A lightweight function triggered by database writes, integrating with Pub/Sub and Firebase, scaling to zero — Cloud Functions. GKE and Compute Engine need infrastructure management, and App Engine flexible does not scale to zero.',
+    explanation: 'A lightweight function triggered by database writes, integrating with Pub/Sub and Firebase, scaling to zero — Cloud Run functions. GKE and Compute Engine need infrastructure management, and App Engine flexible does not scale to zero. Current names: Cloud Functions → Cloud Run functions.',
     votes: [{ pick: [1], pct: 100 }]
   },
   {
@@ -328,7 +328,7 @@ export const community: Question[] = [
       'Firestore',
       'Cloud Data Fusion',
       'Cloud SQL',
-      'Cloud Bigtable',
+      'Bigtable',
     ],
     answer: 3,
     explanation: 'Huge volumes of sensor readings needing high-speed writes and low-latency reads are Bigtable\'s workload. Firestore and Cloud SQL do not sustain that write rate, and Data Fusion is an ETL tool.'
@@ -342,11 +342,11 @@ export const community: Question[] = [
     options: [
       'Pub/Sub',
       'Dataflow',
-      'Data Catalog',
+      'Knowledge Catalog',
       'Dataprep by Trifacta',
     ],
     answer: 1,
-    explanation: 'Dataflow is the managed, autoscaling stream and batch processing service. Pub/Sub carries the events but does not process them, and Data Catalog and Dataprep serve other stages of the pipeline.',
+    explanation: 'Dataflow is the managed, autoscaling stream and batch processing service. Pub/Sub carries the events but does not process them, and Knowledge Catalog and Dataprep serve other stages of the pipeline. Current names: Data Catalog → Knowledge Catalog (formerly Dataplex Universal Catalog).',
     votes: [{ pick: [1], pct: 97 }]
   },
   {
@@ -359,10 +359,10 @@ export const community: Question[] = [
       'Cloud Scheduler',
       'Cloud Code',
       'Cloud Build',
-      'Cloud Deployment Manager',
+      'Infrastructure Manager'
     ],
     answer: 2,
-    explanation: 'Cloud Build is the managed CI/CD service that runs builds, tests and deployments. Cloud Scheduler runs cron jobs, Cloud Code is an IDE plugin, and Deployment Manager provisions infrastructure.',
+    explanation: 'Cloud Build is the managed CI/CD service that runs builds, tests and deployments. Cloud Scheduler runs cron jobs, Cloud Code is an IDE plugin, and Infrastructure Manager provisions infrastructure from Terraform. Current names: Deployment Manager reached end of support in 2026; Infrastructure Manager (managed Terraform) replaces it.',
     votes: [{ pick: [2], pct: 100 }]
   },
   {
@@ -406,11 +406,11 @@ export const community: Question[] = [
     options: [
       'Google Kubernetes Engine',
       'Firebase',
-      'Cloud Functions',
+      'Cloud Run functions',
       'App Engine',
     ],
     answer: 1,
-    explanation: 'Firebase is the fully featured mobile development platform, bundling auth, database, hosting, analytics and messaging. App Engine hosts the backend but is not mobile-specific.',
+    explanation: 'Firebase is the fully featured mobile development platform, bundling auth, database, hosting, analytics and messaging. App Engine hosts the backend but is not mobile-specific. Current names: Cloud Functions → Cloud Run functions.',
     votes: [{ pick: [1], pct: 77 }, { pick: [3], pct: 23 }]
   },
   {
@@ -437,9 +437,9 @@ export const community: Question[] = [
     prompt: 'Your organization wants to migrate its data management solutions to Google Cloud because it needs to dynamically scale up or down and to run transactional SQL queries against historical data at scale. Which Google Cloud product or service should your organization use?',
     options: [
       'BigQuery',
-      'Cloud Bigtable',
+      'Bigtable',
       'Pub/Sub',
-      'Cloud Spanner',
+      'Spanner',
     ],
     answer: 3,
     explanation: 'Dynamic scaling plus transactional SQL at scale is Spanner. BigQuery is analytical rather than transactional, Bigtable is not relational, and Pub/Sub is messaging.',
@@ -453,12 +453,12 @@ export const community: Question[] = [
     prompt: 'Your organization needs to categorize objects in a large group of static images using machine learning. Which Google Cloud product or service should your organization use?',
     options: [
       'BigQuery ML',
-      'AutoML Video Intelligence',
+      'Agent Platform AutoML (video)',
       'Cloud Vision API',
-      'AutoML Tables',
+      'Agent Platform AutoML (tabular)'
     ],
     answer: 2,
-    explanation: 'Categorising objects in static images with a ready-made model is the Vision API. AutoML Video is for video, AutoML Tables and BigQuery ML for tabular data.',
+    explanation: 'Categorising objects in static images with a ready-made model is the Vision API. Agent Platform AutoML (video) is for video, Agent Platform AutoML (tabular) and BigQuery ML for tabular data. Current names: AutoML Vision, Tables and Video are now Agent Platform AutoML (image, tabular, video) in Gemini Enterprise Agent Platform.',
     votes: [{ pick: [2], pct: 97 }]
   },
   {
@@ -500,12 +500,12 @@ export const community: Question[] = [
     prompt: 'Your organization is migrating to Google Cloud. As part of that effort, it needs to move terabytes of data from on-premises file servers to Cloud Storage. Your organization wants the migration process to be automated and to be managed by Google. Your organization has an existing Dedicated Interconnect connection that it wants to use. Which Google Cloud product or feature should your organization use?',
     options: [
       'Storage Transfer Service',
-      'Migrate for Anthos',
+      'Migrate to Containers',
       'BigQuery Data Transfer Service',
-      'Transfer Appliance',
+      'Transfer Appliance'
     ],
     answer: 0,
-    explanation: 'Storage Transfer Service is the managed, automated transfer for on-premises data and can use the existing Dedicated Interconnect. Transfer Appliance is a physical shipment, used when no such link exists.',
+    explanation: 'Storage Transfer Service is the managed, automated transfer for on-premises data and can use the existing Dedicated Interconnect. Transfer Appliance is a physical shipment, used when no such link exists. Current names: Migrate for Anthos → Migrate to Containers; Migrate for Compute Engine → Migrate to Virtual Machines.',
     votes: [{ pick: [0], pct: 100 }]
   },
   {
@@ -517,7 +517,7 @@ export const community: Question[] = [
     options: [
       'Cloud SQL',
       'Dataproc',
-      'Cloud Spanner',
+      'Spanner',
       'BigQuery',
     ],
     answer: 3,
@@ -549,11 +549,11 @@ export const community: Question[] = [
     options: [
       'Google Cloud firewalls',
       'Security Command Center',
-      'Cloud Deployment Manager',
-      'Google Cloud Armor',
+      'Infrastructure Manager',
+      'Google Cloud Armor'
     ],
     answer: 1,
-    explanation: 'Security Command Center generates findings and recommendations for security risks and compliance violations. Firewalls and Cloud Armor enforce rules; Deployment Manager provisions resources.',
+    explanation: 'Security Command Center generates findings and recommendations for security risks and compliance violations. Firewalls and Cloud Armor enforce rules; Infrastructure Manager provisions resources. Current names: Deployment Manager reached end of support in 2026; Infrastructure Manager (managed Terraform) replaces it.',
     votes: [{ pick: [1], pct: 100 }]
   },
   {
@@ -563,13 +563,13 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'Which Google Cloud product provides a consistent platform for multi-cloud application deployments and extends other Google Cloud services to your organization\'s environment?',
     options: [
-      'Google Kubernetes Engine',
+      'Cloud Run',
       'Virtual Public Cloud',
       'Compute Engine',
-      'Anthos',
+      'GKE with fleet management'
     ],
     answer: 3,
-    explanation: 'Anthos is the platform that runs and manages applications consistently across Google Cloud, on-premises and other clouds, extending Google Cloud services to those environments.',
+    explanation: 'GKE fleet management runs and manages applications consistently across Google Cloud, on-premises (Google Distributed Cloud) and other clouds, extending Google Cloud services to those environments. Cloud Run and Compute Engine run in Google Cloud only. Current names: Anthos became GKE Enterprise in 2023, and since September 2025 its features are part of GKE itself (fleet management), with Google Distributed Cloud for on-premises.',
     votes: [{ pick: [3], pct: 96 }]
   },
   {
@@ -582,10 +582,10 @@ export const community: Question[] = [
       'Cloud SQL',
       'Cloud Storage',
       'Firestore',
-      'Cloud Spanner',
+      'Spanner',
     ],
     answer: 3,
-    explanation: 'Strong transactional consistency worldwide plus effectively unlimited growth describes Cloud Spanner. Cloud SQL scales vertically on one instance, and Firestore and Cloud Storage are not relational transactional stores.',
+    explanation: 'Strong transactional consistency worldwide plus effectively unlimited growth describes Spanner. Cloud SQL scales vertically on one instance, and Firestore and Cloud Storage are not relational transactional stores.',
     votes: [{ pick: [3], pct: 90 }]
   },
   {
@@ -597,7 +597,7 @@ export const community: Question[] = [
     options: [
       'Cloud Storage',
       'Cloud SQL',
-      'Cloud Spanner',
+      'Spanner',
       'BigQuery',
     ],
     answer: 0,
@@ -676,11 +676,11 @@ export const community: Question[] = [
     options: [
       'Export the VMs into VMDK format, and import them into Compute Engine',
       'Export the VMs into VMDK format, and import them into Google Cloud VMware Engine',
-      'Migrate the workloads using Migrate for Compute Engine',
-      'Migrate the workloads using Migrate for Anthos',
+      'Migrate the workloads using Migrate to Virtual Machines',
+      'Migrate the workloads using Migrate to Containers'
     ],
     answer: 3,
-    explanation: 'The goal is to modernise as much as possible with cloud-native technology. Migrate for Anthos converts the VM workloads into containers; Migrate for Compute Engine and VMware Engine would only rehost them as VMs.',
+    explanation: 'The goal is to modernise as much as possible with cloud-native technology. Migrate to Containers converts the VM workloads into containers; Migrate to Virtual Machines and VMware Engine would only rehost them as VMs. Current names: Migrate for Anthos → Migrate to Containers; Migrate for Compute Engine → Migrate to Virtual Machines.',
     votes: [{ pick: [3], pct: 58 }, { pick: [2], pct: 40 }]
   },
   {
@@ -740,11 +740,11 @@ export const community: Question[] = [
     options: [
       'BigQuery ML',
       'TensorFlow',
-      'AutoML Tables',
-      'Cloud Bigtable ML',
+      'Agent Platform AutoML (tabular)',
+      'Bigtable ML'
     ],
     answer: 0,
-    explanation: 'BigQuery ML builds and runs models with standard SQL against data already in the warehouse.',
+    explanation: 'BigQuery ML builds and runs models with standard SQL against data already in the warehouse. Current names: AutoML Vision, Tables and Video are now Agent Platform AutoML (image, tabular, video) in Gemini Enterprise Agent Platform.',
     votes: [{ pick: [0], pct: 100 }]
   },
   {
@@ -757,10 +757,10 @@ export const community: Question[] = [
       'Purchase committed use discounts for the baseline load',
       'Purchase committed use discounts for the expected spike load',
       'Leverage sustained use discounts for your virtual machines',
-      'Run the workload on preemptible VM instances',
+      'Run the workload on Spot VM instances'
     ],
     answer: 0,
-    explanation: 'The baseline load runs constantly, so a commitment pays off there; the spikes are intermittent and are better served on demand. Committing to the spike level would leave capacity paid for and idle most of the time.',
+    explanation: 'The baseline load runs constantly, so a commitment pays off there; the spikes are intermittent and are better served on demand. Committing to the spike level would leave capacity paid for and idle most of the time. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.',
     votes: [{ pick: [0], pct: 42 }, { pick: [2], pct: 41 }, { pick: [3], pct: 17 }]
   },
   {
@@ -895,7 +895,7 @@ export const community: Question[] = [
     options: [
       'Compute Engine with BigQuery',
       'Dataproc',
-      'Google Kubernetes Engine with Cloud Bigtable',
+      'Google Kubernetes Engine with Bigtable',
       'Dataflow',
     ],
     answer: 3,
@@ -996,15 +996,15 @@ export const community: Question[] = [
     topic: 'Migration & modernisation',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'How do Migrate for Compute Engine and Migrate for Anthos differ?',
+    prompt: 'How do Migrate to Virtual Machines and Migrate to Containers differ?',
     options: [
-      'Unlike Migrate for Anthos, Migrate for Compute Engine assumes that the migration source is VMware vSphere.',
-      'Migrate for Compute Engine charges for ingress, but Migrate for Anthos does not.',
-      'Migrate for Compute Engine is closed source, and Migrate for Anthos is open source.',
-      'Migrate for Anthos migrates to containers, and Migrate for Compute Engine migrates to virtual machines.',
+      'Unlike Migrate to Containers, Migrate to Virtual Machines assumes that the migration source is VMware vSphere.',
+      'Migrate to Virtual Machines charges for ingress, but Migrate to Containers does not.',
+      'Migrate to Virtual Machines is closed source, and Migrate to Containers is open source.',
+      'Migrate to Containers migrates to containers, and Migrate to Virtual Machines migrates to virtual machines.'
     ],
     answer: 3,
-    explanation: 'The two tools differ in the target: Migrate for Anthos turns workloads into containers, Migrate for Compute Engine moves them onto virtual machines.'
+    explanation: 'The two tools differ in the target: Migrate to Containers turns workloads into containers, Migrate to Virtual Machines moves them onto virtual machines. Current names: Migrate for Anthos → Migrate to Containers; Migrate for Compute Engine → Migrate to Virtual Machines.'
   },
   {
     id: 'et-064',
@@ -1091,10 +1091,10 @@ export const community: Question[] = [
       'TensorFlow',
       'BigQuery ML',
       'Vision API',
-      'AutoML Vision',
+      'Agent Platform AutoML (image)'
     ],
     answer: 0,
-    explanation: 'TensorFlow is the open-source machine learning framework, and Cloud TPUs are built to accelerate it. BigQuery ML, Vision API and AutoML are managed services, not open-source platforms.'
+    explanation: 'TensorFlow is the open-source machine learning framework, and Cloud TPUs are built to accelerate it. BigQuery ML, Vision API and AutoML are managed services, not open-source platforms. Current names: AutoML Vision, Tables and Video are now Agent Platform AutoML (image, tabular, video) in Gemini Enterprise Agent Platform.'
   },
   {
     id: 'et-070',
@@ -1149,12 +1149,12 @@ export const community: Question[] = [
     prompt: 'A global organization is developing an application to manage payments and online bank accounts in multiple regions. Each transaction must be handled consistently in their database, and they anticipate almost unlimited growth in the amount of data stored. Which Google Cloud product should the organization choose?',
     options: [
       'Cloud SQL',
-      'Cloud Spanner',
+      'Spanner',
       'Cloud Storage',
       'BigQuery',
     ],
     answer: 1,
-    explanation: 'Consistent transactions worldwide plus unlimited growth is Cloud Spanner: relational and strongly consistent, but horizontally scalable across regions.'
+    explanation: 'Consistent transactions worldwide plus unlimited growth is Spanner: relational and strongly consistent, but horizontally scalable across regions.'
   },
   {
     id: 'et-074',
@@ -1514,7 +1514,7 @@ export const community: Question[] = [
       'Transforms business data from unstructured to structured',
     ],
     answer: 0,
-    explanation: 'Cloud SQL is a managed relational database that connects to the business intelligence and analytics tools that produce insight — it stores and serves the data rather than analysing it itself. Predictions come from ML products, and charts come from Looker or Data Studio.'
+    explanation: 'Cloud SQL is a managed relational database that connects to the business intelligence and analytics tools that produce insight — it stores and serves the data rather than analysing it itself. Predictions come from ML products, and charts come from Looker or Looker Studio. Current names: Data Studio → Looker Studio.'
   },
   {
     id: 'et-098',
@@ -1541,10 +1541,10 @@ export const community: Question[] = [
       'Virtual machines',
       'Bare Metal Solution',
       'Serverless computing',
-      'Container Registry',
+      'Artifact Registry'
     ],
     answer: 2,
-    explanation: 'Writing only the code and leaving the infrastructure to the provider is serverless computing. Virtual machines and Bare Metal leave the organisation managing servers, and Container Registry only stores images.'
+    explanation: 'Writing only the code and leaving the infrastructure to the provider is serverless computing. Virtual machines and Bare Metal leave the organisation managing servers, and Artifact Registry only stores images. Current names: Container Registry was shut down in 2025; Artifact Registry replaces it.'
   },
   {
     id: 'et-100',
@@ -1626,12 +1626,12 @@ export const community: Question[] = [
     topic: 'Storage & databases',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'How would a global organization benefit from managing their data with Cloud Spanner?',
+    prompt: 'How would a global organization benefit from managing their data with Spanner?',
     options: [
-      'Cloud Spanner is optimized for cold storage',
-      'Cloud Spanner replicates data across regions in real time',
-      'Cloud Spanner is optimized to ingest unstructured data',
-      'Cloud Spanner visualizes and analyzes data in real time',
+      'Spanner is optimized for cold storage',
+      'Spanner replicates data across regions in real time',
+      'Spanner is optimized to ingest unstructured data',
+      'Spanner visualizes and analyzes data in real time',
     ],
     answer: 1,
     explanation: 'Spanner\'s distinguishing feature is synchronous replication across regions with strong consistency, so a global organisation reads and writes the same data everywhere. Cold storage, unstructured ingestion and real-time visualisation describe other products.'
@@ -1706,10 +1706,10 @@ export const community: Question[] = [
       'Cloud Monitoring',
       'Cloud Trace',
       'Cloud Logging',
-      'Cloud Debugger',
+      'Cloud Profiler'
     ],
     answer: 0,
-    explanation: 'Cloud Monitoring collects metrics and metadata from applications and infrastructure and renders them as dashboards, charts and alerts. Cloud Logging stores log entries, Cloud Trace measures latency, and Cloud Debugger inspects running code.'
+    explanation: 'Cloud Monitoring collects metrics and metadata from applications and infrastructure and renders them as dashboards, charts and alerts. Cloud Logging stores log entries, Cloud Trace measures latency, and Cloud Profiler shows which code uses the most CPU and memory.'
   },
   {
     id: 'et-111',
@@ -1750,11 +1750,11 @@ export const community: Question[] = [
     options: [
       'Vision API',
       'BigQuery ML',
-      'AutoML Vision',
-      'Looker',
+      'Agent Platform AutoML (image)',
+      'Looker'
     ],
     answer: 0,
-    explanation: 'Categorising a large set of photographs with a model that already exists is the Vision API — pre-trained, no training data required. AutoML Vision is for training your own model on custom labels, and BigQuery ML and Looker work on tabular data.'
+    explanation: 'Categorising a large set of photographs with a model that already exists is the Vision API — pre-trained, no training data required. Agent Platform AutoML (image) is for training your own model on custom labels, and BigQuery ML and Looker work on tabular data. Current names: AutoML Vision, Tables and Video are now Agent Platform AutoML (image, tabular, video) in Gemini Enterprise Agent Platform.'
   },
   {
     id: 'et-114',
@@ -1779,12 +1779,12 @@ export const community: Question[] = [
     prompt: 'A travel agency wants to seamlessly share their social media content with partners. What should the organization use?',
     options: [
       'A NoSQL database',
-      'Anthos Config Management',
+      'Config Sync',
       'The App Engine standard environment',
-      'An application programming interface (API)',
+      'An application programming interface (API)'
     ],
     answer: 3,
-    explanation: 'Sharing content with partner systems in a controlled, repeatable way is exactly what an API is for. A NoSQL database stores the content, App Engine hosts the code, and Anthos Config Management governs clusters.'
+    explanation: 'Sharing content with partner systems in a controlled, repeatable way is exactly what an API is for. A NoSQL database stores the content, App Engine hosts the code, and Config Sync governs clusters. Current names: Anthos Config Management → Config Sync and Policy Controller.'
   },
   {
     id: 'et-116',
@@ -1811,10 +1811,10 @@ export const community: Question[] = [
       'Compute Engine',
       'Bare Metal Solution',
       'Cloud Run',
-      'Cloud Functions',
+      'Cloud Run functions',
     ],
     answer: 1,
-    explanation: 'Bare Metal Solution provides dedicated, non-virtualised hardware next to Google Cloud for specialised workloads — typically Oracle — whose licensing and architecture cannot be changed. Compute Engine virtualises, and the serverless products require the application to be rewritten.'
+    explanation: 'Bare Metal Solution provides dedicated, non-virtualised hardware next to Google Cloud for specialised workloads — typically Oracle — whose licensing and architecture cannot be changed. Compute Engine virtualises, and the serverless products require the application to be rewritten. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'et-118',
@@ -1874,7 +1874,7 @@ export const community: Question[] = [
       'With machine learning models that always require custom training',
     ],
     answer: 1,
-    explanation: 'Google Cloud\'s AI story is a ladder: pre-trained APIs for non-specialists, AutoML for people with data but no ML background, and Vertex AI and TensorFlow for practitioners. TPUs are cloud hardware, quantum computing is not the answer here, and custom training is not always required.'
+    explanation: 'Google Cloud\'s AI story is a ladder: pre-trained APIs for non-specialists, AutoML for people with data but no ML background, and Gemini Enterprise Agent Platform and TensorFlow for practitioners. TPUs are cloud hardware, quantum computing is not the answer here, and custom training is not always required. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'et-122',
@@ -1914,12 +1914,12 @@ export const community: Question[] = [
     prompt: 'An organization needs to train a machine learning model to categorize photographs. Which Google Cloud product or service should the organization use?',
     options: [
       'Video Intelligence API',
-      'AutoML Vision',
+      'Agent Platform AutoML (image)',
       'BigQuery ML',
-      'Looker',
+      'Looker'
     ],
     answer: 1,
-    explanation: 'Training a model on your own labelled photographs, without writing the model, is AutoML Vision. The Vision API cannot learn new categories, the Video Intelligence API works on video, and BigQuery ML and Looker are tabular.'
+    explanation: 'Training a model on your own labelled photographs, without writing the model, is Agent Platform AutoML (image). The Vision API cannot learn new categories, the Video Intelligence API works on video, and BigQuery ML and Looker are tabular. Current names: AutoML Vision, Tables and Video are now Agent Platform AutoML (image, tabular, video) in Gemini Enterprise Agent Platform.'
   },
   {
     id: 'et-125',
@@ -1971,15 +1971,15 @@ export const community: Question[] = [
     topic: 'Operations & support',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'What does Cloud Debugger help an organization do?',
+    prompt: 'What does Cloud Profiler help an organization do?',
     options: [
       'Implement code updates in real time without affecting the service level objective (SLO).',
-      'Inspect source code in real time without affecting user downtime.',
-      'Manage code and accelerate application development.',
-      'Analyze live source code during user downtime.',
+      'Continuously analyze the CPU and memory use of code running in production, with very low overhead.',
+      'Manage source code and accelerate application development.',
+      'Analyze live source code only during scheduled user downtime.'
     ],
     answer: 1,
-    explanation: 'Cloud Debugger inspects the state of running application code in production without stopping it or slowing it down for users. It does not deploy code updates, and it works on live traffic rather than during downtime.'
+    explanation: 'Cloud Profiler samples running production code continuously and shows which functions use the most CPU, memory and other resources, with overhead low enough to leave it on. It does not deploy code or manage source, and it works on live traffic rather than during downtime. Current names: Cloud Debugger was shut down in 2023.'
   },
   {
     id: 'et-129',
@@ -2294,7 +2294,7 @@ export const community: Question[] = [
       'Manage storage of custom VM images.',
     ],
     answer: 2,
-    explanation: 'Cloud Logging collects, stores and lets you search and analyse log entries, which is how troubleshooting gets faster. Live code inspection is Cloud Debugger, infrastructure as code is Deployment Manager or Terraform, and VM images live in Compute Engine.'
+    explanation: 'Cloud Logging collects, stores and lets you search and analyse log entries, which is how troubleshooting gets faster. finding expensive code is Cloud Profiler, infrastructure as code is Infrastructure Manager (Terraform), and VM images live in Compute Engine.'
   },
   {
     id: 'et-150',
@@ -2319,12 +2319,12 @@ export const community: Question[] = [
     prompt: 'An organization wants to write and run small pieces of code in a serverless way that respond to events like huge discounts. Which Google Cloud compute solution should the organization use?',
     options: [
       'Google Kubernetes Engine',
-      'Cloud Functions',
+      'Cloud Run functions',
       'Bare Metal Solution',
       'Compute Engine',
     ],
     answer: 1,
-    explanation: 'Small pieces of code that run in response to an event, with nothing to provision, is the Cloud Functions description almost word for word. GKE and Compute Engine leave you managing clusters or machines, and Bare Metal Solution is dedicated hardware.'
+    explanation: 'Small pieces of code that run in response to an event, with nothing to provision, is the Cloud Run functions description almost word for word. GKE and Compute Engine leave you managing clusters or machines, and Bare Metal Solution is dedicated hardware. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'et-152',
@@ -2351,10 +2351,10 @@ export const community: Question[] = [
       'Dataproc',
       'Compute Engine',
       'Recommendations AI',
-      'Vertex AI',
+      'Gemini Enterprise Agent Platform',
     ],
     answer: 3,
-    explanation: 'Vertex AI is the single platform for building custom models end to end: data, training, tuning, deployment and monitoring. Dataproc runs Spark and Hadoop, Compute Engine is raw virtual machines, and Recommendations AI is a finished application rather than a platform.'
+    explanation: 'Gemini Enterprise Agent Platform is the single platform for building custom models end to end: data, training, tuning, deployment and monitoring. Dataproc runs Spark and Hadoop, Compute Engine is raw virtual machines, and Recommendations AI is a finished application rather than a platform. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'et-154',
@@ -2440,11 +2440,11 @@ export const community: Question[] = [
     options: [
       'Filestore',
       'Cloud Storage',
-      'Data Catalog',
-      'Cloud Spanner',
+      'Knowledge Catalog',
+      'Spanner',
     ],
     answer: 1,
-    explanation: 'Nearline, Coldline and Archive are storage classes within Cloud Storage, so one product covers the hot subset and the colder tiers, with lifecycle rules moving objects between them. Filestore is network file storage, Spanner is relational, and Data Catalog holds metadata.'
+    explanation: 'Nearline, Coldline and Archive are storage classes within Cloud Storage, so one product covers the hot subset and the colder tiers, with lifecycle rules moving objects between them. Filestore is network file storage, Spanner is relational, and Knowledge Catalog holds metadata. Current names: Data Catalog → Knowledge Catalog (formerly Dataplex Universal Catalog).'
   },
   {
     id: 'et-160',
@@ -2483,13 +2483,13 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization wants to build autoscaling web applications without having to manage application infrastructure Which Google Cloud product should they use?',
     options: [
-      'Anthos',
+      'GKE with fleet management',
       'Apigee',
       'AutoML',
-      'App Engine',
+      'App Engine'
     ],
     answer: 3,
-    explanation: 'App Engine is the fully managed platform for web applications: deploy the code and it scales automatically with no infrastructure to run. Anthos manages clusters, Apigee manages APIs, and AutoML trains models.'
+    explanation: 'App Engine is the fully managed platform for web applications: deploy the code and it scales automatically with no infrastructure to run. GKE fleet management manages clusters, Apigee manages APIs, and AutoML trains models. Current names: Anthos became GKE Enterprise in 2023, and since September 2025 its features are part of GKE itself (fleet management), with Google Distributed Cloud for on-premises.'
   },
   {
     id: 'et-163',
@@ -2513,13 +2513,13 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization needs to train a custom machine learning model to categorize customer responses from their website\'s contact form. Which Google Cloud product or service should the organization use?',
     options: [
-      'Anthos',
+      'GKE with fleet management',
       'Recommendations AI',
-      'AutoML Natural Language',
-      'Pub/Sub',
+      'Supervised tuning of a Gemini model in Agent Platform',
+      'Pub/Sub'
     ],
     answer: 2,
-    explanation: 'Training on your own labelled text without writing a model is AutoML Natural Language. Recommendations AI is pre-built for retail, and Anthos and Pub/Sub are not machine learning products.'
+    explanation: 'Teaching a model your own labelled text categories without building one from scratch is supervised tuning of a Gemini model in Gemini Enterprise Agent Platform (Supervised tuning of a Gemini model in Agent Platform, which used to do this, has been retired). Recommendations AI is pre-built for retail, and GKE with fleet management and Pub/Sub are not machine learning products.'
   },
   {
     id: 'et-165',
@@ -2601,15 +2601,15 @@ export const community: Question[] = [
     topic: 'Operations & support',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'An organization wants to better understand the behavior of their code in production and analyze its state to identify hard-to-find programming errors. Which Google Cloud tool should the organization use?',
+    prompt: 'An organization wants to be alerted to the errors its code throws in production, with identical crashes grouped together and their stack traces, to find hard-to-reproduce programming errors. Which Google Cloud tool should the organization use?',
     options: [
-      'Debugger',
-      'Profiler',
+      'Error Reporting',
+      'Cloud Profiler',
       'Cloud Monitoring',
-      'Trace',
+      'Cloud Trace'
     ],
     answer: 0,
-    explanation: 'Cloud Debugger inspects the state of code while it runs in production, which is how bugs that never reproduce in test get found. Profiler looks at resource consumption, Trace at latency, and Cloud Monitoring at metrics.'
+    explanation: 'Error Reporting groups exceptions from running services, shows stack traces and counts, and notifies you of new errors. Profiler looks at resource consumption, Trace at latency between services, and Cloud Monitoring at metrics. Current names: Cloud Debugger was shut down in 2023.'
   },
   {
     id: 'et-171',
@@ -2708,7 +2708,7 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization is looking for a business intelligence solution that allows individual employees and end users to analyze business data and generate insights. Which Google Cloud product or service should the organization use?',
     options: [
-      'Cloud Spanner',
+      'Spanner',
       'BigQuery',
       'Looker',
       'Dataflow',
@@ -2740,11 +2740,11 @@ export const community: Question[] = [
     options: [
       'Compute Engine',
       'Google Kubernetes Engine',
-      'Cloud Functions',
+      'Cloud Run functions',
       'Bare Metal Solution for SAP',
     ],
     answer: 2,
-    explanation: 'A serverless environment that glues cloud services together and scales without a capacity estimate is Cloud Functions, which runs from zero to many instances on demand. Compute Engine and GKE need capacity planning, and Bare Metal Solution for SAP is dedicated hardware.'
+    explanation: 'A serverless environment that glues cloud services together and scales without a capacity estimate is Cloud Run functions, which runs from zero to many instances on demand. Compute Engine and GKE need capacity planning, and Bare Metal Solution for SAP is dedicated hardware. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'et-180',
@@ -2769,12 +2769,12 @@ export const community: Question[] = [
     prompt: 'An organization is looking for a solution that will allow them to build new applications, modernize old ones, and run applications across different cloud providers. What solution should the organization use?',
     options: [
       'Apigee Hybrid',
-      'Anthos',
+      'GKE with fleet management',
       'Cloud Run',
-      'Compute Engine',
+      'Compute Engine'
     ],
     answer: 1,
-    explanation: 'Anthos is the one platform that covers all three: build new applications, modernise existing ones, and run them on Google Cloud, on-premises or on another provider. Apigee Hybrid manages APIs, and Cloud Run and Compute Engine run in one place.'
+    explanation: 'GKE with fleet management is the one platform that covers all three: build new applications, modernise existing ones, and run them on Google Cloud, on-premises (Google Distributed Cloud) or on another provider. Apigee Hybrid manages APIs, and Cloud Run and Compute Engine run in one place. Current names: GKE with fleet management became GKE Enterprise in 2023, and since September 2025 its features are part of GKE itself (fleet management), with Google Distributed Cloud for on-premises.'
   },
   {
     id: 'et-182',
@@ -2784,12 +2784,12 @@ export const community: Question[] = [
     prompt: 'An organization cannot afford to modernize their infrastructure, but they want to process data from their legacy system in a modern platform hosted by a business partner. What solution should the organization choose to make their data accessible?',
     options: [
       'Compute Engine',
-      'Anthos',
+      'GKE with fleet management',
       'An application programming interface',
-      'Google Kubernetes Engine',
+      'Google Kubernetes Engine'
     ],
     answer: 2,
-    explanation: 'Modernising is off the table, so the answer has to leave the legacy system where it is: an API exposes its data to the partner\'s platform without rewriting anything. Anthos, GKE and Compute Engine all require the migration the organisation cannot afford.'
+    explanation: 'Modernising is off the table, so the answer has to leave the legacy system where it is: an API exposes its data to the partner\'s platform without rewriting anything. GKE fleets, GKE and Compute Engine all require the migration the organisation cannot afford.'
   },
   {
     id: 'et-183',
@@ -2798,7 +2798,7 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An international bank is looking for a serverless warehouse solution that lets them perform smart analytics. Which Google Cloud product or service should the bank use?',
     options: [
-      'Cloud Spanner',
+      'Spanner',
       'Compute Engine',
       'BigQuery',
       'Dataflow',
@@ -2903,13 +2903,13 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization is looking for a hybrid-cloud management solution that will help them build and run applications on-premises and in the cloud. What solution should the organization use?',
     options: [
-      'Anthos',
-      'Cloud Functions',
+      'GKE with fleet management',
+      'Cloud Run functions',
       'App Engine',
-      'Compute Engine',
+      'Compute Engine'
     ],
     answer: 0,
-    explanation: 'Anthos is the hybrid and multicloud management platform for building and running applications both on-premises and in the cloud, with one control plane over the lot. Cloud Functions, App Engine and Compute Engine run only in the cloud.'
+    explanation: 'GKE with fleet management, running on-premises through Google Distributed Cloud, is the hybrid and multicloud platform for building and running applications both on-premises and in the cloud, with one control plane over the lot. Cloud Run functions, App Engine and Compute Engine run only in the cloud. Current names: GKE with fleet management became GKE Enterprise in 2023, and since September 2025 its features are part of GKE itself (fleet management), with Google Distributed Cloud for on-premises.'
   },
   {
     id: 'et-191',
@@ -2965,11 +2965,11 @@ export const community: Question[] = [
     options: [
       'Dialogflow',
       'Cloud Logging',
-      'Cloud SDK',
-      'Data Catalog',
+      'Google Cloud CLI',
+      'Knowledge Catalog',
     ],
     answer: 1,
-    explanation: 'Cloud Logging ingests platform and custom logs from GKE, Compute Engine virtual machines and Google Cloud services, then stores and searches them. Dialogflow builds conversational agents, the Cloud SDK is command-line tooling, and Data Catalog indexes metadata.'
+    explanation: 'Cloud Logging ingests platform and custom logs from GKE, Compute Engine virtual machines and Google Cloud services, then stores and searches them. Dialogflow builds conversational agents, the Google Cloud CLI is command-line tooling, and Knowledge Catalog indexes metadata. Current names: Cloud SDK → Google Cloud CLI; Data Catalog → Knowledge Catalog (formerly Dataplex Universal Catalog).'
   },
   {
     id: 'et-195',
@@ -3113,7 +3113,7 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization needs a flexible and scalable NoSQL database with strong web and mobile application support. Which Google Cloud product or service should the organization use?',
     options: [
-      'Cloud Spanner',
+      'Spanner',
       'Cloud Storage',
       'BigQuery',
       'Firestore',
@@ -3134,7 +3134,7 @@ export const community: Question[] = [
       'Private cloud',
     ],
     answer: 1,
-    explanation: 'Running across three providers at once is multi-cloud by definition. Hybrid means private infrastructure plus public cloud, and on-premises and private cloud describe the estate they have moved beyond. GKE Enterprise — the platform formerly called Anthos — is what makes the Kubernetes deployments consistent across all three.'
+    explanation: 'Running across three providers at once is multi-cloud by definition. Hybrid means private infrastructure plus public cloud, and on-premises and private cloud describe the estate they have moved beyond. GKE fleet management (formerly Anthos, then GKE Enterprise) is what makes the Kubernetes deployments consistent across all three.'
   },
   {
     id: 'et-206',
@@ -3158,13 +3158,13 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'A vacation home rental organization wants to predict the popularity of properties in their upcoming busy season. They do not have a data science team, and want to use their in-house database administration skills to create a machine learning model. What should the organization do?',
     options: [
-      'Use custom training in Vertex AI with TensorFlow.',
+      'Use custom training in Gemini Enterprise Agent Platform with TensorFlow.',
       'Integrate pre-trained APIs into their application.',
       'Use BigQuery ML and create models using SQL.',
       'Build a model in AutoML using labeled data.',
     ],
     answer: 2,
-    explanation: 'The skills in the building are SQL, not data science, so BigQuery ML — models created and trained with SQL statements inside the warehouse — is the fit. Custom training in Vertex AI needs ML engineers, AutoML needs a labelled training set prepared for it, and pre-trained APIs cannot predict something specific to this business.'
+    explanation: 'The skills in the building are SQL, not data science, so BigQuery ML — models created and trained with SQL statements inside the warehouse — is the fit. Custom training in Gemini Enterprise Agent Platform needs ML engineers, AutoML needs a labelled training set prepared for it, and pre-trained APIs cannot predict something specific to this business. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'et-208',
@@ -3278,13 +3278,13 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization wants to use an open source library with a flexible ecosystem of tools to create and train its own machine learning models. Which product or solution should the organization use?',
     options: [
-      'Cloud Functions',
+      'Cloud Run functions',
       'Apache Beam',
       'Dataflow',
       'TensorFlow',
     ],
     answer: 3,
-    explanation: 'TensorFlow is the open-source library with the broad tool ecosystem for building and training your own models. Apache Beam and Dataflow define and run data pipelines, and Cloud Functions runs event-driven code.'
+    explanation: 'TensorFlow is the open-source library with the broad tool ecosystem for building and training your own models. Apache Beam and Dataflow define and run data pipelines, and Cloud Run functions runs event-driven code. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'et-216',
@@ -3443,7 +3443,7 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization wants to build a data pipeline to transform its data so it can be reconciled in a data warehouse. The solution must be scalable and require little or no management. Which Google product or service should the organization choose?',
     options: [
-      'Cloud Bigtable',
+      'Bigtable',
       'Cloud Storage',
       'Pub/Sub',
       'Dataflow',
@@ -3488,13 +3488,13 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization is running Kubernetes applications across multiple cloud environments. They want a consistent and centralized management platform. Which service should they choose?',
     options: [
-      'Cloud Functions',
+      'Cloud Run functions',
       'GKE Enterprise',
       'Cloud Run',
       'Compute Engine',
     ],
     answer: 1,
-    explanation: 'GKE Enterprise — the platform previously called Anthos — is the consistent, centralised management plane for Kubernetes across several clouds. Cloud Run and Cloud Functions run workloads in one place, and Compute Engine is virtual machines.'
+    explanation: 'GKE fleet management (formerly Anthos, then GKE Enterprise) is the consistent, centralised management plane for Kubernetes across several clouds. Cloud Run and Cloud Run functions run workloads in one place, and Compute Engine is virtual machines. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'et-230',
@@ -3564,12 +3564,12 @@ export const community: Question[] = [
     prompt: 'An organization needs to increase the speed at which they can train machine learning models. Which domain-specific hardware is designed for this task?',
     options: [
       'Bare Metal Solution',
-      'Preemptible or Spot VMs',
+      'Spot VMs',
       'Cloud TPUs',
-      'Containers',
+      'Containers'
     ],
     answer: 2,
-    explanation: 'Tensor Processing Units are Google\'s domain-specific hardware, built to accelerate the matrix arithmetic behind model training. Spot VMs change the price rather than the speed, Bare Metal Solution is for specialised licensed workloads, and containers are a packaging format.'
+    explanation: 'Tensor Processing Units are Google\'s domain-specific hardware, built to accelerate the matrix arithmetic behind model training. Spot VMs change the price rather than the speed, Bare Metal Solution is for specialised licensed workloads, and containers are a packaging format. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'et-235',
@@ -3591,7 +3591,7 @@ export const community: Question[] = [
     topic: 'AI & machine learning',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'An organization has hired a team of data scientists and developers. They want to create unique value in their business by coding an advanced machine learning model in Vertex AI Workbench. Which service should the organization use to train the model?',
+    prompt: 'An organization has hired a team of data scientists and developers. They want to create unique value in their business by coding an advanced machine learning model in Agent Platform Workbench. Which service should the organization use to train the model?',
     options: [
       'Custom training',
       'AutoML',
@@ -3599,7 +3599,7 @@ export const community: Question[] = [
       'Prebuilt APIs',
     ],
     answer: 0,
-    explanation: 'A team of data scientists coding a model in Vertex AI Workbench is the custom training path — their own code, their own architecture, trained on Vertex AI. AutoML and prebuilt APIs exist precisely to avoid writing that code, and Compute Engine is just the machines.'
+    explanation: 'A team of data scientists coding a model in Agent Platform Workbench is the custom training path — their own code, their own architecture, trained on Gemini Enterprise Agent Platform. AutoML and prebuilt APIs exist precisely to avoid writing that code, and Compute Engine is just the machines. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'et-237',
@@ -3701,10 +3701,10 @@ export const community: Question[] = [
       'Document AI',
       'Natural Language API',
       'Kubernetes Engine',
-      'Vertex AI',
+      'Gemini Enterprise Agent Platform',
     ],
     answer: 3,
-    explanation: 'Vertex AI is the managed platform that covers the whole custom-model lifecycle: gathering data, building and training, then deploying and monitoring. Document AI and the Natural Language API are pre-trained services, and Kubernetes Engine only runs the containers.'
+    explanation: 'Gemini Enterprise Agent Platform is the managed platform that covers the whole custom-model lifecycle: gathering data, building and training, then deploying and monitoring. Document AI and the Natural Language API are pre-trained services, and Kubernetes Engine only runs the containers. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'et-244',
@@ -3834,8 +3834,8 @@ export const community: Question[] = [
     prompt: 'An organization has an ecommerce application that requires a cost-effective, transactional database. The application will only serve customers in a single region. Which service should they use?',
     options: [
       'BigQuery',
-      'Cloud Bigtable',
-      'Cloud Spanner',
+      'Bigtable',
+      'Spanner',
       'Cloud SQL',
     ],
     answer: 3,
@@ -3863,9 +3863,9 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization has a large archive of unstructured data, including video and audio files. Which storage solution should the organization use?',
     options: [
-      'Cloud Spanner',
+      'Spanner',
       'Cloud Storage',
-      'Cloud Bigtable',
+      'Bigtable',
       'Cloud SQL',
     ],
     answer: 1,
@@ -3941,10 +3941,10 @@ export const community: Question[] = [
       'Cloud Run',
       'Compute Engine',
       'Kubernetes Engine',
-      'Cloud Functions',
+      'Cloud Run functions',
     ],
     answer: 2,
-    explanation: 'Multiple containerised workloads plus full control of how they are configured is Kubernetes Engine — the control surface is the point. Cloud Run and Cloud Functions deliberately hide it, and Compute Engine drops you back to managing machines.'
+    explanation: 'Multiple containerised workloads plus full control of how they are configured is Kubernetes Engine — the control surface is the point. Cloud Run and Cloud Run functions deliberately hide it, and Compute Engine drops you back to managing machines. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'et-260',
@@ -3983,13 +3983,13 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization runs a batch data analysis workload on a virtual machine (VM). The workload can be easily restarted without losing work, and is not time critical. Organizations must choose the lowest cost option to run the workload. What option should they choose?',
     options: [
-      'A Preemptible or Spot VM on Compute Engine',
+      'A Spot VM on Compute Engine',
       'A custom VM in a pay-as-you-go model on Compute Engine',
       'A standard VM in a pay-as-you-go model on Compute Engine',
-      'A Cloud Function with a small memory limit',
+      'A Cloud Run function with a small memory limit'
     ],
     answer: 0,
-    explanation: 'Restartable, not time critical, cheapest possible — that is the Spot (formerly preemptible) VM case exactly: a deep discount in exchange for interruptions the workload already tolerates. Standard and custom VMs at list price cost more, and Cloud Functions is the wrong shape for a long batch job.'
+    explanation: 'Restartable, not time critical, cheapest possible — that is the Spot (formerly preemptible) VM case exactly: a deep discount in exchange for interruptions the workload already tolerates. Standard and custom VMs at list price cost more, and Cloud Run functions is the wrong shape for a long batch job. Current names: Cloud Functions → Cloud Run functions; preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'et-263',
@@ -4193,13 +4193,13 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization is using Compute Engine and wants to receive sustained-use discounts. What should the organization do?',
     options: [
-      'Choose preemptible or spot instances when creating virtual machines.',
+      'Choose Spot instances when creating virtual machines.',
       'Choose low-powered virtual machines.',
       'Nothing. Sustained use discounts are automatically applied.',
-      'Commit to virtual machine usage for a one or three-year period.',
+      'Commit to virtual machine usage for a one or three-year period.'
     ],
     answer: 2,
-    explanation: 'Sustained use discounts need no action: Compute Engine applies them automatically once an instance runs for a large enough share of the month. Committed use discounts are the ones you sign up for, and Spot instances are a different discount entirely.'
+    explanation: 'Sustained use discounts need no action: Compute Engine applies them automatically once an instance runs for a large enough share of the month. Committed use discounts are the ones you sign up for, and Spot instances are a different discount entirely. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'et-277',

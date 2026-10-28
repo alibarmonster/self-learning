@@ -612,7 +612,7 @@ const S42: GuideItem[] = [
   },
   {
     topic: 'Attach service accounts to resources',
-    what: 'Workloads run **as** a service account: a VM (`--service-account`, with the `cloud-platform` scope so IAM alone decides), a Cloud Run service or function (`--service-account`), a GKE Pod through Workload Identity. Attaching one requires `roles/iam.serviceAccountUser` on it. Changing a VM\'s service account requires stopping it.',
+    what: 'Workloads run **as** a service account: a VM (`--service-account`, with the `cloud-platform` scope so IAM alone decides), a Cloud Run service or function (`--service-account`), a GKE Pod through Workload Identity Federation for GKE. Attaching one requires `roles/iam.serviceAccountUser` on it. Changing a VM\'s service account requires stopping it.',
     how: ['gcloud compute instances create report-1 --zone=us-central1-a --service-account=report-job@shop-prod-4821.iam.gserviceaccount.com --scopes=cloud-platform', 'gcloud run services update shop --region=us-central1 --service-account=shop-sa@shop-prod-4821.iam.gserviceaccount.com'],
     exam: '"Use access scopes or IAM?" → set the scope to cloud-platform and control access with IAM roles.',
     see: [L.run]

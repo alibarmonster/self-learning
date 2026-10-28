@@ -233,7 +233,7 @@ const FIG_LIFECYCLE = SVG(
 );
 
 const FIG_WI = SVG(
-  'Workload Identity: a Pod running as a Kubernetes service account asks the GKE metadata server for a token, which is exchanged through the workload identity pool for a short-lived Google token used to call Cloud Storage',
+  'Workload Identity Federation for GKE: a Pod running as a Kubernetes service account asks the GKE metadata server for a token, which is exchanged through the workload identity pool for a short-lived Google token used to call Cloud Storage',
   720,
   210,
   `
@@ -656,7 +656,7 @@ export const lesson: Lesson = {
         },
         {
           id: 'identity',
-          title: 'Identity: IAM, RBAC and Workload Identity',
+          title: 'Identity: IAM, RBAC and Workload Identity Federation for GKE',
           blocks: [
             {
               kind: 'p',
@@ -693,7 +693,7 @@ export const lesson: Lesson = {
             {
               kind: 'callout',
               tone: 'exam',
-              text: '"Pods need to access Google Cloud APIs following best practices / least privilege" → Workload Identity. The wrong answers are usually: grant a broad role to the node service account, or store a service account key in a Kubernetes Secret.'
+              text: '"Pods need to access Google Cloud APIs following best practices / least privilege" → Workload Identity Federation for GKE. The wrong answers are usually: grant a broad role to the node service account, or store a service account key in a Kubernetes Secret.'
             }
           ]
         }
@@ -718,7 +718,7 @@ export const lesson: Lesson = {
                 ['You pay for', 'The CPU, memory and disk your Pods **request**', 'The node VMs, used or not'],
                 ['Location', 'Always regional', 'Zonal or regional'],
                 ['Release channel', 'Required', 'Optional'],
-                ['Default security', 'Hardened: no privileged Pods, no SSH to nodes, Workload Identity always on', 'Can be made just as strict, but you do it'],
+                ['Default security', 'Hardened: no privileged Pods, no SSH to nodes, Workload Identity Federation for GKE always on', 'Can be made just as strict, but you do it'],
                 ['Customisation', 'Through compute classes (e.g. Balanced, Scale-Out, GPU)', 'Anything: privileged DaemonSets, kernel tuning, Ubuntu nodes'],
                 ['SLA', 'Control plane and Pods (multi-zone)', 'Control plane (regional 99.95%, zonal 99.5%)'],
                 ['Good for', 'The default for most new workloads, small teams without Kubernetes ops', 'Special node needs, per-node licences, privileged security agents']
@@ -1200,7 +1200,7 @@ export const lesson: Lesson = {
                 '$ kubectl rollout restart deployment/report -n shop'
               ],
               why: 'Google client libraries in the Pod pick up a token from the GKE metadata server automatically; the application code does not change at all and no secret is stored.',
-              exam: '"Store a service account key as a Kubernetes Secret" is almost always wrong; "use Workload Identity" is almost always right.'
+              exam: '"Store a service account key as a Kubernetes Secret" is almost always wrong; "use Workload Identity Federation for GKE" is almost always right.'
             }
           ]
         },
@@ -1291,11 +1291,11 @@ export const lesson: Lesson = {
               options: [
                 'Store a service account JSON key in a Kubernetes Secret',
                 'Give roles/storage.admin to the node service account',
-                'Use Workload Identity: grant the role to the app\'s KSA identity',
+                'Use Workload Identity Federation for GKE: grant the role to the app\'s KSA identity',
                 'Make the bucket public'
               ],
               answer: 2,
-              explain: 'Workload Identity gives a short-lived token to one particular KSA — no keys, and only that Pod gets access.'
+              explain: 'Workload Identity Federation for GKE gives a short-lived token to one particular KSA — no keys, and only that Pod gets access.'
             },
             {
               kind: 'quiz',

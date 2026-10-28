@@ -531,12 +531,12 @@ export const SPECS: Record<NodeType, NodeSpec> = {
       { key: 'machine', label: 'Machine type node', type: 'select', def: 'e2-medium', options: opts(MACHINES), show: (p) => p.mode === 'standard' },
       { key: 'channel', label: 'Release channel', type: 'select', def: 'regular', options: opts(['rapid', 'regular', 'stable', 'extended']) },
       { key: 'private', label: 'Node privat (tanpa IP eksternal)', type: 'bool', def: false, advanced: true },
-      { key: 'wi', label: 'Workload Identity', type: 'bool', def: true, advanced: true }
+      { key: 'wi', label: 'Workload Identity Federation for GKE', type: 'bool', def: true, advanced: true }
     ],
     validate: (n) => {
       const out: Issue[] = [];
       if (n.params.mode === 'autopilot' && /-[a-z]$/.test(str(n.params, 'location'))) out.push(err('Cluster Autopilot selalu regional — pilih region, bukan zone.', 'location'));
-      if (!bool(n.params, 'wi')) out.push(warn('Tanpa Workload Identity, Pod memakai service account node — sulit dibatasi per aplikasi.', 'wi'));
+      if (!bool(n.params, 'wi')) out.push(warn('Tanpa Workload Identity Federation for GKE, Pod memakai service account node — sulit dibatasi per aplikasi.', 'wi'));
       return out;
     },
     gcloud: (n, d) => {

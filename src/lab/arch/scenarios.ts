@@ -225,7 +225,7 @@ export const ARCH_SCENARIOS: ArchScenario[] = [
     title: 'Analitik dan forecasting ritel',
     level: 'Menengah',
     summary: 'Muat data iklan, pindahkan job Spark, warehouse, orkestrasi, model forecast, dashboard.',
-    topics: ['BigQuery', 'Dataproc', 'Composer', 'Vertex AI', 'Data Transfer Service'],
+    topics: ['BigQuery', 'Dataproc', 'Composer', 'Agent Platform', 'Data Transfer Service'],
     story:
       'Jaringan kafe ingin satu sumber kebenaran untuk penjualan dan iklan. Data Google Ads harus masuk tiap hari tanpa kode. Tim data punya 40 job Spark yang sudah jalan di Hadoop on-prem. Semua langkah harus dijadwalkan berurutan, dan data scientist ingin melatih model forecast permintaan kustom.',
     requirements: [
@@ -246,10 +246,10 @@ export const ARCH_SCENARIOS: ArchScenario[] = [
       { id: 'spark', stage: 'in', label: 'Job Spark lama', need: 'Perubahan minimal', best: ['dataproc'], why: 'Dataproc menjalankan Spark/Hadoop terkelola — job lama bisa dipindah hampir tanpa ubahan.', ok: { dataflow: 'Dataflow serverless, tapi job Spark harus ditulis ulang ke Apache Beam.' } },
       { id: 'dw', stage: 'core', label: 'Warehouse', need: 'SQL pusat', best: ['bigquery'], why: 'BigQuery adalah warehouse serverless; data Ads dan hasil Spark berkumpul di sini.', traps: { cloudsql: 'Cloud SQL untuk transaksi; tidak dirancang untuk analitik skala warehouse.' } },
       { id: 'orchestrate', stage: 'core', label: 'Orkestrasi', need: 'Berurutan dengan retry', best: ['composer'], ok: { workflows: 'Workflows bagus untuk rangkaian panggilan API; untuk DAG data yang kompleks Airflow (Composer) adalah standar.' }, why: 'Cloud Composer (Airflow) menjadwalkan DAG dengan dependensi, retry dan monitoring.', traps: { scheduler: 'Cloud Scheduler hanya memicu pada jadwal; tidak mengelola dependensi antar langkah.' } },
-      { id: 'ml', stage: 'out', label: 'Model forecast kustom', need: 'Melatih dan melayani model kustom', best: ['vertex'], ok: { bqml: 'BigQuery ML bisa membuat model forecast (ARIMA_PLUS) dengan SQL — cocok kalau tidak butuh model kustom.' }, why: 'Vertex AI untuk training kustom, registry dan endpoint serving.' },
+      { id: 'ml', stage: 'out', label: 'Model forecast kustom', need: 'Melatih dan melayani model kustom', best: ['vertex'], ok: { bqml: 'BigQuery ML bisa membuat model forecast (ARIMA_PLUS) dengan SQL — cocok kalau tidak butuh model kustom.' }, why: 'Agent Platform untuk training kustom, registry dan endpoint serving.' },
       { id: 'bi', stage: 'out', label: 'Dashboard', need: 'Definisi metrik konsisten', best: ['looker'], why: 'Looker dengan model semantik LookML menjaga definisi metrik tetap sama di semua dashboard.' }
     ],
-    lesson: 'Pilih alat yang meminimalkan kerja: DTS untuk SaaS, Dataproc untuk Spark yang ada, BigQuery sebagai pusat, Composer untuk orkestrasi, Vertex AI atau BigQuery ML untuk model.'
+    lesson: 'Pilih alat yang meminimalkan kerja: DTS untuk SaaS, Dataproc untuk Spark yang ada, BigQuery sebagai pusat, Composer untuk orkestrasi, Agent Platform atau BigQuery ML untuk model.'
   },
   {
     id: 'devops',

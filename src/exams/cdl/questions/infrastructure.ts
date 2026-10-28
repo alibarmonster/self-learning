@@ -200,7 +200,7 @@ export const infrastructure: Question[] = [
     ],
     answer: 0,
     explanation:
-      'There are still servers — you just never see, size or patch them. Cloud Run, Cloud Functions and App Engine are Google Cloud\'s serverless compute options.'
+      'There are still servers — you just never see, size or patch them. Cloud Run, Cloud Run functions and App Engine are Google Cloud\'s serverless compute options. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'infra-14',
@@ -223,14 +223,14 @@ export const infrastructure: Question[] = [
     difficulty: 'easy',
     prompt: 'A team wants a small piece of code to run every time a file is uploaded to a Cloud Storage bucket, and nothing to run otherwise. Which service is designed for that?',
     options: [
-      'Cloud Functions',
+      'Cloud Run functions',
       'Cloud Run jobs',
       'App Engine',
       'Cloud Scheduler'
     ],
     answer: 0,
     explanation:
-      'Cloud Functions (now Cloud Run functions) is event-driven, function-as-a-service compute: a snippet triggered by an event such as a storage upload, a Pub/Sub message or an HTTP call.'
+      'Cloud Run functions is event-driven, function-as-a-service compute: a snippet triggered by an event such as a storage upload, a Pub/Sub message or an HTTP call. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'infra-16',
@@ -245,7 +245,7 @@ export const infrastructure: Question[] = [
     ],
     answer: [1, 2],
     explanation:
-      'Cloud Run and App Engine (along with Cloud Functions) let you deploy without managing servers. Compute Engine is IaaS — you manage the VMs — and Cloud Storage is storage, not compute.'
+      'Cloud Run and App Engine (along with Cloud Run functions) let you deploy without managing servers. Compute Engine is IaaS — you manage the VMs — and Cloud Storage is storage, not compute. Current names: Cloud Functions → Cloud Run functions.'
   },
 
   // ── The value of APIs ────────────────────────────────────────────────────
@@ -300,7 +300,7 @@ export const infrastructure: Question[] = [
     id: 'infra-20',
     topic: 'Hybrid & multicloud',
     difficulty: 'medium',
-    prompt: 'What is Anthos?',
+    prompt: 'What does GKE fleet management (formerly Anthos) provide?',
     options: [
       'A platform for running and managing applications consistently across on-premises, Google Cloud and other clouds.',
       'A platform for migrating virtual machines from on-premises data centres into Compute Engine with minimal downtime.',
@@ -309,7 +309,7 @@ export const infrastructure: Question[] = [
     ],
     answer: 0,
     explanation:
-      'Anthos (now part of Google Distributed Cloud / GKE Enterprise) extends Kubernetes-based management to wherever your workloads run, so a hybrid or multicloud estate has one way of deploying, securing and observing.'
+      'Fleet management groups clusters wherever they run — Google Cloud, on-premises with Google Distributed Cloud, or other clouds — so a hybrid or multicloud estate has one way of deploying, securing and observing. Current names: Anthos became GKE Enterprise in 2023, and since September 2025 its features are part of GKE itself (fleet management), with Google Distributed Cloud for on-premises.'
   },
   {
     id: 'infra-21',
@@ -330,7 +330,7 @@ export const infrastructure: Question[] = [
     id: 'infra-22',
     topic: 'Hybrid & multicloud',
     difficulty: 'medium',
-    prompt: 'A company runs Kubernetes on-premises and on Google Cloud and struggles to apply the same security policies to both. What is the business value Anthos offers here?',
+    prompt: 'A company runs Kubernetes on-premises and on Google Cloud and struggles to apply the same security policies to both. What is the business value of managing both as a GKE fleet?',
     options: [
       'A single control plane for configuration, policy and observability across every cluster, reducing effort and inconsistency.',
       'Automatic migration of the on-premises cluster into Google Cloud, so that only one environment remains to be secured.',
@@ -339,7 +339,7 @@ export const infrastructure: Question[] = [
     ],
     answer: 0,
     explanation:
-      'The value of Anthos is uniformity: define a policy once, enforce it everywhere, see everything in one dashboard. That is the "single pane of glass" the exam guide refers to.'
+      'The value of a fleet is uniformity: define a policy once (Config Sync, Policy Controller), enforce it on every cluster, and see everything in one dashboard. That is the "single pane of glass" the exam guide refers to. Current names: Anthos became GKE Enterprise in 2023, and since September 2025 its features are part of GKE itself (fleet management), with Google Distributed Cloud for on-premises.'
   },
 
   {
@@ -401,7 +401,7 @@ export const infrastructure: Question[] = [
     ],
     answer: 0,
     explanation:
-      'Reducing lock-in, resilience against a provider outage, and picking the best service for each workload are the reasons the guide lists. The cost is added operational complexity — which is exactly what Anthos and open standards like Kubernetes aim to reduce.'
+      'Reducing lock-in, resilience against a provider outage, and picking the best service for each workload are the reasons the guide lists. The cost is added operational complexity — which is exactly what GKE fleet management and open standards like Kubernetes aim to reduce. Current names: Anthos became GKE Enterprise in 2023, and since September 2025 its features are part of GKE itself (fleet management), with Google Distributed Cloud for on-premises.'
   },
   {
     id: 'infra-27',
@@ -484,7 +484,7 @@ export const infrastructure: Question[] = [
     ],
     answer: 0,
     explanation:
-      'Authentication of consumers, quotas, analytics and monetisation are the four pillars of API management, and Apigee is the product. Cloud Armor protects against attacks, Cloud Functions runs code, Pub/Sub carries messages — none manages a partner API programme.'
+      'Authentication of consumers, quotas, analytics and monetisation are the four pillars of API management, and Apigee is the product. Cloud Armor protects against attacks, Cloud Run functions runs code, Pub/Sub carries messages — none manages a partner API programme. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'infra-32',
@@ -493,14 +493,14 @@ export const infrastructure: Question[] = [
     prompt:
       'A bank must keep its core ledger on-premises for at least five more years under a regulator\'s direction, but wants new digital services in Google Cloud and, for resilience, some workloads on a second public cloud. The operations team is worried about running three environments with three different toolsets. What should the bank adopt?',
     options: [
-      'A hybrid and multicloud platform such as Anthos / GKE Enterprise, managing all three environments from one control plane.',
+      'GKE with fleet management and Google Distributed Cloud, managing all three environments from one control plane.',
       'A dedicated interconnect between the on-premises ledger and each cloud, with separate tooling per environment.',
       'A managed migration of the ledger into a private region inside Google Cloud to satisfy the regulator.',
       'A single public cloud for everything new, with the second cloud limited to backups.'
     ],
     answer: 0,
     explanation:
-      'The constraint (ledger stays) and the goals (cloud services, multi-provider resilience) are both fixed; the problem is operational consistency. Anthos exists to apply one set of policies, deployments and observability across on-prem, Google Cloud and other clouds.'
+      'The constraint (ledger stays) and the goals (cloud services, multi-provider resilience) are both fixed; the problem is operational consistency. GKE fleets, with Google Distributed Cloud on-premises, apply one set of policies, deployments and observability across on-prem, Google Cloud and other clouds. Current names: Anthos became GKE Enterprise in 2023, and since September 2025 its features are part of GKE itself (fleet management), with Google Distributed Cloud for on-premises.'
   },
   {
     id: 'infra-33',

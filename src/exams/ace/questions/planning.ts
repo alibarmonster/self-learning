@@ -19,12 +19,12 @@ export const planning: Question[] = [
     topic: 'Choosing storage & databases',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You want to select and configure a cost-effective solution for relational data on Google Cloud Platform. You are working with a small set of operational data in one geographic location. You need to support point-in- time recovery. What should you do?',
+    prompt: 'You want to select and configure a cost-effective solution for relational data on Google Cloud. You are working with a small set of operational data in one geographic location. You need to support point-in- time recovery. What should you do?',
     options: [
       'Select Cloud SQL (MySQL). Verify that the enable binary logging option is selected.',
       'Select Cloud SQL (MySQL). Select the create failover replicas option.',
-      'Select Cloud Spanner. Set up your instance with 2 nodes.',
-      'Select Cloud Spanner. Set up your instance as multi-regional.'
+      'Select Spanner. Set up your instance with 2 nodes.',
+      'Select Spanner. Set up your instance as multi-regional.'
     ],
     answer: 0,
     explanation: 'Cloud SQL is the cost-effective relational choice for a small, single-location dataset, and point-in-time recovery for Cloud SQL for MySQL depends on binary logging being enabled. Failover replicas give high availability, not point-in-time recovery, and Spanner is far more than this workload needs, especially a multi-regional configuration.'
@@ -66,15 +66,15 @@ export const planning: Question[] = [
     topic: 'Choosing storage & databases',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are building a pipeline to process time-series data. Which Google Cloud Platform services should you put in boxes 1,2,3, and 4?\n\nThe diagram: connected devices (sensors) and standard devices send their data through a gateway into box 1, box 1 feeds box 2, and box 2 feeds two destinations — box 3, labelled Storage, and box 4, labelled Analytics.',
+    prompt: 'You are building a pipeline to process time-series data. Which Google Cloud services should you put in boxes 1,2,3, and 4?\n\nThe diagram: connected devices (sensors) and standard devices send their data through a gateway into box 1, box 1 feeds box 2, and box 2 feeds two destinations — box 3, labelled Storage, and box 4, labelled Analytics.',
     options: [
-      'Cloud Pub/Sub, Cloud Dataflow, Cloud Datastore, BigQuery',
-      'Firebase Messages, Cloud Pub/Sub, Cloud Spanner, BigQuery',
-      'Cloud Pub/Sub, Cloud Storage, BigQuery, Cloud Bigtable',
-      'Cloud Pub/Sub, Cloud Dataflow, Cloud Bigtable, BigQuery'
+      'Pub/Sub, Dataflow, Firestore in Datastore mode, BigQuery',
+      'Firebase Messages, Pub/Sub, Spanner, BigQuery',
+      'Pub/Sub, Cloud Storage, BigQuery, Bigtable',
+      'Pub/Sub, Dataflow, Bigtable, BigQuery'
     ],
     answer: 3,
-    explanation: 'Pub/Sub ingests device data at scale, Dataflow processes the stream, Bigtable is the purpose-built store for high-volume time-series data, and BigQuery handles analytics. Datastore is not designed for high-throughput time-series writes, Firebase messaging is not an ingestion service, and Cloud Storage is not a stream processor.',
+    explanation: 'Pub/Sub ingests device data at scale, Dataflow processes the stream, Bigtable is the purpose-built store for high-volume time-series data, and BigQuery handles analytics. Datastore is not designed for high-throughput time-series writes, Firebase messaging is not an ingestion service, and Cloud Storage is not a stream processor. Current names: Cloud Datastore → Firestore in Datastore mode.',
     tip: 'Time-series or IoT at scale: Pub/Sub to Dataflow to Bigtable, with BigQuery for analytics.'
   },
   {
@@ -86,11 +86,11 @@ export const planning: Question[] = [
     options: [
       'Deploy the application on GKE Autopilot.',
       'Deploy the application on GKE Standard.',
-      'Deploy the application on Cloud Functions.',
+      'Deploy the application on Cloud Run functions.',
       'Deploy the application on Cloud Run.'
     ],
     answer: 0,
-    explanation: 'GKE Autopilot runs standard Kubernetes manifests with full Kubernetes API control while Google manages nodes and infrastructure. GKE Standard requires you to manage node pools, and Cloud Run and Cloud Functions do not accept Kubernetes manifests with full Deployment control.'
+    explanation: 'GKE Autopilot runs standard Kubernetes manifests with full Kubernetes API control while Google manages nodes and infrastructure. GKE Standard requires you to manage node pools, and Cloud Run and Cloud Run functions do not accept Kubernetes manifests with full Deployment control. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-039',
@@ -129,13 +129,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'Your customer wants you to create a secure website with autoscaling based on the compute instance CPU load. You want to enhance performance by storing static content in Cloud Storage. Which resources are needed to distribute the user traffic?',
     options: [
-      'An internal HTTP(S) load balancer together with Identity-Aware Proxy to allow only HTTPS traffic.',
-      'An external HTTP(S) load balancer to distribute the load and a URL map to target the requests for the static content to the Cloud Storage backend. Install the HTTPS certificates on the instance.',
-      'An external HTTP(S) load balancer with a managed SSL certificate to distribute the load and a URL map to target the requests for the static content to the Cloud Storage backend.',
-      'An external network load balancer pointing to the backend instances to distribute the load evenly. The web servers will forward the request to the Cloud Storage as needed.'
+      'An internal Application Load Balancer together with Identity-Aware Proxy to allow only HTTPS traffic.',
+      'An external Application Load Balancer to distribute the load and a URL map to target the requests for the static content to the Cloud Storage backend. Install the HTTPS certificates on the instance.',
+      'An external Application Load Balancer with a managed SSL certificate to distribute the load and a URL map to target the requests for the static content to the Cloud Storage backend.',
+      'An external passthrough Network Load Balancer pointing to the backend instances to distribute the load evenly. The web servers will forward the request to the Cloud Storage as needed.'
     ],
     answer: 2,
-    explanation: 'An external Application Load Balancer (HTTP(S)) with a Google-managed SSL certificate terminates HTTPS at the edge, distributes traffic to the autoscaled backends, and a URL map can send static content paths to a Cloud Storage backend bucket. Installing certificates on each instance is more work, an internal load balancer is not public, and a network load balancer cannot route by URL to Cloud Storage.'
+    explanation: 'An external Application Load Balancer (HTTP(S)) with a Google-managed SSL certificate terminates HTTPS at the edge, distributes traffic to the autoscaled backends, and a URL map can send static content paths to a Cloud Storage backend bucket. Installing certificates on each instance is more work, an internal load balancer is not public, and a passthrough Network Load Balancer cannot route by URL to Cloud Storage. Current names: HTTP(S) Load Balancing → Application Load Balancer; Network Load Balancing → passthrough Network Load Balancer.'
   },
   {
     id: 'ace-050',
@@ -144,13 +144,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You are deploying a web application using Compute Engine. You created a managed instance group (MIG) to host the application. You want to follow Google-recommended practices to implement a secure and highly available solution. What should you do?',
     options: [
-      'Use SSL proxy load balancing for the MIG and an A record in your DNS private zone with the load balancer\'s IP address.',
-      'Use SSL proxy load balancing for the MIG and a CNAME record in your DNS public zone with the load balancer\'s IP address.',
-      'Use HTTP(S) load balancing for the MIG and a CNAME record in your DNS private zone with the load balancer\'s IP address.',
-      'Use HTTP(S) load balancing for the MIG and an A record in your DNS public zone with the load balancer\'s IP address.'
+      'Use SSL proxy Network Load Balancer for the MIG and an A record in your DNS private zone with the load balancer\'s IP address.',
+      'Use SSL proxy Network Load Balancer for the MIG and a CNAME record in your DNS public zone with the load balancer\'s IP address.',
+      'Use external Application Load Balancing for the MIG and a CNAME record in your DNS private zone with the load balancer\'s IP address.',
+      'Use external Application Load Balancing for the MIG and an A record in your DNS public zone with the load balancer\'s IP address.'
     ],
     answer: 3,
-    explanation: 'A web application belongs behind an external Application Load Balancer (HTTP(S)), and public users reach it through an A record in a public DNS zone pointing to the load balancer\'s IP address. A CNAME must point to another hostname, not an IP, a private zone is not resolvable by internet users, and SSL proxy load balancing is meant for non-HTTP TLS traffic.',
+    explanation: 'A web application belongs behind an external Application Load Balancer (HTTP(S)), and public users reach it through an A record in a public DNS zone pointing to the load balancer\'s IP address. A CNAME must point to another hostname, not an IP, a private zone is not resolvable by internet users, and SSL proxy Network Load Balancer is meant for non-HTTP TLS traffic. Current names: SSL/TCP Proxy → proxy Network Load Balancer; HTTP(S) Load Balancing → Application Load Balancer.',
     tip: 'DNS records that point at an IP address are A (or AAAA) records, never CNAMEs.'
   },
   {
@@ -173,7 +173,7 @@ export const planning: Question[] = [
     topic: 'Choosing networking & load balancing',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are using HTTP(S) Load Balancing for a Web application that has several services. Depending on the URL specified by a user, requests are routed to different backend services. What would you use to specify how those requests should be routed?',
+    prompt: 'You are using external Application Load Balancing for a Web application that has several services. Depending on the URL specified by a user, requests are routed to different backend services. What would you use to specify how those requests should be routed?',
     options: [
       'URL maps',
       'Routes',
@@ -181,7 +181,7 @@ export const planning: Question[] = [
       'Traces'
     ],
     answer: 0,
-    explanation: 'In an Application Load Balancer, the URL map holds the host and path rules that send requests to different backend services. VPC routes direct packets between networks by destination IP, firewall rules only allow or deny traffic, and traces are a Cloud Trace concept unrelated to routing.'
+    explanation: 'In an Application Load Balancer, the URL map holds the host and path rules that send requests to different backend services. VPC routes direct packets between networks by destination IP, firewall rules only allow or deny traffic, and traces are a Cloud Trace concept unrelated to routing. Current names: HTTP(S) Load Balancing → Application Load Balancer.'
   },
   {
     id: 'ace-060',
@@ -190,13 +190,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You want to load balance an application that receives traffic from other resources in the same VPC. All traffic is TCP with IPv4 addresses. What load balancer would you recommend?',
     options: [
-      'SSL Proxy Load Balancing',
-      'TCP Proxy Load Balancing',
-      'Internal TCP/UDP Load Balancing',
-      'Network TCP/UDP Load Balancing'
+      'SSL proxy Network Load Balancer',
+      'TCP proxy Network Load Balancer',
+      'internal passthrough Network Load Balancing',
+      'external passthrough Network Load Balancing'
     ],
     answer: 2,
-    explanation: 'Traffic from within the same VPC on TCP calls for an internal load balancer, and the internal TCP/UDP load balancer (now called the internal passthrough Network Load Balancer) fits exactly. SSL Proxy, TCP Proxy and the external Network TCP/UDP load balancer all front traffic coming from the internet.'
+    explanation: 'Traffic from within the same VPC on TCP calls for an internal load balancer, and the internal passthrough Network Load Balancer fits exactly. SSL proxy Network Load Balancer, TCP proxy Network Load Balancer and the external external passthrough Network Load Balancer all front traffic coming from the internet. Current names: SSL/TCP Proxy → proxy Network Load Balancer; Internal TCP/UDP → internal passthrough Network Load Balancer; TCP/UDP Network Load Balancing → passthrough Network Load Balancer.'
   },
   {
     id: 'ace-066',
@@ -239,11 +239,11 @@ export const planning: Question[] = [
     options: [
       'Compute Engine',
       'Kubernetes Engine',
-      'Cloud Functions',
+      'Cloud Run functions',
       'App Engine'
     ],
     answer: 3,
-    explanation: 'App Engine standard is fully managed and autoscales quickly from very few or zero instances to handle sudden spikes, keeping costs low during quiet periods with minimal operational overhead. Compute Engine and GKE require more management and pay for idle capacity, and Cloud Functions suits event-driven snippets rather than a continually running API service. It is debatable because Cloud Run would be today\'s natural choice, but it is not offered.'
+    explanation: 'App Engine standard is fully managed and autoscales quickly from very few or zero instances to handle sudden spikes, keeping costs low during quiet periods with minimal operational overhead. Compute Engine and GKE require more management and pay for idle capacity, and Cloud Run functions suits event-driven snippets rather than a continually running API service. It is debatable because Cloud Run would be today\'s natural choice, but it is not offered. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-099',
@@ -254,11 +254,11 @@ export const planning: Question[] = [
     options: [
       'App Engine Standard',
       'App Engine Flexible',
-      'Cloud Functions',
+      'Cloud Run functions',
       'Cloud Run'
     ],
     answer: 2,
-    explanation: 'Cloud Functions (now Cloud Run functions) can be triggered directly by Cloud Storage object-finalize events, scale to zero when idle and scale out quickly for bursts, which suits short per-image processing. App Engine is not natively triggered by storage events and keeps idle instances, especially Flexible. Cloud Run could do this via Eventarc but needs more wiring than a storage-triggered function.'
+    explanation: 'Cloud Run functions can be triggered directly by Cloud Storage object-finalize events, scale to zero when idle and scale out quickly for bursts, which suits short per-image processing. App Engine is not natively triggered by storage events and keeps idle instances, especially Flexible. Cloud Run could do this via Eventarc but needs more wiring than a storage-triggered function. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-100',
@@ -270,7 +270,7 @@ export const planning: Question[] = [
       'Bigtable',
       'BigQuery',
       'Cloud SQL',
-      'Cloud Spanner'
+      'Spanner'
     ],
     answer: 1,
     explanation: 'BigQuery is Google\'s serverless data warehouse with standard SQL and broad support for existing BI and SQL tools via ODBC/JDBC, giving minimal operational overhead. Bigtable is NoSQL, and Cloud SQL and Spanner are transactional databases not designed for warehouse-scale analytics.'
@@ -284,8 +284,8 @@ export const planning: Question[] = [
     options: [
       'Bigtable',
       'Cloud SQL',
-      'Cloud Spanner',
-      'Cloud Dataproc'
+      'Spanner',
+      'Dataproc'
     ],
     answer: 1,
     explanation: 'An inventory application needs a relational, transactional database, and with a regional market Cloud SQL provides that as a managed service at low cost. Spanner\'s global scale and cost are unnecessary, Bigtable is a NoSQL wide-column store, and Dataproc is a Spark and Hadoop service.',
@@ -300,8 +300,8 @@ export const planning: Question[] = [
     options: [
       'Bigtable',
       'BigQuery',
-      'Cloud Spanner',
-      'Cloud Dataproc'
+      'Spanner',
+      'Dataproc'
     ],
     answer: 0,
     explanation: 'Bigtable is a managed wide-column NoSQL database built for high-volume, low-latency writes and is compatible with the HBase API, making it the natural migration target. BigQuery is an analytics warehouse, Spanner is a relational database, and Dataproc can run HBase but is not a managed database service.'
@@ -311,7 +311,7 @@ export const planning: Question[] = [
     topic: 'Choosing storage & databases',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'A team providing business intelligence solutions to your company is migrating to GCP. They make extensive use of SQL and want to continue to use SQL. They currently use relational databases to store data. Data is loaded every night. When data is older than 3 years, it is no longer needed. They expect the database to grow to 100 GB within six months. Most of the operations on the database query a few columns but scan many rows. They also want to minimize database management overhead. What GCP service would you recommend they use?',
+    prompt: 'A team providing business intelligence solutions to your company is migrating to Google Cloud. They make extensive use of SQL and want to continue to use SQL. They currently use relational databases to store data. Data is loaded every night. When data is older than 3 years, it is no longer needed. They expect the database to grow to 100 GB within six months. Most of the operations on the database query a few columns but scan many rows. They also want to minimize database management overhead. What Google Cloud service would you recommend they use?',
     options: [
       'Bigtable',
       'BigQuery',
@@ -326,12 +326,12 @@ export const planning: Question[] = [
     topic: 'Choosing storage & databases',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'A startup is deploying analytical services for Internet of Things (IoT) applications. The service will need to ingest large volumes of time series data in short periods of time. Users will query the data is a few different ways but those ways are known and fixed. What managed GCP database service would you recommend?',
+    prompt: 'A startup is deploying analytical services for Internet of Things (IoT) applications. The service will need to ingest large volumes of time series data in short periods of time. Users will query the data is a few different ways but those ways are known and fixed. What managed Google Cloud database service would you recommend?',
     options: [
       'BigQuery',
       'Bigtable',
       'Cloud SQL',
-      'Cloud Spanner'
+      'Spanner'
     ],
     answer: 1,
     explanation: 'Bigtable handles high-throughput time-series ingestion at low latency, and because query patterns are known and fixed you can design row keys to serve them efficiently. BigQuery is better for ad hoc analytics, and Cloud SQL and Spanner are relational databases that are not optimized for massive time-series write rates.',
@@ -347,17 +347,17 @@ export const planning: Question[] = [
       'Compute Engine',
       'App Engine Standard',
       'App Engine Flexible',
-      'Cloud Functions'
+      'Cloud Run functions'
     ],
     answer: 3,
-    explanation: 'Cloud Functions (now Cloud Run functions) can be triggered by each Pub/Sub message and handle short, sub-second checks with automatic scaling and no servers to manage. Compute Engine needs VM management, and App Engine would need a push subscription and keeps instances running.'
+    explanation: 'Cloud Run functions can be triggered by each Pub/Sub message and handle short, sub-second checks with automatic scaling and no servers to manage. Compute Engine needs VM management, and App Engine would need a push subscription and keeps instances running. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-114',
     topic: 'Choosing networking & load balancing',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are hosting a large amount of image and video content for an educational service. Learners from around the world use the service. You currently host content on servers in your own data center in North America. Learners in Asia, Africa, and Europe experience long latencies loading content. What GCP service could you use to ensure that all learners experience the same level of latency and the latency is kept low, especially for frequently accessed content?',
+    prompt: 'You are hosting a large amount of image and video content for an educational service. Learners from around the world use the service. You currently host content on servers in your own data center in North America. Learners in Asia, Africa, and Europe experience long latencies loading content. What Google Cloud service could you use to ensure that all learners experience the same level of latency and the latency is kept low, especially for frequently accessed content?',
     options: [
       'Cloud Storage Nearline Storage Class',
       'Cloud CDN',
@@ -374,14 +374,14 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You need to deploy a load balancer that will support external clients using TCP traffic, including SSL. You want to offload SSL processing. What load balancer would you deploy?',
     options: [
-      'HTTP(S) Load Balancing',
-      'SSL Proxy',
-      'TCP Proxy',
-      'Network TCP/UDP Load Balancing'
+      'external Application Load Balancing',
+      'SSL proxy Network Load Balancer',
+      'TCP proxy Network Load Balancer',
+      'external passthrough Network Load Balancing'
     ],
     answer: 1,
-    explanation: 'SSL Proxy load balancing (today the external proxy Network Load Balancer with SSL offload) terminates TLS for non-HTTP TCP traffic from external clients. The HTTP(S) load balancer also offloads TLS but only for HTTP/HTTPS, TCP Proxy forwards TCP without terminating SSL, and the passthrough network load balancer never terminates TLS.',
-    tip: 'Non-HTTP TCP plus SSL termination points to SSL proxy; HTTP(S) traffic points to the Application Load Balancer.'
+    explanation: 'SSL proxy Network Load Balancer (today the external proxy Network Load Balancer with SSL offload) terminates TLS for non-HTTP TCP traffic from external clients. The external Application Load Balancer also offloads TLS but only for HTTP/HTTPS, TCP proxy Network Load Balancer forwards TCP without terminating SSL, and the passthrough network load balancer never terminates TLS. Current names: HTTP(S) Load Balancing → Application Load Balancer; SSL/TCP Proxy → proxy Network Load Balancer; TCP/UDP Network Load Balancing → passthrough Network Load Balancer.',
+    tip: 'Non-HTTP TCP plus SSL termination points to SSL proxy Network Load Balancer; HTTP(S) traffic points to the Application Load Balancer.'
   },
   {
     id: 'ace-123',
@@ -390,28 +390,28 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You need to deploy a load balancer that will support internal TCP traffic within a single region. What load balancer would you deploy?',
     options: [
-      'Network TCP/UDP Load Balancing',
-      'SSL Proxy',
-      'TCP Proxy',
-      'Internal HTTP(S) Load Balancing'
+      'external passthrough Network Load Balancing',
+      'SSL proxy Network Load Balancer',
+      'TCP proxy Network Load Balancer',
+      'internal Application Load Balancing'
     ],
     answer: 0,
-    explanation: 'Regional internal TCP traffic is served by the internal passthrough Network Load Balancer, formerly the Internal TCP/UDP load balancer, which is the network TCP/UDP family the key intends. Internal HTTP(S) is layer 7 only, and SSL Proxy and TCP Proxy were historically external global services. This is debatable because the option omits the word internal, and a regional internal proxy Network Load Balancer (TCP proxy) now also exists.'
+    explanation: 'Regional internal TCP traffic is served by the internal passthrough Network Load Balancer, formerly the internal passthrough Network Load Balancer, which is the network TCP/UDP family the key intends. Internal HTTP(S) is layer 7 only, and SSL proxy Network Load Balancer and TCP proxy Network Load Balancer were historically external global services. This is debatable because the option omits the word internal, and a regional internal proxy Network Load Balancer (TCP proxy Network Load Balancer) now also exists. Current names: TCP/UDP Network Load Balancing → passthrough Network Load Balancer; SSL/TCP Proxy → proxy Network Load Balancer; HTTP(S) Load Balancing → Application Load Balancer; Internal TCP/UDP → internal passthrough Network Load Balancer.'
   },
   {
     id: 'ace-126',
     topic: 'Pricing & cost',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'A group of epidemiologists is running a large number of simulations. They are using several high CPU virtual machines. Each simulation takes approximately 10 minutes to complete. If a simulation fails before completing, it is restarted on another VM. The epidemiologists would like to minimize the GCP costs without increasing the time need to complete a simulation. What would you recommend?',
+    prompt: 'A group of epidemiologists is running a large number of simulations. They are using several high CPU virtual machines. Each simulation takes approximately 10 minutes to complete. If a simulation fails before completing, it is restarted on another VM. The epidemiologists would like to minimize the Google Cloud costs without increasing the time need to complete a simulation. What would you recommend?',
     options: [
       'Use more virtual machine instances',
-      'Use preemptible virtual machine instances',
+      'Use Spot virtual machine instances',
       'Use Shielded VM instances',
       'Use sole-tenant VMS'
     ],
     answer: 1,
-    explanation: 'Short, restartable 10-minute jobs are an ideal fit for preemptible (now Spot) VMs, which cost far less and run at the same speed; an interrupted simulation simply restarts elsewhere. Adding more VMs raises cost, Shielded VMs add boot integrity not savings, and sole-tenant nodes cost more.',
+    explanation: 'Short, restartable 10-minute jobs are an ideal fit for Spot VMs, which cost far less and run at the same speed; an interrupted simulation simply restarts elsewhere. Adding more VMs raises cost, Shielded VMs add boot integrity not savings, and sole-tenant nodes cost more. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.',
     tip: 'Fault-tolerant, restartable batch work is the classic Spot VM use case.'
   },
   {
@@ -421,13 +421,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'As a consultant to a global logistics company, you have been asked to advise on the migration from an on premises inventory system to Google Cloud. The inventory system uses a relational database. Your client wants to use a managed database service that supports users in multiple regions. Inventory data needs to be consistent at all times. What service would you recommend?',
     options: [
-      'Cloud Bigtable',
+      'Bigtable',
       'Cloud BigQuery',
-      'Cloud Spanner',
+      'Spanner',
       'Cloud SQL'
     ],
     answer: 2,
-    explanation: 'Cloud Spanner is a managed relational database that scales across regions while providing strong, external consistency. Cloud SQL is regional with only read replicas elsewhere, Bigtable is non-relational, and BigQuery is an analytics warehouse rather than a transactional inventory store.'
+    explanation: 'Spanner is a managed relational database that scales across regions while providing strong, external consistency. Cloud SQL is regional with only read replicas elsewhere, Bigtable is non-relational, and BigQuery is an analytics warehouse rather than a transactional inventory store.'
   },
   {
     id: 'ace-141',
@@ -439,34 +439,34 @@ export const planning: Question[] = [
       'Shielded VMs',
       'Sole-tenant nodes',
       'Managed instance groups',
-      'Preemptible VMs'
+      'Spot VMs'
     ],
     answer: 1,
-    explanation: 'Sole-tenant nodes dedicate a physical host to your project\'s VMs, meeting isolation or licensing requirements. Shielded VMs protect boot integrity, managed instance groups handle scaling, and preemptible VMs are about cost, none of which controls who shares the hardware.'
+    explanation: 'Sole-tenant nodes dedicate a physical host to your project\'s VMs, meeting isolation or licensing requirements. Shielded VMs protect boot integrity, managed instance groups handle scaling, and Spot VMs are about cost, none of which controls who shares the hardware. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'ace-149',
     topic: 'Choosing compute',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'An app development team wants to develop a service written in C++ that can process a file after it is uploaded to Cloud Storage. The processing time varies based on the size and complexity of the content of the file. Almost all files can be processed in less than 1 minute but some files can take up to 20 minutes to process. The developers are already using containers and Cloud Pub/Sub for other services. They plan to use Cloud Storage\'s trigger mechanism to send a message to Pub/Sub on upload. You want to minimize operational overhead while ensuring all files are processed correctly. What GCP compute service would you use?',
+    prompt: 'An app development team wants to develop a service written in C++ that can process a file after it is uploaded to Cloud Storage. The processing time varies based on the size and complexity of the content of the file. Almost all files can be processed in less than 1 minute but some files can take up to 20 minutes to process. The developers are already using containers and Pub/Sub for other services. They plan to use Cloud Storage\'s trigger mechanism to send a message to Pub/Sub on upload. You want to minimize operational overhead while ensuring all files are processed correctly. What Google Cloud compute service would you use?',
     options: [
       'Compute Engine',
       'App Engine Standard',
       'Cloud Run',
-      'Anthos'
+      'GKE Standard'
     ],
     answer: 2,
-    explanation: 'Cloud Run runs any container, including C++, scales to zero, and can receive Pub/Sub push messages with request timeouts up to 60 minutes, so 20-minute jobs complete. App Engine Standard does not support custom C++ runtimes, Compute Engine needs you to manage VMs, and Anthos adds cluster management overhead.'
+    explanation: 'Cloud Run runs any container, including C++, scales to zero, and can receive Pub/Sub push messages with request timeouts up to 60 minutes, so 20-minute jobs complete. App Engine Standard does not support custom C++ runtimes, Compute Engine needs you to manage VMs, and GKE Standard adds cluster and node management overhead.'
   },
   {
     id: 'ace-157',
     topic: 'Choosing compute',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'GreenWorks, a new startup, is launching an eco-friendly marketplace app that must serve a large number of users quickly. To ensure minimal latency for their site, they want to set up a single HTTP reverse proxy with caching capabilities. The reverse proxy will use almost no CPU, but they require 30 GB of in- memory cache, with an additional 2 GB of memory for other processes. They are also looking to keep costs as low as possible. How should they set up this reverse proxy on Google Cloud Platform?',
+    prompt: 'GreenWorks, a new startup, is launching an eco-friendly marketplace app that must serve a large number of users quickly. To ensure minimal latency for their site, they want to set up a single HTTP reverse proxy with caching capabilities. The reverse proxy will use almost no CPU, but they require 30 GB of in- memory cache, with an additional 2 GB of memory for other processes. They are also looking to keep costs as low as possible. How should they set up this reverse proxy on Google Cloud?',
     options: [
-      'Create a Cloud Memorystore for Redis instance with 32-GB capacity.',
+      'Create a Memorystore for Redis instance with 32-GB capacity.',
       'Run it on Compute Engine, and choose a custom instance type with 6 vCPUs and 32 GB of memory.',
       'Package it in a container image, and run it on Kubernetes Engine, using n1-standard-32 instances as nodes.',
       'Run it on Compute Engine, choose the instance type n1-standard-1, and add an SSD persistent disk of 32 GB.'
@@ -481,13 +481,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'Your company, SnapDojo runs a social media platform where users can upload images. These images need to be processed by converting them to an internal optimized binary format and stored afterward. You want to choose the most efficient and cost-effective approach for handling this task. What should you do?',
     options: [
-      'Upload images to Cloud Bigtable and monitor Bigtable for new entries. Trigger a Cloud Function to convert the images and store them in Bigtable.',
-      'Upload images to Firestore and monitor Firestore for new entries. Trigger a Cloud Function to convert the images and store them in Firestore.',
-      'Upload images to Filestore and monitor Filestore for changes. Trigger a Cloud Function to convert the images and store them in Filestore.',
-      'Upload images to a Cloud Storage bucket and monitor the bucket for new uploads. Trigger a Cloud Function to convert the images and store them back in a Cloud Storage bucket.'
+      'Upload images to Bigtable and monitor Bigtable for new entries. Trigger a Cloud Run function to convert the images and store them in Bigtable.',
+      'Upload images to Firestore and monitor Firestore for new entries. Trigger a Cloud Run function to convert the images and store them in Firestore.',
+      'Upload images to Filestore and monitor Filestore for changes. Trigger a Cloud Run function to convert the images and store them in Filestore.',
+      'Upload images to a Cloud Storage bucket and monitor the bucket for new uploads. Trigger a Cloud Run function to convert the images and store them back in a Cloud Storage bucket.'
     ],
     answer: 3,
-    explanation: 'Images are unstructured objects that belong in Cloud Storage, and a Cloud Run function triggered by object finalize events can convert each upload and write the result back to a bucket cheaply. Bigtable and Firestore are databases unsuited to large binary blobs, and Filestore is a costly NFS service that does not emit triggers for Cloud Functions.'
+    explanation: 'Images are unstructured objects that belong in Cloud Storage, and a Cloud Run function triggered by object finalize events can convert each upload and write the result back to a bucket cheaply. Bigtable and Firestore are databases unsuited to large binary blobs, and Filestore is a costly NFS service that does not emit triggers for Cloud Run functions. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-164',
@@ -528,11 +528,11 @@ export const planning: Question[] = [
     options: [
       'i. Select Cloud SQL (MySQL). ii. Verify that the enable binary logging option is selected.',
       'i. Select Cloud SQL (MySQL). ii. Select the create failover replicas option.',
-      'i. Select Cloud Spanner. ii. Set up your instance with 2 nodes.',
-      'i. Select Cloud Spanner. ii. Set up your instance as multi-regional.'
+      'i. Select Spanner. ii. Set up your instance with 2 nodes.',
+      'i. Select Spanner. ii. Set up your instance as multi-regional.'
     ],
     answer: 0,
-    explanation: 'A small, single-region relational workload fits Cloud SQL, and for Cloud SQL for MySQL point-in-time recovery depends on binary logging being enabled alongside automated backups. A failover replica gives high availability but replicates deletions immediately, so it cannot restore data to an earlier point. Cloud Spanner, especially multi-regional, is far more expensive than needed for a small regional dataset.',
+    explanation: 'A small, single-region relational workload fits Cloud SQL, and for Cloud SQL for MySQL point-in-time recovery depends on binary logging being enabled alongside automated backups. A failover replica gives high availability but replicates deletions immediately, so it cannot restore data to an earlier point. Spanner, especially multi-regional, is far more expensive than needed for a small regional dataset.',
     tip: 'Cloud SQL MySQL PITR needs automated backups plus binary logging.'
   },
   {
@@ -604,11 +604,11 @@ export const planning: Question[] = [
     options: [
       'BigQuery',
       'Cloud SQL',
-      'Cloud Spanner',
-      'Cloud Datastore'
+      'Spanner',
+      'Firestore in Datastore mode'
     ],
     answer: 1,
-    explanation: 'Cloud SQL for PostgreSQL runs the same engine as the current app, giving strong consistency, ACID multi-table transactions and minimal code changes for a single-site workload. Spanner is built for global scale and needs schema and code adaptation even with its PostgreSQL interface. BigQuery is an analytics warehouse, and Datastore (Firestore) is a NoSQL document store.'
+    explanation: 'Cloud SQL for PostgreSQL runs the same engine as the current app, giving strong consistency, ACID multi-table transactions and minimal code changes for a single-site workload. Spanner is built for global scale and needs schema and code adaptation even with its PostgreSQL interface. BigQuery is an analytics warehouse, and Datastore (Firestore) is a NoSQL document store. Current names: Cloud Datastore → Firestore in Datastore mode.'
   },
   {
     id: 'ace-202',
@@ -617,21 +617,21 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You manage a video streaming platform called StreamSphere that receives SSL-encrypted TCP traffic on port 443. Users from various regions across the globe connect to the platform. To ensure a seamless streaming experience, you want to minimize latency for these users. Which load-balancing solution would be the best choice?',
     options: [
-      'HTTPS Load Balancer',
-      'Network Load Balancer',
-      'SSL Proxy Load Balancer',
-      'Internal TCP/UDP Load Balancer. Add a firewall rule allowing ingress traffic from 0.0.0.0/0 on the target instances.'
+      'external Application Load Balancer',
+      'passthrough Network Load Balancer',
+      'SSL proxy Network Load Balancer',
+      'internal passthrough Network Load Balancer. Add a firewall rule allowing ingress traffic from 0.0.0.0/0 on the target instances.'
     ],
     answer: 2,
-    explanation: 'The traffic is SSL-encrypted TCP rather than HTTP, and the SSL proxy load balancer (now the global external proxy Network Load Balancer) terminates TLS at Google\'s edge close to users worldwide, which cuts latency. The HTTPS load balancer is for HTTP(S) traffic only. The passthrough Network Load Balancer is regional, and an internal load balancer cannot receive internet traffic no matter what firewall rule you add.',
-    tip: 'Non-HTTP TLS traffic from global users points to the SSL proxy load balancer.'
+    explanation: 'The traffic is SSL-encrypted TCP rather than HTTP, and the SSL proxy Network Load Balancer (now the global external proxy Network Load Balancer) terminates TLS at Google\'s edge close to users worldwide, which cuts latency. The external Application Load Balancer is for HTTP(S) traffic only. The passthrough Network Load Balancer is regional, and an internal load balancer cannot receive internet traffic no matter what firewall rule you add. Current names: HTTP(S) Load Balancing → Application Load Balancer; Network Load Balancing → passthrough Network Load Balancer; SSL/TCP Proxy → proxy Network Load Balancer; Internal TCP/UDP → internal passthrough Network Load Balancer.',
+    tip: 'Non-HTTP TLS traffic from global users points to the SSL proxy Network Load Balancer.'
   },
   {
     id: 'ace-222',
     topic: 'Pricing & cost',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are tasked with providing a cost estimate for a cloud-based logistics tracking system that runs on a Kubernetes cluster using the GCP pricing calculator. The system handles real-time data processing and requires high IOPs, along with the need for disk snapshots for backups. You begin by entering the number of nodes, the average hours of operation per day, and the number of active days per month. What should you do next?',
+    prompt: 'You are tasked with providing a cost estimate for a cloud-based logistics tracking system that runs on a Kubernetes cluster using the Google Cloud pricing calculator. The system handles real-time data processing and requires high IOPs, along with the need for disk snapshots for backups. You begin by entering the number of nodes, the average hours of operation per day, and the number of active days per month. What should you do next?',
     options: [
       'Fill in local SSD. Fill in persistent disk storage and snapshot storage.',
       'Fill in local SSD. Add estimated cost for cluster management.',
@@ -648,13 +648,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'A startup called SparkThreads runs a complex data processing task on an on-premises server that takes about 40 hours to complete. This task is performed monthly, can run without user interaction, and must restart if interrupted. SparkThreads wants to move this workload to the cloud while keeping costs as low as possible. What approach should they take?',
     options: [
-      'Migrate the workload to a Compute Engine Preemptible VM.',
-      'Migrate the workload to a Google Kubernetes Engine cluster with Preemptible nodes.',
+      'Migrate the workload to a Compute Engine Spot VM.',
+      'Migrate the workload to a Google Kubernetes Engine cluster with Spot nodes.',
       'Migrate the workload to a Compute Engine VM and start and stop the instance as needed.',
-      'Create an Instance Template with Preemptible VMs ON, create a Managed Instance Group from the template, adjust Target CPU Utilization, and then migrate the workload.'
+      'Create an Instance Template with Spot VMs on, create a Managed Instance Group from the template, adjust Target CPU Utilization, and then migrate the workload.'
     ],
     answer: 2,
-    explanation: 'Preemptible VMs are always stopped after at most 24 hours, so a 40-hour job that restarts from scratch when interrupted would never finish on them. A regular VM that you start for the monthly run and stop afterwards only bills while it runs, which keeps cost low and lets the job complete. Preemptible GKE nodes and a preemptible MIG have the same 24-hour limit and add complexity a single batch job does not need.',
+    explanation: 'Spot VMs can be preempted at any time, so a 40-hour job that restarts from scratch when interrupted may never finish on them. A regular VM that you start for the monthly run and stop afterwards only bills while it runs, which keeps cost low and lets the job complete. Spot GKE nodes and a MIG of Spot VMs carry the same risk and add complexity. Current names: Spot VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.',
     tip: 'Preemptible VMs cap at 24 hours; jobs that cannot checkpoint need a standard VM.'
   },
   {
@@ -667,7 +667,7 @@ export const planning: Question[] = [
       'Create a file in Cloud Storage for each drone and append new data to the file.',
       'Create a file in Cloud Filestore for each drone and append new data to the file.',
       'Ingest the data into Datastore and store it in an entity group organized by the drone.',
-      'Ingest the data into Cloud Bigtable and create a row key based on the event\'s timestamp.'
+      'Ingest the data into Bigtable and create a row key based on the event\'s timestamp.'
     ],
     answer: 3,
     explanation: 'Bigtable is built for high-throughput time-series sensor data, gives atomic single-row writes, and supports consistent reads by row-key range, so a timestamp-based row key fits the requirement. Appending to files in Cloud Storage or Filestore gives no atomic per-event updates or efficient time-range lookups, and Datastore entity groups are limited to roughly one write per second, far too slow for thousands of events per hour per drone. In practice you would prefix the key with the drone ID rather than lead with the raw timestamp, to avoid hotspotting.'
@@ -696,7 +696,7 @@ export const planning: Question[] = [
     prompt: 'You are developing a global e-learning platform that tracks user progress and stores course completion data in a database. As the platform grows in popularity, you\'re concerned about ensuring consistent performance. You need to provide an optimal learning experience for users worldwide while keeping management tasks simple. What should you do?',
     options: [
       'Use Cloud SQL with cross-region replication to store course completion data in the EU, US, and APAC regions.',
-      'Use Cloud Spanner to store user data associated with their course completion progress.',
+      'Use Spanner to store user data associated with their course completion progress.',
       'Use BigQuery to store course completion data with a Redis on Memorystore instance in front to ensure global consistency.',
       'Store course completion data in a Bigtable database partitioned by user ID.'
     ],
@@ -727,7 +727,7 @@ export const planning: Question[] = [
     options: [
       'Cloud SQL',
       'Firestore',
-      'Cloud Spanner',
+      'Spanner',
       'Bigtable'
     ],
     answer: 2,
@@ -741,13 +741,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'Your company, FinTechGuru, has developed a financial data processing application running on a managed instance group in Compute Engine. This application handles TCP traffic on port 389 and needs to ensure that the original IP address of clients sending requests is preserved. You plan to make this application accessible to the internet through a load balancer. What should you do?',
     options: [
-      'Expose the application by using an external TCP Network Load Balancer.',
-      'Expose the application by using a TCP Proxy Load Balancer.',
-      'Expose the application by using an SSL Proxy Load Balancer.',
-      'Expose the application by using an internal TCP Network Load Balancer.'
+      'Expose the application by using an external TCP passthrough Network Load Balancer.',
+      'Expose the application by using a TCP proxy Network Load Balancer.',
+      'Expose the application by using an SSL proxy Network Load Balancer.',
+      'Expose the application by using an internal TCP passthrough Network Load Balancer.'
     ],
     answer: 0,
-    explanation: 'The external passthrough Network Load Balancer (the old external TCP/UDP Network Load Balancer) does not proxy connections, so backends see the client\'s original source IP, and it handles any TCP port such as 389. TCP Proxy and SSL Proxy load balancers end the connection and replace the source IP unless you add the PROXY protocol. An internal load balancer cannot be reached from the internet.',
+    explanation: 'The external passthrough Network Load Balancer (the old external passthrough Network Load Balancer) does not proxy connections, so backends see the client\'s original source IP, and it handles any TCP port such as 389. TCP proxy Network Load Balancer and SSL proxy Network Load Balancers end the connection and replace the source IP unless you add the PROXY protocol. An internal load balancer cannot be reached from the internet. Current names: Network Load Balancing → passthrough Network Load Balancer; SSL/TCP Proxy → proxy Network Load Balancer; TCP/UDP Network Load Balancing → passthrough Network Load Balancer.',
     tip: 'Need the client source IP preserved for non-HTTP traffic: use a passthrough Network Load Balancer.'
   },
   {
@@ -757,7 +757,7 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You are building a backend service for a ride-sharing app that will store trip and fare data from mobile and web users. Once the app is launched, you anticipate a high volume of rides and transactions worldwide. Your analytics team needs to run SQL queries to gain insights from this data. You need to implement a data store that is highly available and scalable to meet these demands. What should you do?',
     options: [
-      'Create a multi-region Cloud Spanner instance with an optimized schema.',
+      'Create a multi-region Spanner instance with an optimized schema.',
       'Create a multi-region Firestore database with aggregation query enabled.',
       'Create a multi-region Cloud SQL for PostgreSQL database with optimized indexes.',
       'Create a multi-region BigQuery dataset with optimized tables.'
@@ -770,15 +770,15 @@ export const planning: Question[] = [
     topic: 'Choosing storage & databases',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your company is an A.C manufacturer. You are head of a research and development project and looking to build a mobile app to remotely access the A.C. For this, it is essential to build a pipeline to process time-series data. Given that services in boxes \'2\' & \'3\' are used for \'Storage\' & \'Analytics\' purposes respectively. Which Google Cloud Platform services should you put in boxes 1, 2, and 3?\n\nThe diagram: the IoT device (the A.C.) and the smart device (the mobile app) send data over Cloud Pub/Sub into box 1, and box 1 feeds box 2 (Storage) and box 3 (Analytics).',
+    prompt: 'Your company is an A.C manufacturer. You are head of a research and development project and looking to build a mobile app to remotely access the A.C. For this, it is essential to build a pipeline to process time-series data. Given that services in boxes \'2\' & \'3\' are used for \'Storage\' & \'Analytics\' purposes respectively. Which Google Cloud services should you put in boxes 1, 2, and 3?\n\nThe diagram: the IoT device (the A.C.) and the smart device (the mobile app) send data over Pub/Sub into box 1, and box 1 feeds box 2 (Storage) and box 3 (Analytics).',
     options: [
-      'Cloud Dataflow, Cloud Datastore, BigQuery',
-      'Firebase Messages, Cloud Spanner, BigQuery',
-      'BigQuery, Cloud Bigtable, Cloud Storage',
-      'Cloud Dataflow, Cloud Bigtable, BigQuery'
+      'Dataflow, Firestore in Datastore mode, BigQuery',
+      'Firebase Messages, Spanner, BigQuery',
+      'BigQuery, Bigtable, Cloud Storage',
+      'Dataflow, Bigtable, BigQuery'
     ],
     answer: 3,
-    explanation: 'Google\'s reference pattern for streaming IoT time-series data is Pub/Sub, then Dataflow for processing, then Bigtable for low-latency time-series storage and BigQuery for analytics. Datastore is not designed for high-volume time-series writes. Firebase Cloud Messaging is a notification service, not a processing step. BigQuery cannot pull straight from Pub/Sub as a processing stage in this flow, and Cloud Storage is not an analytics engine.'
+    explanation: 'Google\'s reference pattern for streaming IoT time-series data is Pub/Sub, then Dataflow for processing, then Bigtable for low-latency time-series storage and BigQuery for analytics. Datastore is not designed for high-volume time-series writes. Firebase Cloud Messaging is a notification service, not a processing step. BigQuery cannot pull straight from Pub/Sub as a processing stage in this flow, and Cloud Storage is not an analytics engine. Current names: Cloud Datastore → Firestore in Datastore mode.'
   },
   {
     id: 'ace-281',
@@ -787,13 +787,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'Your company, DataFlow Dynamics, operates an analytics platform that processes large datasets every night. This process requires numerous virtual machines (VMs) to handle the workload, but the cost has become a concern. Since the workload is fault-tolerant and can handle some of the VMs being terminated unexpectedly, you\'re looking for a more cost-efficient solution. What should you do?',
     options: [
-      '- Run a test using simulated maintenance events.\n- If the test is successful, use preemptible N1 Standard VMs when running future jobs.',
+      '- Run a test using simulated maintenance events.\n- If the test is successful, use Spot N1 Standard VMs when running future jobs.',
       '- Run a test using simulated maintenance events.\n- If the test is successful, use N1 Standard VMs when running future jobs.',
       '- Run a test using a managed instance group.\n- If the test is successful, use N1 Standard VMs in the managed instance group when running future jobs.',
       '- Run a test using N1 Standard VMs instead of N2.\n- If the test is successful, use N1 Standard VMs when running future jobs.'
     ],
     answer: 0,
-    explanation: 'A fault-tolerant nightly batch that can survive VMs disappearing is the textbook case for preemptible (today Spot) VMs, which cost a fraction of on-demand. Simulating maintenance events first confirms the job tolerates terminations. Switching to plain N1 standard VMs, or just wrapping them in a managed instance group, keeps full on-demand pricing and does not address cost.',
+    explanation: 'A fault-tolerant nightly batch that can survive VMs disappearing is the textbook case for Spot VMs, which cost a fraction of on-demand. Simulating maintenance events first confirms the job tolerates terminations. Switching to plain N1 standard VMs, or just wrapping them in a managed instance group, keeps full on-demand pricing and does not address cost. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.',
     tip: 'Fault-tolerant plus cost-sensitive almost always means Spot (formerly preemptible) VMs.'
   },
   {
@@ -822,10 +822,10 @@ export const planning: Question[] = [
       'Deploy the application on GKE Autopilot.',
       'Deploy the application on Cloud Run.',
       'Deploy the application on GKE Standard.',
-      'Deploy the application on Cloud Functions.'
+      'Deploy the application on Cloud Run functions.'
     ],
     answer: 0,
-    explanation: 'The PDF\'s key says GKE Standard, but GKE Autopilot is the better fit: it accepts normal Kubernetes manifests, giving full control over the deployment objects, while Google manages nodes and node pools so infrastructure configuration is minimal. Standard requires you to size and manage node pools yourself, contradicting the minimal-configuration requirement, and Cloud Run and Cloud Functions do not take standard Kubernetes manifests. It is debatable only if full control is read as control over nodes, which the stem does not ask for.',
+    explanation: 'The PDF\'s key says GKE Standard, but GKE Autopilot is the better fit: it accepts normal Kubernetes manifests, giving full control over the deployment objects, while Google manages nodes and node pools so infrastructure configuration is minimal. Standard requires you to size and manage node pools yourself, contradicting the minimal-configuration requirement, and Cloud Run and Cloud Run functions do not take standard Kubernetes manifests. It is debatable only if full control is read as control over nodes, which the stem does not ask for. Current names: Cloud Functions → Cloud Run functions.',
     tip: 'Kubernetes manifest plus minimal infrastructure management points to GKE Autopilot.'
   },
   {
@@ -835,13 +835,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'Your client, Foodify, is launching a recipe-sharing website that needs to scale automatically based on the CPU load of its compute instances. To optimize performance, the static content, such as images and documents, will be stored in Cloud Storage. Which resources should be used to manage and distribute user traffic efficiently?',
     options: [
-      '- An external HTTP(S) load balancer with a managed SSL certificate to distribute the load\n- A URL map to route requests for static content to the Cloud Storage backend.',
-      'An external network load balancer pointing to the backend instances to distribute the load evenly with web servers forwarding requests to Cloud Storage as needed.',
-      'An internal HTTP(S) load balancer combined with an Identity-Aware Proxy to restrict traffic to HTTPS only.',
-      '- An external HTTP(S) load balancer to distribute the load and a URL map to route requests for static content to the Cloud Storage backend.\n- Install the HTTPS certificates on the compute instances.'
+      '- An external Application Load Balancer with a managed SSL certificate to distribute the load\n- A URL map to route requests for static content to the Cloud Storage backend.',
+      'An external passthrough Network Load Balancer pointing to the backend instances to distribute the load evenly with web servers forwarding requests to Cloud Storage as needed.',
+      'An internal Application Load Balancer combined with an Identity-Aware Proxy to restrict traffic to HTTPS only.',
+      '- An external Application Load Balancer to distribute the load and a URL map to route requests for static content to the Cloud Storage backend.\n- Install the HTTPS certificates on the compute instances.'
     ],
     answer: 0,
-    explanation: 'An external Application Load Balancer (HTTP(S)) can front an autoscaling managed instance group and use a URL map to send static paths to a Cloud Storage backend bucket, with a Google-managed SSL certificate terminating TLS at the load balancer. Installing certificates on each instance adds needless management, a network load balancer cannot do URL-based routing, and an internal load balancer does not serve public users.'
+    explanation: 'An external Application Load Balancer (HTTP(S)) can front an autoscaling managed instance group and use a URL map to send static paths to a Cloud Storage backend bucket, with a Google-managed SSL certificate terminating TLS at the load balancer. Installing certificates on each instance adds needless management, a passthrough Network Load Balancer cannot do URL-based routing, and an internal load balancer does not serve public users. Current names: HTTP(S) Load Balancing → Application Load Balancer; Network Load Balancing → passthrough Network Load Balancer.'
   },
   {
     id: 'ace-306',
@@ -850,13 +850,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'TechCraft is a fictional company that has developed a new social media app called SnapWave. The app is hosted on Google Cloud and has gained popularity quickly, requiring TechCraft to scale up its infrastructure. They have set up an instance group to handle traffic, and they want to ensure that traffic to their web application, which is served over HTTPS, is properly load-balanced. TechCraft also wants the load balancer to terminate the SSL session at the load balancer itself, following Google-recommended practices. What should TechCraft do?',
     options: [
-      'Configure an HTTP(S) load balancer.',
+      'Configure an external Application Load Balancer.',
       'Configure an internal TCP load balancer.',
-      'Configure an external SSL proxy load balancer.',
-      'Configure an external TCP proxy load balancer.'
+      'Configure an SSL proxy Network Load Balancer.',
+      'Configure an TCP proxy Network Load Balancer.'
     ],
     answer: 0,
-    explanation: 'HTTPS web traffic with SSL terminated at the load balancer is handled by the external Application Load Balancer (HTTP(S)), which is the Google-recommended option for web apps. The SSL proxy and TCP proxy load balancers are meant for non-HTTP TCP traffic, and an internal TCP load balancer does not serve internet users.'
+    explanation: 'HTTPS web traffic with SSL terminated at the load balancer is handled by the external Application Load Balancer (HTTP(S)), which is the Google-recommended option for web apps. The SSL proxy Network Load Balancer and TCP proxy Network Load Balancers are meant for non-HTTP TCP traffic, and an internal TCP load balancer does not serve internet users. Current names: HTTP(S) Load Balancing → Application Load Balancer; SSL/TCP Proxy → proxy Network Load Balancer.'
   },
   {
     id: 'ace-314',
@@ -913,12 +913,12 @@ export const planning: Question[] = [
     prompt: 'TechWorld Solutions, a fictional e-commerce company, is planning to migrate its on-premises data management systems to Google Cloud. Their current setup is mentioned below. TechWorld wants to follow Google’s best practices for migration, ensuring that its new cloud infrastructure scales globally while requiring minimal operational management. What steps should TechWorld take to achieve this? - A MySQL cluster for handling customer transactions and product inventory. - Apache Kafka to manage real-time order and delivery event streams. - A PostgreSQL database for generating analytical reports and business insights.',
     options: [
       '- Migrate from MySQL to Cloud SQL\n- From Kafka to Pub/Sub\n- From PostgreSQL to BigQuery.',
-      '- Migrate from MySQL to Cloud Spanner\n- From Kafka to Pub/Sub\n- From PostgreSQL to BigQuery.',
-      '- Migrate from MySQL to Cloud Spanner\n- From Kafka to Memorystore\n- From PostgreSQL to Cloud SQL.',
+      '- Migrate from MySQL to Spanner\n- From Kafka to Pub/Sub\n- From PostgreSQL to BigQuery.',
+      '- Migrate from MySQL to Spanner\n- From Kafka to Memorystore\n- From PostgreSQL to Cloud SQL.',
       '- Migrate from MySQL to Cloud SQL\n- From Kafka to Memorystore\n- From PostgreSQL to Cloud SQL.'
     ],
     answer: 1,
-    explanation: 'Cloud Spanner scales a relational transactional workload globally with little operations work, Pub/Sub is the managed replacement for Kafka event streams, and BigQuery is the serverless analytics warehouse for reporting. Cloud SQL scales only regionally and vertically, and Memorystore is an in-memory cache, not a messaging system.'
+    explanation: 'Spanner scales a relational transactional workload globally with little operations work, Pub/Sub is the managed replacement for Kafka event streams, and BigQuery is the serverless analytics warehouse for reporting. Cloud SQL scales only regionally and vertically, and Memorystore is an in-memory cache, not a messaging system.'
   },
   {
     id: 'ace-341',
@@ -927,13 +927,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You are deploying a video streaming platform called StreamFlix using Compute Engine. You created a managed instance group (MIG) to host the platform\'s backend services. You want to follow Google- recommended practices to ensure StreamFlix is both secure and highly available. What should you do?',
     options: [
-      'Use SSL proxy load balancing for the MIG and an A record in your DNS private zone with the load balancer\'s IP address.',
-      'Use SSL proxy load balancing for the MIG and a CNAME record in your DNS public zone with the load balancer’s IP address.',
-      'Use HTTP(S) load balancing for the MIG and a CNAME record in your DNS private zone with the load balancer’s IP address.',
-      'Use HTTP(S) load balancing for the MIG and an A record in your DNS public zone with the load balancer’s IP address.'
+      'Use SSL proxy Network Load Balancer for the MIG and an A record in your DNS private zone with the load balancer\'s IP address.',
+      'Use SSL proxy Network Load Balancer for the MIG and a CNAME record in your DNS public zone with the load balancer’s IP address.',
+      'Use external Application Load Balancing for the MIG and a CNAME record in your DNS private zone with the load balancer’s IP address.',
+      'Use external Application Load Balancing for the MIG and an A record in your DNS public zone with the load balancer’s IP address.'
     ],
     answer: 3,
-    explanation: 'An external Application Load Balancer (HTTP(S)) is the Google-recommended global front end for web traffic, terminating TLS and spreading requests across the MIG, and users on the internet need a public DNS zone with an A record pointing at its IP address. A CNAME must point to another hostname, never to an IP address, and a private zone is only resolvable inside your VPCs. The SSL proxy load balancer is meant for non-HTTP TLS traffic, so it is the wrong fit for a web streaming front end.',
+    explanation: 'An external Application Load Balancer (HTTP(S)) is the Google-recommended global front end for web traffic, terminating TLS and spreading requests across the MIG, and users on the internet need a public DNS zone with an A record pointing at its IP address. A CNAME must point to another hostname, never to an IP address, and a private zone is only resolvable inside your VPCs. The SSL proxy Network Load Balancer is meant for non-HTTP TLS traffic, so it is the wrong fit for a web streaming front end. Current names: SSL/TCP Proxy → proxy Network Load Balancer; HTTP(S) Load Balancing → Application Load Balancer.',
     tip: 'A records map names to IPs; CNAMEs map names to other names.'
   },
   {
@@ -976,11 +976,11 @@ export const planning: Question[] = [
     options: [
       '- Select Google Kubernetes Engine.\n- Use a single-node cluster with a small instance type.',
       '- Select Google Kubernetes Engine.\n- Use a three-node cluster with micro instance types.',
-      '- Select Compute Engine.\n- Use preemptible VM instances of the appropriate standard machine type.',
+      '- Select Compute Engine.\n- Use Spot VM instances of the appropriate standard machine type.',
       '- Select Compute Engine.\n- Use VM instance types that support micro bursting.'
     ],
     answer: 2,
-    explanation: 'Nightly batch jobs that can be retried are the textbook case for preemptible VMs (now Spot VMs), which cost a fraction of the on-demand price. A single small GKE node or micro instances would simply be too small for large data processing and run longer, and shared-core bursting instances are not built for sustained two-hour compute.'
+    explanation: 'Nightly batch jobs that can be retried are the textbook case for Spot VMs, which cost a fraction of the on-demand price. A single small GKE node or micro instances would simply be too small for large data processing and run longer, and shared-core bursting instances are not built for sustained two-hour compute. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'ace-365',
@@ -1005,13 +1005,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'Imagine you are working for a fictional company called "TechSphere Solutions," which has developed a new internal tool called "CollabSuite." This containerized web application will be used exclusively by employees during regular business hours. To minimize costs, you want to ensure that the application does not incur any charges when it is not in use outside of these hours. You have recently set up a new Google Cloud project and are ready to deploy the CollabSuite application. What should you do?',
     options: [
-      '- Deploy the container on Cloud Run for Anthos\n- Set the minimum number of instances to zero.',
+      '- Deploy the container on Knative serving in a GKE cluster\n- Set the minimum number of instances to zero.',
       '- Deploy the container on Cloud Run (fully managed)\n- Set the minimum number of instances to zero.',
       '- Deploy the container on the App Engine flexible environment with autoscaling\n- Set the value min_instances to zero in the app.yaml.',
       '- Deploy the container on the App Engine flexible environment with manual scaling\n- Set the value instances to zero in the app.yaml.'
     ],
     answer: 1,
-    explanation: 'Cloud Run (fully managed) scales to zero by default and bills only while handling requests, so a business-hours internal tool costs nothing overnight. Cloud Run for Anthos (now Knative serving on GKE) runs on a GKE cluster whose nodes keep costing money. The App Engine flexible environment always runs at least one instance, so neither of its options gets to zero cost.',
+    explanation: 'Cloud Run scales to zero by default and bills only while handling requests, so a business-hours internal tool costs nothing overnight. Knative serving runs on a GKE cluster whose nodes keep costing money. The App Engine flexible environment always runs at least one instance, so neither of its options gets to zero cost. Current names: Cloud Run for Anthos → Knative serving on GKE.',
     tip: 'Need zero cost when idle for a container: Cloud Run (or App Engine standard), never App Engine flexible.'
   },
   {
@@ -1021,13 +1021,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'Your company has created a live quiz app that users can play on their smartphones over the internet. The app needs to send UDP packets to the backend servers in real time to update players\' scores and actions during multiplayer sessions. The backend system is designed to scale across several virtual machines (VMs), and you want to make these VMs accessible via a single IP address. What approach should you take?',
     options: [
-      'Configure an SSL Proxy load balancer in front of the application servers.',
+      'Configure an SSL proxy Network Load Balancer in front of the application servers.',
       'Configure an Internal UDP load balancer in front of the application servers.',
       'Configure an External HTTP(s) load balancer in front of the application servers.',
-      'Configure an External Network load balancer in front of the application servers.'
+      'Configure an External passthrough Network Load Balancer in front of the application servers.'
     ],
     answer: 3,
-    explanation: 'Internet clients sending UDP need an external passthrough Network Load Balancer, which supports UDP and gives the backends a single external IP. The SSL proxy and external HTTP(S) load balancers handle only TCP-based TLS or HTTP traffic, and an internal load balancer is not reachable from smartphones on the internet.',
+    explanation: 'Internet clients sending UDP need an external passthrough Network Load Balancer, which supports UDP and gives the backends a single external IP. The SSL proxy Network Load Balancer and external Application Load Balancers handle only TCP-based TLS or HTTP traffic, and an internal load balancer is not reachable from smartphones on the internet. Current names: SSL/TCP Proxy → proxy Network Load Balancer; Network Load Balancing → passthrough Network Load Balancer; HTTP(S) Load Balancing → Application Load Balancer.',
     tip: 'UDP from the internet points to the external passthrough Network Load Balancer.'
   },
   {
@@ -1068,9 +1068,9 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You are designing a new weather-tracking app that collects and stores data from thousands of sensors spread across the country. The app will store up to 15 petabytes (PB) of weather data and needs to support fast reads and writes of small data packets from each sensor. The data schema for these sensor readings is simple. You want to choose the most cost-effective solution for storing this data. What should you do?',
     options: [
-      '- Store the data in Cloud Spanner\n- Add an in-memory cache for speed.',
+      '- Store the data in Spanner\n- Add an in-memory cache for speed.',
       '- Store the data in Cloud Storage\n- Distribute the data through Cloud CDN for speed.',
-      '- Store the data in Cloud Bigtable\n- Implement the business logic in the programming language of your choice.',
+      '- Store the data in Bigtable\n- Implement the business logic in the programming language of your choice.',
       '- Use BigQuery\n- Implement the business logic in SQL.'
     ],
     answer: 2,
@@ -1101,11 +1101,11 @@ export const planning: Question[] = [
     options: [
       'Compute Engine',
       'App Engine Standard',
-      'Cloud Function',
+      'Cloud Run function',
       'CloudRun'
     ],
     answer: 0,
-    explanation: 'Compute Engine gives full control over the operating system, installed software and libraries, so any language such as Clojure can run however you like. App Engine standard and Cloud Functions restrict you to supported runtimes, and Cloud Run gives container-level but not OS-level control.'
+    explanation: 'Compute Engine gives full control over the operating system, installed software and libraries, so any language such as Clojure can run however you like. App Engine standard and Cloud Run functions restrict you to supported runtimes, and Cloud Run gives container-level but not OS-level control. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-419',
@@ -1114,13 +1114,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You have been hired as a contractor by one of the travel technology company who is planning to containerize their existing applications in such a way that they can perform a lift and shift very easily in future if they plan to move away from Google Cloud. Which service will best suit this case?',
     options: [
-      'Cloud Function',
+      'Cloud Run function',
       'App Engine Standard',
       'Kubernetes Engine',
       'CloudRun'
     ],
     answer: 2,
-    explanation: 'GKE runs standard Kubernetes, so containerized workloads and their manifests can be moved to any other Kubernetes environment with little change, which is the portability the company wants. Cloud Functions and App Engine standard are Google-specific platforms, and Cloud Run, while Knative-compatible, is a Google-managed serverless service rather than the usual portability answer.'
+    explanation: 'GKE runs standard Kubernetes, so containerized workloads and their manifests can be moved to any other Kubernetes environment with little change, which is the portability the company wants. Cloud Run functions and App Engine standard are Google-specific platforms, and Cloud Run, while Knative-compatible, is a Google-managed serverless service rather than the usual portability answer. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-424',
@@ -1129,13 +1129,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You are building an architecture for one of your client with a requirement of streaming millions of requests with high availability and durability along with HIPAA compliance. Which managed service will you prefer?',
     options: [
-      'Cloud Function',
+      'Cloud Run function',
       'Cloud DataProc',
-      'Cloud Pub/Sub',
+      'Pub/Sub',
       'RabbitMQ'
     ],
     answer: 2,
-    explanation: 'Pub/Sub is a fully managed, globally available messaging service that handles millions of messages per second with durable storage, and it is covered by Google\'s HIPAA BAA. Cloud Functions processes events rather than streaming them, Dataproc runs Hadoop and Spark, and RabbitMQ is self-managed rather than a Google managed service.'
+    explanation: 'Pub/Sub is a fully managed, globally available messaging service that handles millions of messages per second with durable storage, and it is covered by Google\'s HIPAA BAA. Cloud Run functions processes events rather than streaming them, Dataproc runs Hadoop and Spark, and RabbitMQ is self-managed rather than a Google managed service. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-425',
@@ -1144,20 +1144,20 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You are planning to build a micro-service application with docker containers and want to host them on Google Cloud as stateless and serverless. Which service will help you serve the need?',
     options: [
-      'Cloud Function',
+      'Cloud Run function',
       'App Engine Standard',
       'App Engine Flexible',
       'CloudRun'
     ],
     answer: 3,
-    explanation: 'Cloud Run runs any stateless Docker container in a fully serverless, scale-to-zero environment, which matches the microservice design. Cloud Functions and App Engine standard deploy source code rather than your own containers, and App Engine flexible runs containers on VMs that do not scale to zero.'
+    explanation: 'Cloud Run runs any stateless Docker container in a fully serverless, scale-to-zero environment, which matches the microservice design. Cloud Run functions and App Engine standard deploy source code rather than your own containers, and App Engine flexible runs containers on VMs that do not scale to zero. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-432',
     topic: 'Choosing compute',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your client wants to migrate their 30 TB of Hadoop or Spark cluster from a RHEL 6.5 on-premise servers to Google Cloud Platform. Which of the following service can be used at GCP end?',
+    prompt: 'Your client wants to migrate their 30 TB of Hadoop or Spark cluster from a RHEL 6.5 on-premise servers to Google Cloud. Which of the following service can be used at Google Cloud end?',
     options: [
       'Compute Engine',
       'App Engine',
@@ -1190,12 +1190,12 @@ export const planning: Question[] = [
     prompt: 'You are one of the Cloud Engineers in an Enterprise level tech company. You have been given the task of coming up with a plan to run complex workloads that need flexibility and control at the configuration level with high memory and processing power. The workloads are planned to run for the next 6 months. Choose the cost-effective option to achieve the best performance for a specific workload.',
     options: [
       'Choose AppEngine to run the workload and reduce the complexity',
-      'Choose Compute Engine VMs with predefined types and use templates from the GCP marketplace',
+      'Choose Compute Engine VMs with predefined types and use templates from the Google Cloud marketplace',
       'Choose Compute Engine with custom Machine types and select the required number of vCPUs and Gigabytes of memory',
-      'Choose Google Cloud Run to fetch Docker images from Container Registry and run the workload'
+      'Choose Google Cloud Run to fetch Docker images from Artifact Registry and run the workload'
     ],
     answer: 2,
-    explanation: 'Custom machine types let you choose the exact vCPU and memory combination the workload needs, so you avoid paying for unused capacity while keeping full configuration control. Predefined types may over-provision one resource, and App Engine and Cloud Run give less control over the underlying configuration.'
+    explanation: 'Custom machine types let you choose the exact vCPU and memory combination the workload needs, so you avoid paying for unused capacity while keeping full configuration control. Predefined types may over-provision one resource, and App Engine and Cloud Run give less control over the underlying configuration. Current names: Container Registry was shut down in 2025; Artifact Registry replaces it.'
   },
   {
     id: 'ace-441',
@@ -1220,13 +1220,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You work for a service company. One of the clients has developed an Erlang-based application for internal consumption and has approached your company to ease the application deployment process on Google Cloud. The client does not have highly trained resources and hence has asked your company to deploy the application in such a way that post-deployment, they will be able to manage it without worrying about the infrastructure. Which of the following service would you prefer?',
     options: [
-      'Cloud Functions',
+      'Cloud Run functions',
       'App Engine Standard',
       'App Engine Flexible',
       'GKE'
     ],
     answer: 2,
-    explanation: 'App Engine flexible supports custom runtimes via a Dockerfile, so an Erlang app can run on a fully managed platform the client can operate without handling infrastructure. App Engine standard and Cloud Functions only support specific language runtimes, and GKE requires Kubernetes skills the client lacks.'
+    explanation: 'App Engine flexible supports custom runtimes via a Dockerfile, so an Erlang app can run on a fully managed platform the client can operate without handling infrastructure. App Engine standard and Cloud Run functions only support specific language runtimes, and GKE requires Kubernetes skills the client lacks. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-449',
@@ -1250,13 +1250,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'What is the command for creating a storage bucket that has once per month access and is named \'archive_bucket\'?',
     options: [
-      'gsutil rm -coldline gs://archive_bucket',
-      'gsutil mb -c coldline gs://archive_bucket',
-      'gsutil mb -c nearline gs://archive_bucket',
-      'gsutil mb gs://archive_bucket'
+      'gcloud storage rm --recursive gs://archive_bucket',
+      'gcloud storage buckets create gs://archive_bucket --default-storage-class=COLDLINE',
+      'gcloud storage buckets create gs://archive_bucket --default-storage-class=NEARLINE',
+      'gcloud storage buckets create gs://archive_bucket'
     ],
     answer: 2,
-    explanation: 'Nearline is designed for data accessed about once a month or less, with a 30-day minimum storage duration, so gsutil mb -c nearline creates the right bucket. Coldline targets data accessed about once a quarter, leaving out -c gives Standard storage, and gsutil rm deletes rather than creates. Today the equivalent command is gcloud storage buckets create gs://archive_bucket --default-storage-class=nearline.',
+    explanation: 'Nearline is designed for data accessed about once a month or less, with a 30-day minimum storage duration, so a bucket created with --default-storage-class=NEARLINE fits. Coldline targets data accessed about once a quarter, leaving out the flag gives Standard storage, and gcloud storage rm deletes rather than creates. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.',
     tip: 'Nearline is about once a month (30-day minimum), Coldline once a quarter (90-day) and Archive once a year (365-day).'
   },
   {
@@ -1264,15 +1264,15 @@ export const planning: Question[] = [
     topic: 'Choosing compute',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'In your company, there are massive data services that are currently running Hadoop/Spark on- premises. The Architects start their work on a Migration plan to Google Cloud. However, the big data team wants to use the existing workflows during the migration. The main focus is to continue working on their\n\nHadoop cluster and Spark jobs with the scaling and data processing capacity of GCP. Which tool would be the right option to choose?',
+    prompt: 'In your company, there are massive data services that are currently running Hadoop/Spark on- premises. The Architects start their work on a Migration plan to Google Cloud. However, the big data team wants to use the existing workflows during the migration. The main focus is to continue working on their\n\nHadoop cluster and Spark jobs with the scaling and data processing capacity of Google Cloud. Which tool would be the right option to choose?',
     options: [
       'Data flow',
       'Data Proc',
       'Data prep',
-      'Data Studio'
+      'Looker Studio'
     ],
     answer: 1,
-    explanation: 'Dataproc is Google\'s managed Hadoop and Spark service, so existing Hadoop clusters and Spark jobs can move over with little change and gain cloud scaling. Dataflow runs Apache Beam pipelines and would mean rewriting the jobs, Dataprep is a visual data-cleaning tool, and Data Studio (now Looker Studio) is for reporting.'
+    explanation: 'Dataproc is Google\'s managed Hadoop and Spark service, so existing Hadoop clusters and Spark jobs can move over with little change and gain cloud scaling. Dataflow runs Apache Beam pipelines and would mean rewriting the jobs, Dataprep is a visual data-cleaning tool, and Looker Studio is for reporting. Current names: Data Studio → Looker Studio.'
   },
   {
     id: 'ace-477',
@@ -1281,13 +1281,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'An IoT (Internet of Things) application system needs to ingest and process the streaming sensor data received from multiple sources of connected devices. Choose the best set of tools to handle incoming data.',
     options: [
-      'Use Cloud Data prep to cleanse the incoming data and run a Cloud function to process it',
+      'Use Cloud Data prep to cleanse the incoming data and run a Cloud Run function to process it',
       'Use Cloud Pub/ Sub to receive data and process it via Cloud data flow pipelines',
       'Use REST API exposed using App Engine and post data from endpoints',
       'Use Cloud SQL database and run queries to process the data'
     ],
     answer: 1,
-    explanation: 'Pub/Sub is the scalable ingestion layer for high-volume device events, and Dataflow processes the stream in real time with autoscaling and windowing. It\'s Google\'s standard streaming pattern. Dataprep is an interactive data-cleaning tool rather than a stream processor, a custom App Engine API would need its own buffering and scaling, and Cloud SQL isn\'t designed for high-rate streaming ingestion.'
+    explanation: 'Pub/Sub is the scalable ingestion layer for high-volume device events, and Dataflow processes the stream in real time with autoscaling and windowing. It\'s Google\'s standard streaming pattern. Dataprep is an interactive data-cleaning tool rather than a stream processor, a custom App Engine API would need its own buffering and scaling, and Cloud SQL isn\'t designed for high-rate streaming ingestion. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-478',
@@ -1298,11 +1298,11 @@ export const planning: Question[] = [
     options: [
       'Use Jupyter notebooks, develop code and run it using Google Colab to display recommended products',
       'Use PyTorch and test it with Google CoLab setup and run ML algorithms to provide training data based on recommendation',
-      'Use SparkMLlib inside DataProc and host models in the Vertex AI platform and enable Prediction APIs to suggest recommendations',
-      'Use Cloud Functions to trigger based on events and provide recommendations'
+      'Use SparkMLlib inside DataProc and host models in the Gemini Enterprise Agent Platform platform and enable Prediction APIs to suggest recommendations',
+      'Use Cloud Run functions to trigger based on events and provide recommendations'
     ],
     answer: 2,
-    explanation: 'This needs scalable model training and real-time serving. Spark MLlib on Dataproc trains on the collected data at scale, and Vertex AI hosts the model behind an online prediction endpoint. Colab notebooks are for interactive experiments rather than production hosting, and Cloud Functions alone have no model training or serving.'
+    explanation: 'This needs scalable model training and real-time serving. Spark MLlib on Dataproc trains on the collected data at scale, and Gemini Enterprise Agent Platform hosts the model behind an online prediction endpoint. Colab notebooks are for interactive experiments rather than production hosting, and Cloud Run functions alone have no model training or serving. Current names: Vertex AI → Gemini Enterprise Agent Platform; Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-480',
@@ -1326,13 +1326,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You are designing a multi-tier application with web servers and database servers running in different regions. To ensure global availability and low-latency access for users, which type of load balancer should you configure?',
     options: [
-      'Internal TCP/UDP Load Balancer',
-      'HTTP(S) Load Balancer',
-      'Network Load Balancer',
-      'SSL Proxy Load Balancer'
+      'internal passthrough Network Load Balancer',
+      'external Application Load Balancer',
+      'passthrough Network Load Balancer',
+      'SSL proxy Network Load Balancer'
     ],
     answer: 1,
-    explanation: 'The global external Application Load Balancer (HTTP(S)) uses one anycast IP and sends users to the nearest healthy backend across regions, giving global availability and low latency for web traffic. The internal TCP/UDP load balancer is regional and private, and the passthrough Network Load Balancer is regional. SSL Proxy is global but works at layer 4 and is meant for non-HTTP TLS traffic.'
+    explanation: 'The global external Application Load Balancer (HTTP(S)) uses one anycast IP and sends users to the nearest healthy backend across regions, giving global availability and low latency for web traffic. The internal passthrough Network Load Balancer is regional and private, and the passthrough Network Load Balancer is regional. SSL proxy Network Load Balancer is global but works at layer 4 and is meant for non-HTTP TLS traffic. Current names: Internal TCP/UDP → internal passthrough Network Load Balancer; HTTP(S) Load Balancing → Application Load Balancer; Network Load Balancing → passthrough Network Load Balancer; SSL/TCP Proxy → proxy Network Load Balancer.'
   },
   {
     id: 'ace-498',
@@ -1387,13 +1387,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'Your company is running a data processing workload that requires low-latency access to the CPU and the ability to horizontally scale out as needed. Which Google Cloud service is the most appropriate choice for this scenario?',
     options: [
-      'Cloud Functions',
+      'Cloud Run functions',
       'Compute Engine with Spot VMs',
       'Google Kubernetes Engine (GKE)',
       'Cloud Run'
     ],
     answer: 2,
-    explanation: 'GKE gives containers direct access to node CPUs and scales out with horizontal pod autoscaling and cluster autoscaling, which suits a data processing workload that needs to grow on demand. Cloud Functions and Cloud Run are request-driven serverless platforms with cold starts and limited control over CPU. Spot VMs can be preempted at any moment. This is debatable because a Compute Engine managed instance group with standard VMs would also meet the stated needs.'
+    explanation: 'GKE gives containers direct access to node CPUs and scales out with horizontal pod autoscaling and cluster autoscaling, which suits a data processing workload that needs to grow on demand. Cloud Run functions and Cloud Run are request-driven serverless platforms with cold starts and limited control over CPU. Spot VMs can be preempted at any moment. This is debatable because a Compute Engine managed instance group with standard VMs would also meet the stated needs. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-502',
@@ -1402,13 +1402,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You need to run a batch processing job that can tolerate interruptions and requires minimal cost. How can you optimize the cost for this workload in Google Cloud?',
     options: [
-      'Use preemptible VM instances with a custom machine type that matches the job\'s requirements',
+      'Use Spot VM instances with a custom machine type that matches the job\'s requirements',
       'Deploy the workload on standard VM instances with a smaller machine type to reduce costs',
       'Use GKE with autoscaling enabled to handle interruptions gracefully',
-      'Choose Cloud Functions for the job to leverage serverless pricing'
+      'Choose Cloud Run functions for the job to leverage serverless pricing'
     ],
     answer: 0,
-    explanation: 'Interruption-tolerant batch work is exactly what preemptible VMs (now Spot VMs) are for, at a large discount, and a custom machine type avoids paying for unused CPU or memory. A smaller standard VM still pays full price, GKE autoscaling doesn\'t lower the per-VM price by itself, and Cloud Functions have execution time limits that don\'t suit long batch jobs.',
+    explanation: 'Interruption-tolerant batch work is exactly what Spot VMs are for, at a large discount, and a custom machine type avoids paying for unused CPU or memory. A smaller standard VM still pays full price, GKE autoscaling doesn\'t lower the per-VM price by itself, and Cloud Run functions have execution time limits that don\'t suit long batch jobs. Current names: Cloud Functions → Cloud Run functions; preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.',
     tip: 'Fault-tolerant, interruptible batch jobs belong on Spot VMs (preemptible VMs in older questions).'
   },
   {
@@ -1421,10 +1421,10 @@ export const planning: Question[] = [
       'BigQuery',
       'Cloud SQL',
       'Firestore',
-      'Cloud Spanner'
+      'Spanner'
     ],
     answer: 3,
-    explanation: 'Cloud Spanner is the relational database built for strong consistency with automatic synchronous replication across regions. Cloud SQL is regional with read replicas and HA, not multi-region strongly consistent writes; BigQuery is an analytics warehouse and Firestore is a NoSQL document database.'
+    explanation: 'Spanner is the relational database built for strong consistency with automatic synchronous replication across regions. Cloud SQL is regional with read replicas and HA, not multi-region strongly consistent writes; BigQuery is an analytics warehouse and Firestore is a NoSQL document database.'
   },
   {
     id: 'ace-509',
@@ -1433,13 +1433,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'Your team is deploying a stateless web application that must quickly scale with unpredictable traffic patterns. The application does not require Kubernetes-specific features, but it should be cost- effective and simple to manage. Which Google Cloud platform should you choose?',
     options: [
-      'Cloud Functions',
+      'Cloud Run functions',
       'Cloud Run (fully managed)',
-      'Cloud Run for Anthos',
+      'Knative serving on GKE',
       'Google Kubernetes Engine (GKE)'
     ],
     answer: 1,
-    explanation: 'Cloud Run fully managed runs stateless containers, scales rapidly from zero with traffic and bills per use with no cluster to manage. GKE and Cloud Run for Anthos (now Knative serving on GKE) add cluster management the team does not need, and Cloud Functions is aimed at event-driven single-purpose functions rather than a full web application.'
+    explanation: 'Cloud Run runs stateless containers, scales rapidly from zero with traffic and bills per use with no cluster to manage. GKE and Knative serving add cluster management the team does not need, and Cloud Run functions is aimed at event-driven single-purpose functions rather than a full web application. Current names: Cloud Functions → Cloud Run functions; Cloud Run for Anthos → Knative serving on GKE.'
   },
   {
     id: 'ace-520',
@@ -1465,7 +1465,7 @@ export const planning: Question[] = [
     prompt: 'A system is expected to receive over 15,000 content delivery logs every minute from different web & mobile apps. Logs are received in JSON format. Due to logs being generated by different apps, each developed by a different team, logs do not have a fixed structure and may hold different attributes. Which of the following is a recommended storage option?',
     options: [
       'Cloud SQL',
-      'Cloud Spanner',
+      'Spanner',
       'BigTable',
       'Datastore'
     ],
@@ -1482,7 +1482,7 @@ export const planning: Question[] = [
       'BigTable',
       'BigQuery',
       'Datastore',
-      'Cloud Spanner'
+      'Spanner'
     ],
     answer: 0,
     explanation: 'Bigtable delivers single-digit-millisecond reads and writes at very high throughput and scales out linearly by adding nodes, which suits streaming stock-tick data. BigQuery is optimized for large analytical scans rather than low-latency lookups, Datastore is not built for this write rate, and Spanner is for relational transactional workloads.',
@@ -1496,24 +1496,24 @@ export const planning: Question[] = [
     prompt: 'You have an on-premise MySQL database that you have been asked to move to Google Cloud. Users should run SQL queries to fetch data from the database. Your solution should be cost-effective and\n\nallow increasing read capacities in the future. Which of the following Google Cloud product is the best for this scenario?',
     options: [
       'Cloud Storage',
-      'Cloud Spanner',
+      'Spanner',
       'Cloud SQL',
-      'Cloud Datastore'
+      'Firestore in Datastore mode'
     ],
     answer: 2,
-    explanation: 'Cloud SQL for MySQL is the managed, cost-effective lift-and-shift target for a MySQL database, and read replicas add read capacity later. Spanner is far more expensive and not needed at this scale, while Cloud Storage and Datastore do not support SQL queries over a relational database.'
+    explanation: 'Cloud SQL for MySQL is the managed, cost-effective lift-and-shift target for a MySQL database, and read replicas add read capacity later. Spanner is far more expensive and not needed at this scale, while Cloud Storage and Datastore do not support SQL queries over a relational database. Current names: Cloud Datastore → Firestore in Datastore mode.'
   },
   {
     id: 'ace-524',
     topic: 'Choosing compute',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are managing the GCP Account of a client, the client raises a request to attach 9 local SSDs and launch a VM instance in us-east1 Region, as a Cloud Architect what would be your response to the above request?',
+    prompt: 'You are managing the Google Cloud Account of a client, the client raises a request to attach 9 local SSDs and launch a VM instance in us-east1 Region, as a Cloud Architect what would be your response to the above request?',
     options: [
       'You can always attach maximum of ten local SSD devices to a VM instance.',
       'If a resource is not available, you won’t be able to create new resources of that type, even if you still have remaining quota in your region or project and you can attach up to 24 local SSD devices for 9 TB of total local SSD storage space per instance.',
       'Launch the instance first and add the local SSD drives later for optimal performance.',
-      'Request changes to quota from the Quotas page in the GCP Console.'
+      'Request changes to quota from the Quotas page in the Google Cloud console.'
     ],
     answer: 1,
     explanation: 'Quota is not a guarantee of capacity, and local SSD support depends on machine type: on N1 and N2 you can attach up to 24 local SSD partitions of 375 GB for 9 TB. The claim of a fixed ten-device maximum is false, local SSDs on most families must be added at creation time rather than later, and a quota increase does not address the request. It is debatable because the options are poorly worded and nine is not even a valid local SSD count on N1/N2 (valid counts jump from 8 to 16 to 24).'
@@ -1523,7 +1523,7 @@ export const planning: Question[] = [
     topic: 'Pricing & cost',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'A new client has approached your company with a requirement that they want to host a serverless on Google Cloud, but before that want you to give them a price estimate for running a serverless application using Cloud Function. Which parameters will you consider while calculating the price using Google Pricing Calculator?',
+    prompt: 'A new client has approached your company with a requirement that they want to host a serverless on Google Cloud, but before that want you to give them a price estimate for running a serverless application using Cloud Run function. Which parameters will you consider while calculating the price using Google Pricing Calculator?',
     options: [
       'Type, Execution Time and Invocations.',
       'Memory, CPU, Execution Time and Invocations.',
@@ -1531,7 +1531,7 @@ export const planning: Question[] = [
       'Memory, Execution Time and Bandwidth.'
     ],
     answer: 1,
-    explanation: 'Cloud Functions pricing is driven by the number of invocations, compute time (execution time multiplied by allocated memory and CPU) and outbound networking, so memory, CPU, execution time and invocations are the core calculator inputs. The other sets either omit invocations or memory, or include a vague type in place of compute size. It is debatable because egress bandwidth is also billed, but no option includes all four plus bandwidth.'
+    explanation: 'Cloud Run functions pricing is driven by the number of invocations, compute time (execution time multiplied by allocated memory and CPU) and outbound networking, so memory, CPU, execution time and invocations are the core calculator inputs. The other sets either omit invocations or memory, or include a vague type in place of compute size. It is debatable because egress bandwidth is also billed, but no option includes all four plus bandwidth. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-530',
@@ -1557,8 +1557,8 @@ export const planning: Question[] = [
     options: [
       'Cloud Storage',
       'BigQuery',
-      'Cloud Spanner',
-      'Cloud Bigtable'
+      'Spanner',
+      'Bigtable'
     ],
     answer: 2,
     explanation: 'Spanner is a horizontally scalable relational database that handles tens of terabytes with fast growth and scales reads by adding nodes, so the heavy read load is covered. Cloud SQL is not offered, Bigtable is NoSQL without relational semantics, BigQuery is for analytics and Cloud Storage is object storage.'
@@ -1568,30 +1568,30 @@ export const planning: Question[] = [
     topic: 'Choosing storage & databases',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your client wants to develop a new cost effective web application that runs on serverless platform using Cloud Function, Cloud Storage, Pub/Sub and Cloud CDN. The expected data would be 20 GB. Which of the following NoSQL database would be the most suitable schemaless option to support the queries to retrieve data and serverless functionality?',
+    prompt: 'Your client wants to develop a new cost effective web application that runs on serverless platform using Cloud Run function, Cloud Storage, Pub/Sub and Cloud CDN. The expected data would be 20 GB. Which of the following NoSQL database would be the most suitable schemaless option to support the queries to retrieve data and serverless functionality?',
     options: [
       'Cloud BigTable',
       'BigQuery',
-      'Cloud Spanner',
+      'Spanner',
       'Cloud Firestore'
     ],
     answer: 3,
-    explanation: 'Firestore is a serverless, schemaless NoSQL document database with rich queries and per-operation pricing, which fits a small 20 GB serverless app. Bigtable has hourly node costs and is meant for terabyte-scale throughput, Spanner is relational and costly, and BigQuery is an analytics warehouse rather than an application database.'
+    explanation: 'Firestore is a serverless, schemaless NoSQL document database with rich queries and per-operation pricing, which fits a small 20 GB serverless app. Bigtable has hourly node costs and is meant for terabyte-scale throughput, Spanner is relational and costly, and BigQuery is an analytics warehouse rather than an application database. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-537',
     topic: 'Choosing compute',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your client has a web application that is currently using a single GCE to read the messages from a pub/sub topic, process them and store them in Cloud Bigtable by its unique order id. When a user uploads an order to Cloud Storage, it triggers a Cloud Function that inserts a message to pub/subtopic. The traffic is expected to increase next week and as a cloud engineer, you are expected to resolve any possible auto scaling problem.\n\nWhich service is not likely to auto scale when the traffic is increased?',
+    prompt: 'Your client has a web application that is currently using a single GCE to read the messages from a pub/sub topic, process them and store them in Bigtable by its unique order id. When a user uploads an order to Cloud Storage, it triggers a Cloud Run function that inserts a message to pub/subtopic. The traffic is expected to increase next week and as a cloud engineer, you are expected to resolve any possible auto scaling problem.\n\nWhich service is not likely to auto scale when the traffic is increased?',
     options: [
       'Cloud Storage',
-      'Cloud Bigtable',
+      'Bigtable',
       'GCE',
       'Pub/Sub'
     ],
     answer: 2,
-    explanation: 'A single Compute Engine VM has no autoscaling unless placed in a managed instance group with an autoscaler, so it will become the bottleneck. Cloud Storage and Pub/Sub are fully managed and scale automatically, and Bigtable scales throughput by adding nodes (including with built-in autoscaling).'
+    explanation: 'A single Compute Engine VM has no autoscaling unless placed in a managed instance group with an autoscaler, so it will become the bottleneck. Cloud Storage and Pub/Sub are fully managed and scale automatically, and Bigtable scales throughput by adding nodes (including with built-in autoscaling). Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-538',
@@ -1644,15 +1644,15 @@ export const planning: Question[] = [
     topic: 'Choosing networking & load balancing',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your inventory application has 2 backend API servers launched using Managed Instance Groups (MIG), you have been asked to load balance UDP, TCP, and SSL traffic on ports that are not supported by the TCP proxy and SSL proxy load balancer. Which of the following Load Balancer would you use?',
+    prompt: 'Your inventory application has 2 backend API servers launched using Managed Instance Groups (MIG), you have been asked to load balance UDP, TCP, and SSL traffic on ports that are not supported by the TCP proxy Network Load Balancer and SSL proxy Network Load Balancer. Which of the following Load Balancer would you use?',
     options: [
-      'HTTP(S) Load Balancer',
-      'SSL Proxy Load Balancer',
-      'TCP Proxy Load Balancer',
-      'Network Load Balancer'
+      'external Application Load Balancer',
+      'SSL proxy Network Load Balancer',
+      'TCP proxy Network Load Balancer',
+      'passthrough Network Load Balancer'
     ],
     answer: 3,
-    explanation: 'The passthrough Network Load Balancer handles TCP, UDP and SSL traffic on any port because it forwards packets without proxying. HTTP(S), SSL Proxy and TCP Proxy load balancers are proxies with protocol and port restrictions and do not carry UDP.',
+    explanation: 'The passthrough Network Load Balancer handles TCP, UDP and SSL traffic on any port because it forwards packets without proxying. HTTP(S), SSL proxy Network Load Balancer and TCP proxy Network Load Balancers are proxies with protocol and port restrictions and do not carry UDP. Current names: SSL/TCP Proxy → proxy Network Load Balancer; HTTP(S) Load Balancing → Application Load Balancer; Network Load Balancing → passthrough Network Load Balancer.',
     tip: 'UDP or arbitrary ports = passthrough Network Load Balancer.'
   },
   {
@@ -1660,7 +1660,7 @@ export const planning: Question[] = [
     topic: 'Choosing networking & load balancing',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are distributing the traffic between a fleet of VMs within your VPC using Internal TCP/UDP Load Balancer. Which of the following is not supported by the given load balancer?',
+    prompt: 'You are distributing the traffic between a fleet of VMs within your VPC using internal passthrough Network Load Balancer. Which of the following is not supported by the given load balancer?',
     options: [
       'Preserved Client IP',
       'Global Availability',
@@ -1668,7 +1668,7 @@ export const planning: Question[] = [
       'Any Destination Ports'
     ],
     answer: 1,
-    explanation: 'The internal passthrough Network Load Balancer is a regional resource, so it is not a global load balancer even though its global access option lets clients from other regions reach it. It does preserve client IPs, is internal by definition and can forward all ports. It is debatable because global access exists, but that is client reachability, not a globally available frontend.'
+    explanation: 'The internal passthrough Network Load Balancer is a regional resource, so it is not a global load balancer even though its global access option lets clients from other regions reach it. It does preserve client IPs, is internal by definition and can forward all ports. It is debatable because global access exists, but that is client reachability, not a globally available frontend. Current names: Internal TCP/UDP → internal passthrough Network Load Balancer.'
   },
   {
     id: 'ace-561',
@@ -1678,12 +1678,12 @@ export const planning: Question[] = [
     prompt: 'Your client has prepared a new company policy in which each developer must sign a Contributor License Agreement (CLA) before code changes are committed to any version control repository. You have been asked to check each commit in a repository that includes the policy and your manager has also provided you with node.js code. Which of the following services can help you implement this solution?',
     options: [
       'Task Scheduler',
-      'Cloud Function',
+      'Cloud Run function',
       'Pub/Sub',
       'GKE'
     ],
     answer: 1,
-    explanation: 'A Cloud Function (now Cloud Run functions) can run the provided Node.js code on each commit event, for example from a repository webhook, and check that the author has signed the CLA. Pub/Sub only moves messages and still needs something to run the check, GKE is heavy infrastructure for a small event handler, and "Task Scheduler" is not a Google Cloud service (Cloud Scheduler runs on a timer, not per commit).'
+    explanation: 'A Cloud Run function can run the provided Node.js code on each commit event, for example from a repository webhook, and check that the author has signed the CLA. Pub/Sub only moves messages and still needs something to run the check, GKE is heavy infrastructure for a small event handler, and "Task Scheduler" is not a Google Cloud service (Cloud Scheduler runs on a timer, not per commit). Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-565',
@@ -1705,7 +1705,7 @@ export const planning: Question[] = [
     topic: 'Choosing networking & load balancing',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your company’s data center has a CIDR of 10.20.0.0/10 and your remote office has 172.50.0.0/16. You have been asked to plan a migration of the workloads from your company’s data center to GCP. Which of the following CIDR range would you select for your VPC in GCP?',
+    prompt: 'Your company’s data center has a CIDR of 10.20.0.0/10 and your remote office has 172.50.0.0/16. You have been asked to plan a migration of the workloads from your company’s data center to Google Cloud. Which of the following CIDR range would you select for your VPC in Google Cloud?',
     options: [
       '172.50.0.0/12',
       '10.20.0.0/16',
@@ -1739,12 +1739,12 @@ export const planning: Question[] = [
     prompt: 'You are building an application that processes Pub/Sub events from a topic. What is the simplest way to deploy the application and ensure it automatically scales in response to event traffic?',
     options: [
       'Use Compute Engine, subscribe to the Pub/Sub topic, and write a script to pull messages',
-      'Use Cloud Functions with a Pub/Sub trigger to deploy the function, which will automatically process messages from the topic and scale as needed',
+      'Use Cloud Run functions with a Pub/Sub trigger to deploy the function, which will automatically process messages from the topic and scale as needed',
       'Use Kubernetes Engine, create a Pub/Sub subscription, and deploy a containerized application that pulls messages from the topic',
       'Use Cloud Run with a Pub/Sub trigger and deploy a containerized application that listens for messages on the topic'
     ],
     answer: 1,
-    explanation: 'A function with a Pub/Sub trigger is invoked for each message and scaled automatically, with no container image or subscription plumbing to manage, which makes it the simplest choice. Cloud Run with an Eventarc or push subscription also works and scales, but needs a container listening for HTTP and is a bit more setup. Compute Engine and GKE pull-based consumers need you to manage scaling yourself.'
+    explanation: 'A function with a Pub/Sub trigger is invoked for each message and scaled automatically, with no container image or subscription plumbing to manage, which makes it the simplest choice. Cloud Run with an Eventarc or push subscription also works and scales, but needs a container listening for HTTP and is a bit more setup. Compute Engine and GKE pull-based consumers need you to manage scaling yourself. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-575',
@@ -1753,13 +1753,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You need to deploy an application that processes image files whenever they are uploaded to a Cloud Storage bucket. Which service and configuration should you use to deploy this application?',
     options: [
-      'Deploy the application on Cloud Functions with a Cloud Storage trigger to automatically process the files as they are uploaded',
+      'Deploy the application on Cloud Run functions with a Cloud Storage trigger to automatically process the files as they are uploaded',
       'Deploy the application on Cloud Run and manually poll the Cloud Storage bucket for changes',
       'Use Compute Engine, configure a cron job to check the bucket periodically and run the application whenever new files are detected',
       'Use Kubernetes Engine and set up a Pub/Sub topic to listen for Cloud Storage object change notifications'
     ],
     answer: 0,
-    explanation: 'A function with a Cloud Storage object-finalize trigger (via Eventarc) runs automatically on each upload with no polling and no servers to manage. Polling from Cloud Run or a cron job on Compute Engine adds delay and wasted work, and a GKE consumer of Pub/Sub notifications works but is far more infrastructure than the task needs.',
+    explanation: 'A function with a Cloud Storage object-finalize trigger (via Eventarc) runs automatically on each upload with no polling and no servers to manage. Polling from Cloud Run or a cron job on Compute Engine adds delay and wasted work, and a GKE consumer of Pub/Sub notifications works but is far more infrastructure than the task needs. Current names: Cloud Functions → Cloud Run functions.',
     tip: 'React to bucket uploads with an event trigger, never with polling.'
   },
   {
@@ -1767,15 +1767,15 @@ export const planning: Question[] = [
     topic: 'Choosing compute',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your organization needs to deploy a microservice that processes HTTP requests. The microservice is stateless and does not require full control over the underlying infrastructure. Should you use Cloud Run or Cloud Functions, and why?',
+    prompt: 'Your organization needs to deploy a microservice that processes HTTP requests. The microservice is stateless and does not require full control over the underlying infrastructure. Should you use Cloud Run or Cloud Run functions, and why?',
     options: [
       'Use Cloud Run because it supports containerized applications and gives full control over infrastructure configuration',
-      'Use Cloud Functions because it is serverless and best suited for deploying small stateless functions that process HTTP requests without infrastructure management',
+      'Use Cloud Run functions because it is serverless and best suited for deploying small stateless functions that process HTTP requests without infrastructure management',
       'Use Kubernetes Engine because it offers the most control over scaling and infrastructure, even for small stateless services',
       'Use Compute Engine with a virtual machine to deploy the microservice and handle HTTP requests'
     ],
     answer: 1,
-    explanation: 'The PDF\'s key says to use Cloud Run because it gives full control over infrastructure configuration, but Cloud Run is fully managed and gives no infrastructure control, and the stem says such control is not needed. The option that matches the stated reason is Cloud Functions as a serverless platform for small stateless HTTP handlers with no infrastructure to manage. GKE and Compute Engine add operational work the service does not need. This is debatable because Cloud Run is also a very good fit for stateless HTTP microservices; it is the justification in the Cloud Run option that is wrong.'
+    explanation: 'The PDF\'s key says to use Cloud Run because it gives full control over infrastructure configuration, but Cloud Run is fully managed and gives no infrastructure control, and the stem says such control is not needed. The option that matches the stated reason is Cloud Run functions as a serverless platform for small stateless HTTP handlers with no infrastructure to manage. GKE and Compute Engine add operational work the service does not need. This is debatable because Cloud Run is also a very good fit for stateless HTTP microservices; it is the justification in the Cloud Run option that is wrong. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-594',
@@ -1802,7 +1802,7 @@ export const planning: Question[] = [
       'Send transactions to BigQuery. On the VMs, poll for transactions that do not have the ‘processed’ key, and mark them ‘processed’ when done.',
       'Set up Cloud SQL with a memory cache for speed. On your multiple servers, poll for transactions that do not have the ‘processed’ key, and mark them ‘processed’ when done.',
       'Send transactions to Pub/Sub. Process them in VMs in a managed instance group.',
-      'Record transactions in Cloud Bigtable, and poll for new transactions from the VMs.'
+      'Record transactions in Bigtable, and poll for new transactions from the VMs.'
     ],
     answer: 2,
     explanation: 'Pub/Sub decouples producers from consumers and spreads messages across subscribers in real time, and a managed instance group can autoscale on load (including subscription backlog). Polling BigQuery, Cloud SQL or Bigtable for unprocessed rows adds latency, contention and cost, and none of these is designed as a work queue.'
@@ -1814,9 +1814,9 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You are creating a Cloud IOT application requiring data storage of up to 10 petabytes (PB). The application must support high-speed reads and writes of small pieces of data, but your data schema is simple. You want to use the most economical solution for data storage. What should you do?',
     options: [
-      'Store the data in Cloud Spanner, and add an in-memory cache for speed.',
+      'Store the data in Spanner, and add an in-memory cache for speed.',
       'Store the data in Cloud Storage, and distribute the data through Cloud CDN for speed.',
-      'Store the data in Cloud Bigtable, and implement the business logic in the programming language of your choice.',
+      'Store the data in Bigtable, and implement the business logic in the programming language of your choice.',
       'Use BigQuery, and implement the business logic in SQL.'
     ],
     answer: 2,
@@ -1846,12 +1846,12 @@ export const planning: Question[] = [
     prompt: 'You are developing a new social media platform called "GlobeConnect" that allows users from all over the world to share and interact with posts in real time. The platform will be used globally, and you are unsure how quickly the user base will grow. Your CTO is concerned about the platform\'s scalability and wants to ensure the database can handle unpredictable growth while requiring minimal configuration changes. Which database solution would best fit these requirements?',
     options: [
       'Cloud SQL',
-      'Cloud Spanner',
+      'Spanner',
       'Cloud Firestore',
-      'Cloud Datastore'
+      'Firestore in Datastore mode'
     ],
     answer: 1,
-    explanation: 'Cloud Spanner scales horizontally and globally with strong consistency, and you can add capacity (or use autoscaling) without changing schema or application code, which suits a global platform with unpredictable growth. Cloud SQL scales mostly vertically and is regional, so it fits poorly. This is debatable because Firestore also scales automatically with no capacity configuration at all, and Datastore is simply Firestore in Datastore mode, but the dump\'s intended answer is Spanner.'
+    explanation: 'Spanner scales horizontally and globally with strong consistency, and you can add capacity (or use autoscaling) without changing schema or application code, which suits a global platform with unpredictable growth. Cloud SQL scales mostly vertically and is regional, so it fits poorly. This is debatable because Firestore also scales automatically with no capacity configuration at all, and Datastore is simply Firestore in Datastore mode, but the dump\'s intended answer is Spanner. Current names: Cloud Datastore → Firestore in Datastore mode.'
   },
   {
     id: 'ace-637',
@@ -1860,13 +1860,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You are building a worldwide e-commerce platform that allows users to buy and sell digital products. The data for transactions, users, and inventory is stored and queried using a relational database. Customers from all regions need to see the exact same data state regardless of their location. To improve user experience, the application will be deployed across multiple geographic regions to minimize latency. You must choose a storage solution for your application\'s data that maintains consistency while also reducing latency.',
     options: [
-      'Use Cloud Bigtable for data storage.',
+      'Use Bigtable for data storage.',
       'Use Cloud SQL for data storage.',
-      'Use Cloud Spanner for data storage.',
+      'Use Spanner for data storage.',
       'Use Firestore for data storage.'
     ],
     answer: 2,
-    explanation: 'Cloud Spanner is a relational database with multi-region configurations and external (strong) consistency, so every region sees the same data while reads stay close to users. Cloud SQL is regional with read replicas that lag behind the primary. Bigtable and Firestore are NoSQL, so they do not meet the relational requirement.',
+    explanation: 'Spanner is a relational database with multi-region configurations and external (strong) consistency, so every region sees the same data while reads stay close to users. Cloud SQL is regional with read replicas that lag behind the primary. Bigtable and Firestore are NoSQL, so they do not meet the relational requirement.',
     tip: 'Global + relational + strong consistency points to Spanner.'
   },
   {
@@ -1876,13 +1876,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'A company named RapidInventory is preparing to deploy a new inventory management application on Google Cloud. The application stores its entire dataset in-memory to ensure quick access to data, and the team needs to configure the most suitable Google Cloud resources to support this application. What is the best approach?',
     options: [
-      'Provision preemptible Compute Engine instances.',
+      'Provision Spot Compute Engine instances.',
       'Provision Compute Engine instances with GPUs attached.',
       'Provision Compute Engine instances with local SSDs attached.',
       'Provision Compute Engine instances with M1 machine type.'
     ],
     answer: 3,
-    explanation: 'An in-memory dataset needs lots of RAM, which is what memory-optimized machine types such as M1 provide. Local SSDs speed up disk I/O but do not give more memory, and GPUs are for parallel computation. Preemptible (Spot) VMs can be stopped at any time, which would wipe the in-memory data.'
+    explanation: 'An in-memory dataset needs lots of RAM, which is what memory-optimized machine types such as M1 provide. Local SSDs speed up disk I/O but do not give more memory, and GPUs are for parallel computation. Spot VMs can be stopped at any time, which would wipe the in-memory data. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'ace-645',
@@ -1893,11 +1893,11 @@ export const planning: Question[] = [
     options: [
       '- Create a container for the data processing tool.\n- Use Cloud Scheduler to start a Cloud Run job for the container.',
       '- Create a container for the data processing tool.\n- Deploy the container to Google Kubernetes Engine (GKE) and use the Kubernetes scheduler to start the application.',
-      '- Upload the code to Cloud Functions.\n- Use Cloud Scheduler to start the application.',
+      '- Upload the code to Cloud Run functions.\n- Use Cloud Scheduler to start the application.',
       '- Lift and shift to a VM on Compute Engine.\n- Use an instance schedule to start and stop the instance.'
     ],
     answer: 3,
-    explanation: 'Lifting the tool onto a Compute Engine VM needs no code or packaging changes, and an instance schedule starts and stops it around the nightly run so you only pay for about an hour a day. Cloud Functions has memory and timeout limits that make a 50-minute job with up to 20 GB in memory a poor fit, and GKE adds cluster overhead. This is debatable because a Cloud Run job (up to 32 GiB memory and multi-hour task timeouts) triggered by Cloud Scheduler would also work and may be cheaper, but it requires containerizing the tool, so the dump favors the lift-and-shift VM for least effort.'
+    explanation: 'Lifting the tool onto a Compute Engine VM needs no code or packaging changes, and an instance schedule starts and stops it around the nightly run so you only pay for about an hour a day. Cloud Run functions has memory and timeout limits that make a 50-minute job with up to 20 GB in memory a poor fit, and GKE adds cluster overhead. This is debatable because a Cloud Run job (up to 32 GiB memory and multi-hour task timeouts) triggered by Cloud Scheduler would also work and may be cheaper, but it requires containerizing the tool, so the dump favors the lift-and-shift VM for least effort. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-650',
@@ -1921,7 +1921,7 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'You are setting up a platform for a team of data analysts working on a fictional research project. The analysts need to run ad hoc SQL queries on large datasets, though they will only be actively using the platform for around one hour per day. However, they need to have the ability to run queries at any time, so the environment should always be ready. The solution needs to be cost-effective. What approach should you take?',
     options: [
-      '- Store the data in Cloud Bigtable.\n- Run SQL queries provided by Bigtable schema.',
+      '- Store the data in Bigtable.\n- Run SQL queries provided by Bigtable schema.',
       '- Store the data in BigQuery.\n- Run SQL queries in BigQuery.',
       '- Create a Dataproc cluster.\n- Store the data in HDFS storage\n- Run SQL queries in Spark.',
       '- Create a Dataproc cluster.\n- Store the data in Cloud Storage\n- Run SQL queries in Spark.'
@@ -1967,11 +1967,11 @@ export const planning: Question[] = [
     prompt: 'Your team is running an on-premises fitness tracking application. The application consists of a set of complex microservices written in Python, with each microservice running in Docker containers. Configurations are injected using environment variables. You need to deploy your current application to a serverless Google Cloud solution. What should you do?',
     options: [
       '- Use your existing CI/CD pipeline.\n- Use the generated Docker images and deploy them to Cloud Run.\n- Update the configurations and the required endpoints.',
-      '- Use your existing continuous integration and delivery (CI/CD) pipeline.\n- Use the generated Docker images and deploy them to Cloud Function.\n- Use the same configuration as on-premises.',
-      '- Use the existing codebase and deploy each service as a separate Cloud Function.\n- Update the configurations and the required endpoints.',
+      '- Use your existing continuous integration and delivery (CI/CD) pipeline.\n- Use the generated Docker images and deploy them to Cloud Run function.\n- Use the same configuration as on-premises.',
+      '- Use the existing codebase and deploy each service as a separate Cloud Run function.\n- Update the configurations and the required endpoints.',
       '- Use your existing codebase and deploy each service as a separate Cloud Run.\n- Use the same configurations as on-premises.'
     ],
     answer: 0,
-    explanation: 'The services are already containerized, so the existing CI/CD pipeline can push those images to Cloud Run, a serverless container platform that accepts environment-variable configuration. Endpoints and settings will need updating for the cloud environment. Cloud Functions deploys source code, not arbitrary Docker images. Reusing the on-premises configuration unchanged would leave endpoints pointing at old services.'
+    explanation: 'The services are already containerized, so the existing CI/CD pipeline can push those images to Cloud Run, a serverless container platform that accepts environment-variable configuration. Endpoints and settings will need updating for the cloud environment. Cloud Run functions deploys source code, not arbitrary Docker images. Reusing the on-premises configuration unchanged would leave endpoints pointing at old services. Current names: Cloud Functions → Cloud Run functions.'
   }
 ];

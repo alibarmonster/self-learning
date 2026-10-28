@@ -150,7 +150,7 @@ export const data: Question[] = [
     topic: 'Data management solutions',
     difficulty: 'medium',
     prompt: 'Which database offers a relational, SQL interface with strong consistency AND horizontal scaling across regions for a global application?',
-    options: ['Cloud SQL', 'Cloud Spanner', 'Firestore', 'Bigtable'],
+    options: ['Cloud SQL', 'Spanner', 'Firestore', 'Bigtable'],
     answer: 1,
     explanation:
       'Spanner is Google\'s globally distributed relational database. Unlike Cloud SQL, which scales vertically on one instance, Spanner scales out across nodes and regions while keeping strong consistency and SQL.'
@@ -164,7 +164,7 @@ export const data: Question[] = [
       'Cloud SQL',
       'Bigtable',
       'Firestore',
-      'Cloud Spanner'
+      'Spanner'
     ],
     answer: 1,
     explanation:
@@ -175,7 +175,7 @@ export const data: Question[] = [
     topic: 'Data management solutions',
     difficulty: 'medium',
     prompt: 'Which service is a NoSQL document database designed for mobile and web apps, with real-time synchronisation and offline support?',
-    options: ['Firestore', 'Cloud Spanner', 'BigQuery', 'Bigtable'],
+    options: ['Firestore', 'Spanner', 'BigQuery', 'Bigtable'],
     answer: 0,
     explanation:
       'Firestore stores flexible JSON-like documents in collections and keeps client apps in sync automatically, which is why it pairs with Firebase for consumer apps.'
@@ -233,7 +233,7 @@ export const data: Question[] = [
     options: [
       'Cloud SQL',
       'Bigtable',
-      'Cloud Spanner',
+      'Spanner',
       'Firestore'
     ],
     answer: [0, 2],
@@ -346,7 +346,7 @@ export const data: Question[] = [
     ],
     answer: 0,
     explanation:
-      'Looker (formerly the standalone Looker product) centralises metric definitions so every dashboard agrees. Looker Studio (formerly Data Studio) lets anyone drag together a report from a data source in minutes. Both connect natively to BigQuery.'
+      'Looker (formerly the standalone Looker product) centralises metric definitions so every dashboard agrees. Looker Studio (formerly Data Studio) lets anyone drag together a report from a data source in minutes. Both connect natively to BigQuery. Current names: Data Studio → Looker Studio.'
   },
   {
     id: 'data-25',
@@ -354,14 +354,14 @@ export const data: Question[] = [
     difficulty: 'easy',
     prompt: 'A retailer has ten years of sales history in spreadsheets on individual laptops. What is the first step to getting business value from it?',
     options: [
-      'Train a demand-forecasting model on the spreadsheets directly in Vertex AI, using AutoML to handle the cleaning.',
+      'Train a demand-forecasting model on the spreadsheets directly in Gemini Enterprise Agent Platform, using AutoML to handle the cleaning.',
       'Consolidate the data into a central, governed store such as BigQuery so it can be cleaned, queried and shared.',
       'Build a Looker Studio dashboard connected to each spreadsheet so managers can see the full history at once.',
       'Upload the spreadsheets to Cloud Storage in the Archive class so they are preserved cheaply for future analysis.'
     ],
     answer: 1,
     explanation:
-      'Scattered, ungoverned data cannot be analysed reliably. Centralising it is the foundation the whole data value chain rests on; analytics and ML come after.'
+      'Scattered, ungoverned data cannot be analysed reliably. Centralising it is the foundation the whole data value chain rests on; analytics and ML come after. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
   },
   {
     id: 'data-26',
@@ -396,7 +396,7 @@ export const data: Question[] = [
       'An online retailer runs a MySQL database on-premises for orders and inventory. Traffic has grown and the ops team spends most of its time on patching, backups and failover testing. They want to move to Google Cloud with the least application change and hand the maintenance to Google. Which service should they choose?',
     options: [
       'Cloud SQL',
-      'Cloud Spanner',
+      'Spanner',
       'AlloyDB',
       'BigQuery'
     ],
@@ -412,7 +412,7 @@ export const data: Question[] = [
       'A ride-hailing company operates in 40 countries. Its trip-booking system needs a relational database with strong consistency for payments, must serve users on every continent with low latency, and expects to grow far beyond what a single database server can handle. Which service fits?',
     options: [
       'Cloud SQL',
-      'Cloud Spanner',
+      'Spanner',
       'Bigtable',
       'Firestore'
     ],
@@ -431,7 +431,7 @@ export const data: Question[] = [
       'Bigtable',
       'Cloud SQL',
       'Firestore',
-      'Cloud Spanner'
+      'Spanner'
     ],
     answer: 0,
     explanation:

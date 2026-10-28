@@ -984,7 +984,7 @@ const H: Record<string, Handler> = {
     sa!.keys += 1;
     c.s.files[file] = `{ "type": "service_account", "project_id": "${p.id}", "client_email": "${email}", "private_key": "-----BEGIN PRIVATE KEY-----…" }`;
     c.o.info(`created key [${suffix(c.s, 12)}] of type [json] as [${file}] for [${email}]`);
-    c.o.warn('Lab: kunci JSON adalah rahasia jangka panjang. Untuk workload di Google Cloud, lebih aman pakai service account terpasang atau Workload Identity daripada file kunci.');
+    c.o.warn('Lab: kunci JSON adalah rahasia jangka panjang. Untuk workload di Google Cloud, lebih aman pakai service account terpasang atau Workload Identity Federation for GKE daripada file kunci.');
   },
   'iam service-accounts keys list'(c) {
     const sa = c.s.projects.flatMap((x) => x.serviceAccounts).find((x) => x.email === flag(c.a, 'iam-account'));

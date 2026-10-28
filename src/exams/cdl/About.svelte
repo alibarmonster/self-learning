@@ -33,13 +33,13 @@
       n: '03',
       title: 'Innovating with Google Cloud AI',
       weight: '~16%',
-      body: 'AI versus ML versus analytics; problem types; data quality, explainable and responsible AI; the pre-trained API, AutoML and custom-model trade-off; Vision, Natural Language, Translation, Speech APIs; BigQuery ML, Vertex AI, TensorFlow and TPUs.'
+      body: 'AI versus ML versus analytics; problem types; data quality, explainable and responsible AI; the pre-trained API, AutoML and custom-model trade-off; Vision, Natural Language, Translation, Speech APIs; BigQuery ML, Gemini Enterprise Agent Platform (formerly Vertex AI), TensorFlow and TPUs.'
     },
     {
       n: '04',
       title: 'Modernize infrastructure and applications',
       weight: '~17%',
-      body: 'Retire, retain, rehost, replatform, refactor, reimagine; VMs, containers, microservices, Kubernetes and GKE; Spot VMs, autoscaling, load balancing; Cloud Run, Cloud Functions, App Engine; APIs and Apigee; hybrid and multicloud with Anthos.'
+      body: 'Retire, retain, rehost, replatform, refactor, reimagine; VMs, containers, microservices, Kubernetes and GKE; Spot VMs, autoscaling, load balancing; Cloud Run, Cloud Run functions, App Engine; APIs and Apigee; hybrid and multicloud with GKE fleets and Google Distributed Cloud (formerly Anthos).'
     },
     {
       n: '05',
@@ -148,7 +148,7 @@
         <p class="shape-body">
           A short business scenario ends in "which Google Cloud product should they use?". The trap
           is two products that sound alike — Cloud SQL and Spanner, Bigtable and BigQuery, Nearline
-          and Coldline, Cloud Run and Cloud Functions. Learn each pair as a <em>contrast</em>, not as
+          and Coldline, Cloud Run and Cloud Run functions. Learn each pair as a <em>contrast</em>, not as
           two separate facts.
         </p>
       </div>

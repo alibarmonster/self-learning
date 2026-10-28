@@ -85,7 +85,7 @@ export const SERVICES: Service[] = [
   S('monitoring', 'Cloud Monitoring', 'devops', 'Metrik, dashboard, uptime check dan alert.'),
   S('logging', 'Cloud Logging', 'devops', 'Mengumpulkan, mencari dan merutekan log (sink ke BigQuery/Storage).'),
   // ai
-  S('vertex', 'Vertex AI', 'ai', 'Platform ML: melatih, men-tune dan melayani model kustom serta model Gemini.'),
+  S('vertex', 'Agent Platform', 'ai', 'Platform ML: melatih, men-tune dan melayani model kustom serta model Gemini.'),
   S('bqml', 'BigQuery ML', 'ai', 'Membuat model ML dengan SQL langsung di BigQuery — tanpa memindahkan data.'),
   S('docai', 'Document AI', 'ai', 'Ekstraksi data terstruktur dari dokumen (invoice, KTP, formulir).'),
   S('vision', 'Vision AI', 'ai', 'Model siap pakai untuk label, teks (OCR) dan deteksi objek pada gambar.'),

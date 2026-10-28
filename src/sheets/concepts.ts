@@ -400,7 +400,7 @@ export const concepts: Cheatsheet = {
           term: 'Digital transformation',
           meaning: 'Memakai teknologi modern untuk mengubah cara perusahaan bekerja dan melayani pelanggan — bukan sekadar memindahkan server, tapi mengubah proses dan produk.',
           analogy: 'Bank yang dulu hanya punya kantor cabang, kini sebagian besar layanannya lewat aplikasi.',
-          example: 'Retailer memakai BigQuery dan Vertex AI untuk rekomendasi produk personal, bukan hanya laporan penjualan bulanan.',
+          example: 'Retailer memakai BigQuery dan Gemini Enterprise Agent Platform untuk rekomendasi produk personal, bukan hanya laporan penjualan bulanan.',
           exam: '“digital transformation”, “modernize”, “data-driven decisions”'
         },
         {

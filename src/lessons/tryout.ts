@@ -602,7 +602,7 @@ export const lesson: Lesson = {
                 ['Nodes', 'Managed by Google, you never see node pools', 'You create and size node pools'],
                 ['Billing', 'Per Pod **resource requests**', 'Per node (VM), used or not'],
                 ['Location', 'Always **regional**', 'Zonal or regional'],
-                ['Security defaults', 'Workload Identity, Shielded nodes, no SSH to nodes', 'You choose'],
+                ['Security defaults', 'Workload Identity Federation for GKE, Shielded nodes, no SSH to nodes', 'You choose'],
                 ['Pick when', 'You want Kubernetes without node operations — the recommended default', 'You need node-level control (special kernels, DaemonSets with privileges, specific machine shapes)']
               ]
             },

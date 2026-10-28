@@ -375,7 +375,7 @@ export const lesson: Lesson = {
             {
               kind: 'table',
               caption: 'Worth memorising a few',
-              columns: ['Prefix', 'Total addresses', 'Usable in a GCP subnet', 'Typical use'],
+              columns: ['Prefix', 'Total addresses', 'Usable in a Google Cloud subnet', 'Typical use'],
               mono: [0],
               rows: [
                 ['/29', '8', '4', 'The smallest subnet allowed'],

@@ -122,11 +122,11 @@ export const operations: Question[] = [
       'Spot VMs, which are discounted because they can be reclaimed',
       'Committed use discounts for a one- or three-year usage commitment',
       'Sustained use discounts earned automatically each month',
-      'Preemptible VMs on a long-running managed instance group'
+      'Spot VMs on a long-running managed instance group'
     ],
     answer: 1,
     explanation:
-      'Steady, predictable workloads are what commitments are for. Spot VMs are cheaper still but can be interrupted, which a production database cannot tolerate.'
+      'Steady, predictable workloads are what commitments are for. Spot VMs are cheaper still but can be interrupted, which a production database cannot tolerate. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
 
   // ── Operational excellence and reliability at scale ──────────────────────
@@ -386,7 +386,7 @@ export const operations: Question[] = [
     ],
     answer: 0,
     explanation:
-      'You cannot run a reliable service you cannot see. Cloud Monitoring (metrics, dashboards, alerts), Cloud Logging and Cloud Trace — formerly the "Operations suite" — are the tooling behind SLO-based reliability.'
+      'You cannot run a reliable service you cannot see. Cloud Monitoring (metrics, dashboards, alerts), Cloud Logging and Cloud Trace — formerly the "Google Cloud Observability" — are the tooling behind SLO-based reliability. Current names: operations suite → Google Cloud Observability.'
   },
 
 

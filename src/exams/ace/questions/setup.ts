@@ -36,8 +36,8 @@ export const setup: Question[] = [
     options: [
       'Contact cloud-billing@google.com with your bank account details and request a corporate billing account for your company.',
       'Create a ticket with Google Support and wait for their call to share your credit card details over the phone.',
-      'In the Google Platform Console, go to the Resource Manage and move all projects to the root Organizarion.',
-      'In the Google Cloud Platform Console, create a new billing account and set up a payment method.'
+      'In the Google Cloud console, go to the Resource Manage and move all projects to the root Organizarion.',
+      'In the Google Cloud console, create a new billing account and set up a payment method.'
     ],
     answer: 3,
     explanation: 'Anyone can create a new self-serve billing account in the Cloud Console and attach a payment method, after which the projects can be relinked to it. Billing accounts are not created by emailing Google or phoning Support with card details, and moving projects into the organization does not change which billing account pays for them.'
@@ -47,9 +47,9 @@ export const setup: Question[] = [
     topic: 'Billing & budgets',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are analyzing Google Cloud Platform service costs from three separate projects. You want to use this information to create service cost estimates by service type, daily and monthly, for the next six months using standard query syntax. What should you do?',
+    prompt: 'You are analyzing Google Cloud service costs from three separate projects. You want to use this information to create service cost estimates by service type, daily and monthly, for the next six months using standard query syntax. What should you do?',
     options: [
-      'Export your bill to a Cloud Storage bucket, and then import into Cloud Bigtable for analysis.',
+      'Export your bill to a Cloud Storage bucket, and then import into Bigtable for analysis.',
       'Export your bill to a Cloud Storage bucket, and then import into Google Sheets for analysis.',
       'Export your transactions to a local file, and perform analysis with a desktop tool.',
       'Export your bill to a BigQuery dataset, and then write time window-based SQL queries for analysis.'
@@ -62,7 +62,7 @@ export const setup: Question[] = [
     topic: 'gcloud CLI, APIs & quotas',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You have one GCP account running in your default region and zone and another account running in a non- default region and zone. You want to start a new Compute Engine instance in these two Google Cloud Platform accounts using the command line interface. What should you do?',
+    prompt: 'You have one Google Cloud account running in your default region and zone and another account running in a non- default region and zone. You want to start a new Compute Engine instance in these two Google Cloud accounts using the command line interface. What should you do?',
     options: [
       'Create two configurations using gcloud config configurations create [NAME]. Run gcloud config configurations activate [NAME] to switch between accounts when running the commands to start the Compute Engine instances.',
       'Create two configurations using gcloud config configurations create [NAME]. Run gcloud configurations list to start the Compute Engine instances.',
@@ -77,25 +77,25 @@ export const setup: Question[] = [
     topic: 'gcloud CLI, APIs & quotas',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You want to send and consume Cloud Pub/Sub messages from your App Engine application. The Cloud Pub/Sub API is currently disabled. You will use a service account to authenticate your application to the API. You want to make sure your application can use Cloud Pub/Sub. What should you do?',
+    prompt: 'You want to send and consume Pub/Sub messages from your App Engine application. The Pub/Sub API is currently disabled. You will use a service account to authenticate your application to the API. You want to make sure your application can use Pub/Sub. What should you do?',
     options: [
-      'Enable the Cloud Pub/Sub API in the API Library on the GCP Console.',
-      'Rely on the automatic enablement of the Cloud Pub/Sub API when the Service Account accesses it.',
-      'Use Deployment Manager to deploy your application. Rely on the automatic enablement of all APIs used by the application being deployed.',
-      'Grant the App Engine Default service account the role of Cloud Pub/Sub Admin. Have your application enable the API on the first connection to Cloud Pub/ Sub.'
+      'Enable the Pub/Sub API in the API Library on the Google Cloud console.',
+      'Rely on the automatic enablement of the Pub/Sub API when the Service Account accesses it.',
+      'Use Infrastructure Manager to deploy your application. Rely on the automatic enablement of all APIs used by the application being deployed.',
+      'Grant the App Engine Default service account the role of Pub/Sub Admin. Have your application enable the API on the first connection to Cloud Pub/ Sub.'
     ],
     answer: 0,
-    explanation: 'APIs must be enabled explicitly in the project, for example from the API Library or with gcloud services enable, before any credential can call them. Neither service accounts nor Deployment Manager auto-enable APIs on first use, and giving the app Pub/Sub Admin does not grant permission to enable services.'
+    explanation: 'APIs must be enabled explicitly in the project, for example from the API Library or with gcloud services enable, before any credential can call them. Neither service accounts nor Infrastructure Manager auto-enable APIs on first use, and giving the app Pub/Sub Admin does not grant permission to enable services. Current names: Deployment Manager reached end of support in 2026; Infrastructure Manager (managed Terraform) replaces it.'
   },
   {
     id: 'ace-035',
     topic: 'Billing & budgets',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You need to create a new billing account and then link it with an existing Google Cloud Platform project. What should you do?',
+    prompt: 'You need to create a new billing account and then link it with an existing Google Cloud project. What should you do?',
     options: [
-      'Verify that you are Project Billing Manager for the GCP project. Update the existing project to link it to the existing billing account.',
-      'Verify that you are Project Billing Manager for the GCP project. Create a new billing account and link the new billing account to the existing project.',
+      'Verify that you are Project Billing Manager for the Google Cloud project. Update the existing project to link it to the existing billing account.',
+      'Verify that you are Project Billing Manager for the Google Cloud project. Create a new billing account and link the new billing account to the existing project.',
       'Verify that you are Billing Administrator for the billing account. Create a new project and link the new project to the existing billing account.',
       'Verify that you are Billing Administrator for the billing account. Update the existing project to link it to the existing billing account.'
     ],
@@ -307,7 +307,7 @@ export const setup: Question[] = [
     topic: 'Resource hierarchy & org policy',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your use of GCP has grown significantly and you now have many resources to manage. Some resources are in different environments and some are for different teams. You would like to easily group resources so you can manage them more effectively. What feature of GCP would you use?',
+    prompt: 'Your use of Google Cloud has grown significantly and you now have many resources to manage. Some resources are in different environments and some are for different teams. You would like to easily group resources so you can manage them more effectively. What feature of Google Cloud would you use?',
     options: [
       'Labels',
       'Images',
@@ -322,7 +322,7 @@ export const setup: Question[] = [
     topic: 'Resource hierarchy & org policy',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You have been given the responsibility to manage projects in GCP. What set of permissions will you need to manage projects?',
+    prompt: 'You have been given the responsibility to manage projects in Google Cloud. What set of permissions will you need to manage projects?',
     options: [
       'resourcemanager.projects.getIamPolicy and resourcemanager.projects.setIamPolicy only',
       'resourcemanager.projects.get only',
@@ -357,7 +357,7 @@ export const setup: Question[] = [
       'Contact cloud-billing@google.com with your bank account details and request a corporate billing account for Snackify.',
       'Create a ticket with Google Support and wait for their call to share your credit card details over the phone.',
       'In the Google Cloud Console, go to the Resource Manager and move all projects to the root Organization.',
-      'In the Google Cloud Platform Console, create a new billing account and set up a payment method.'
+      'In the Google Cloud console, create a new billing account and set up a payment method.'
     ],
     answer: 3,
     explanation: 'A company billing account is created self-service in the Cloud Console\'s Billing section with a payment method, after which each project is linked to it. Google does not collect bank or card details by email or phone, and moving projects into an organization does not change who pays for them.'
@@ -367,12 +367,12 @@ export const setup: Question[] = [
     topic: 'Billing & budgets',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your company, an online education platform named Learnly, has an existing GCP organization with hundreds of projects and a billing account. Recently, Learnly acquired a virtual tutoring startup, TutorVerse, which also has hundreds of projects and its own billing account. To streamline operations, you would like to consolidate all GCP costs from both organizations onto a single invoice. You want to achieve this consolidation as of tomorrow. What should you do?',
+    prompt: 'Your company, an online education platform named Learnly, has an existing Google Cloud organization with hundreds of projects and a billing account. Recently, Learnly acquired a virtual tutoring startup, TutorVerse, which also has hundreds of projects and its own billing account. To streamline operations, you would like to consolidate all Google Cloud costs from both organizations onto a single invoice. You want to achieve this consolidation as of tomorrow. What should you do?',
     options: [
       'Link TutorVerse\'s projects to Learnly\'s billing account.',
       'Configure TutorVerse\'s billing account and Learnly\'s billing account to export billing data into the same BigQuery dataset.',
-      'Migrate TutorVerse\'s projects into Learnly\'s GCP organization. Link the migrated projects to Learnly\'s billing account.',
-      'Create a new GCP organization and a new billing account. Migrate both Learnly\'s and TutorVerse\'s projects into the new GCP organization and link the projects to the new billing account.'
+      'Migrate TutorVerse\'s projects into Learnly\'s Google Cloud organization. Link the migrated projects to Learnly\'s billing account.',
+      'Create a new Google Cloud organization and a new billing account. Migrate both Learnly\'s and TutorVerse\'s projects into the new Google Cloud organization and link the projects to the new billing account.'
     ],
     answer: 0,
     explanation: 'A project can be linked to any billing account you have billing permissions on, even one owned by another organization, so linking TutorVerse\'s projects to Learnly\'s billing account consolidates charges on one invoice immediately. Migrating projects between organizations takes planning and time, and exporting both accounts to one BigQuery dataset combines reporting but still produces two invoices.',
@@ -387,11 +387,11 @@ export const setup: Question[] = [
     options: [
       'Set up a budget alert on the project with an amount of 100 dollars, a threshold of 100%, and a notification type of email.',
       'Set up a budget alert on the billing account with an amount of 100 dollars, a threshold of 100%, and a notification type of email.',
-      'i. Export the billing data to BigQuery. ii. Create a Cloud Function that uses BigQuery to sum the egress network costs of the exported billing data for the Apache web server for the current month and send an email if it is over 100 dollars. iii. Schedule the Cloud Function using Cloud Scheduler to run hourly.',
-      'i. Use the Cloud Logging Agent to export the Apache web server logs to Cloud Logging. ii. Create a Cloud Function that uses BigQuery to parse the HTTP response log data in Cloud Logging for the current month and sends an email if the size of all HTTP responses, multiplied by current Google Cloud egress prices, totals over 100 dollars. iii. Schedule the Cloud Function using Cloud Scheduler to run hourly.'
+      'i. Export the billing data to BigQuery. ii. Create a Cloud Run function that uses BigQuery to sum the egress network costs of the exported billing data for the Apache web server for the current month and send an email if it is over 100 dollars. iii. Schedule the Cloud Run function using Cloud Scheduler to run hourly.',
+      'i. Use the Cloud Logging Agent to export the Apache web server logs to Cloud Logging. ii. Create a Cloud Run function that uses BigQuery to parse the HTTP response log data in Cloud Logging for the current month and sends an email if the size of all HTTP responses, multiplied by current Google Cloud egress prices, totals over 100 dollars. iii. Schedule the Cloud Run function using Cloud Scheduler to run hourly.'
     ],
     answer: 2,
-    explanation: 'The requirement is cost for one server\'s egress only, and the billing export to BigQuery carries per-SKU, per-resource and label detail that lets a scheduled function sum exactly that cost and email when it passes 100 dollars. A plain 100-dollar budget on the project or on the billing account tracks all spend from many applications, so it would fire on unrelated costs. Estimating cost from Apache response sizes times list prices is not the cost \'as reported by Google Cloud\' and ignores discounts and tiered pricing.'
+    explanation: 'The requirement is cost for one server\'s egress only, and the billing export to BigQuery carries per-SKU, per-resource and label detail that lets a scheduled function sum exactly that cost and email when it passes 100 dollars. A plain 100-dollar budget on the project or on the billing account tracks all spend from many applications, so it would fire on unrelated costs. Estimating cost from Apache response sizes times list prices is not the cost \'as reported by Google Cloud\' and ignores discounts and tiered pricing. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-173',
@@ -443,7 +443,7 @@ export const setup: Question[] = [
     topic: 'gcloud CLI, APIs & quotas',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are responsible for managing a social media app\'s backend infrastructure, specifically a Google Kubernetes Engine (GKE) cluster called "chat-prod" hosted on Google Cloud. You want to configure your command line interface (CLI) to always target this GKE cluster by default for any future commands. You\'ve just installed the Cloud SDK, and now you want to ensure that any future CLI operations are set to focus on this specific cluster. What should you do?',
+    prompt: 'You are responsible for managing a social media app\'s backend infrastructure, specifically a Google Kubernetes Engine (GKE) cluster called "chat-prod" hosted on Google Cloud. You want to configure your command line interface (CLI) to always target this GKE cluster by default for any future commands. You\'ve just installed the Google Cloud CLI, and now you want to ensure that any future CLI operations are set to focus on this specific cluster. What should you do?',
     options: [
       'Use the command “gcloud config set container/cluster chat-prod”.',
       'Use the command “gcloud container clusters update chat-prod”.',
@@ -451,14 +451,14 @@ export const setup: Question[] = [
       'Create a file called defaults.json in the ~/.gcloud folder that contains the cluster name.'
     ],
     answer: 0,
-    explanation: 'gcloud config set container/cluster chat-prod stores the cluster as the default for gcloud container commands in the active configuration. gcloud container clusters update changes the cluster\'s own settings rather than your CLI defaults. gcloud does not read files such as gke.default or defaults.json in a ~/.gcloud folder; its properties live in configurations managed by gcloud config.'
+    explanation: 'gcloud config set container/cluster chat-prod stores the cluster as the default for gcloud container commands in the active configuration. gcloud container clusters update changes the cluster\'s own settings rather than your CLI defaults. gcloud does not read files such as gke.default or defaults.json in a ~/.gcloud folder; its properties live in configurations managed by gcloud config. Current names: Cloud SDK → Google Cloud CLI.'
   },
   {
     id: 'ace-214',
     topic: 'gcloud CLI, APIs & quotas',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You\'ve been hired by a new tech startup, SpaceyMedia, to manage their cloud infrastructure on Google Cloud. One of your tasks is to produce a list of all the enabled Google Cloud Platform APIs for their GCP project. The project name is spacey-media-app. You need to use the gcloud command line within Cloud Shell to get this information. How do you proceed?',
+    prompt: 'You\'ve been hired by a new tech startup, SpaceyMedia, to manage their cloud infrastructure on Google Cloud. One of your tasks is to produce a list of all the enabled Google Cloud APIs for their Google Cloud project. The project name is spacey-media-app. You need to use the gcloud command line within Cloud Shell to get this information. How do you proceed?',
     options: [
       'Run “gcloud projects list” to get the project ID, and then run “gcloud services list --project ”.',
       'Run “gcloud init” to set the current project to spacey-media-app, and then run “gcloud services list --available”.',
@@ -475,7 +475,7 @@ export const setup: Question[] = [
     verbatim: true,
     prompt: 'You are managing expenses for three different departments within your company’s online fitness platform. You need to create accurate cost estimates for various cloud services, broken down by service type, on a daily and monthly basis for the upcoming six months. The goal is to use standard query syntax for this analysis. What should you do?',
     options: [
-      'Export your bill to a Cloud Storage bucket, and then import it into Cloud Bigtable for analysis.',
+      'Export your bill to a Cloud Storage bucket, and then import it into Bigtable for analysis.',
       'Export your bill to a Cloud Storage bucket, and then import it into Google Sheets for analysis.',
       'Export your transactions to a local file, and perform analysis with a desktop tool.',
       'Export your bill to a BigQuery dataset, and then write time window-based SQL queries for analysis.'
@@ -490,13 +490,13 @@ export const setup: Question[] = [
     verbatim: true,
     prompt: 'You need to launch a new virtual machine for a website called NoveltyExpress, but the project for this website hasn\'t been set up yet. What steps should you take?',
     options: [
-      'Using the Cloud SDK, create a new project, enable the Compute Engine API in that project, and then create the instance specifying your new project.',
-      'Enable the Compute Engine API in the Cloud Console, use the Cloud SDK to create the instance, and then use the --project flag to specify a new project.',
-      'Using the Cloud SDK, create the new instance, and use the --project flag to specify the new project.\n\nAnswer yes when prompted by Cloud SDK to enable the Compute Engine API.',
+      'Using the Google Cloud CLI, create a new project, enable the Compute Engine API in that project, and then create the instance specifying your new project.',
+      'Enable the Compute Engine API in the Cloud Console, use the Google Cloud CLI to create the instance, and then use the --project flag to specify a new project.',
+      'Using the Google Cloud CLI, create the new instance, and use the --project flag to specify the new project.\n\nAnswer yes when prompted by Google Cloud CLI to enable the Compute Engine API.',
       'Enable the Compute Engine API in the Cloud Console. Go to the Compute Engine section of the Console to create a new instance, and look for the Create In A New Project option in the creation form.'
     ],
     answer: 0,
-    explanation: 'A VM has to live in an existing project with the Compute Engine API enabled, so the order is create the project, enable the API in it, then create the instance with --project. You cannot enable an API before the project exists, and the --project flag only points at an existing project; it does not create one. The console has no create-in-a-new-project option on the VM creation form.',
+    explanation: 'A VM has to live in an existing project with the Compute Engine API enabled, so the order is create the project, enable the API in it, then create the instance with --project. You cannot enable an API before the project exists, and the --project flag only points at an existing project; it does not create one. The console has no create-in-a-new-project option on the VM creation form. Current names: Cloud SDK → Google Cloud CLI.',
     tip: 'Order of operations: project, then billing and API, then resources.'
   },
   {
@@ -580,12 +580,12 @@ export const setup: Question[] = [
     topic: 'gcloud CLI, APIs & quotas',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are managing cloud resources for a fictional company, "TechEase Solutions," which runs both production and development environments on the Google Cloud Platform. You are tasked with setting up\n\nan automated process to retrieve a list of all compute instances across both environments daily. What should you do?',
+    prompt: 'You are managing cloud resources for a fictional company, "TechEase Solutions," which runs both production and development environments on the Google Cloud. You are tasked with setting up\n\nan automated process to retrieve a list of all compute instances across both environments daily. What should you do?',
     options: [
       'Create two configurations using gcloud config. Write a script that sets configurations as active, individually. For each configuration, use “gcloud compute instances list” to get a list of compute resources.',
       'Create two configurations using gsutil config. Write a script that sets configurations as active, individually. For each configuration, use “gsutil compute instances” list to get a list of compute resources.',
       'Go to Cloud Shell and export this information to Cloud Storage on a daily basis.',
-      'Go to GCP Console and export this information to Cloud SQL on a daily basis.'
+      'Go to Google Cloud console and export this information to Cloud SQL on a daily basis.'
     ],
     answer: 0,
     explanation: 'A script that activates one gcloud configuration per environment and runs gcloud compute instances list for each automates the daily inventory. gsutil only works with Cloud Storage and has no compute commands, and exporting by hand from Cloud Shell or the console is neither automated nor a real feature.'
@@ -612,13 +612,13 @@ export const setup: Question[] = [
     verbatim: true,
     prompt: 'You are managing an online platform called "EcoCrafts" that operates several microservices deployed across multiple Google Cloud projects. Each of these projects is associated with different billing accounts. To better estimate and track future charges, you want a single, unified visual representation of all\n\nthe costs across these projects. You also want to ensure that the latest cost data is incorporated quickly. What should you do?',
     options: [
-      'Configure Billing Data Export to BigQuery and visualize the data in Data Studio.',
-      'Visit the Cost Table page to get a CSV export and visualize it using Data Studio.',
+      'Configure Billing Data Export to BigQuery and visualize the data in Looker Studio.',
+      'Visit the Cost Table page to get a CSV export and visualize it using Looker Studio.',
       'Fill all resources in the Pricing Calculator to get an estimate of the monthly cost.',
       'Use the Reports view in the Cloud Billing Console to view the desired cost information.'
     ],
     answer: 0,
-    explanation: 'Cloud Billing export to BigQuery updates through the day, and several billing accounts can export to the same dataset, so a Looker Studio (formerly Data Studio) dashboard over it gives one current view of all costs. The console Reports view covers one billing account at a time, a CSV export from the cost table is a manual snapshot, and the Pricing Calculator estimates future costs rather than tracking actual spending.',
+    explanation: 'Cloud Billing export to BigQuery updates through the day, and several billing accounts can export to the same dataset, so a Looker Studio (formerly Data Studio) dashboard over it gives one current view of all costs. The console Reports view covers one billing account at a time, a CSV export from the cost table is a manual snapshot, and the Pricing Calculator estimates future costs rather than tracking actual spending. Current names: Data Studio → Looker Studio.',
     tip: 'Custom or cross-billing-account cost dashboards: billing export to BigQuery plus Looker Studio.'
   },
   {
@@ -702,10 +702,10 @@ export const setup: Question[] = [
     topic: 'Billing & budgets',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are managing the cloud infrastructure for a company called "SnapDine," a fictional app that allows users to share real-time restaurant recommendations. You need to create a new billing account and link it with an existing Google Cloud Platform project that manages SnapDine\'s backend services. What steps should you take?',
+    prompt: 'You are managing the cloud infrastructure for a company called "SnapDine," a fictional app that allows users to share real-time restaurant recommendations. You need to create a new billing account and link it with an existing Google Cloud project that manages SnapDine\'s backend services. What steps should you take?',
     options: [
-      '- Verify that you are the Project Billing Manager for the GCP project.\n- Update the existing project to link it to the existing billing account.',
-      '- Verify that you are the Project Billing Manager for the GCP project.\n- Create a new billing account and link the new billing account to the existing project.',
+      '- Verify that you are the Project Billing Manager for the Google Cloud project.\n- Update the existing project to link it to the existing billing account.',
+      '- Verify that you are the Project Billing Manager for the Google Cloud project.\n- Create a new billing account and link the new billing account to the existing project.',
       '- Verify that you are the Billing Administrator for the billing account.\n- Create a new project and link the new project to the existing billing account.',
       '- Verify that you are the Billing Administrator for the billing account.\n- Update the existing project to link it to the existing billing account.'
     ],
@@ -720,27 +720,27 @@ export const setup: Question[] = [
     prompt: 'You are the IT manager for a startup called "NextStep Innovations," which focuses on building cutting-edge productivity apps. You have a team of 10 developers, and you\'ve provided each of them with their own Google Cloud project as a personal sandbox to test new app features and experiment with various cloud services. Your goal is to be alerted if any of the developers exceed $650 in monthly spending on their sandbox environments. What should you do?',
     options: [
       'Create a single budget for all projects and configure budget alerts on this budget.',
-      '- Create a separate billing account per sandbox project and enable BigQuery billing exports.\n- Create a Data Studio dashboard to plot the spending per billing account.',
+      '- Create a separate billing account per sandbox project and enable BigQuery billing exports.\n- Create a Looker Studio dashboard to plot the spending per billing account.',
       'Create a budget per project and configure budget alerts on all of these budgets.',
-      '- Create a single billing account for all sandbox projects and enable BigQuery billing exports.\n- Create a Data Studio dashboard to plot the spending per project.'
+      '- Create a single billing account for all sandbox projects and enable BigQuery billing exports.\n- Create a Looker Studio dashboard to plot the spending per project.'
     ],
     answer: 2,
-    explanation: 'A budget scoped to each sandbox project with a $650 threshold alert notifies you when any single developer overspends. One budget for all projects would only alert on combined spend, and billing exports with dashboards show spending but do not alert anyone.'
+    explanation: 'A budget scoped to each sandbox project with a $650 threshold alert notifies you when any single developer overspends. One budget for all projects would only alert on combined spend, and billing exports with dashboards show spending but do not alert anyone. Current names: Data Studio → Looker Studio.'
   },
   {
     id: 'ace-330',
     topic: 'gcloud CLI, APIs & quotas',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are working on a task management web app called TaskHive, which runs on App Engine. TaskHive needs to send and receive messages using Cloud Pub/Sub for managing task notifications. However, you discover that the Cloud Pub/Sub API is disabled for your project. You plan to use a service account to authenticate TaskHive to the Cloud Pub/Sub API. What steps should you take to ensure TaskHive can use Cloud Pub/Sub?',
+    prompt: 'You are working on a task management web app called TaskHive, which runs on App Engine. TaskHive needs to send and receive messages using Pub/Sub for managing task notifications. However, you discover that the Pub/Sub API is disabled for your project. You plan to use a service account to authenticate TaskHive to the Pub/Sub API. What steps should you take to ensure TaskHive can use Pub/Sub?',
     options: [
-      'Enable the Cloud Pub/Sub API in the API Library on the GCP Console.',
-      'Rely on the automatic enablement of the Cloud Pub/Sub API when the Service Account accesses it.',
-      '- Use Deployment Manager to deploy your application.\n- Rely on the automatic enablement of all APIs used by the application being deployed.',
-      '- Grant the App Engine Default service account the role of Cloud Pub/Sub Admin.\n- Have your application enable the API on the first connection to Cloud Pub/Sub.'
+      'Enable the Pub/Sub API in the API Library on the Google Cloud console.',
+      'Rely on the automatic enablement of the Pub/Sub API when the Service Account accesses it.',
+      '- Use Infrastructure Manager to deploy your application.\n- Rely on the automatic enablement of all APIs used by the application being deployed.',
+      '- Grant the App Engine Default service account the role of Pub/Sub Admin.\n- Have your application enable the API on the first connection to Pub/Sub.'
     ],
     answer: 0,
-    explanation: 'APIs must be explicitly enabled per project, which you can do from the API Library in the console or with gcloud services enable. APIs are not enabled automatically when a service account calls them or when Deployment Manager deploys an app, and having the app enable the API at runtime needs extra permissions and is bad practice.'
+    explanation: 'APIs must be explicitly enabled per project, which you can do from the API Library in the console or with gcloud services enable. APIs are not enabled automatically when a service account calls them or when Infrastructure Manager deploys an app, and having the app enable the API at runtime needs extra permissions and is bad practice. Current names: Deployment Manager reached end of support in 2026; Infrastructure Manager (managed Terraform) replaces it.'
   },
   {
     id: 'ace-339',
@@ -779,15 +779,15 @@ export const setup: Question[] = [
     topic: 'gcloud CLI, APIs & quotas',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your team at the startup QuickFoodie is working on a new food delivery application, and you\'ve been tasked with testing a new feature that interacts with Cloud Datastore. You have a developer laptop running Ubuntu, and the Cloud SDK has already been installed via the Google Cloud Ubuntu package repository. You need to test your app locally by simulating Cloud Datastore. What should you do?',
+    prompt: 'Your team at the startup QuickFoodie is working on a new food delivery application, and you\'ve been tasked with testing a new feature that interacts with Firestore in Datastore mode. You have a developer laptop running Ubuntu, and the Google Cloud CLI has already been installed via the Google Cloud Ubuntu package repository. You need to test your app locally by simulating Firestore in Datastore mode. What should you do?',
     options: [
-      'Export Cloud Datastore data using “gcloud datastore export”.',
-      'Create a Cloud Datastore index using “gcloud datastore indexes create”.',
+      'Export Firestore in Datastore mode data using “gcloud datastore export”.',
+      'Create a Firestore in Datastore mode index using “gcloud datastore indexes create”.',
       'Install the google-cloud-sdk-datastore-emulator component using the “apt get install” command.',
       'Install the cloud-datastore-emulator component using the “gcloud components install” command.'
     ],
     answer: 2,
-    explanation: 'When the Cloud SDK was installed from the apt repository, the gcloud components manager is disabled, so extra components such as the Datastore emulator must be installed with the package manager (today the package is google-cloud-cli-datastore-emulator). The gcloud components install route only works for the standalone installer. Exporting data or creating indexes does not give you a local emulator at all.',
+    explanation: 'When the Google Cloud CLI was installed from the apt repository, the gcloud components manager is disabled, so extra components such as the Datastore emulator must be installed with the package manager (today the package is google-cloud-cli-datastore-emulator). The gcloud components install route only works for the standalone installer. Exporting data or creating indexes does not give you a local emulator at all. Current names: Cloud SDK → Google Cloud CLI; Cloud Datastore → Firestore in Datastore mode.',
     tip: 'If gcloud came from apt or yum, install components through apt or yum too.'
   },
   {
@@ -799,11 +799,11 @@ export const setup: Question[] = [
     options: [
       'Check the app.yaml file for WorkSync and review the project settings.',
       'Check the web-application.xml file for WorkSync and review the project settings.',
-      'Go to Deployment Manager and review the deployment settings for your applications.',
+      'Go to Infrastructure Manager and review the deployment settings for your applications.',
       'Go to Cloud Shell and run “gcloud config list” to see the Google Cloud configuration used for the deployment.'
     ],
     answer: 3,
-    explanation: 'gcloud app deploy targets the project in the active gcloud configuration unless --project is passed, so gcloud config list shows which project and account the deployment used. app.yaml does not set the target project in current App Engine, web-application.xml is not a deployment config for this, and Deployment Manager (deprecated) has nothing to do with gcloud app deploy.'
+    explanation: 'gcloud app deploy targets the project in the active gcloud configuration unless --project is passed, so gcloud config list shows which project and account the deployment used. app.yaml does not set the target project in current App Engine, web-application.xml is not a deployment config for this, and Infrastructure Manager has nothing to do with gcloud app deploy.'
   },
   {
     id: 'ace-363',
@@ -855,7 +855,7 @@ export const setup: Question[] = [
     topic: 'Resource hierarchy & org policy',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'The fictional tech company "AppSolutions" specializes in creating software tools for project management. The company has user identities managed in their internal Active Directory system. AppSolutions wants to use its Active Directory as the primary source of truth for all user identities. They also want to have complete control over the Google accounts used by their employees across all Google services, including their Google Cloud Platform (GCP) projects and services. What approach should AppSolutions take?',
+    prompt: 'The fictional tech company "AppSolutions" specializes in creating software tools for project management. The company has user identities managed in their internal Active Directory system. AppSolutions wants to use its Active Directory as the primary source of truth for all user identities. They also want to have complete control over the Google accounts used by their employees across all Google services, including their Google Cloud (Google Cloud) projects and services. What approach should AppSolutions take?',
     options: [
       'Use Google Cloud Directory Sync (GCDS) to synchronize users into Cloud Identity.',
       'Use the Cloud Identity APIs and write a script to synchronize users to Cloud Identity.',
@@ -1000,7 +1000,7 @@ export const setup: Question[] = [
       'constraints/cloudresourcemanager.disableCrossProjectServiceAccounts'
     ],
     answer: 2,
-    explanation: 'The constraints/compute.vmExternalIpAccess list constraint defines which VMs, if any, may have external IPs, and setting it to deny all blocks public IPs everywhere it\'s inherited. The requireShieldedVm constraint concerns boot integrity, and the Workload Identity and cross-project service account constraints are about identity, not IP addresses.'
+    explanation: 'The constraints/compute.vmExternalIpAccess list constraint defines which VMs, if any, may have external IPs, and setting it to deny all blocks public IPs everywhere it\'s inherited. The requireShieldedVm constraint concerns boot integrity, and the Workload Identity Federation for GKE and cross-project service account constraints are about identity, not IP addresses. Current names: Workload Identity → Workload Identity Federation for GKE.'
   },
   {
     id: 'ace-495',
@@ -1219,12 +1219,12 @@ export const setup: Question[] = [
     topic: 'Resource hierarchy & org policy',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'The engineering department at Orbital Innovations, a company specializing in space-based data analytics, needs to reduce its GCP service costs. You have been tasked with shutting down all active services within one of their existing GCP projects, with the goal of completing this in the fewest number of steps. What should you do?',
+    prompt: 'The engineering department at Orbital Innovations, a company specializing in space-based data analytics, needs to reduce its Google Cloud service costs. You have been tasked with shutting down all active services within one of their existing Google Cloud projects, with the goal of completing this in the fewest number of steps. What should you do?',
     options: [
-      '1. Verify that you are assigned the Project Owner IAM role for this project. 2. Locate the project in the GCP console, click Shut Down, and then enter the project ID.',
-      '1. Verify that you are assigned the Project Owner IAM role for this project. 2. Switch to the project in the GCP console, locate the resources, and delete them.',
-      '1. Verify that you are assigned the Organizational Administrator IAM role for this project. 2. Locate the project in the GCP console, enter the project ID, and then click Shut down.',
-      '1. Verify that you are assigned the Organizational Administrator IAM role for this project. 2. Switch to the project in the GCP console, locate the resources, and delete them.'
+      '1. Verify that you are assigned the Project Owner IAM role for this project. 2. Locate the project in the Google Cloud console, click Shut Down, and then enter the project ID.',
+      '1. Verify that you are assigned the Project Owner IAM role for this project. 2. Switch to the project in the Google Cloud console, locate the resources, and delete them.',
+      '1. Verify that you are assigned the Organizational Administrator IAM role for this project. 2. Locate the project in the Google Cloud console, enter the project ID, and then click Shut down.',
+      '1. Verify that you are assigned the Organizational Administrator IAM role for this project. 2. Switch to the project in the Google Cloud console, locate the resources, and delete them.'
     ],
     answer: 0,
     explanation: 'Shutting down the project stops all billing and services in one action, and you need the Owner role (resourcemanager.projects.delete) on the project to do it. Deleting resources one by one takes many more steps and can miss something. Organization Administrator manages IAM policy on the organization but does not itself include permission to delete projects.'
@@ -1234,7 +1234,7 @@ export const setup: Question[] = [
     topic: 'gcloud CLI, APIs & quotas',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are overseeing several online services for a company called TechFuse, which runs multiple web applications across different Google Cloud projects. To manage these projects effectively using the fewest steps, you need to configure the Google Cloud SDK command line interface (CLI) for easy switching between projects. What should you do?',
+    prompt: 'You are overseeing several online services for a company called TechFuse, which runs multiple web applications across different Google Cloud projects. To manage these projects effectively using the fewest steps, you need to configure the Google Cloud CLI command line interface (CLI) for easy switching between projects. What should you do?',
     options: [
       '1. Create a configuration for each project you need to manage. 2. Activate the appropriate configuration when you work with each of your assigned Google Cloud projects.',
       '1. Create a configuration for each project you need to manage. 2. Use “gcloud init” to update the configuration values when you need to work with a non-default project.',
@@ -1242,22 +1242,22 @@ export const setup: Question[] = [
       '1. Use the default configuration for one project you need to manage. 2. Use “gcloud init” to update the configuration values when you need to work with a non-default project.'
     ],
     answer: 0,
-    explanation: 'Named gcloud configurations hold a project, account and default region and zone, and gcloud config configurations activate switches between them in one command. Rerunning gcloud init every time you change projects is slower and overwrites settings. Relying on only the default configuration defeats the purpose of having one configuration per project.'
+    explanation: 'Named gcloud configurations hold a project, account and default region and zone, and gcloud config configurations activate switches between them in one command. Rerunning gcloud init every time you change projects is slower and overwrites settings. Relying on only the default configuration defeats the purpose of having one configuration per project. Current names: Cloud SDK → Google Cloud CLI.'
   },
   {
     id: 'ace-648',
     topic: 'gcloud CLI, APIs & quotas',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your company, ByteStream Inc., is developing a globally distributed application that requires scalable, high-performance data storage. You have decided to use Cloud Spanner as your database solution. Before you can create a Cloud Spanner instance, you need to complete the initial step in preparation. What should you do first?',
+    prompt: 'Your company, ByteStream Inc., is developing a globally distributed application that requires scalable, high-performance data storage. You have decided to use Spanner as your database solution. Before you can create a Spanner instance, you need to complete the initial step in preparation. What should you do first?',
     options: [
-      'Enable the Cloud Spanner API.',
-      'Configure your Cloud Spanner instance to be multi-regional.',
+      'Enable the Spanner API.',
+      'Configure your Spanner instance to be multi-regional.',
       'Create a new VPC network with subnetworks in all desired regions.',
-      'Grant yourself the IAM role of Cloud Spanner Admin.'
+      'Grant yourself the IAM role of Spanner Admin.'
     ],
     answer: 0,
-    explanation: 'Any Google Cloud service\'s API must be enabled in the project before you can create its resources, so enabling the Cloud Spanner API comes first. Choosing a multi-region configuration is part of creating the instance, not a prerequisite. Spanner does not need a VPC, and IAM roles matter only if you do not already have them.'
+    explanation: 'Any Google Cloud service\'s API must be enabled in the project before you can create its resources, so enabling the Spanner API comes first. Choosing a multi-region configuration is part of creating the instance, not a prerequisite. Spanner does not need a VPC, and IAM roles matter only if you do not already have them.'
   },
   {
     id: 'ace-649',
@@ -1282,12 +1282,12 @@ export const setup: Question[] = [
     prompt: 'You are working for a rapidly growing e-commerce platform called SwiftCart. As the platform scales, you need to optimize its Google Cloud resource consumption and provide a detailed report on resource usage and associated costs. To achieve this in the most efficient way, you are evaluating your options for investigating resource consumption charges and presenting a clear summary of your findings. What should you do?',
     options: [
       '- Rename SwiftCart\'s resources to reflect the owner and purpose.\n- Write a Python script to analyze resource consumption.',
-      '- Attach labels to SwiftCart\'s resources to reflect the owner and purpose.\n- Export Cloud Billing data into BigQuery, and analyze it with Data Studio.',
-      '- Assign tags to SwiftCart\'s resources to reflect the owner and purpose.\n- Export Cloud Billing data into BigQuery, and analyze it with Data Studio.',
+      '- Attach labels to SwiftCart\'s resources to reflect the owner and purpose.\n- Export Cloud Billing data into BigQuery, and analyze it with Looker Studio.',
+      '- Assign tags to SwiftCart\'s resources to reflect the owner and purpose.\n- Export Cloud Billing data into BigQuery, and analyze it with Looker Studio.',
       '- Create a script to analyze resource usage based on the project to which SwiftCart\'s resources belong.\n- In this script, use the IAM accounts and service accounts that control given resources.'
     ],
     answer: 1,
-    explanation: 'Labels are key-value pairs that flow into Cloud Billing export, so exporting billing data to BigQuery lets you break down costs by owner and purpose, and Looker Studio (formerly Data Studio) presents the results. Renaming resources and writing custom scripts is slow and error-prone. Tags are mainly for policy conditions such as IAM and firewall rules, and labels remain the standard way to attribute costs.',
+    explanation: 'Labels are key-value pairs that flow into Cloud Billing export, so exporting billing data to BigQuery lets you break down costs by owner and purpose, and Looker Studio (formerly Data Studio) presents the results. Renaming resources and writing custom scripts is slow and error-prone. Tags are mainly for policy conditions such as IAM and firewall rules, and labels remain the standard way to attribute costs. Current names: Data Studio → Looker Studio.',
     tip: 'Use labels plus BigQuery billing export to attribute costs.'
   },
   {

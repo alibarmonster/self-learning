@@ -44,7 +44,7 @@ const SECTIONS: Section[] = [
     icon: '03',
     weight: 16,
     blurb:
-      'AI and ML fundamentals, responsible and explainable AI, choosing between pre-trained APIs, AutoML and custom models, and the products: Vision, Natural Language, Translation, Speech APIs, BigQuery ML, Vertex AI, TensorFlow and TPUs.',
+      'AI and ML fundamentals, responsible and explainable AI, choosing between pre-trained APIs, AutoML and custom models, and the products: Vision, Natural Language, Translation, Speech APIs, BigQuery ML, Gemini Enterprise Agent Platform (formerly Vertex AI), TensorFlow and TPUs.',
     questions: ai
   },
   {
@@ -54,7 +54,7 @@ const SECTIONS: Section[] = [
     icon: '04',
     weight: 17,
     blurb:
-      'Migration paths from rehost to reimagine, VMs versus containers, Kubernetes and GKE, serverless with Cloud Run, Cloud Functions and App Engine, APIs and Apigee, and hybrid or multicloud with Anthos.',
+      'Migration paths from rehost to reimagine, VMs versus containers, Kubernetes and GKE, serverless with Cloud Run, Cloud Run functions and App Engine, APIs and Apigee, and hybrid or multicloud with GKE fleets and Google Distributed Cloud (formerly Anthos).',
     questions: infrastructure
   },
   {

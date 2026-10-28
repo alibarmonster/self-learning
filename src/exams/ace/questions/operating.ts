@@ -17,15 +17,15 @@ export const operating: Question[] = [
     topic: 'Managing VMs & instance groups',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You want to configure autohealing for network load balancing for a group of Compute Engine instances that run in multiple zones, using the fewest possible steps. You need to configure re-creation of VMs if they are unresponsive after 3 attempts of 10 seconds each. What should you do?',
+    prompt: 'You want to configure autohealing for passthrough Network Load Balancing for a group of Compute Engine instances that run in multiple zones, using the fewest possible steps. You need to configure re-creation of VMs if they are unresponsive after 3 attempts of 10 seconds each. What should you do?',
     options: [
-      'Create an HTTP load balancer with a backend configuration that references an existing instance group. Set the health check to healthy (HTTP)',
-      'Create an HTTP load balancer with a backend configuration that references an existing instance group. Define a balancing mode and set the maximum RPS to 10.',
+      'Create an external Application Load Balancer with a backend configuration that references an existing instance group. Set the health check to healthy (HTTP)',
+      'Create an external Application Load Balancer with a backend configuration that references an existing instance group. Define a balancing mode and set the maximum RPS to 10.',
       'Create a managed instance group. Set the Autohealing health check to healthy (HTTP)',
       'Create a managed instance group. Verify that the autoscaling setting is on.'
     ],
     answer: 2,
-    explanation: 'Autohealing is a feature of managed instance groups: you attach a health check with the desired interval and unhealthy threshold, and the MIG recreates VMs that fail it. Load balancer health checks only stop sending traffic to unhealthy backends and never recreate VMs, and autoscaling changes group size rather than replacing broken instances.',
+    explanation: 'Autohealing is a feature of managed instance groups: you attach a health check with the desired interval and unhealthy threshold, and the MIG recreates VMs that fail it. Load balancer health checks only stop sending traffic to unhealthy backends and never recreate VMs, and autoscaling changes group size rather than replacing broken instances. Current names: Network Load Balancing → passthrough Network Load Balancer; HTTP(S) Load Balancing → Application Load Balancer.',
     tip: 'Load balancer health checks route traffic; MIG autohealing health checks recreate VMs.'
   },
   {
@@ -37,11 +37,11 @@ export const operating: Question[] = [
     options: [
       'Use Cloud Storage Object Lifecycle Management using Age conditions with SetStorageClass and Delete actions. Set the SetStorageClass action to 90 days and the Delete action to 275 days (365 - 90)',
       'Use Cloud Storage Object Lifecycle Management using Age conditions with SetStorageClass and Delete actions. Set the SetStorageClass action to 90 days and the Delete action to 365 days.',
-      'Use gsutil rewrite and set the Delete action to 275 days (365-90).',
-      'Use gsutil rewrite and set the Delete action to 365 days.'
+      'Use gcloud storage objects update --storage-class and set the Delete action to 275 days (365-90).',
+      'Use gcloud storage objects update --storage-class and set the Delete action to 365 days.'
     ],
     answer: 1,
-    explanation: 'Lifecycle Age conditions are measured from the object\'s creation time, not from the last class change, so the delete rule should be 365 days and the SetStorageClass rule 90 days. Subtracting 90 would delete the videos after 275 days, and gsutil rewrite changes storage class immediately but cannot schedule deletions.',
+    explanation: 'Lifecycle Age conditions are measured from the object\'s creation time, not from the last class change, so the delete rule should be 365 days and the SetStorageClass rule 90 days. Subtracting 90 would delete the videos after 275 days, and gcloud storage objects update changes storage class immediately but cannot schedule deletions.',
     tip: 'Lifecycle Age always counts from object creation, so never subtract earlier transitions.'
   },
   {
@@ -52,9 +52,9 @@ export const operating: Question[] = [
     prompt: 'You created an instance of SQL Server 2017 on Compute Engine to test features in the new version. You want to connect to this instance using the fewest number of steps. What should you do?',
     options: [
       'Install a RDP client on your desktop. Verify that a firewall rule for port 3389 exists.',
-      'Install a RDP client in your desktop. Set a Windows username and password in the GCP Console. Use the credentials to log in to the instance.',
-      'Set a Windows password in the GCP Console. Verify that a firewall rule for port 22 exists. Click the RDP button in the GCP Console and supply the credentials to log in.',
-      'Set a Windows username and password in the GCP Console. Verify that a firewall rule for port 3389 exists. Click the RDP button in the GCP Console, and supply the credentials to log in.'
+      'Install a RDP client in your desktop. Set a Windows username and password in the Google Cloud console. Use the credentials to log in to the instance.',
+      'Set a Windows password in the Google Cloud console. Verify that a firewall rule for port 22 exists. Click the RDP button in the Google Cloud console and supply the credentials to log in.',
+      'Set a Windows username and password in the Google Cloud console. Verify that a firewall rule for port 3389 exists. Click the RDP button in the Google Cloud console, and supply the credentials to log in.'
     ],
     answer: 3,
     explanation: 'For a Windows VM you set a Windows username and password from the console, make sure a firewall rule allows RDP on TCP 3389, and use the console\'s RDP button to connect. Port 22 is for SSH, not RDP, and installing a separate desktop RDP client adds a step compared with the built-in RDP option.'
@@ -66,10 +66,10 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'You have sensitive data stored in three Cloud Storage buckets and have enabled data access logging. You want to verify activities for a particular user for these buckets, using the fewest possible steps. You need to verify the addition of metadata labels and which files have been viewed from those buckets. What should you do?',
     options: [
-      'Using the GCP Console, filter the Audit logs to view the information.',
-      'Using the GCP Console, filter the Stackdriver log(Cloud Logging) to view the information.',
-      'View the bucket in the Storage section of the GCP Console.',
-      'Create a trace in Stackdriver to view the information.'
+      'Using the Google Cloud console, filter the Audit logs to view the information.',
+      'Using the Google Cloud console, filter the logs in Cloud Logging to view the information.',
+      'View the bucket in the Storage section of the Google Cloud console.',
+      'Create a trace in Cloud Trace to view the information.'
     ],
     answer: 1,
     explanation: 'Data Access and Admin Activity audit log entries for Cloud Storage land in Cloud Logging, where filtering by the user\'s principal email and the bucket resource in Logs Explorer shows both label changes and object reads. The Storage browser does not show who did what, and Cloud Trace is for request latency, not audit records. It is debatable because the audit logs option describes the same entries reached through Logs Explorer, so the two are nearly equivalent.'
@@ -79,22 +79,22 @@ export const operating: Question[] = [
     topic: 'Monitoring & logging',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You need to monitor resources that are distributed over different projects in Google Cloud Platform. You want to consolidate reporting under the same Stackdriver Monitoring dashboard. What should you do?',
+    prompt: 'You need to monitor resources that are distributed over different projects in Google Cloud. You want to consolidate reporting under the same Cloud Monitoring dashboard. What should you do?',
     options: [
-      'Use Shared VPC to connect all projects, and link Stackdriver to one of the projects.',
-      'For each project, create a Stackdriver account. In each project, create a service account for that project and grant it the role of Stackdriver Account Editor in all other projects.',
-      'Configure a single Stackdriver account, and link all projects to the same account.',
-      'Configure a single Stackdriver account for one of the projects. In Stackdriver, create a Group and add the other project names as criteria for that Group.'
+      'Use Shared VPC to connect all projects, and turn on Cloud Monitoring in one of the projects.',
+      'In each project, create a service account and grant it the Monitoring Editor role in all the other projects.',
+      'Choose one project as the scoping project, and add all the other projects to its metrics scope.',
+      'In one project, create a Cloud Monitoring group and add the other project names as criteria for that group.'
     ],
     answer: 2,
-    explanation: 'A single Stackdriver workspace (today a Cloud Monitoring metrics scope in a scoping project) can include many monitored projects, letting one dashboard show resources across all of them. Shared VPC is about networking, not monitoring, and per-project accounts or Groups do not consolidate metrics from other projects.'
+    explanation: 'A scoping project’s metrics scope can include many monitored projects, so one set of dashboards and alerts covers resources across all of them. Shared VPC is about networking, cross-granted service accounts do not combine dashboards, and groups only organize resources already in scope. Current names: a Stackdriver account or workspace is today a Cloud Monitoring metrics scope in a scoping project.'
   },
   {
     id: 'ace-033',
     topic: 'Managing VMs & instance groups',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are deploying an application to a Compute Engine VM in a managed instance group. The application must be running at all times, but only a single instance of the VM should run per GCP project. How should you configure the instance group?',
+    prompt: 'You are deploying an application to a Compute Engine VM in a managed instance group. The application must be running at all times, but only a single instance of the VM should run per Google Cloud project. How should you configure the instance group?',
     options: [
       'Set autoscaling to On, set the minimum number of instances to 1, and then set the maximum number of instances to 1.',
       'Set autoscaling to Off, set the minimum number of instances to 1, and then set the maximum number of instances to 1.',
@@ -143,12 +143,12 @@ export const operating: Question[] = [
     prompt: 'You need to deploy an application in Google Cloud using savorless technology. You want to test a new version of the application with a small percentage of production traffic. What should you do?',
     options: [
       'Deploy the application lo Cloud. Run. Use gradual rollouts for traffic spelling.',
-      'Deploy the application lo Google Kubemetes Engine. Use Anthos Service Mesh for traffic splitting.',
-      'Deploy the application to Cloud functions. Saucily the version number in the functions name.',
+      'Deploy the application to Google Kubernetes Engine. Use Cloud Service Mesh for traffic splitting.',
+      'Deploy the application to Cloud Run functions. Saucily the version number in the functions name.',
       'Deploy the application to App Engine. For each new version, create a new service.'
     ],
     answer: 0,
-    explanation: 'Cloud Run is serverless and supports deploying a new revision with no traffic and then splitting a small percentage of traffic to it for a gradual rollout. GKE with a service mesh is not serverless, function names do not provide traffic splitting, and creating a new App Engine service per version defeats App Engine\'s built-in version traffic splitting.'
+    explanation: 'Cloud Run is serverless and supports deploying a new revision with no traffic and then splitting a small percentage of traffic to it for a gradual rollout. GKE with a service mesh is not serverless, function names do not provide traffic splitting, and creating a new App Engine service per version defeats App Engine\'s built-in version traffic splitting. Current names: Cloud Functions → Cloud Run functions; Anthos Service Mesh → Cloud Service Mesh.'
   },
   {
     id: 'ace-048',
@@ -157,13 +157,13 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'You need to migrate invoice documents stored on-premises to Cloud Storage. The documents have the following storage requirements:\n* Documents must be kept for five years.\n* Up to five revisions of the same invoice document must be stored, to allow for corrections.\n* Documents older than 365 days should be moved to lower cost storage tiers. You want to follow Google-recommended practices to minimize your operational and development costs. What should you do?',
     options: [
-      'Enable retention policies on the bucket, and use Cloud Scheduler to invoke a Cloud Function to move or delete your documents based on their metadata.',
+      'Enable retention policies on the bucket, and use Cloud Scheduler to invoke a Cloud Run function to move or delete your documents based on their metadata.',
       'Enable retention policies on the bucket, use lifecycle rules to change the storage classes of the objects, set the number of versions, and delete old files.',
-      'Enable object versioning on the bucket, and use Cloud Scheduler to invoke a Cloud Functions instance to move or delete your documents based on their metadata.',
+      'Enable object versioning on the bucket, and use Cloud Scheduler to invoke a Cloud Run functions instance to move or delete your documents based on their metadata.',
       'Enable object versioning on the bucket, use lifecycle conditions to change the storage class of the objects, set the number of versions, and delete old files.'
     ],
     answer: 3,
-    explanation: 'Object versioning keeps prior revisions, and lifecycle rules can move objects to colder classes after 365 days, cap the number of noncurrent versions and delete objects after five years, all without code. Custom Cloud Scheduler and Cloud Functions jobs add development and operations cost, and a bucket retention policy would block deleting or replacing objects before the period ends, which conflicts with corrections.'
+    explanation: 'Object versioning keeps prior revisions, and lifecycle rules can move objects to colder classes after 365 days, cap the number of noncurrent versions and delete objects after five years, all without code. Custom Cloud Scheduler and Cloud Run functions jobs add development and operations cost, and a bucket retention policy would block deleting or replacing objects before the period ends, which conflicts with corrections. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-056',
@@ -172,13 +172,13 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'The contents of a Cloud Storage bucket called free-photos-gcp are currently stored in a standard storage class bucket. You want to change the storage class to nearline. What command would you use?',
     options: [
-      'gcloud storage objects update gs://free-photos-gcp --storage-class=Nearline',
-      'gsutil migrate -s nearline gs://free-photos-gcp',
-      'gsutil rewrite -from multiregional --to nearline gs://free-photos-gcp',
-      'gsutil migrate --from multiregional --to nearline gs://free-photos-gcp'
+      'gcloud storage objects update gs://free-photos-gcp/** --storage-class=NEARLINE',
+      'gcloud storage objects migrate -s nearline gs://free-photos-gcp',
+      'gcloud storage rewrite --from multiregional --to nearline gs://free-photos-gcp',
+      'gcloud storage buckets migrate --from multiregional --to nearline gs://free-photos-gcp'
     ],
     answer: 0,
-    explanation: 'gcloud storage objects update with --storage-class rewrites existing objects into the new class, which is the current way to change the class of stored objects. gsutil has no migrate command and gsutil rewrite takes -s with a class rather than from and to flags. It is debatable because the option as written targets the bucket URL instead of gs://free-photos-gcp/** or adding --recursive, and changing only the bucket\'s default class would use gcloud storage buckets update.'
+    explanation: '`gcloud storage objects update` with --storage-class rewrites existing objects into the new class; `gs://free-photos-gcp/**` covers every object in the bucket. gcloud storage has no migrate or rewrite command. Changing only the bucket’s default class would use `gcloud storage buckets update --default-storage-class`. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.'
   },
   {
     id: 'ace-057',
@@ -187,13 +187,13 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'A Cloud Storage user wants to rename several files in a bucket. What command should they use?',
     options: [
-      'gsutil mv',
-      'gsutil rename',
-      'gsutil cp',
-      'gsutil rn'
+      'gcloud storage mv',
+      'gcloud storage rename',
+      'gcloud storage cp',
+      'gcloud storage rn'
     ],
     answer: 0,
-    explanation: 'Cloud Storage has no rename operation; moving an object to a new name with gsutil mv (today gcloud storage mv) is how you rename it, and under the hood it copies then deletes the original. There is no gsutil rename or rn command, and gsutil cp would leave the original object in place.'
+    explanation: 'Cloud Storage has no rename operation; moving an object to a new name with `gcloud storage mv` is how you rename it, and under the hood it copies then deletes the original. There is no rename or rn command, and cp would leave the original object in place. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.'
   },
   {
     id: 'ace-062',
@@ -236,10 +236,10 @@ export const operating: Question[] = [
       'Enable firewall rule logging for each of the firewall rules',
       'Enable Cloud Monitoring of each firewall rule',
       'Enable Cloud Trace of each firewall rule',
-      'Use Cloud Debugger to debug the firewall rules'
+      'Use Error Reporting to find errors in the firewall rules'
     ],
     answer: 0,
-    explanation: 'Firewall Rules Logging records each connection a rule allows or denies, so enabling it on the relevant rules shows which rule is blocking the egress traffic. Cloud Monitoring, Cloud Trace and the retired Cloud Debugger do not record per-connection firewall decisions.'
+    explanation: 'Firewall Rules Logging records each connection a rule allows or denies, so enabling it on the relevant rules shows which rule is blocking the egress traffic. Cloud Monitoring, Cloud Trace and Error Reporting do not record per-connection firewall decisions.'
   },
   {
     id: 'ace-076',
@@ -261,7 +261,7 @@ export const operating: Question[] = [
     topic: 'Managing storage & databases',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You have a Cloud Datastore database that you would like to back up. You\'d like to issue a command and have it return immediately while the backup runs in the background. You want the backup file to be stored in a Cloud Storage bucket named my-datastore-backup. What command would you use?',
+    prompt: 'You have a Firestore in Datastore mode database that you would like to back up. You\'d like to issue a command and have it return immediately while the backup runs in the background. You want the backup file to be stored in a Cloud Storage bucket named my-datastore-backup. What command would you use?',
     options: [
       'gcloud datastore backup gs://my-datastore-backup',
       'gcloud datastore export gs://my-datastore-backup --async',
@@ -269,7 +269,7 @@ export const operating: Question[] = [
       'gcloud datastore export gs://my-datastore-backup'
     ],
     answer: 1,
-    explanation: 'gcloud datastore export writes a managed export to a Cloud Storage bucket, and --async returns immediately while the operation runs in the background. Datastore is now Firestore in Datastore mode, and gcloud firestore export works too. There is no gcloud datastore backup command, gsutil does not manage Datastore, and omitting --async makes the command wait for completion.'
+    explanation: 'gcloud datastore export writes a managed export to a Cloud Storage bucket, and --async returns immediately while the operation runs in the background. Datastore is now Firestore in Datastore mode, and gcloud firestore export works too. There is no gcloud datastore backup command, gsutil does not manage Datastore, and omitting --async makes the command wait for completion. Current names: Cloud Datastore → Firestore in Datastore mode.'
   },
   {
     id: 'ace-080',
@@ -463,11 +463,11 @@ export const operating: Question[] = [
     options: [
       'Install a bash script that uses the sar -u command to get CPU utilization and write the value to syslog.',
       'Install a bash script that uses the sar -u command to get CPU utilization and write the value to sysout.',
-      'Install the Cloud Monitoring agent on each server and monitor the load_15m metric.',
+      'Install the Ops Agent on each server and monitor the load_15m metric.',
       'Install the Prometheus agent on each server and monitor the load_15m metric.'
     ],
     answer: 2,
-    explanation: 'The Cloud Monitoring agent (today the Ops Agent) collects guest metrics such as agent.googleapis.com/cpu/load_15m, which Cloud Monitoring stores and charts with no custom code. Writing sar output to syslog or stdout needs scripting and still leaves you to collect and aggregate it, and a Prometheus agent adds more setup than the native agent.'
+    explanation: 'The Ops Agent collects guest metrics such as agent.googleapis.com/cpu/load_15m, which Cloud Monitoring stores and charts with no custom code. Writing sar output to syslog or stdout needs scripting and still leaves you to collect and aggregate it, and a Prometheus agent adds more setup than the native agent. Current names: the separate Logging and Monitoring agents are replaced by the Ops Agent.'
   },
   {
     id: 'ace-138',
@@ -554,13 +554,13 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'You have several buckets using Nearline storage class that you would like to change to Coldline storage. What command would you use?',
     options: [
-      'gsutil rewrite -s Coldline gs://PATH_TO_OBJECT',
+      'gcloud storage objects update gs://PATH_TO_OBJECT --storage-class=COLDLINE',
       'gcloud storage rewrite -s Coldline gs://PATH_TO_OBJECT',
-      'gsutil newclass -s Coldline gs://PATH_TO_OBJECT',
-      'gcloud storage newclass -s Coldline gs://PATH_TO_OBJECT'
+      'gcloud storage buckets newclass -s Coldline gs://PATH_TO_OBJECT',
+      'gcloud storage objects newclass --class=COLDLINE gs://PATH_TO_OBJECT'
     ],
     answer: 0,
-    explanation: 'gsutil rewrite -s Coldline rewrites existing objects into the new storage class in place. gcloud storage has no rewrite or newclass command (it uses gcloud storage objects update --storage-class), and gsutil newclass does not exist. Note that changing the bucket\'s default class separately only affects newly written objects.'
+    explanation: '`gcloud storage objects update --storage-class` rewrites existing objects into the new storage class (use gs://BUCKET/** or --recursive for every object). There is no rewrite or newclass command in gcloud storage. Changing the bucket’s default class with `gcloud storage buckets update --default-storage-class` only affects newly written objects. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.'
   },
   {
     id: 'ace-153',
@@ -569,13 +569,13 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'You have just taken over responsibility to manage a large number of objects in Cloud Storage. You are reviewing a random sample of objects and want to know the creation time and content type for those objects. You plan to write a shell script to display this data. What command would you use in your script to retrieve that metadata?',
     options: [
-      'gsutil metadata gs://BUCKET_NAME/OBJECT_NAME',
-      'gsutil stat gs://BUCKET_NAME/OBJECT_NAME',
-      'gsutil list gs://BUCKET_NAME/OBJECT_NAME',
-      'gsutil describe gs://BUCKET_NAME/OBJECT_NAME'
+      'gcloud storage objects metadata gs://BUCKET_NAME/OBJECT_NAME',
+      'gcloud storage objects describe gs://BUCKET_NAME/OBJECT_NAME',
+      'gcloud storage list gs://BUCKET_NAME/OBJECT_NAME',
+      'gcloud storage objects stat-all gs://BUCKET_NAME/OBJECT_NAME'
     ],
     answer: 1,
-    explanation: 'gsutil stat prints an object\'s metadata, including creation time and Content-Type, which suits scripting; today the equivalent is gcloud storage objects describe. gsutil list (ls) shows names unless given -L, and gsutil has no metadata or describe commands.'
+    explanation: '`gcloud storage objects describe` prints an object’s metadata, including creation time and Content-Type, which suits scripting (`gsutil stat` was the legacy equivalent). `gcloud storage ls` lists names unless given --long, and there are no metadata or stat-all commands. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.'
   },
   {
     id: 'ace-158',
@@ -597,15 +597,15 @@ export const operating: Question[] = [
     topic: 'Monitoring & logging',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your company, StellarApps, runs a distributed mobile application that relies on multiple backend services deployed on Compute Engine instances. For performance and security analysis, you need to collect and send all the logs from these instances to a BigQuery dataset called app-logs for further analysis. You\'ve already ensured that the Cloud Logging agent is installed on all the instances. Since cost efficiency is a priority, you\'re looking for the best approach to achieve this. What should you do?',
+    prompt: 'Your company, StellarApps, runs a distributed mobile application that relies on multiple backend services deployed on Compute Engine instances. For performance and security analysis, you need to collect and send all the logs from these instances to a BigQuery dataset called app-logs for further analysis. You\'ve already ensured that the Ops Agent is installed on all the instances. Since cost efficiency is a priority, you\'re looking for the best approach to achieve this. What should you do?',
     options: [
       'i. Assign the BigQuery Data Editor role on the app-logs dataset to the service accounts used by your Compute Engine instances. ii. Update your instances\' metadata to include the following value: logs-destination: bq://app- logs.',
-      'i. In Cloud Logging, create a logs export with a Cloud Pub/Sub topic called app-logs as a sink. ii. Develop a Cloud Function triggered by messages in the app-logs topic. iii. Configure this Cloud Function to filter out non-Compute Engine logs and insert the Compute Engine logs into the app-logs dataset.',
+      'i. In Cloud Logging, create a logs export with a Pub/Sub topic called app-logs as a sink. ii. Develop a Cloud Run function triggered by messages in the app-logs topic. iii. Configure this Cloud Run function to filter out non-Compute Engine logs and insert the Compute Engine logs into the app-logs dataset.',
       'i. In Cloud Logging, create a filter to display only Compute Engine logs. ii. Click Create Export. iii. Select BigQuery as the Sink Service and the app-logs dataset as the Sink Destination.',
-      'i. Develop a Cloud Function that has the BigQuery User role on the app-logs dataset.\n\nii. Configure the Cloud Function to create a BigQuery job that runs the following query: INSERT INTO dataset.app-logs (timestamp, log). SELECT timestamp, log FROM compute.logs WHERE timestamp > DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY). iii. Use Cloud Scheduler to trigger this Cloud Function daily.'
+      'i. Develop a Cloud Run function that has the BigQuery User role on the app-logs dataset.\n\nii. Configure the Cloud Run function to create a BigQuery job that runs the following query: INSERT INTO dataset.app-logs (timestamp, log). SELECT timestamp, log FROM compute.logs WHERE timestamp > DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY). iii. Use Cloud Scheduler to trigger this Cloud Run function daily.'
     ],
     answer: 2,
-    explanation: 'A Cloud Logging sink with a Compute Engine filter and a BigQuery dataset destination streams matching logs into BigQuery with no code to maintain. Pub/Sub plus a Cloud Function adds cost and custom code, instance metadata cannot redirect logs, and a scheduled INSERT query refers to a compute.logs table that does not exist.',
+    explanation: 'A Cloud Logging sink with a Compute Engine filter and a BigQuery dataset destination streams matching logs into BigQuery with no code to maintain. Pub/Sub plus a Cloud Run function adds cost and custom code, instance metadata cannot redirect logs, and a scheduled INSERT query refers to a compute.logs table that does not exist. Current names: Cloud Functions → Cloud Run functions; the separate Logging and Monitoring agents are replaced by the Ops Agent.',
     tip: 'Use a log sink for routing logs to BigQuery, Cloud Storage or Pub/Sub instead of custom pipelines.'
   },
   {
@@ -613,12 +613,12 @@ export const operating: Question[] = [
     topic: 'Monitoring & logging',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your organization runs a social media platform that needs to store user activity log files for 3 years. Your platform manages hundreds of Google Cloud projects. You need to implement a cost-effective solution for retaining these log files. What should you do? (Note: Stackdriver is now called \'Google Cloud\'s Operation Suite\')',
+    prompt: 'Your organization runs a social media platform that needs to store user activity log files for 3 years. Your platform manages hundreds of Google Cloud projects. You need to implement a cost-effective solution for retaining these log files. What should you do?',
     options: [
       'Create an export to the sink that saves logs from Cloud Audit to BigQuery.',
       'Create an export to the sink that saves logs from Cloud Audit to a Coldline Storage bucket.',
-      'Write a custom script that uses logging API to copy the logs from Stackdriver logs to BigQuery.',
-      'Export these logs to Cloud Pub/Sub and write a Cloud Dataflow pipeline to store logs to Cloud SQL.'
+      'Write a custom script that uses logging API to copy the logs from Cloud Logging to BigQuery.',
+      'Export these logs to Pub/Sub and write a Dataflow pipeline to store logs to Cloud SQL.'
     ],
     answer: 1,
     explanation: 'A log sink to a Coldline bucket is the cheapest offered option for keeping rarely read logs for years, and an aggregated sink at the organization or folder level covers hundreds of projects. BigQuery and Cloud SQL storage cost more and the Dataflow and custom script options add components to run. It is debatable because an Archive class bucket or a Cloud Logging bucket with custom retention would now be at least as cost-effective, but neither is offered.'
@@ -630,13 +630,13 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'You are tasked with setting up autohealing for the backend systems of a popular multi-regional e- commerce website, ShopEase, that operates on multiple Compute Engine instances. The goal is to ensure that if any backend server becomes unresponsive, it is automatically re-created after failing 2 consecutive health checks, each with a 8-second interval. You want to achieve this with the minimum number of steps. What should you do?',
     options: [
-      'i. Create an HTTP load balancer with a backend configuration that references an existing instance group. ii. Set the health check to healthy (HTTP)',
-      'i. Create an HTTP load balancer with a backend configuration that references an existing instance group. ii. Define a balancing mode and set the maximum RPS to 8.',
+      'i. Create an external Application Load Balancer with a backend configuration that references an existing instance group. ii. Set the health check to healthy (HTTP)',
+      'i. Create an external Application Load Balancer with a backend configuration that references an existing instance group. ii. Define a balancing mode and set the maximum RPS to 8.',
       'i. Create a managed instance group. ii. Set the Autohealing health check to healthy (HTTP)',
       'i. Create a managed instance group. ii. Verify that the autoscaling setting is on.'
     ],
     answer: 2,
-    explanation: 'Autohealing is a feature of managed instance groups: you attach a health check (here with an 8-second check interval and an unhealthy threshold of 2) and the MIG recreates any VM that fails it. A load balancer health check only stops sending traffic to a bad backend, it never recreates the VM, and RPS balancing settings have nothing to do with healing. Autoscaling adds or removes VMs for load and does not repair an unresponsive one.'
+    explanation: 'Autohealing is a feature of managed instance groups: you attach a health check (here with an 8-second check interval and an unhealthy threshold of 2) and the MIG recreates any VM that fails it. A load balancer health check only stops sending traffic to a bad backend, it never recreates the VM, and RPS balancing settings have nothing to do with healing. Autoscaling adds or removes VMs for load and does not repair an unresponsive one. Current names: HTTP(S) Load Balancing → Application Load Balancer.'
   },
   {
     id: 'ace-175',
@@ -646,12 +646,12 @@ export const operating: Question[] = [
     prompt: 'Your company, PixaShare, operates a photo-sharing application where users upload images that are stored on Cloud Storage using the Standard Storage class. The app only requires access to images uploaded within the last 30 days. You want to minimize costs by automatically managing older images that are no longer needed by the application in the near future. What should you do?',
     options: [
       'Create an object lifecycle on the storage bucket to change the storage class to Archive Storage for objects older than 30 days.',
-      'Create a cron job in Cloud Scheduler to call a Cloud Functions instance every day to delete images older than 30 days.',
+      'Create a cron job in Cloud Scheduler to call a Cloud Run functions instance every day to delete images older than 30 days.',
       'Create a retention policy on the storage bucket of 30 days, and lock the bucket by using a retention policy lock.',
       'Enable object versioning on the storage bucket and add lifecycle rules to expire non-current versions after 30 days.'
     ],
     answer: 0,
-    explanation: 'An Object Lifecycle Management rule that sets the storage class to Archive at age 30 days cuts storage cost automatically with no code to run. A scheduled Cloud Function that deletes images works but is custom code to maintain and permanently removes photos users may still want. A locked retention policy prevents deletion and saves nothing, and versioning rules only affect noncurrent versions, not the live images.'
+    explanation: 'An Object Lifecycle Management rule that sets the storage class to Archive at age 30 days cuts storage cost automatically with no code to run. A scheduled Cloud Run function that deletes images works but is custom code to maintain and permanently removes photos users may still want. A locked retention policy prevents deletion and saves nothing, and versioning rules only affect noncurrent versions, not the live images. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-179',
@@ -661,8 +661,8 @@ export const operating: Question[] = [
     prompt: 'Imagine you are managing a virtual machine for a startup called "BrightLight Media" that runs a popular video streaming service. This virtual machine is crucial for the service\'s performance. You want to ensure that you are notified if the server’s CPU usage exceeds 90% using Google Cloud tools for monitoring and alerting. What steps would you take to set this up?',
     options: [
       'i. Create a personal Gmail account. ii. Write a custom script that monitors the CPU usage. iii. When the CPU usage goes above 90%, the script sends an email using smtp.gmail.com on port 25.',
-      'i. Set up a Cloud Monitoring Workspace and link it to your Google Cloud Platform (GCP) project. ii. Create a Cloud Monitoring Alerting Policy with a 90% CPU threshold. iii. Add your email address to the notification channel.',
-      'i. Set up a Cloud Monitoring Workspace and link it to your GCP project. ii. Develop a custom script that sends CPU usage as a custom metric to Cloud Monitoring. iii. Create an uptime check for your virtual machine within Cloud Monitoring.',
+      'i. Set up a Cloud Monitoring Workspace and link it to your Google Cloud (Google Cloud) project. ii. Create a Cloud Monitoring Alerting Policy with a 90% CPU threshold. iii. Add your email address to the notification channel.',
+      'i. Set up a Cloud Monitoring Workspace and link it to your Google Cloud project. ii. Develop a custom script that sends CPU usage as a custom metric to Cloud Monitoring. iii. Create an uptime check for your virtual machine within Cloud Monitoring.',
       'i. Use Cloud Logging to create a logs-based metric, extracting CPU usage data using the regular expression: CPU Usage: ([0-9] {1,3})%. ii. In Cloud Monitoring, create an Alerting Policy based on this metric. iii. Add your email address to the notification channel.'
     ],
     answer: 1,
@@ -673,15 +673,15 @@ export const operating: Question[] = [
     topic: 'Managing storage & databases',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your company runs an online recipe-sharing platform, RecipeBox, which uses Cloud Spanner as the backend database. The platform experiences predictable traffic spikes during meal times. You want to ensure that the number of Spanner nodes automatically scales up or down based on user traffic. What should you do?',
+    prompt: 'Your company runs an online recipe-sharing platform, RecipeBox, which uses Spanner as the backend database. The platform experiences predictable traffic spikes during meal times. You want to ensure that the number of Spanner nodes automatically scales up or down based on user traffic. What should you do?',
     options: [
       'Create a cron job that runs on a scheduled basis to review Cloud Monitoring metrics, and then resize the Spanner instance accordingly.',
-      'i. Create a Cloud Monitoring alerting policy to send an alert to on-call site reliability engineers (SRE) via email when Cloud Spanner CPU exceeds a threshold. ii. The SREs would manually adjust the resources up or down.',
-      'i. Create a Cloud Monitoring alerting policy to send an alert to Google Cloud Support via email when Cloud Spanner CPU exceeds your threshold. ii. Google Cloud Support would handle the scaling adjustments.',
-      'i. Create a Cloud Monitoring alerting policy to send an alert to a webhook when Cloud Spanner CPU is above or below your threshold. ii. Set up a Cloud Function that listens for HTTP requests and resizes the Spanner resources automatically.'
+      'i. Create a Cloud Monitoring alerting policy to send an alert to on-call site reliability engineers (SRE) via email when Spanner CPU exceeds a threshold. ii. The SREs would manually adjust the resources up or down.',
+      'i. Create a Cloud Monitoring alerting policy to send an alert to Google Cloud Support via email when Spanner CPU exceeds your threshold. ii. Google Cloud Support would handle the scaling adjustments.',
+      'i. Create a Cloud Monitoring alerting policy to send an alert to a webhook when Spanner CPU is above or below your threshold. ii. Set up a Cloud Run function that listens for HTTP requests and resizes the Spanner resources automatically.'
     ],
     answer: 3,
-    explanation: 'Of the choices, only an alert that calls a webhook which triggers a function to resize the Spanner instance scales up and down automatically on actual load. A fixed cron job, emailing SREs to resize by hand, or asking Google Cloud Support to scale are all manual or not responsive to traffic. Today Spanner also has a built-in managed autoscaler (and Google\'s open-source Autoscaler tool), which would be the first choice if offered.',
+    explanation: 'Of the choices, only an alert that calls a webhook which triggers a function to resize the Spanner instance scales up and down automatically on actual load. A fixed cron job, emailing SREs to resize by hand, or asking Google Cloud Support to scale are all manual or not responsive to traffic. Today Spanner also has a built-in managed autoscaler (and Google\'s open-source Autoscaler tool), which would be the first choice if offered. Current names: Cloud Functions → Cloud Run functions.',
     tip: 'For Spanner autoscaling, prefer the managed autoscaler; otherwise use metric-driven automation.'
   },
   {
@@ -689,11 +689,11 @@ export const operating: Question[] = [
     topic: 'Managing storage & databases',
     difficulty: 'hard',
     verbatim: true,
-    prompt: 'You are responsible for managing the database performance of an online education platform called EduPrime, which uses Cloud Spanner to handle student data and course materials. The platform operates in a single Google Cloud region, and you need to enhance the query performance in the shortest possible time. You aim to adhere to Google’s recommended practices for configuring services. What should you do?',
+    prompt: 'You are responsible for managing the database performance of an online education platform called EduPrime, which uses Spanner to handle student data and course materials. The platform operates in a single Google Cloud region, and you need to enhance the query performance in the shortest possible time. You aim to adhere to Google’s recommended practices for configuring services. What should you do?',
     options: [
-      'i. Create an alert in Cloud Monitoring to notify you when high-priority CPU utilization reaches 45%. ii. If this threshold is exceeded, add more nodes to your Cloud Spanner instance.',
+      'i. Create an alert in Cloud Monitoring to notify you when high-priority CPU utilization reaches 45%. ii. If this threshold is exceeded, add more nodes to your Spanner instance.',
       'i. Create an alert in Cloud Monitoring to notify you when high-priority CPU utilization reaches 45%. ii. Use database query statistics to identify queries with high CPU usage and optimize those queries by rewriting them.',
-      'i. Create an alert in Cloud Monitoring to notify you when high-priority CPU utilization reaches 65%. ii. If this threshold is exceeded, add more nodes to your Cloud Spanner instance.',
+      'i. Create an alert in Cloud Monitoring to notify you when high-priority CPU utilization reaches 65%. ii. If this threshold is exceeded, add more nodes to your Spanner instance.',
       'i. Create an alert in Cloud Monitoring to notify you when high-priority CPU utilization reaches 65%. ii. Use database query statistics to identify queries with high CPU usage and optimize those queries by rewriting them.'
     ],
     answer: 2,
@@ -707,13 +707,13 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'NovaPayments, a fictional online invoicing platform, is planning to migrate its invoice records from its local data center to Cloud Storage. The invoices have specific requirements as mentioned below. NovaPayments wants to adopt Google\'s best practices to reduce operational and development costs. What should they do?\n- The invoices must be retained for a minimum of five years.\n- Up to five versions of the same invoice need to be saved, in case any corrections or updates are made.\n- Invoices that are older than one year should be transferred to a lower-cost storage tier.',
     options: [
-      'i. Enable retention policies on the Cloud Storage bucket ii. Use Cloud Scheduler to trigger a Cloud Function that moves or deletes invoices based on their metadata.',
+      'i. Enable retention policies on the Cloud Storage bucket ii. Use Cloud Scheduler to trigger a Cloud Run function that moves or deletes invoices based on their metadata.',
       'i. Enable retention policies on the Cloud Storage bucket ii. Set lifecycle rules to adjust the storage classes of the invoices iii. Specify the number of versions to retain, and delete outdated invoices.',
-      'i. Enable object versioning on the Cloud Storage bucket ii. Use Cloud Scheduler to invoke a Cloud Function to manage the movement or deletion of invoices based on their metadata.',
+      'i. Enable object versioning on the Cloud Storage bucket ii. Use Cloud Scheduler to invoke a Cloud Run function to manage the movement or deletion of invoices based on their metadata.',
       'i. Enable object versioning on the Cloud Storage bucket ii. Configure lifecycle conditions to adjust the storage classes iii. Specify the number of versions, and delete outdated invoices.'
     ],
     answer: 3,
-    explanation: 'Object versioning keeps prior copies of corrected invoices, and lifecycle rules can both move objects to a colder class after 365 days and delete noncurrent versions beyond five newer ones (numNewerVersions), all without custom code. A bucket retention policy cannot be combined with object versioning, so the retention-policy approach cannot also keep a set number of versions. Scheduled Cloud Functions add code to maintain. It is debatable because versioning alone does not enforce the five-year minimum the way a retention policy would.'
+    explanation: 'Object versioning keeps prior copies of corrected invoices, and lifecycle rules can both move objects to a colder class after 365 days and delete noncurrent versions beyond five newer ones (numNewerVersions), all without custom code. A bucket retention policy cannot be combined with object versioning, so the retention-policy approach cannot also keep a set number of versions. Scheduled Cloud Run functions add code to maintain. It is debatable because versioning alone does not enforce the five-year minimum the way a retention policy would. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-192',
@@ -736,7 +736,7 @@ export const operating: Question[] = [
     topic: 'Serverless operations',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are managing a web platform for an online food delivery service called QuickEats, which operates on the Google Cloud Platform. As part of your update strategy, you want to test new features with a small portion of live traffic to gather feedback, while most of the users should continue to interact with the stable version of the platform. What approach should you take?',
+    prompt: 'You are managing a web platform for an online food delivery service called QuickEats, which operates on the Google Cloud. As part of your update strategy, you want to test new features with a small portion of live traffic to gather feedback, while most of the users should continue to interact with the stable version of the platform. What approach should you take?',
     options: [
       'i. Deploy the platform on App Engine. For each update, create a new version of the same service. ii. Configure traffic splitting to send a small percentage of traffic to the new version.',
       'i. Deploy the platform on App Engine. For each update, create a new service. ii. Configure traffic splitting to send a small percentage of traffic to the new service.',
@@ -769,9 +769,9 @@ export const operating: Question[] = [
     prompt: 'Imagine that you’re testing a new feature for a website called BookshelfHub, a platform that connects book lovers and independent bookstores. You’ve created an instance of SQL Server 2017 on Compute Engine to try out some database updates specific to the latest version. Now, you want to connect to this SQL Server instance on Compute Engine using the simplest and quickest setup. What should you do?',
     options: [
       'Install an RDP client on your desktop. Verify that a firewall rule for port 3389 is set.',
-      'Install an RDP client on your desktop. Set a Windows username and password in the GCP Console. Use those credentials to log in to the instance.',
-      'Set a Windows password in the GCP Console. Ensure there’s a firewall rule for port 22. Click the RDP button in the GCP Console, providing the credentials to log in.',
-      'Set a Windows username and password in the GCP Console. Confirm that a firewall rule for port 3389 is in place. Click the RDP button in the GCP Console to log in using those credentials.'
+      'Install an RDP client on your desktop. Set a Windows username and password in the Google Cloud console. Use those credentials to log in to the instance.',
+      'Set a Windows password in the Google Cloud console. Ensure there’s a firewall rule for port 22. Click the RDP button in the Google Cloud console, providing the credentials to log in.',
+      'Set a Windows username and password in the Google Cloud console. Confirm that a firewall rule for port 3389 is in place. Click the RDP button in the Google Cloud console to log in using those credentials.'
     ],
     answer: 3,
     explanation: 'For a Windows VM you set a Windows username and password from the console, make sure a firewall rule allows TCP 3389, and use the console\'s RDP button to connect. An RDP client without credentials, or credentials without the 3389 rule, will not get you in. Port 22 is SSH and is not what RDP uses.'
@@ -798,10 +798,10 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'You are developing a new version of a popular task management app called TaskMaster, hosted on App Engine. You want to roll out the new version to just 1% of users initially, allowing you to monitor its performance before fully switching over to this new version for all users. What approach should you take?',
     options: [
-      'Deploy the new version of TaskMaster in Google Kubernetes Engine instead of App Engine, then use GCP Console to split the traffic.',
-      'Deploy the new version of TaskMaster in a Compute Engine instance instead of App Engine, then use GCP Console to split the traffic.',
-      'Deploy the new version as a separate app in App Engine. Then configure App Engine using GCP Console to split traffic between the two apps.',
-      'Deploy the new version of TaskMaster in App Engine, then go to App Engine settings in GCP Console and split the traffic between the current version and the new version.'
+      'Deploy the new version of TaskMaster in Google Kubernetes Engine instead of App Engine, then use Google Cloud console to split the traffic.',
+      'Deploy the new version of TaskMaster in a Compute Engine instance instead of App Engine, then use Google Cloud console to split the traffic.',
+      'Deploy the new version as a separate app in App Engine. Then configure App Engine using Google Cloud console to split traffic between the two apps.',
+      'Deploy the new version of TaskMaster in App Engine, then go to App Engine settings in Google Cloud console and split the traffic between the current version and the new version.'
     ],
     answer: 3,
     explanation: 'Deploying the new code as another version of the same App Engine service and splitting traffic so 1% goes to it is the built-in canary approach. Moving to GKE or Compute Engine is unnecessary and the console cannot split traffic between those and App Engine. Traffic splitting works across versions of one service, not between separate apps.'
@@ -815,11 +815,11 @@ export const operating: Question[] = [
     options: [
       '- Use Cloud Storage Object Lifecycle Management with Age conditions, setting the actions to SetStorageClass and Delete.\n- Configure the SetStorageClass action to move videos to Coldline after 90 days and the Delete action to remove them after 275 days (365 - 90).',
       '- Use Cloud Storage Object Lifecycle Management with Age conditions, setting the actions to SetStorageClass and Delete.\n- Configure the SetStorageClass action to 90 days and the Delete action to 365 days.',
-      'Use gsutil rewrite and set the Delete action to 275 days (365-90).',
-      'Use gsutil rewrite and set the Delete action to 365 days.'
+      'Use gcloud storage objects update --storage-class and set the Delete action to 275 days (365-90).',
+      'Use gcloud storage objects update --storage-class and set the Delete action to 365 days.'
     ],
     answer: 1,
-    explanation: 'Lifecycle Age conditions count days since the object was created, so the SetStorageClass rule uses age 90 and the Delete rule uses age 365. Subtracting 90 and deleting at 275 would remove videos about three months early because the age does not reset on a storage class change. gsutil rewrite changes the class of existing objects once and has no delete scheduling.',
+    explanation: 'Lifecycle Age conditions count days since the object was created, so the SetStorageClass rule uses age 90 and the Delete rule uses age 365. Subtracting 90 and deleting at 275 would remove videos about three months early because the age does not reset on a storage class change. gcloud storage objects update changes the class of existing objects once and has no delete scheduling.',
     tip: 'Lifecycle Age is measured from object creation and is not reset by a class change.'
   },
   {
@@ -835,7 +835,7 @@ export const operating: Question[] = [
       'Install and configure the Cloud Logging Agent and view the logs from Cloud Logging.'
     ],
     answer: 3,
-    explanation: 'Application logs written to the VM\'s local disk are not sent to Cloud Logging until an agent ships them, so you install the logging agent (the Ops Agent today) configured to read those files, then search them in Cloud Logging. Viewing Cloud Logging first would show only platform logs. The serial console shows boot and system output, not app log files, and a health check would not explain why requests fail.'
+    explanation: 'Application logs written to the VM\'s local disk are not sent to Cloud Logging until an agent ships them, so you install the Ops Agent configured to read those files, then search them in Cloud Logging. Viewing Cloud Logging first would show only platform logs. The serial console shows boot and system output, not app log files, and a health check would not explain why requests fail.'
   },
   {
     id: 'ace-223',
@@ -888,15 +888,15 @@ export const operating: Question[] = [
     topic: 'Managing storage & databases',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are managing a dashboard for a fictional online marketplace app, "ShopSmart," that uses Data Studio to visualize sales data from a data warehouse built on top of BigQuery. Throughout the day, new transactions are appended to the data warehouse, and at night, the summary table of daily sales is recalculated and overwritten. You recently noticed that the sales charts on your dashboard have stopped displaying properly, and you need to investigate the issue. What should you do?',
+    prompt: 'You are managing a dashboard for a fictional online marketplace app, "ShopSmart," that uses Looker Studio to visualize sales data from a data warehouse built on top of BigQuery. Throughout the day, new transactions are appended to the data warehouse, and at night, the summary table of daily sales is recalculated and overwritten. You recently noticed that the sales charts on your dashboard have stopped displaying properly, and you need to investigate the issue. What should you do?',
     options: [
       'Review the Error Reporting page in the Cloud Console to find any errors.',
       'Use the BigQuery interface to review the nightly job and look for any errors.',
-      'Use Cloud Debugger to find out why the data was not refreshed correctly.',
-      'In Cloud Logging, create a filter for your Data Studio report.'
+      'Use Cloud Profiler to find out why the data was not refreshed correctly.',
+      'In Cloud Logging, create a filter for your Looker Studio report.'
     ],
     answer: 1,
-    explanation: 'The charts depend on the nightly job that overwrites the summary table, so the first place to look is that job\'s history and errors in BigQuery. Error Reporting covers application exceptions, not BigQuery jobs. Cloud Debugger was shut down in 2023 and never covered BigQuery. Data Studio (now Looker Studio) reports do not write logs you can filter in Cloud Logging.'
+    explanation: 'The charts depend on the nightly job that overwrites the summary table, so the first place to look is that job\'s history and errors in BigQuery. Error Reporting covers application exceptions, not BigQuery jobs. Cloud Profiler measures application CPU and memory, not BigQuery jobs. Looker Studio reports do not write logs you can filter in Cloud Logging. Current names: Data Studio → Looker Studio.'
   },
   {
     id: 'ace-240',
@@ -906,12 +906,12 @@ export const operating: Question[] = [
     prompt: 'You are managing a popular e-learning platform called LearnMate. You want to deploy a new version of the platform’s backend using serverless technology in Google Cloud. However, before fully rolling it out, you want to test this new version with a small percentage of your production users to ensure it functions as expected. What should you do?',
     options: [
       'Deploy the application to Cloud Run. Use gradual rollouts for traffic splitting.',
-      'Deploy the application to Google Kubernetes Engine. Use Anthos Service Mesh for traffic splitting.',
-      'Deploy the application to Cloud Functions. Specify the version number in the function’s name.',
+      'Deploy the application to Google Kubernetes Engine. Use Cloud Service Mesh for traffic splitting.',
+      'Deploy the application to Cloud Run functions. Specify the version number in the function’s name.',
       'Deploy the application to App Engine. For each new version, create a new service.'
     ],
     answer: 0,
-    explanation: 'Cloud Run is serverless and can send a chosen percentage of traffic to a new revision, which is exactly a canary test with real users. GKE with a service mesh can split traffic but is not serverless. Putting version numbers in Cloud Functions names gives separate functions with no traffic split, and a new App Engine service per version misuses services; App Engine splits traffic between versions of the same service.'
+    explanation: 'Cloud Run is serverless and can send a chosen percentage of traffic to a new revision, which is exactly a canary test with real users. GKE with a service mesh can split traffic but is not serverless. Putting version numbers in Cloud Run functions names gives separate functions with no traffic split, and a new App Engine service per version misuses services; App Engine splits traffic between versions of the same service. Current names: Cloud Functions → Cloud Run functions; Anthos Service Mesh → Cloud Service Mesh.'
   },
   {
     id: 'ace-242',
@@ -1009,12 +1009,12 @@ export const operating: Question[] = [
     topic: 'Managing storage & databases',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your company, DigiFitness, runs a fitness tracking application that uses Cloud Spanner as the primary database to maintain real-time user state data such as workout progress, steps, and health metrics. All user-triggered events, such as starting or stopping workouts or completing goals, are logged into Cloud Bigtable. Daily backups of Cloud Spanner data are stored in Cloud Storage. A data analyst from your team has requested to join data from both Cloud Spanner and Cloud Bigtable for specific users to generate insights. You need to handle this ad hoc request efficiently. What should you do?',
+    prompt: 'Your company, DigiFitness, runs a fitness tracking application that uses Spanner as the primary database to maintain real-time user state data such as workout progress, steps, and health metrics. All user-triggered events, such as starting or stopping workouts or completing goals, are logged into Bigtable. Daily backups of Spanner data are stored in Cloud Storage. A data analyst from your team has requested to join data from both Spanner and Bigtable for specific users to generate insights. You need to handle this ad hoc request efficiently. What should you do?',
     options: [
-      'Create a dataflow job that copies data from Cloud Bigtable and Cloud Storage for specific users.',
-      'Create a dataflow job that copies data from Cloud Bigtable and Cloud Spanner for specific users.',
-      'Create a Cloud Dataproc cluster that runs a Spark job to extract data from Cloud Bigtable and Cloud Storage for specific users.',
-      'Create two separate BigQuery external tables on Cloud Storage and Cloud Bigtable. Use the BigQuery console to join these tables through user fields, and apply appropriate filters.'
+      'Create a dataflow job that copies data from Bigtable and Cloud Storage for specific users.',
+      'Create a dataflow job that copies data from Bigtable and Spanner for specific users.',
+      'Create a Dataproc cluster that runs a Spark job to extract data from Bigtable and Cloud Storage for specific users.',
+      'Create two separate BigQuery external tables on Cloud Storage and Bigtable. Use the BigQuery console to join these tables through user fields, and apply appropriate filters.'
     ],
     answer: 3,
     explanation: 'BigQuery can define external tables over Bigtable and over the Spanner backups in Cloud Storage, so the analyst can join and filter them with SQL without building a pipeline, the lightest option for a one-off request. Dataflow jobs or a Dataproc Spark cluster mean writing and running code and infrastructure for a single question. BigQuery federated queries against Spanner would be a modern alternative, but none of the options offers it.'
@@ -1044,11 +1044,11 @@ export const operating: Question[] = [
     options: [
       '1. Update your instance\'s metadata to add the following value: snapshot–schedule: 0 1 * * * 2. Update your instance\'s metadata to add the following value: snapshot–retention: 30',
       '1. In the Cloud Console, go to the Compute Engine Disks page and select your instance\'s disk. 2. In the Snapshot Schedule section, select Create Schedule and configure the following parameters:\n- Schedule frequency: Daily\n- Start time: 1:00 AM – 2:00 AM\n- Autodelete snapshots after: 30 days',
-      '1. Create a Cloud Function that creates a snapshot of your instance\'s disk. 2. Create a Cloud Function that deletes snapshots older than 30 days. 3. Use Cloud Scheduler to trigger both Cloud Functions daily at 1:00 AM.',
+      '1. Create a Cloud Run function that creates a snapshot of your instance\'s disk. 2. Create a Cloud Run function that deletes snapshots older than 30 days. 3. Use Cloud Scheduler to trigger both Cloud Run functions daily at 1:00 AM.',
       '1. Create a bash script in the instance that copies the content of the disk to Cloud Storage. 2. Create a bash script in the instance that deletes data older than 30 days in the backup Cloud Storage bucket. 3. Configure the instance\'s crontab to execute these scripts daily at 1:00 AM.'
     ],
     answer: 1,
-    explanation: 'Snapshot schedules, a built-in resource policy attached to the disk, take daily snapshots and delete them after 30 days with nothing else to run or maintain. Custom Cloud Functions with Cloud Scheduler, or cron scripts copying the disk to Cloud Storage, add services and upkeep. Instance metadata keys do not create snapshot schedules.',
+    explanation: 'Snapshot schedules, a built-in resource policy attached to the disk, take daily snapshots and delete them after 30 days with nothing else to run or maintain. Custom Cloud Run functions with Cloud Scheduler, or cron scripts copying the disk to Cloud Storage, add services and upkeep. Instance metadata keys do not create snapshot schedules. Current names: Cloud Functions → Cloud Run functions.',
     tip: 'Recurring disk backups: snapshot schedule with an auto-delete setting.'
   },
   {
@@ -1086,30 +1086,30 @@ export const operating: Question[] = [
     topic: 'Managing storage & databases',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your company, FinAnalyze, has been using BigQuery as a core part of its data analysis infrastructure. Over the years, various teams within the organization have created over 1000 datasets spread across numerous GCP projects. Your CTO has asked you to review all these datasets and identify any tables that contain a column named customer_id. You want to approach this task efficiently and with minimal manual effort. What should you do?',
+    prompt: 'Your company, FinAnalyze, has been using BigQuery as a core part of its data analysis infrastructure. Over the years, various teams within the organization have created over 1000 datasets spread across numerous Google Cloud projects. Your CTO has asked you to review all these datasets and identify any tables that contain a column named customer_id. You want to approach this task efficiently and with minimal manual effort. What should you do?',
     options: [
-      'Use Data Catalog to search for customer_id in the search box.',
+      'Use Knowledge Catalog to search for customer_id in the search box.',
       'Create a shell script that leverages the bq command line tool to loop through all the projects in your organization.',
       'Develop a script that loops through all projects and queries the INFORMATION_SCHEMA.COLUMNS view to locate the customer_id column.',
-      'Write a Cloud Dataflow job that loops through all projects and queries the INFORMATION_SCHEMA.COLUMNS view to find the customer_id column.'
+      'Write a Dataflow job that loops through all projects and queries the INFORMATION_SCHEMA.COLUMNS view to find the customer_id column.'
     ],
     answer: 0,
-    explanation: 'Data Catalog (now part of Dataplex Universal Catalog) automatically indexes BigQuery metadata across projects, so a single search for the column name finds every matching table. Scripts using bq, INFORMATION_SCHEMA loops, or a Dataflow job all require custom code and per-project iteration.'
+    explanation: 'Knowledge Catalog automatically indexes BigQuery metadata across projects, so a single search for the column name finds every matching table. Scripts using bq, INFORMATION_SCHEMA loops, or a Dataflow job all require custom code and per-project iteration. Current names: Data Catalog → Knowledge Catalog (formerly Dataplex Universal Catalog).'
   },
   {
     id: 'ace-309',
     topic: 'Managing GKE',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are the lead DevOps engineer at a new online recipe-sharing platform called DishDojo. You’ve deployed your application on a Google Kubernetes Engine (GKE) cluster, which consists of a single preemptible node pool. To check the status of your app, you run the below command. The app is configured as a deployment resource with two replicas. Upon reviewing the output, you observe that one pod is in a Running status while the second one remains in a Pending state. What could be causing this issue? $ kubectl get pods -l app=recipe-manager',
+    prompt: 'You are the lead DevOps engineer at a new online recipe-sharing platform called DishDojo. You’ve deployed your application on a Google Kubernetes Engine (GKE) cluster, which consists of a single Spot node pool. To check the status of your app, you run the below command. The app is configured as a deployment resource with two replicas. Upon reviewing the output, you observe that one pod is in a Running status while the second one remains in a Pending state. What could be causing this issue? $ kubectl get pods -l app=recipe-manager',
     options: [
       'The pending Pod is requesting more resources than what a single node in the cluster can provide.',
       'There are too many Pods running on the cluster already, leaving insufficient resources to schedule the pending Pod.',
       'The node pool’s service account does not have the necessary permissions to pull the container images required by the pending Pod.',
-      'Preemptible nodes are in use, and the pod might have been running on a node that was preempted. The pod will be rescheduled on a new node.'
+      'Spot nodes are in use, and the pod might have been running on a node that was preempted. The pod will be rescheduled on a new node.'
     ],
     answer: 1,
-    explanation: 'A Pod stays Pending when the scheduler cannot find a node with enough free CPU or memory, which happens when other Pods already consume the capacity. The Pod cannot be requesting more than one node offers, because the identical replica is Running. An image-pull permission problem would show ImagePullBackOff, not Pending, and a Pod rescheduled after preemption would normally be placed again once capacity exists.'
+    explanation: 'A Pod stays Pending when the scheduler cannot find a node with enough free CPU or memory, which happens when other Pods already consume the capacity. The Pod cannot be requesting more than one node offers, because the identical replica is Running. An image-pull permission problem would show ImagePullBackOff, not Pending, and a Pod rescheduled after preemption would normally be placed again once capacity exists. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'ace-316',
@@ -1124,7 +1124,7 @@ export const operating: Question[] = [
       'Use the Data Definition Language (DDL) to create a secondary index and access it via the primary key.'
     ],
     answer: 2,
-    explanation: 'This is a Cloud Spanner schema, and a monotonically increasing primary key such as a sequential sign-up number concentrates reads and writes on one split, creating a hotspot. Using a UUID, bit-reversed sequence, or hashed key spreads load across servers. A secondary index on the primary key is redundant, and the small bytes column is not the cause.',
+    explanation: 'This is a Spanner schema, and a monotonically increasing primary key such as a sequential sign-up number concentrates reads and writes on one split, creating a hotspot. Using a UUID, bit-reversed sequence, or hashed key spreads load across servers. A secondary index on the primary key is redundant, and the small bytes column is not the cause.',
     tip: 'Spanner and Bigtable keys should not be monotonically increasing.'
   },
   {
@@ -1132,15 +1132,15 @@ export const operating: Question[] = [
     topic: 'Monitoring & logging',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are managing the infrastructure of an online platform called "SkylineStream," which operates a video streaming service across several regions. The resources for this platform are spread across different Google Cloud projects. You want to consolidate monitoring for all these projects under one unified Stackdriver Monitoring dashboard. How would you achieve this? (Note: Stackdriver is now called \'Google Cloud\'s Operation Suite\')',
+    prompt: 'You are managing the infrastructure of an online platform called "SkylineStream," which operates a video streaming service across several regions. The resources for this platform are spread across different Google Cloud projects. You want to consolidate monitoring for all these projects under one unified Cloud Monitoring dashboard. How would you achieve this?',
     options: [
-      'Use Shared VPC to connect all projects, and link Stackdriver Monitoring to one of the projects.',
-      '- For each project, create a Stackdriver account.\n- In each project, create a service account for that project and grant it the role of Stackdriver Account Editor in all other projects.',
-      'Configure a single Stackdriver Monitoring account, and link all projects to the same account.',
-      '- Configure a single Stackdriver Monitoring account for one of the projects.\n- In Stackdriver, create a Group and add the other project names as criteria for that Group.'
+      'Use Shared VPC to connect all projects, and turn on Cloud Monitoring in one of the projects.',
+      'In each project, create a service account and grant it the Monitoring Editor role in all the other projects.',
+      'Choose one project as the scoping project, and add all the other projects to its metrics scope.',
+      'In one project, create a Cloud Monitoring group and add the other project names as criteria for that group.'
     ],
     answer: 2,
-    explanation: 'Monitoring multiple projects from one place is done with a single scoping project whose metrics scope includes all the other projects (formerly one Stackdriver Workspace with linked projects). Shared VPC is a networking feature, per-project accounts with cross-granted service accounts do not combine dashboards, and resource groups only organize resources already in scope.'
+    explanation: 'Monitoring multiple projects from one place is done with a single scoping project whose metrics scope includes all the other projects. Shared VPC is a networking feature, per-project service accounts do not combine dashboards, and groups only organize resources already in scope. Current names: a Stackdriver account or workspace is today a Cloud Monitoring metrics scope in a scoping project.'
   },
   {
     id: 'ace-323',
@@ -1212,11 +1212,11 @@ export const operating: Question[] = [
     options: [
       'Configure the instance to use persistent disk asynchronous replication.',
       'Configure daily scheduled persistent disk snapshots with a retention period of 7 days.',
-      'Configure Cloud Scheduler to trigger a Cloud Function each day that creates a new machine image and deletes machine images that are older than 7 days.',
-      '- Configure a bash script using gsutil to run daily through a cron job.\n- Copy the disk’s files to a Cloud Storage bucket with an archive storage class and an object lifecycle rule to delete the objects after 7 days.'
+      'Configure Cloud Scheduler to trigger a Cloud Run function each day that creates a new machine image and deletes machine images that are older than 7 days.',
+      '- Configure a bash script using gcloud storage to run daily through a cron job.\n- Copy the disk’s files to a Cloud Storage bucket with an archive storage class and an object lifecycle rule to delete the objects after 7 days.'
     ],
     answer: 1,
-    explanation: 'A snapshot schedule attached to the persistent disk takes a daily snapshot and deletes snapshots older than the retention period automatically, which is exactly the requirement with almost no setup. Asynchronous replication is a disaster-recovery copy to another region, not a point-in-time daily backup with retention. A Cloud Scheduler plus Cloud Function job for machine images works but is custom code to maintain, and copying files with gsutil from cron is not a whole-disk backup at all.',
+    explanation: 'A snapshot schedule attached to the persistent disk takes a daily snapshot and deletes snapshots older than the retention period automatically, which is exactly the requirement with almost no setup. Asynchronous replication is a disaster-recovery copy to another region, not a point-in-time daily backup with retention. A Cloud Scheduler plus Cloud Run function job for machine images works but is custom code to maintain, and copying files with gsutil from cron is not a whole-disk backup at all. Current names: Cloud Functions → Cloud Run functions.',
     tip: 'For recurring VM disk backups with retention, reach for snapshot schedules before any scripted solution.'
   },
   {
@@ -1229,11 +1229,11 @@ export const operating: Question[] = [
       'Build a lifecycle policy to delete Cloud Storage objects after 50 days.',
       'Use signed URLs to allow vendors limited-time access for uploading their files.',
       'Set up an SFTP server for FreshFiles, creating a separate user for each vendor.',
-      'Build a Cloud Function that starts a 50-day timer to delete files after expiration.',
+      'Build a Cloud Run function that starts a 50-day timer to delete files after expiration.',
       'Develop a script that checks all Cloud Storage buckets and deletes files older than 50 days.'
     ],
     answer: [0, 1],
-    explanation: 'An Object Lifecycle Management rule with an age condition of 50 days deletes old files automatically with no code, and signed URLs give each vendor time-limited (here 30-minute) upload access to a specific object without needing a Google account. An SFTP server per vendor is far more to build and run. A Cloud Function with a 50-day timer or a custom cleanup script reinvents what lifecycle rules already do and adds maintenance.'
+    explanation: 'An Object Lifecycle Management rule with an age condition of 50 days deletes old files automatically with no code, and signed URLs give each vendor time-limited (here 30-minute) upload access to a specific object without needing a Google account. An SFTP server per vendor is far more to build and run. A Cloud Run function with a 50-day timer or a custom cleanup script reinvents what lifecycle rules already do and adds maintenance. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-345',
@@ -1321,12 +1321,12 @@ export const operating: Question[] = [
     prompt: 'In the context of a fictional company, let\'s say you\'re working at "TechSphere Solutions," and you have a web app called "TaskMate" that you need to host on a Compute Engine instance. The project environment is shared with multiple departments, and you\'re concerned about ensuring that other teams don\'t unintentionally bring the TaskMate app offline. Which feature would best help you achieve this?',
     options: [
       'Use a Shielded VM.',
-      'Use a Preemptible VM.',
+      'Use a Spot VM.',
       'Use a sole-tenant node.',
       'Enable deletion protection on the instance.'
     ],
     answer: 3,
-    explanation: 'Deletion protection prevents the instance from being deleted until someone deliberately turns the flag off, which guards against other teams removing it by accident. A Shielded VM protects against boot-level tampering, a preemptible VM is more likely to go offline, and a sole-tenant node isolates hardware but does not stop anyone from deleting the instance.'
+    explanation: 'Deletion protection prevents the instance from being deleted until someone deliberately turns the flag off, which guards against other teams removing it by accident. A Shielded VM protects against boot-level tampering, a Spot VM is more likely to go offline, and a sole-tenant node isolates hardware but does not stop anyone from deleting the instance. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'ace-364',
@@ -1336,8 +1336,8 @@ export const operating: Question[] = [
     prompt: 'You are managing a cloud-based fitness tracking app called FitPulse, which helps users monitor their workouts. After deploying a new version of FitPulse to Google App Engine, you discover that the latest release contains a critical bug. To prevent further issues, you need to quickly revert to the previous stable version of the app. What is the best course of action?',
     options: [
       'Run gcloud app restore.',
-      'On the App Engine page of the GCP Console, select the app version that needs to be reverted and click Revert.',
-      'On the App Engine Versions page of the GCP Console, route 100% of the traffic to the previous version.',
+      'On the App Engine page of the Google Cloud console, select the app version that needs to be reverted and click Revert.',
+      'On the App Engine Versions page of the Google Cloud console, route 100% of the traffic to the previous version.',
       '- Deploy the original version as a separate app.\n- Then go to App Engine settings and split traffic between apps so that the original version handles 100% of the traffic.'
     ],
     answer: 2,
@@ -1352,11 +1352,11 @@ export const operating: Question[] = [
     options: [
       'Enable node auto-provisioning on the GKE cluster.',
       'Create a VerticalPodAutoscaler for those specific workloads.',
-      'Create a node pool using preemptible VMs with GPUs attached to the VMs.',
+      'Create a node pool using Spot VMs with GPUs attached to the VMs.',
       'Set up a node pool with GPU instances, enabling autoscaling with a minimum pool size of 1.'
     ],
     answer: 0,
-    explanation: 'Node auto-provisioning creates a GPU node pool only when pending pods request GPUs and removes it when they finish, so you pay for GPUs only while the occasional jobs run. Preemptible (Spot) GPU nodes are cheaper but can be reclaimed, which breaks long non-restartable jobs. A GPU pool with a minimum size of 1 keeps a costly GPU node running all the time, and a Vertical Pod Autoscaler only sizes pods. It is slightly debatable because a GPU node pool autoscaling from zero would also work, but no option offers that.'
+    explanation: 'Node auto-provisioning creates a GPU node pool only when pending pods request GPUs and removes it when they finish, so you pay for GPUs only while the occasional jobs run. Spot GPU nodes are cheaper but can be reclaimed, which breaks long non-restartable jobs. A GPU pool with a minimum size of 1 keeps a costly GPU node running all the time, and a Vertical Pod Autoscaler only sizes pods. It is slightly debatable because a GPU node pool autoscaling from zero would also work, but no option offers that. Current names: preemptible VMs are the legacy model; Spot VMs replace them, with no 24-hour limit.'
   },
   {
     id: 'ace-370',
@@ -1393,15 +1393,15 @@ export const operating: Question[] = [
     topic: 'Serverless operations',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your company, QuickShift, runs an online marketplace for fast, local deliveries. You\'ve been using Cloud Run for Anthos to manage your microservices architecture successfully. Now, you want to test an updated version of your app by directing a specific percentage of your production users to this new version while continuing to serve the rest with the current one (canary deployment). What steps should you take?',
+    prompt: 'Your company, QuickShift, runs an online marketplace for fast, local deliveries. You\'ve been using Cloud Run to manage your microservices architecture successfully. Now, you want to test an updated version of your app by directing a specific percentage of your production users to this new version while continuing to serve the rest with the current one (canary deployment). What steps should you take?',
     options: [
       '- Create a new service with the updated version of the app.\n- Split traffic between this version and the current one.',
       '- Create a new revision with the updated version of the app.\n- Split traffic between this version and the current one.',
-      '- Create a new service with the updated version of the app.\n- Set up an HTTP Load Balancer in front of both services.',
-      '- Create a new revision with the updated version of the app.\n- Set up an HTTP Load Balancer in front of both revisions.'
+      '- Create a new service with the updated version of the app.\n- Set up an external Application Load Balancer in front of both services.',
+      '- Create a new revision with the updated version of the app.\n- Set up an external Application Load Balancer in front of both revisions.'
     ],
     answer: 1,
-    explanation: 'In Cloud Run (including Cloud Run for Anthos, now Knative serving on GKE) each deployment creates a new revision of the same service, and you can split traffic by percentage between revisions for a canary. A separate service would need its own URL and external load balancing to split traffic, and putting a load balancer in front of revisions duplicates what Cloud Run traffic splitting already does.'
+    explanation: 'In Cloud Run each deployment creates a new revision of the same service, and you can split traffic by percentage between revisions for a canary. A separate service would need its own URL and external load balancing to split traffic, and putting a load balancer in front of revisions duplicates what Cloud Run traffic splitting already does. Current names: HTTP(S) Load Balancing → Application Load Balancer; Cloud Run for Anthos → Knative serving on GKE.'
   },
   {
     id: 'ace-381',
@@ -1426,12 +1426,12 @@ export const operating: Question[] = [
     prompt: 'You are working for a new app called "BookBox," a platform that helps users track and organize their personal libraries. The platform\'s data warehouse is built on BigQuery. During the day, BookBox appends new data to its warehouse, and each night the daily summary is recalculated by overwriting a specific table. Recently, you noticed that the visualizations in Looker Studio, used for generating insights and reports for BookBox, are broken. You need to investigate the issue and understand the root cause of the problem. What should you do?',
     options: [
       'In Cloud Logging, create a filter for your Looker Studio report.',
-      'Use the open-source CLI tool, Snapshot Debugger, to find out why the data was not refreshed correctly.',
+      'Use Cloud Profiler to find out why the data was not refreshed correctly.',
       'Review the Error Reporting page in the Google Cloud console to find any errors.',
       'Use the BigQuery interface to review the nightly job and look for any errors.'
     ],
     answer: 3,
-    explanation: 'The visualizations depend on the summary table that is overwritten nightly, so the likeliest cause is a failed or bad overwrite job, and BigQuery\'s job history shows each job\'s status and error. Looker Studio reports do not log to Cloud Logging, Snapshot Debugger is a retired tool for debugging running application code, and Error Reporting collects application exceptions rather than BigQuery job failures. It is debatable because BigQuery job errors can also be found through Cloud Logging, but starting with the job history is the most direct.'
+    explanation: 'The visualizations depend on the summary table that is overwritten nightly, so the likeliest cause is a failed or bad overwrite job, and BigQuery\'s job history shows each job\'s status and error. Looker Studio reports do not log to Cloud Logging, Cloud Profiler measures application CPU and memory, not BigQuery jobs, and Error Reporting collects application exceptions rather than BigQuery job failures. It is debatable because BigQuery job errors can also be found through Cloud Logging, but starting with the job history is the most direct.'
   },
   {
     id: 'ace-386',
@@ -1499,7 +1499,7 @@ export const operating: Question[] = [
     topic: 'Managing VMs & instance groups',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You have recently joined a startup that is migrating its infrastructure from AWS to Google Cloud. A junior architect was assigned the task of migrating one of their web servers with Amazon Linux OS from AWS to GCP in a public subnet of custom VPC. He was able to migrate the instance successfully but is unable to get SSH access to the migrated instance. What are the possible steps to look for? (Multiple Answer)',
+    prompt: 'You have recently joined a startup that is migrating its infrastructure from AWS to Google Cloud. A junior architect was assigned the task of migrating one of their web servers with Amazon Linux OS from AWS to Google Cloud in a public subnet of custom VPC. He was able to migrate the instance successfully but is unable to get SSH access to the migrated instance. What are the possible steps to look for? (Multiple Answer)',
     options: [
       'Check if he has attached the correct firewall rule with port udp:22 open to the instance.',
       'Ask if he has added the SSH key to the instance during the launching phase.',
@@ -1579,13 +1579,13 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'A developer accidentally deleted some of the files from a bucket. Luckily, the files were not critical and were re-created soon. Because of this, your team lead has asked you to enable versioning on bucket. Which command would help you enable the same?',
     options: [
-      'gsutil versioning enable gs://whizlabs-bucket',
-      'gsutil gs://whizlabs-bucket enable versioning',
-      'gsutil enable versioning gs://whizlabs-bucket',
-      'gsutil versioning set on gs://whizlabs-bucket'
+      'gcloud storage buckets versioning enable gs://whizlabs-bucket',
+      'gcloud storage gs://whizlabs-bucket enable versioning',
+      'gcloud storage enable versioning gs://whizlabs-bucket',
+      'gcloud storage buckets update gs://whizlabs-bucket --versioning'
     ],
     answer: 3,
-    explanation: 'gsutil versioning set on gs://BUCKET turns on Object Versioning; today the equivalent is gcloud storage buckets update gs://BUCKET --versioning. The other forms do not match gsutil\'s versioning set syntax.'
+    explanation: '`gcloud storage buckets update gs://BUCKET --versioning` turns on Object Versioning (`--no-versioning` turns it off). The other forms are not valid commands; the legacy equivalent was `gsutil versioning set on`. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.'
   },
   {
     id: 'ace-444',
@@ -1854,15 +1854,15 @@ export const operating: Question[] = [
     topic: 'Serverless operations',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Using Cloud functions, you are deploying an application that receives Google Cloud events like Pub/Sub topics and Cloud Storage object change notifications. When testing, it is trying to invoke but fails to complete the request, so you have enabled Retries for the event-driven function. As a result, certain functions complete the invocation and some keep running in a loop for a long time without termination. Which of the following solves this issue?',
+    prompt: 'Using Cloud Run functions, you are deploying an application that receives Google Cloud events like Pub/Sub topics and Cloud Storage object change notifications. When testing, it is trying to invoke but fails to complete the request, so you have enabled Retries for the event-driven function. As a result, certain functions complete the invocation and some keep running in a loop for a long time without termination. Which of the following solves this issue?',
     options: [
-      'Disable retries for the event-driven cloud function and execute the function',
+      'Disable retries for the event-driven Cloud Run function and execute the function',
       'Discard all events older than 10 seconds using an end condition',
       'Check the logs and find if 200 OK responses indicate it resolves automatically in iterative invocations',
       'Set an end condition for the retry window to 7 days'
     ],
     answer: 1,
-    explanation: 'Google\'s guidance for retried event-driven functions is to add an end condition to the code, such as checking the event timestamp and skipping events older than a threshold like 10 seconds, so a permanently failing event stops being retried. Disabling retries loses the reliability you turned them on for. Waiting for success doesn\'t stop events that will never succeed, and retries already expire after 7 days, which is the cause of the long loops.'
+    explanation: 'Google\'s guidance for retried event-driven functions is to add an end condition to the code, such as checking the event timestamp and skipping events older than a threshold like 10 seconds, so a permanently failing event stops being retried. Disabling retries loses the reliability you turned them on for. Waiting for success doesn\'t stop events that will never succeed, and retries already expire after 7 days, which is the cause of the long loops. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-511',
@@ -2025,9 +2025,9 @@ export const operating: Question[] = [
     prompt: 'You company has developed an application to accelerate the efficiency in making sales calls about the product of your client. Everytime a recipient is called, log sink is used to export the record to a destination. Which of the following destinations are supported? Choose any 2.',
     options: [
       'BigQuery',
-      'Cloud Spanner',
+      'Spanner',
       'Pub/Sub',
-      'Cloud Bigtable'
+      'Bigtable'
     ],
     answer: [0, 2],
     explanation: 'Log sinks can route to Cloud Logging buckets, Cloud Storage, BigQuery datasets, Pub/Sub topics, and Google Cloud projects. Spanner and Bigtable are not supported sink destinations, though you could stream through Pub/Sub into them.',
@@ -2069,15 +2069,15 @@ export const operating: Question[] = [
     topic: 'Managing storage & databases',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You updated the metadata of an object stored in Reports-PDF bucket using google cloud SDK. You want to ensure that the metadata has been updated for that object before you confirm the changes to the development team. Which of the following google cloud SDK command would you use?',
+    prompt: 'You updated the metadata of an object stored in the Reports-PDF bucket using the Google Cloud CLI. You want to confirm that the metadata has been updated for that object before you tell the development team. Which Google Cloud CLI command would you use?',
     options: [
-      'gsutil stat gs://Reports-PDF/[OBJECT_NAME]',
-      'gsutil getmeta gs://Reports-PDF/[OBJECT_NAME]',
-      'gsutil setmeta gs://Reports-PDF/[OBJECT_NAME]',
-      'gsutil meta gs://Reports-PDF/[OBJECT_NAME]'
+      'gcloud storage objects describe gs://Reports-PDF/[OBJECT_NAME]',
+      'gcloud storage objects getmeta gs://Reports-PDF/[OBJECT_NAME]',
+      'gcloud storage objects update gs://Reports-PDF/[OBJECT_NAME]',
+      'gcloud storage meta gs://Reports-PDF/[OBJECT_NAME]'
     ],
     answer: 0,
-    explanation: 'gsutil stat prints an object\'s metadata, including custom metadata and Content-Type, so it verifies a setmeta change; today\'s equivalent is gcloud storage objects describe. setmeta changes metadata rather than verifying it, and getmeta and meta are not gsutil commands.'
+    explanation: '`gcloud storage objects describe` prints an object’s metadata, including custom metadata and Content-Type, so it verifies the change. `objects update` changes metadata rather than showing it, and getmeta and meta are not commands. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.'
   },
   {
     id: 'ace-557',
@@ -2099,7 +2099,7 @@ export const operating: Question[] = [
     topic: 'Serverless operations',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your company has an application that is deployed using serverless architecture by making use of Cloud Function as backend code, Pub/Sub, and Endpoints and serving the static content via Cloud Storage. Your application is used heavily and you were informed about an issue for the Cloud Function. You realized that the issue is because of the invocation limit per second. What is the default limit set by GCP to invoke a function per second?',
+    prompt: 'Your company has an application that is deployed using serverless architecture by making use of Cloud Run function as backend code, Pub/Sub, and Endpoints and serving the static content via Cloud Storage. Your application is used heavily and you were informed about an issue for the Cloud Run function. You realized that the issue is because of the invocation limit per second. What is the default limit set by Google Cloud to invoke a function per second?',
     options: [
       '65',
       '1000',
@@ -2107,7 +2107,7 @@ export const operating: Question[] = [
       '70'
     ],
     answer: 1,
-    explanation: 'Cloud Functions (1st gen) historically had a default rate limit of about 1,000 invocations per second per function for background functions, which is the figure the question tests. The other numbers do not match any documented limit. It is debatable because Cloud Run functions (2nd gen) are governed by instance and concurrency limits rather than a per-second invocation cap.'
+    explanation: 'Cloud Run functions (1st gen) historically had a default rate limit of about 1,000 invocations per second per function for background functions, which is the figure the question tests. The other numbers do not match any documented limit. It is debatable because Cloud Run functions (2nd gen) are governed by instance and concurrency limits rather than a per-second invocation cap. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-559',
@@ -2144,7 +2144,7 @@ export const operating: Question[] = [
     topic: 'Managing storage & databases',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You have mapped /static/* to gs://resources_bucket/ and you are using HTTPS Load Balancer to serve the contents from a host, the request to HTTPS LB will try to serve gs://resources_bucket/static/path/to/content.jpg. When you hit the DNS, you get “The specified key doesn’t exist” error. What could be the reason?',
+    prompt: 'You have mapped /static/* to gs://resources_bucket/ and you are using external Application Load Balancer to serve the contents from a host, the request to HTTPS LB will try to serve gs://resources_bucket/static/path/to/content.jpg. When you hit the DNS, you get “The specified key doesn’t exist” error. What could be the reason?',
     options: [
       'HTTPS is not able to serve the content from the bucket',
       'Load balancer doesn’t have required permission to access the bucket',
@@ -2152,14 +2152,14 @@ export const operating: Question[] = [
       'Content of the bucket is privately stored'
     ],
     answer: 2,
-    explanation: 'A load balancer backend bucket passes the full request path through, so a request for /static/path/to/content.jpg looks for an object named static/path/to/content.jpg, and "The specified key does not exist" (NoSuchKey) means no object has that name. A permissions or private-object problem returns an access denied (403) error instead, and the load balancer can serve bucket content over HTTPS without issue.'
+    explanation: 'A load balancer backend bucket passes the full request path through, so a request for /static/path/to/content.jpg looks for an object named static/path/to/content.jpg, and "The specified key does not exist" (NoSuchKey) means no object has that name. A permissions or private-object problem returns an access denied (403) error instead, and the load balancer can serve bucket content over HTTPS without issue. Current names: HTTP(S) Load Balancing → Application Load Balancer.'
   },
   {
     id: 'ace-586',
     topic: 'Monitoring & logging',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You need to set up monitoring for a production environment that spans multiple projects in Google Cloud. How can you configure Google Cloud’s Operations Suite (formerly Stackdriver) to ensure consistent monitoring and alerting across all projects?',
+    prompt: 'You need to set up monitoring for a production environment that spans multiple projects in Google Cloud. How can you configure Google Cloud Observability (formerly Stackdriver) to ensure consistent monitoring and alerting across all projects?',
     options: [
       'Create separate monitoring workspaces for each project and set up individual alerting policies',
       'Use a single monitoring workspace that includes all projects and configures centralized alerting policies',
@@ -2208,13 +2208,13 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'You are setting up a Cloud Storage bucket to store backup files, and you want to minimize storage costs by automatically deleting files that have not been accessed in the last 180 days. What is the most efficient way to achieve this?',
     options: [
-      'Implement a Cloud Function that deletes objects based on their last access time',
+      'Implement a Cloud Run function that deletes objects based on their last access time',
       'Apply a lifecycle policy that deletes objects older than 180 days',
       'Use object versioning and manually delete the old versions periodically',
       'Set up a lifecycle management policy to delete objects that haven’t been accessed in the last 180 days'
     ],
     answer: 1,
-    explanation: 'The PDF\'s key says to use a lifecycle policy that deletes objects not accessed in 180 days, but Cloud Storage lifecycle rules have no last-access condition; they can act on age, creation date, custom time, storage class and version status. A Delete action with an age of 180 days is the efficient rule you can actually configure, and for backups written once age is a good proxy. A Cloud Function cannot see last access times either, and versioning with manual deletion is not automated. Some debate exists because age is not exactly the same as last access, but the access-based rule does not exist.',
+    explanation: 'The PDF\'s key says to use a lifecycle policy that deletes objects not accessed in 180 days, but Cloud Storage lifecycle rules have no last-access condition; they can act on age, creation date, custom time, storage class and version status. A Delete action with an age of 180 days is the efficient rule you can actually configure, and for backups written once age is a good proxy. A Cloud Run function cannot see last access times either, and versioning with manual deletion is not automated. Some debate exists because age is not exactly the same as last access, but the access-based rule does not exist. Current names: Cloud Functions → Cloud Run functions.',
     tip: 'Lifecycle rules work on age, not last access; for access-based tiering use Autoclass.'
   },
   {
@@ -2226,11 +2226,11 @@ export const operating: Question[] = [
     options: [
       'Regularly export Firestore data to BigQuery for safekeeping.',
       'Enable Firestore\'s automated backups and configure a sufficient retention period',
-      'Implement a custom backup solution using Cloud Functions',
+      'Implement a custom backup solution using Cloud Run functions',
       'Rely on Firestore\'s built-in data redundancy for recovery'
     ],
     answer: 1,
-    explanation: 'Firestore scheduled backups, with a retention period you choose (and optionally point-in-time recovery), are the managed way to restore a database quickly after data loss or corruption. Exporting to BigQuery is for analytics, a custom Cloud Functions backup adds code to maintain, and built-in replication protects against infrastructure failure but not against bad writes or deletes.'
+    explanation: 'Firestore scheduled backups, with a retention period you choose (and optionally point-in-time recovery), are the managed way to restore a database quickly after data loss or corruption. Exporting to BigQuery is for analytics, a custom Cloud Run functions backup adds code to maintain, and built-in replication protects against infrastructure failure but not against bad writes or deletes. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-596',
@@ -2240,12 +2240,12 @@ export const operating: Question[] = [
     prompt: 'Your team needs to monitor a custom application running on Google Kubernetes Engine (GKE). The application emits custom metrics that are not captured by default in Cloud Monitoring. How can you ingest these custom metrics into Cloud Monitoring?',
     options: [
       'Modify the application to log metrics as text, and use Cloud Logging to ingest them',
-      'Set up a Cloud Function to parse the application logs and convert them into custom metrics',
+      'Set up a Cloud Run function to parse the application logs and convert them into custom metrics',
       'Use the Cloud Monitoring API to create custom metrics and configure the application to send metrics to Cloud Monitoring',
       'Deploy the Ops Agent on GKE to automatically capture and ingest custom metrics'
     ],
     answer: 2,
-    explanation: 'Instrumenting the application to write custom metrics to Cloud Monitoring through the Monitoring API (or OpenTelemetry, or Managed Service for Prometheus on GKE) gets them ingested directly. The Ops Agent is for Compute Engine VMs, not GKE, and parsing logs through Cloud Logging or a Cloud Function is roundabout; log-based metrics exist but are not what this option describes.'
+    explanation: 'Instrumenting the application to write custom metrics to Cloud Monitoring through the Monitoring API (or OpenTelemetry, or Managed Service for Prometheus on GKE) gets them ingested directly. The Ops Agent is for Compute Engine VMs, not GKE, and parsing logs through Cloud Logging or a Cloud Run function is roundabout; log-based metrics exist but are not what this option describes. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-597',
@@ -2283,15 +2283,15 @@ export const operating: Question[] = [
     topic: 'Monitoring & logging',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your tech startup, AppifyNow, has been building a new app, and last month you noticed the project’s cloud expenses were higher than expected. After investigating, you discovered that one of your development GKE containers generated a large number of logs, leading to the unexpected cost increase. You want to quickly stop these logs with the fewest steps possible. What should you do? (Note: Stackdriver is now called \'Google Cloud\'s Operation Suite\')',
+    prompt: 'Your tech startup, AppifyNow, has been building a new app, and last month you noticed the project’s cloud expenses were higher than expected. After investigating, you discovered that one of your development GKE containers generated a large number of logs, leading to the unexpected cost increase. You want to quickly stop these logs with the fewest steps possible. What should you do?',
     options: [
-      '1. Go to the Logs ingestion window in Stackdriver Logging, and disable the log source for the GKE container resource.',
-      '1. Go to the Logs ingestion window in Stackdriver Logging, and disable the log source for the GKE Cluster Operations resource.',
-      '1. Go to the GKE console, and delete existing clusters. 2. Recreate a new cluster. 3. Clear the option to enable legacy Stackdriver Logging.',
-      '1. Go to the GKE console, and delete existing clusters. 2. Recreate a new cluster. 3. Clear the option to enable legacy Stackdriver Monitoring.'
+      '1. Go to the Logs ingestion window in Cloud Logging, and disable the log source for the GKE container resource.',
+      '1. Go to the Logs ingestion window in Cloud Logging, and disable the log source for the GKE Cluster Operations resource.',
+      '1. Go to the GKE console, and delete existing clusters. 2. Recreate a new cluster. 3. Clear the option to enable legacy Cloud Logging.',
+      '1. Go to the GKE console, and delete existing clusters. 2. Recreate a new cluster. 3. Clear the option to enable legacy Cloud Monitoring.'
     ],
     answer: 0,
-    explanation: 'The fastest fix is a log exclusion on the GKE container resource, which stops those logs from being ingested and billed. Today this is an exclusion filter on the _Default sink in the Cloud Logging Log Router, which replaced the old Logs ingestion page. Excluding GKE Cluster Operations logs would target the wrong source, and deleting and recreating clusters is far more work and disruptive.'
+    explanation: 'The fastest fix is a log exclusion on the GKE container resource, which stops those logs from being ingested and billed. Today this is an exclusion filter on the _Default sink in the Cloud Logging Log Router, which replaced the old Logs ingestion page. Excluding GKE Cluster Operations logs would target the wrong source, and deleting and recreating clusters is far more work and disruptive. Current names: Stackdriver → Cloud Logging and Cloud Monitoring.'
   },
   {
     id: 'ace-622',
@@ -2303,10 +2303,10 @@ export const operating: Question[] = [
       'Deploy the new version in the same application and use the --migrate option.',
       'Deploy the new version in the same application and use the --splits option to give a weight of 98 to the current version and a weight of 2 to the new version.',
       '- Create a new App Engine application in the same project.\n- Deploy the new version in that application.\n- Use the App Engine library to proxy 2% of the requests to the new version.',
-      '- Create a new App Engine application in the same project.\n- Deploy the new version in that application.\n- Configure your network load balancer to send 2% of the traffic to that new application.'
+      '- Create a new App Engine application in the same project.\n- Deploy the new version in that application.\n- Configure your passthrough Network Load Balancer to send 2% of the traffic to that new application.'
     ],
     answer: 1,
-    explanation: 'App Engine supports traffic splitting between versions of the same service, so deploying the new version and splitting 98/2 with --splits (gcloud app services set-traffic) is the simplest canary. The --migrate flag moves all traffic to the new version. A project can have only one App Engine application, so the options that create a second application are not possible anyway.'
+    explanation: 'App Engine supports traffic splitting between versions of the same service, so deploying the new version and splitting 98/2 with --splits (gcloud app services set-traffic) is the simplest canary. The --migrate flag moves all traffic to the new version. A project can have only one App Engine application, so the options that create a second application are not possible anyway. Current names: Network Load Balancing → passthrough Network Load Balancer.'
   },
   {
     id: 'ace-623',
@@ -2331,28 +2331,28 @@ export const operating: Question[] = [
     verbatim: true,
     prompt: 'You are managing a key application for FotoSnap, a popular photo-sharing platform, hosted on Compute Engine. This app is crucial to the business, and you want to ensure that the data on the boot disk of this app is backed up frequently. In the event of a disaster, you need to restore the backup as quickly as possible. Additionally, to save costs, you want older backups to be cleaned up automatically. You aim to follow the best practices recommended by Google. What should you do?',
     options: [
-      'Create a Cloud Function to create an instance template.',
+      'Create a Cloud Run function to create an instance template.',
       'Create a snapshot schedule for the disk using the desired interval.',
       'Create a cron job to create a new disk from the disk using gcloud.',
       'Create a Cloud Task to create an image and export it to Cloud Storage.'
     ],
     answer: 1,
-    explanation: 'A snapshot schedule takes snapshots of the persistent disk automatically at the interval you choose and deletes old ones according to its retention policy, and you can restore quickly by creating a disk from a snapshot. Instance templates hold no disk data, cron jobs that clone disks need custom cleanup, and exporting images to Cloud Storage is slower to restore and not the recommended backup method.'
+    explanation: 'A snapshot schedule takes snapshots of the persistent disk automatically at the interval you choose and deletes old ones according to its retention policy, and you can restore quickly by creating a disk from a snapshot. Instance templates hold no disk data, cron jobs that clone disks need custom cleanup, and exporting images to Cloud Storage is slower to restore and not the recommended backup method. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-629',
     topic: 'Monitoring & logging',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are responsible for managing the analytics and monitoring for several projects on GCP for a fictional company called "ZenApps", which runs multiple mobile apps. ZenApps wants to explore and analyze all logs from their projects for the past 60 days. Following Google\'s recommended best practices, how should you aggregate and manage logs across all projects? (Note: Stackdriver is now called \'Google Cloud\'s Operation Suite\')',
+    prompt: 'You are responsible for managing the analytics and monitoring for several projects on Google Cloud for a fictional company called "ZenApps", which runs multiple mobile apps. ZenApps wants to explore and analyze all logs from their projects for the past 60 days. Following Google\'s recommended best practices, how should you aggregate and manage logs across all projects?',
     options: [
-      'Navigate to Stackdriver Logging and select resource.labels.project_id="*"',
-      '- Create a Stackdriver Logging Export with a Sink destination to a BigQuery dataset.\n- Configure the table expiration to 60 days.',
-      '- Create a Stackdriver Logging Export with a Sink destination to Cloud Storage.\n- Create a lifecycle rule to delete objects after 60 days.',
-      '- Configure a Cloud Scheduler job to read from Stackdriver and store the logs in BigQuery.\n- Configure the table expiration to 60 days.'
+      'Navigate to Cloud Logging and select resource.labels.project_id="*"',
+      '- Create a Cloud Logging Export with a Sink destination to a BigQuery dataset.\n- Configure the table expiration to 60 days.',
+      '- Create a Cloud Logging Export with a Sink destination to Cloud Storage.\n- Create a lifecycle rule to delete objects after 60 days.',
+      '- Configure a Cloud Scheduler job to read from Cloud Logging and store the logs in BigQuery.\n- Configure the table expiration to 60 days.'
     ],
     answer: 1,
-    explanation: 'An aggregated log sink to a BigQuery dataset collects logs from all projects into one place where they can be queried with SQL, and a 60-day table expiration drops old data automatically. Cloud Storage is cheap for archiving but poor for interactive analysis. A Cloud Scheduler job that copies logs is custom work when sinks do this for you, and the Logs Explorer cannot query across all projects with a wildcard.',
+    explanation: 'An aggregated log sink to a BigQuery dataset collects logs from all projects into one place where they can be queried with SQL, and a 60-day table expiration drops old data automatically. Cloud Storage is cheap for archiving but poor for interactive analysis. A Cloud Scheduler job that copies logs is custom work when sinks do this for you, and the Logs Explorer cannot query across all projects with a wildcard. Current names: Stackdriver → Cloud Logging and Cloud Monitoring.',
     tip: 'Use a log sink to BigQuery when you need to analyze logs with SQL.'
   },
   {
@@ -2379,12 +2379,12 @@ export const operating: Question[] = [
     prompt: 'You are managing the backend services for a new mobile app, QuickBuy, which allows users to make instant purchases from various online retailers. Recently, some users have reported an issue where their purchases are failing. After investigating, you discover that the problem stems from a Service Account that lacks the necessary permissions to complete the purchase process. You resolve the issue by updating the Service Account’s permissions. However, you want to ensure that you are alerted if this issue happens again in the future. What should you do?',
     options: [
       'In the Log Viewer, filter the logs on severity \'Error\' and the name of the Service Account.',
-      'Create a sink to BigQuery to export all the logs. Create a Data Studio dashboard on the exported logs.',
+      'Create a sink to BigQuery to export all the logs. Create a Looker Studio dashboard on the exported logs.',
       'Create a custom log-based metric for the specific error to be used in an Alerting Policy.',
       'Grant Project Owner access to the Service Account.'
     ],
     answer: 2,
-    explanation: 'A log-based metric that counts the specific permission error, combined with an alerting policy on that metric, notifies you automatically the next time it happens. Filtering logs in the Logs Explorer or building a Looker Studio dashboard only helps if someone is watching. Granting Project Owner to the service account breaks least privilege and does nothing for alerting.'
+    explanation: 'A log-based metric that counts the specific permission error, combined with an alerting policy on that metric, notifies you automatically the next time it happens. Filtering logs in the Logs Explorer or building a Looker Studio dashboard only helps if someone is watching. Granting Project Owner to the service account breaks least privilege and does nothing for alerting. Current names: Data Studio → Looker Studio.'
   },
   {
     id: 'ace-643',

@@ -37,8 +37,8 @@ export const access: Question[] = [
     options: [
       'Use gcloud iam roles copy and specify the production project as the destination project.',
       'Use gcloud iam roles copy and specify your organization as the destination organization.',
-      'In the Google Cloud Platform Console, use the \'create role from role\' functionality.',
-      'In the Google Cloud Platform Console, use the \'create role\' functionality and select all applicable permissions.'
+      'In the Google Cloud console, use the \'create role from role\' functionality.',
+      'In the Google Cloud console, use the \'create role\' functionality and select all applicable permissions.'
     ],
     answer: 0,
     explanation: 'gcloud iam roles copy copies a custom role from one project to another, and pointing the destination at the production project is a single command per role. Copying to the organization changes the role\'s scope rather than creating it in the new project, and the console create-role paths require manually rebuilding each role.'
@@ -94,7 +94,7 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are the project owner of a GCP project and want to delegate control to colleagues to manage buckets and files in Cloud Storage. You want to follow Google- recommended practices. Which IAM roles should you grant your colleagues?',
+    prompt: 'You are the project owner of a Google Cloud project and want to delegate control to colleagues to manage buckets and files in Cloud Storage. You want to follow Google- recommended practices. Which IAM roles should you grant your colleagues?',
     options: [
       'Project Editor',
       'Storage Admin',
@@ -124,12 +124,12 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You want to verify the IAM users and roles assigned within a GCP project named my-project. What should you do?',
+    prompt: 'You want to verify the IAM users and roles assigned within a Google Cloud project named my-project. What should you do?',
     options: [
       'Run gcloud iam roles list. Review the output section.',
       'Run gcloud iam service-accounts list. Review the output section.',
-      'Navigate to the project and then to the IAM section in the GCP Console. Review the members and roles.',
-      'Navigate to the project and then to the Roles section in the GCP Console. Review the roles and status.'
+      'Navigate to the project and then to the IAM section in the Google Cloud console. Review the members and roles.',
+      'Navigate to the project and then to the Roles section in the Google Cloud console. Review the roles and status.'
     ],
     answer: 2,
     explanation: 'The IAM page for the project lists every principal and the roles granted to them, which is exactly what you need to verify. gcloud iam roles list shows role definitions rather than assignments, service-accounts list shows only service accounts, and the Roles page shows role definitions, not who holds them.'
@@ -219,19 +219,19 @@ export const access: Question[] = [
     prompt: 'A photographer wants to share images they have stored in a Cloud Storage bucket called free-photos-on- gcp. What command would you use to allow all users to read these files?',
     options: [
       'gcloud iam ch allUsers:Viewer gs://free-photos-on-gcp',
-      'gcloud ch allUsers:objectViewer gs://free-photos-on-gcp',
-      'gsutil iam ch allUsers:objectViewer gs://free-photos-on-gcp',
-      'gsutil ch allUsers:Viewer gs://free-photos-on-gcp'
+      'gcloud storage buckets ch allUsers:objectViewer gs://free-photos-on-gcp',
+      'gcloud storage buckets add-iam-policy-binding gs://free-photos-on-gcp --member=allUsers --role=roles/storage.objectViewer',
+      'gcloud storage buckets add-iam-policy-binding gs://free-photos-on-gcp --member=allUsers --role=roles/viewer'
     ],
     answer: 2,
-    explanation: 'gsutil iam ch allUsers:objectViewer grants the Storage Object Viewer role to everyone on the bucket, making its objects publicly readable (the modern equivalent is gcloud storage buckets add-iam-policy-binding with member allUsers). The gcloud forms shown are not real commands, and the gsutil option omits the iam subcommand and uses the broad Viewer role.'
+    explanation: 'Granting Storage Object Viewer to allUsers on the bucket makes its objects publicly readable: `gcloud storage buckets add-iam-policy-binding` with `--member=allUsers --role=roles/storage.objectViewer` (legacy: `gsutil iam ch allUsers:objectViewer`). The ch forms are not real gcloud commands, and roles/viewer is a project basic role, not a bucket role. Current names: gsutil is the legacy tool; gcloud storage is the recommended CLI for Cloud Storage.'
   },
   {
     id: 'ace-071',
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'A group of data scientists needs access to data stored in Cloud Bigtable. You want to follow Google\'s recommended best practices for security. What role would you assign to the data scientist to allow them to read data from Bigtable?',
+    prompt: 'A group of data scientists needs access to data stored in Bigtable. You want to follow Google\'s recommended best practices for security. What role would you assign to the data scientist to allow them to read data from Bigtable?',
     options: [
       'roles/bigtable.admin',
       'roles/bigtable.reader',
@@ -261,7 +261,7 @@ export const access: Question[] = [
     topic: 'Audit logs, keys & secrets',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'An auditor is reviewing your Google Cloud use. They have asked for access to any audit logs available in GCP. What audit logs are available for each project, folder, and organization?',
+    prompt: 'An auditor is reviewing your Google Cloud use. They have asked for access to any audit logs available in Google Cloud. What audit logs are available for each project, folder, and organization?',
     options: [
       'Admin Activity',
       'Data Access',
@@ -280,13 +280,13 @@ export const access: Question[] = [
     verbatim: true,
     prompt: 'Due to security concerns, you want to ensure all data written to your Cloud Storage buckets are encrypted. What do you need to do to ensure data is encrypted when stored in Cloud Storage?',
     options: [
-      'Use the --encrypt flag with gsutil',
+      'Use the --encrypt flag with gcloud storage cp',
       'Set a lifecycle policy that specifies encryption is on',
       'Set up customer managed encryption keys and use those keys to encrypt data before saving to Cloud Storage',
       'Nothing, this is the default behavior.'
     ],
     answer: 3,
-    explanation: 'Cloud Storage encrypts all data at rest by default with Google-managed keys, so nothing extra is required. Customer-managed or customer-supplied keys are only needed when you must control the keys yourself, and there is no gsutil --encrypt flag or lifecycle setting for encryption.',
+    explanation: 'Cloud Storage encrypts all data at rest by default with Google-managed keys, so nothing extra is required. Customer-managed or customer-supplied keys are only needed when you must control the keys yourself, and there is no --encrypt flag or lifecycle setting for encryption.',
     tip: 'Google Cloud encrypts data at rest by default; CMEK and CSEK are only for extra key control.'
   },
   {
@@ -325,7 +325,7 @@ export const access: Question[] = [
     topic: 'Audit logs, keys & secrets',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your most recent GCP bill is higher than expected because of a significant increase in storage charges. Your department recently enabled an audit log that is off by default for most services. You think that audit logging may be responsible for the increased storage charges. Which type of audit log would you think could be responsible?',
+    prompt: 'Your most recent Google Cloud bill is higher than expected because of a significant increase in storage charges. Your department recently enabled an audit log that is off by default for most services. You think that audit logging may be responsible for the increased storage charges. Which type of audit log would you think could be responsible?',
     options: [
       'System Event Audit Log',
       'Data Access Audit Log',
@@ -372,7 +372,7 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You have been given the responsibility to manage several projects in GCP. You want to list roles defined in a particular project. What Cloud SDK command would you use? (Note: [PROJECT] is a placeholder for a project identifier.)',
+    prompt: 'You have been given the responsibility to manage several projects in Google Cloud. You want to list roles defined in a particular project. What Google Cloud CLI command would you use? (Note: [PROJECT] is a placeholder for a project identifier.)',
     options: [
       'gcloud iam roles list --project=[PROJECT]',
       'gcloud iam list roles --project=[PROJECT]',
@@ -380,14 +380,14 @@ export const access: Question[] = [
       'gsutil list iam roles [PROJECT]'
     ],
     answer: 0,
-    explanation: 'gcloud iam roles list --project lists the custom roles defined in that project. The verb order in gcloud is group then command, so gcloud iam list roles is invalid, and gsutil only manages Cloud Storage.'
+    explanation: 'gcloud iam roles list --project lists the custom roles defined in that project. The verb order in gcloud is group then command, so gcloud iam list roles is invalid, and gsutil only manages Cloud Storage. Current names: Cloud SDK → Google Cloud CLI.'
   },
   {
     id: 'ace-136',
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'A colleague who is new to GCP has asked for your help with understanding predefined roles. They would like to know details about several predefined roles. What command would you suggest they use?',
+    prompt: 'A colleague who is new to Google Cloud has asked for your help with understanding predefined roles. They would like to know details about several predefined roles. What command would you suggest they use?',
     options: [
       'gcloud roles predefined describe [ROLE-ID]',
       'gcloud iam roles describe [ROLE-ID]',
@@ -451,8 +451,8 @@ export const access: Question[] = [
     options: [
       'Use “gcloud iam roles copy” and specify the production project as the destination project.',
       'Use “gcloud iam roles copy” and specify your organization as the destination organization.',
-      'In the Google Cloud Platform Console, use the \'create role from role\' functionality.',
-      'In the Google Cloud Platform Console, use the \'create role\' functionality and select all applicable permissions.'
+      'In the Google Cloud console, use the \'create role from role\' functionality.',
+      'In the Google Cloud console, use the \'create role\' functionality and select all applicable permissions.'
     ],
     answer: 0,
     explanation: 'gcloud iam roles copy duplicates a custom role into another project with one command, which is the fewest steps. Copying to the organization changes the scope rather than placing the role in the production project, and recreating roles in the console is more manual. Predefined roles need no copying, so the question is about custom roles.'
@@ -462,7 +462,7 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are managing a restaurant review app hosted on Google Cloud that uses Cloud Spanner to store reviews and restaurant data. Your operations team is responsible for monitoring the app’s environment, but they should not be able to access any review or restaurant details in the database. You want to set up the right permissions for your operations team while following Google-recommended best practices. What should you do?\n\n(Note: Stackdriver is now called \'Google Cloud\'s Operation Suite\')',
+    prompt: 'You are managing a restaurant review app hosted on Google Cloud that uses Spanner to store reviews and restaurant data. Your operations team is responsible for monitoring the app’s environment, but they should not be able to access any review or restaurant details in the database. You want to set up the right permissions for your operations team while following Google-recommended best practices. What should you do?',
     options: [
       'Add the operations team group to the roles/monitoring.viewer role',
       'Add the operations team group to the roles/spanner.databaseUser role',
@@ -492,11 +492,11 @@ export const access: Question[] = [
     topic: 'Service accounts',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your company, MovieMagic Productions, is building an AI-driven platform that runs in your local data center. The platform leverages Google Cloud Platform (GCP) services, such as AutoML, to analyze user-submitted video content. You have created a service account with the necessary permissions to access AutoML. Now, you need to ensure that your on-premises application can authenticate and connect to GCP APIs. What should you do?',
+    prompt: 'Your company, MovieMagic Productions, is building an AI-driven platform that runs in your local data center. The platform leverages Google Cloud (Google Cloud) services, such as AutoML, to analyze user-submitted video content. You have created a service account with the necessary permissions to access AutoML. Now, you need to ensure that your on-premises application can authenticate and connect to Google Cloud APIs. What should you do?',
     options: [
       'Use service account credentials in your on-premises application.',
       'Use gcloud to create a key file for the service account that has appropriate permissions.',
-      'Set up direct interconnect between your data center and Google Cloud Platform to enable authentication for your on-premises applications.',
+      'Set up direct interconnect between your data center and Google Cloud to enable authentication for your on-premises applications.',
       'Go to the IAM & admin console, grant a user account permissions similar to the service account permissions, and use this user account for authentication from your data center.'
     ],
     answer: 1,
@@ -526,12 +526,12 @@ export const access: Question[] = [
     prompt: 'Your company, SolarTech Solutions, has an internal app that uses a Bigtable instance with three nodes, storing sensitive customer data, including personally identifiable information (PII). The security team has requested that you log all read and write operations, including metadata and configuration reads, and send these logs to your company’s Security Information and Event Management (SIEM) system. What should you do?',
     options: [
       'i. Navigate to Cloud Monitoring in the Google Cloud console, and create a custom monitoring job for the Bigtable instance to track all changes. ii. Create an alert by using webhook endpoints, with the SIEM endpoint as a receiver.',
-      'i. Navigate to the Audit Logs page in the Google Cloud console, and enable Admin Write logs for the Bigtable instance. ii. Create a Cloud Functions instance to export logs from Cloud Logging to your SIEM.',
+      'i. Navigate to the Audit Logs page in the Google Cloud console, and enable Admin Write logs for the Bigtable instance. ii. Create a Cloud Run functions instance to export logs from Cloud Logging to your SIEM.',
       'i. Navigate to the Audit Logs page in the Google Cloud console, and enable Data Read, Data Write, and Admin Read logs for the Bigtable instance. ii. Create a Pub/Sub topic as a Cloud Logging sink destination, and add your SIEM as a subscriber to the topic.',
       'i. Install the Ops Agent on the Bigtable instance during configuration. ii. Create a service account with read permissions for the Bigtable instance. iii. Create a custom Dataflow job with this service account to export logs to the company’s SIEM system.'
     ],
     answer: 2,
-    explanation: 'Reads and writes of Bigtable data and reads of metadata and configuration are captured by Data Read, Data Write and Admin Read audit logs, which are off by default and must be enabled; Admin Write logs are always on. A log sink to a Pub/Sub topic is the standard way to stream logs to a SIEM. Admin Write alone misses the data access, Cloud Monitoring tracks metrics rather than access events, and Bigtable is a managed service with no instance to install the Ops Agent on.',
+    explanation: 'Reads and writes of Bigtable data and reads of metadata and configuration are captured by Data Read, Data Write and Admin Read audit logs, which are off by default and must be enabled; Admin Write logs are always on. A log sink to a Pub/Sub topic is the standard way to stream logs to a SIEM. Admin Write alone misses the data access, Cloud Monitoring tracks metrics rather than access events, and Bigtable is a managed service with no instance to install the Ops Agent on. Current names: Cloud Functions → Cloud Run functions.',
     tip: 'Admin Activity audit logs are always on; Data Access logs must be enabled.'
   },
   {
@@ -629,7 +629,7 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You are managing the infrastructure for an e-commerce website called ShopVerse, and you need to configure secure SSH access to a single Compute Engine instance for developers in the dev1 team. This particular instance hosts a microservice, and it is the only resource in this ShopVerse GCP project that the dev1 developers need to access. What should you do?',
+    prompt: 'You are managing the infrastructure for an e-commerce website called ShopVerse, and you need to configure secure SSH access to a single Compute Engine instance for developers in the dev1 team. This particular instance hosts a microservice, and it is the only resource in this ShopVerse Google Cloud project that the dev1 developers need to access. What should you do?',
     options: [
       'Set metadata to enable-oslogin=true for the instance. Grant the dev1 team the compute.osLogin role. Instruct them to use the Cloud Shell to SSH into the instance.',
       'Set metadata to enable-oslogin=true for the instance. Configure the service account to "no service account" for that instance. Instruct them to use the Cloud Shell to SSH into the instance.',
@@ -737,15 +737,15 @@ export const access: Question[] = [
     topic: 'Audit logs, keys & secrets',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Imagine you run a fictional company called SnapTech, which manages a popular photo-sharing app. SnapTech stores sensitive user photos in three separate Cloud Storage buckets. You\'ve enabled data access logging to keep track of all interactions with the stored photos. Now, you need to investigate the activities of a specific employee related to these buckets. Specifically, you want to verify which photos this employee has viewed and whether they\'ve added or modified any metadata labels on the photos while using the fewest possible steps. What should you do? (Note: Stackdriver is now called \'Google Cloud\'s Operation Suite\')',
+    prompt: 'Imagine you run a fictional company called SnapTech, which manages a popular photo-sharing app. SnapTech stores sensitive user photos in three separate Cloud Storage buckets. You\'ve enabled data access logging to keep track of all interactions with the stored photos. Now, you need to investigate the activities of a specific employee related to these buckets. Specifically, you want to verify which photos this employee has viewed and whether they\'ve added or modified any metadata labels on the photos while using the fewest possible steps. What should you do?',
     options: [
-      'Using the GCP Console, filter the Activity log to view the information.',
-      'Using the GCP Console, filter the Stackdriver log to view the information.',
-      'View the bucket in the Storage section of the GCP Console.',
-      'Create a trace in Stackdriver to view the information.'
+      'Using the Google Cloud console, filter the Activity log to view the information.',
+      'Using the Google Cloud console, filter the logs in Cloud Logging to view the information.',
+      'View the bucket in the Storage section of the Google Cloud console.',
+      'Create a trace in Cloud Trace to view the information.'
     ],
     answer: 1,
-    explanation: 'The PDF\'s key says to filter the console Activity log, but that page shows abbreviated Admin Activity entries and hides Data Access entries by default, so it will not show which photos were read. A single Logs Explorer query in Cloud Logging (the old Stackdriver Logging), filtered on the employee\'s principal email and the three buckets, returns both the Data Access entries for object reads and the Admin Activity entries for label changes. The Storage browser keeps no access history, and Cloud Trace measures latency, not who did what. This matches the original version of this question, which is keyed to the Cloud Logging answer.'
+    explanation: 'The PDF\'s key says to filter the console Activity log, but that page shows abbreviated Admin Activity entries and hides Data Access entries by default, so it will not show which photos were read. A single Logs Explorer query in Cloud Logging, filtered on the employee\'s principal email and the three buckets, returns both the Data Access entries for object reads and the Admin Activity entries for label changes. The Storage browser keeps no access history, and Cloud Trace measures latency, not who did what. This matches the original version of this question, which is keyed to the Cloud Logging answer. Current names: Stackdriver → Cloud Logging and Cloud Monitoring.'
   },
   {
     id: 'ace-259',
@@ -874,7 +874,7 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'A tech startup called GlazeTech is building a new application that relies on Google Cloud Spanner to manage its data. The team needs to grant access to three developers so they can both view and modify table data within a Cloud Spanner instance. What should you do to ensure they have the correct permissions?',
+    prompt: 'A tech startup called GlazeTech is building a new application that relies on Google Spanner to manage its data. The team needs to grant access to three developers so they can both view and modify table data within a Spanner instance. What should you do to ensure they have the correct permissions?',
     options: [
       '- Run “gcloud iam roles describe roles/spanner.databaseUser”.\n- Add the developers to the role.',
       '- Run “gcloud iam roles describe roles/spanner.databaseUser”.\n- Add the developers to a new group.\n- Add the group to the role.',
@@ -890,12 +890,12 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You have been hired as a cloud engineer for a fictional company called SkyApp, which runs a cloud- based weather forecasting service. You need to verify the IAM users and roles assigned within a GCP project named skyapp-weather. What should you do?',
+    prompt: 'You have been hired as a cloud engineer for a fictional company called SkyApp, which runs a cloud- based weather forecasting service. You need to verify the IAM users and roles assigned within a Google Cloud project named skyapp-weather. What should you do?',
     options: [
       '- Run “gcloud iam roles list”. - Review the output section.',
       '- Run “gcloud iam service-accounts list”.\n- Review the output section.',
-      '- Navigate to the project and then to the IAM section in the GCP Console.\n- Review the members and roles.',
-      '- Navigate to the project and then to the Roles section in the GCP Console.\n- Review the roles and status.'
+      '- Navigate to the project and then to the IAM section in the Google Cloud console.\n- Review the members and roles.',
+      '- Navigate to the project and then to the Roles section in the Google Cloud console.\n- Review the roles and status.'
     ],
     answer: 2,
     explanation: 'The IAM page for the project shows every principal and the roles granted to it, including inherited roles. gcloud iam roles list only lists role definitions, gcloud iam service-accounts list shows service accounts without their bindings, and the Roles page shows role definitions rather than who holds them.'
@@ -935,15 +935,15 @@ export const access: Question[] = [
     topic: 'Audit logs, keys & secrets',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your team at a fictional company, BlueSkies Tech, has recently expanded its user base, and you want to track when users were added to specific Cloud Spanner Identity and Access Management (IAM) roles for better governance. You need to find this information using the Google Cloud Platform (GCP) Console. What should you do? (Note: Stackdriver is now called \'Google Cloud\'s Operation Suite\')',
+    prompt: 'Your team at a fictional company, BlueSkies Tech, has recently expanded its user base, and you want to track when users were added to specific Spanner Identity and Access Management (IAM) roles for better governance. You need to find this information using the Google Cloud (Google Cloud) Console. What should you do?',
     options: [
-      'Open the Cloud Spanner console to review configurations.',
-      'Open the IAM & admin console to review IAM policies for Cloud Spanner roles.',
-      'Go to the Stackdriver Monitoring console and review information for Cloud Spanner.',
-      'Go to the Stackdriver Logging console, review admin activity logs, and filter them for Cloud Spanner IAM roles.'
+      'Open the Spanner console to review configurations.',
+      'Open the IAM & admin console to review IAM policies for Spanner roles.',
+      'Go to the Cloud Monitoring console and review information for Spanner.',
+      'Go to the Cloud Logging console, review admin activity logs, and filter them for Spanner IAM roles.'
     ],
     answer: 3,
-    explanation: 'IAM policy changes are recorded in Admin Activity audit logs, which can be viewed in Cloud Logging and filtered for Spanner SetIamPolicy calls to see when members were added. The IAM page shows only current bindings, not history, and Cloud Monitoring and the Spanner console do not track permission changes.'
+    explanation: 'IAM policy changes are recorded in Admin Activity audit logs, which can be viewed in Cloud Logging and filtered for Spanner SetIamPolicy calls to see when members were added. The IAM page shows only current bindings, not history, and Cloud Monitoring and the Spanner console do not track permission changes. Current names: Stackdriver → Cloud Logging and Cloud Monitoring.'
   },
   {
     id: 'ace-324',
@@ -982,15 +982,15 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'Your company, ByteStream Studios, develops a range of apps, including the popular Skyboard task management app. The company has a policy requiring all developers to have the same permissions regardless of the project they are working on within your cloud environment. The security team also mandates that developer access should only include permissions to work on Compute Engine, Cloud Functions, and Cloud SQL resources. You want to ensure this policy is implemented efficiently, with the least amount of effort. What should you do?',
+    prompt: 'Your company, ByteStream Studios, develops a range of apps, including the popular Skyboard task management app. The company has a policy requiring all developers to have the same permissions regardless of the project they are working on within your cloud environment. The security team also mandates that developer access should only include permissions to work on Compute Engine, Cloud Run functions, and Cloud SQL resources. You want to ensure this policy is implemented efficiently, with the least amount of effort. What should you do?',
     options: [
-      '- Create a custom role with Compute Engine, Cloud Functions, and Cloud SQL permissions in one project under ByteStream Studios\' organization in Google Cloud.\n- Use the “gcloud iam roles copy” command to duplicate the role across all future projects within the organization.\n- Assign this role to developers in each project.',
+      '- Create a custom role with Compute Engine, Cloud Run functions, and Cloud SQL permissions in one project under ByteStream Studios\' organization in Google Cloud.\n- Use the “gcloud iam roles copy” command to duplicate the role across all future projects within the organization.\n- Assign this role to developers in each project.',
       '- Add all developers to a Google group using Google Groups for Workspace.\n- Assign the predefined Compute Admin role to the Google group at the organization level.',
-      '- Add all developers to a Google group in Cloud Identity.\n- Assign predefined roles for Compute Engine, Cloud Functions, and Cloud SQL for each project within ByteStream Studios\' Google Cloud organization.',
-      '- Add all developers to a Google group in Cloud Identity.\n- Create a custom role that includes permissions for Compute Engine, Cloud Functions, and Cloud SQL at the organization level.\n- Assign the custom role to the Google group.'
+      '- Add all developers to a Google group in Cloud Identity.\n- Assign predefined roles for Compute Engine, Cloud Run functions, and Cloud SQL for each project within ByteStream Studios\' Google Cloud organization.',
+      '- Add all developers to a Google group in Cloud Identity.\n- Create a custom role that includes permissions for Compute Engine, Cloud Run functions, and Cloud SQL at the organization level.\n- Assign the custom role to the Google group.'
     ],
     answer: 3,
-    explanation: 'A single custom role defined at the organization level is available in every project, and granting it to one Cloud Identity group gives all developers identical, scoped permissions with one binding to manage. Copying a project-level custom role into each project with gcloud iam roles copy repeats work for every new project. Compute Admin at the organization level misses Cloud Functions and Cloud SQL and is too broad, and granting several predefined roles in every project is more effort and less precise.'
+    explanation: 'A single custom role defined at the organization level is available in every project, and granting it to one Cloud Identity group gives all developers identical, scoped permissions with one binding to manage. Copying a project-level custom role into each project with gcloud iam roles copy repeats work for every new project. Compute Admin at the organization level misses Cloud Run functions and Cloud SQL and is too broad, and granting several predefined roles in every project is more effort and less precise. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-344',
@@ -1108,12 +1108,12 @@ export const access: Question[] = [
     prompt: 'Your company, "PhotoSnapper," is an online photo-sharing platform that stores large volumes of user-uploaded images in Cloud Storage buckets. An external auditor is now reviewing your organization\'s data usage, focusing specifically on who accessed the stored images in the Cloud Storage buckets. You need to assist the auditor in getting the required access logs. What should you do?',
     options: [
       '- Turn on Data Access Logs for the buckets they want to audit.\n- Build a query in the log viewer that filters on Cloud Storage.',
-      '- Assign the appropriate permissions.\n- Create a Data Studio report on Admin Activity Audit Logs.',
+      '- Assign the appropriate permissions.\n- Create a Looker Studio report on Admin Activity Audit Logs.',
       'Assign the appropriate permissions, and then use Cloud Monitoring to review metrics.',
       'Use the export logs API to provide the Admin Activity Audit Logs in the format they want.'
     ],
     answer: 0,
-    explanation: 'Reads of Cloud Storage objects are recorded only in Data Access audit logs, which are off by default, so you enable them for Cloud Storage and then filter in Logs Explorer. Admin Activity logs capture configuration changes such as bucket or IAM updates, not who read objects, and Cloud Monitoring metrics show volume but not identities.',
+    explanation: 'Reads of Cloud Storage objects are recorded only in Data Access audit logs, which are off by default, so you enable them for Cloud Storage and then filter in Logs Explorer. Admin Activity logs capture configuration changes such as bucket or IAM updates, not who read objects, and Cloud Monitoring metrics show volume but not identities. Current names: Data Studio → Looker Studio.',
     tip: 'Who read or wrote data equals Data Access logs (enable them); who changed configuration equals Admin Activity logs (always on).'
   },
   {
@@ -1136,15 +1136,15 @@ export const access: Question[] = [
     topic: 'Service accounts',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your company, ByteFleet, recently created a new SaaS platform that provides real-time analytics for transportation companies. To manage and automate resource access within the platform, you received a JSON file that contains a private key tied to a Service Account. You\'ve already downloaded and installed the Cloud SDK and now need to use this private key to authenticate and authorize yourself for running gcloud commands to interact with the various services in your Google Cloud project. What is the correct next step?',
+    prompt: 'Your company, ByteFleet, recently created a new SaaS platform that provides real-time analytics for transportation companies. To manage and automate resource access within the platform, you received a JSON file that contains a private key tied to a Service Account. You\'ve already downloaded and installed the Google Cloud CLI and now need to use this private key to authenticate and authorize yourself for running gcloud commands to interact with the various services in your Google Cloud project. What is the correct next step?',
     options: [
       'Use the command “gcloud auth login” and point it to the private key.',
       'Use the command “gcloud auth activate-service-account” and point it to the private key.',
-      'Place the private key file in the installation directory of the Cloud SDK and rename it to "credentials.json".',
+      'Place the private key file in the installation directory of the Google Cloud CLI and rename it to "credentials.json".',
       'Place the private key file in your home directory and rename it to "GOOGLE_APPLICATION_CREDENTIALS".'
     ],
     answer: 1,
-    explanation: 'gcloud auth activate-service-account --key-file=KEY.json authorizes gcloud with the service account\'s key so later gcloud commands run as that identity. gcloud auth login runs an interactive user sign-in, and renaming or placing the key file in the SDK or home directory does not configure gcloud (GOOGLE_APPLICATION_CREDENTIALS is an environment variable for client libraries, not a file name).'
+    explanation: 'gcloud auth activate-service-account --key-file=KEY.json authorizes gcloud with the service account\'s key so later gcloud commands run as that identity. gcloud auth login runs an interactive user sign-in, and renaming or placing the key file in the SDK or home directory does not configure gcloud (GOOGLE_APPLICATION_CREDENTIALS is an environment variable for client libraries, not a file name). Current names: Cloud SDK → Google Cloud CLI.'
   },
   {
     id: 'ace-398',
@@ -1198,7 +1198,7 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You are a Google Cloud Engineer and assigned to set up a project for a team of four members. You need to grant only general permissions for all the resources of the project. You decided to grant a primitive role to each person for different levels of access based on their responsibilities in the project. What is not considered as a primitive role in the Google Cloud Platform console?',
+    prompt: 'You are a Google Cloud Engineer and assigned to set up a project for a team of four members. You need to grant only general permissions for all the resources of the project. You decided to grant a primitive role to each person for different levels of access based on their responsibilities in the project. What is not considered as a primitive role in the Google Cloud console?',
     options: [
       'Viewer',
       'Editor',
@@ -1218,10 +1218,10 @@ export const access: Question[] = [
       'The application performing the read will drop the read operation',
       'The read will not execute as IAM roles and scopes both determine what operations will be performed',
       'The read will succeed because the most permissive permission is allowed',
-      'The read operation will execute, but a message will be sent to the Stackdriver Logging'
+      'The read operation will execute, but a message will be sent to the Cloud Logging'
     ],
     answer: 1,
-    explanation: 'For the default credential flow on a VM, access is granted only when both the service account\'s IAM roles and the instance\'s access scopes allow the call, so a denying scope blocks the read. Google Cloud never picks the most permissive of the two, and there is no partial-execute-and-log behavior.',
+    explanation: 'For the default credential flow on a VM, access is granted only when both the service account\'s IAM roles and the instance\'s access scopes allow the call, so a denying scope blocks the read. Google Cloud never picks the most permissive of the two, and there is no partial-execute-and-log behavior. Current names: Stackdriver → Cloud Logging and Cloud Monitoring.',
     tip: 'Effective VM access is the intersection of access scopes and IAM; Google recommends cloud-platform scope plus least-privilege IAM.'
   },
   {
@@ -1411,7 +1411,7 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your customer is moving their corporate applications to Google Cloud Platform. The security team wants detailed visibility of all projects in the organization. You provision the Google Cloud Resource Manager and set up yourself as the org admin. Which Google Cloud Identity and Access Management (Cloud IAM) roles should you give to the security team?',
+    prompt: 'Your customer is moving their corporate applications to Google Cloud. The security team wants detailed visibility of all projects in the organization. You provision the Google Cloud Resource Manager and set up yourself as the org admin. Which Google Cloud Identity and Access Management (Cloud IAM) roles should you give to the security team?',
     options: [
       'Org viewer, project owner',
       'Org viewer, project viewer',
@@ -1565,7 +1565,7 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Which of the following role provide granular access for a specific service and is managed by GCP?',
+    prompt: 'Which of the following role provide granular access for a specific service and is managed by Google Cloud?',
     options: [
       'Custom',
       'Predefined',
@@ -1581,7 +1581,7 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'Your project team has asked to disabled a custom role editor from the project which might require deletion from your Google Cloud Platform console. The project team will inform you when to perform the deletion of the role. Suggest the correct gcloud command to perform the deletion.',
+    prompt: 'Your project team has asked to disabled a custom role editor from the project which might require deletion from your Google Cloud console. The project team will inform you when to perform the deletion of the role. Suggest the correct gcloud command to perform the deletion.',
     options: [
       'gcloud iam roles disable editor --project-id [project_id]',
       'gcloud iam roles update editor --project-id [project_id] --stage disable',
@@ -1718,15 +1718,15 @@ export const access: Question[] = [
     topic: 'Service accounts',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You need to configure a service account that allows a Google Kubernetes Engine (GKE) cluster to pull container images from a private Google Container Registry (GCR). What is the minimum set of permissions you should assign to this service account?',
+    prompt: 'You need to configure a service account that allows a Google Kubernetes Engine (GKE) cluster to pull container images from a private Artifact Registry repository. What is the minimum role you should assign to this service account?',
     options: [
-      'Assign the "Storage Object Admin" role to the service account to allow full access to the GCR',
-      'Assign the "Storage Admin" role to the service account to manage and pull images from GCR',
-      'Assign the "Storage Object Viewer" role to the service account, which grants read-only access to GCR',
-      'Assign the "Editor" role at the project level to ensure the service account has access to all necessary resources'
+      'Assign the "Artifact Registry Writer" role on the repository to allow pushing and pulling images',
+      'Assign the "Artifact Registry Administrator" role on the repository to manage and pull images',
+      'Assign the "Artifact Registry Reader" role on the repository, which grants read-only access to images',
+      'Assign the "Editor" role at the project level to ensure the service account has access to all resources'
     ],
     answer: 2,
-    explanation: 'Container Registry stored images in Cloud Storage buckets, so pulling only needs Storage Object Viewer, which is read-only. Storage Object Admin and Storage Admin grant write and delete, and Editor is a broad basic role. Container Registry has since been shut down; with Artifact Registry the equivalent is Artifact Registry Reader.'
+    explanation: 'Pulling images only needs Artifact Registry Reader, granted on the repository (or project). Writer can also push, Administrator can delete and manage the repository, and Editor is a broad basic role. With the old Container Registry the equivalent was Storage Object Viewer on its bucket. Current names: Container Registry was shut down in 2025; Artifact Registry replaces it.'
   },
   {
     id: 'ace-604',
@@ -1741,8 +1741,8 @@ export const access: Question[] = [
       'Use the default Kubernetes service account and grant it the "Cloud SQL Admin" role'
     ],
     answer: 2,
-    explanation: 'A dedicated service account with only the Cloud SQL Client role, linked to the workload\'s Kubernetes service account through Workload Identity Federation for GKE, gives the app a secure, least-privilege identity for the Cloud SQL Auth Proxy or connectors. Cloud SQL Admin is far more than connecting needs, and the default Compute Engine service account is shared by everything on the nodes.',
-    tip: 'Give each GKE workload its own Google service account via Workload Identity.'
+    explanation: 'A dedicated service account with only the Cloud SQL Client role, linked to the workload\'s Kubernetes service account through Workload Identity Federation for GKE, gives the app a secure, least-privilege identity for the Cloud SQL Auth Proxy or connectors. Cloud SQL Admin is far more than connecting needs, and the default Compute Engine service account is shared by everything on the nodes. Current names: Workload Identity → Workload Identity Federation for GKE.',
+    tip: 'Give each GKE workload its own Google service account via Workload Identity Federation for GKE.'
   },
   {
     id: 'ace-605',
@@ -1795,15 +1795,15 @@ export const access: Question[] = [
     topic: 'IAM roles & policies',
     difficulty: 'easy',
     verbatim: true,
-    prompt: 'You have a service account that is used by a Cloud Function to access sensitive data stored in BigQuery. Recently, there have been concerns about over-permissioned service accounts. What steps should you take to ensure the service account follows the principle of least privilege?',
+    prompt: 'You have a service account that is used by a Cloud Run function to access sensitive data stored in BigQuery. Recently, there have been concerns about over-permissioned service accounts. What steps should you take to ensure the service account follows the principle of least privilege?',
     options: [
       'Assign the "BigQuery Admin" role to the service account, ensuring it has full control over BigQuery resources',
       'Audit the service account\'s existing permissions, remove any unnecessary roles, and assign only the "BigQuery Data Viewer" role',
-      'Create a new service account with the "BigQuery Data Editor" role and migrate the Cloud Function to use this new service account',
+      'Create a new service account with the "BigQuery Data Editor" role and migrate the Cloud Run function to use this new service account',
       'Apply a custom organization policy to restrict the service account\'s access to sensitive data'
     ],
     answer: 1,
-    explanation: 'Reviewing the account\'s current roles, removing the unneeded ones and granting only BigQuery Data Viewer (plus Job User if it runs queries) fits a function that reads data. BigQuery Admin is the opposite of least privilege, Data Editor adds write access the function does not need, and organization policies constrain resource configuration rather than trimming a principal\'s IAM permissions.'
+    explanation: 'Reviewing the account\'s current roles, removing the unneeded ones and granting only BigQuery Data Viewer (plus Job User if it runs queries) fits a function that reads data. BigQuery Admin is the opposite of least privilege, Data Editor adds write access the function does not need, and organization policies constrain resource configuration rather than trimming a principal\'s IAM permissions. Current names: Cloud Functions → Cloud Run functions.'
   },
   {
     id: 'ace-609',
@@ -1842,7 +1842,7 @@ export const access: Question[] = [
     topic: 'Audit logs, keys & secrets',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'You\'re managing an external review for a fictional company, ByteLens, which develops a photo- sharing application. You need to assign a Cloud Identity and Access Management (Cloud IAM) role to an external auditor. The auditor’s task is to review ByteLens\' Google Cloud Platform (GCP) Audit Logs and also examine the Data Access logs to ensure regulatory compliance. What should you do?',
+    prompt: 'You\'re managing an external review for a fictional company, ByteLens, which develops a photo- sharing application. You need to assign a Cloud Identity and Access Management (Cloud IAM) role to an external auditor. The auditor’s task is to review ByteLens\' Google Cloud (Google Cloud) Audit Logs and also examine the Data Access logs to ensure regulatory compliance. What should you do?',
     options: [
       '- Assign the auditor the IAM role roles/logging.privateLogViewer.\n- Perform the export of logs to Cloud Storage.',
       '- Assign the auditor the IAM role roles/logging.privateLogViewer.\n- Direct the auditor to also review the logs for changes to Cloud IAM policy.',
@@ -1891,13 +1891,13 @@ export const access: Question[] = [
     verbatim: true,
     prompt: 'Your team manages a project for StreamTrack, a company that specializes in delivering real-time analytics for live events. A data pipeline continuously streams event metrics into BigQuery. The analytics team at StreamTrack needs to run custom SQL queries to analyze the most recent data in BigQuery. How should you enable this?',
     options: [
-      '- Create a Data Studio dashboard that connects to the relevant BigQuery tables.\n- Provide the analytics team with view access to the Data Studio dashboard.',
+      '- Create a Looker Studio dashboard that connects to the relevant BigQuery tables.\n- Provide the analytics team with view access to the Looker Studio dashboard.',
       '- Create a Service Account specifically for the analytics team\n- Generate a new private key for each member of the team.',
       'Use Cloud Scheduler to schedule a batch Dataflow job to transfer the data from BigQuery to the analytics team’s internal data warehouse.',
       'Assign the IAM role of BigQuery User to a Google Group that includes all the members of the analytics team.'
     ],
     answer: 3,
-    explanation: 'Granting BigQuery User to a Google group lets each analyst run their own queries, including against the newest streamed data, and access is managed in one place. A Looker Studio dashboard does not let them write custom SQL. Sharing a service account key per person is insecure, and copying data out with a batch Dataflow job loses the most recent data.'
+    explanation: 'Granting BigQuery User to a Google group lets each analyst run their own queries, including against the newest streamed data, and access is managed in one place. A Looker Studio dashboard does not let them write custom SQL. Sharing a service account key per person is insecure, and copying data out with a batch Dataflow job loses the most recent data. Current names: Data Studio → Looker Studio.'
   },
   {
     id: 'ace-640',
