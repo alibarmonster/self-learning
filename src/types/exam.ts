@@ -53,6 +53,8 @@ export interface PaperSet {
   minutes?: number;
   /** A line under the name, e.g. what the set covers. */
   note?: string;
+  /** Heading the set is listed under on the home page, e.g. a course module. */
+  group?: string;
 }
 
 export interface ExamHome {

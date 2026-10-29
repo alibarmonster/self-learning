@@ -79,7 +79,12 @@
   const hits = $derived(
     Array.isArray(selected) ? selected.filter((i) => isAnswerOption(question, i)).length : 0
   );
+
+  /** Splits text on `code` spans: odd parts are code. Plain text, never HTML. */
+  const spans = (text: string) => text.split(/`([^`\n]+)`/);
 </script>
+
+{#snippet rich(text: string)}{#each spans(text) as part, k (k)}{#if k % 2}<code class="ic">{part}</code>{:else}{part}{/if}{/each}{/snippet}
 
 <article class="q">
   <div class="meta">
@@ -91,7 +96,7 @@
     <span class="chip difficulty {question.difficulty}">{question.difficulty}</span>
   </div>
 
-  <h2 class="prompt" class:long={question.prompt.length > 280}>{question.prompt}</h2>
+  <h2 class="prompt" class:long={question.prompt.length > 280}>{@render rich(question.prompt)}</h2>
 
   {#if multi}
     <p class="pick-note" class:done={!reveal && chosenCount === need}>
@@ -148,7 +153,7 @@
             onclick={() => onselect?.(i)}
           >
             <span class="letter">{LETTERS[i]}</span>
-            <span class="text">{option}</span>
+            <span class="text">{@render rich(option)}</span>
             {#if shown && isAnswerOption(question, i)}
               <span class="tag correct-tag">Correct</span>
             {:else if shown && isChosen(selected, i)}
@@ -216,9 +221,9 @@
         <p class="discussion-head">
           <span class="eyebrow">Explanation</span>
         </p>
-        <p>{question.explanation}</p>
+        <p>{@render rich(question.explanation)}</p>
         {#if question.tip}
-          <p class="tip"><span class="tip-label">Tip</span>{question.tip}</p>
+          <p class="tip"><span class="tip-label">Tip</span>{@render rich(question.tip)}</p>
         {/if}
       </div>
     </div>
@@ -289,6 +294,16 @@
     line-height: 1.35;
     white-space: pre-line;
     letter-spacing: -0.3px;
+  }
+
+  /* `code` in prompts, options and explanations: commands, flags, field names. */
+  .ic {
+    font-family: var(--font-mono);
+    font-size: 0.84em;
+    letter-spacing: 0;
+    padding: 1px 4px;
+    background: var(--bg-sunken);
+    overflow-wrap: anywhere;
   }
 
   /* Scenario-style stems run to several sentences; set them a size down so the

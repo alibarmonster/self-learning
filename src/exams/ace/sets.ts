@@ -4,7 +4,9 @@
  * scripts/tools/make-sets.ts (seed 2026); this file is now the source, so the
  * sets stay the same when the bank is edited.
  *
- * The four Tryout sets come first: 200 questions written for the course modules
+ * The module try-outs come first: the six modules of the course syllabus (ACE-2-01),
+ * 100 questions each in questions/module1-6.ts, dealt into five sets of 20 timed at
+ * 24 minutes (the tryout's pace). Then the four Tryout sets: 200 questions written for the course modules
  * (questions/tryout*.ts), 50 per set, every set mixing all four sections, on the
  * tryout's own clock of 60 minutes. Tryout 1 is questions/tryout.ts; Tryout 2–4
  * deal the other 150 out section by section, so each gets an even share.
@@ -13,8 +15,219 @@ import type { PaperSet } from '@/types';
 
 export const sets: PaperSet[] = [
   {
+    id: 'm1-set-1',
+    name: 'M1 · Set 1',
+    group: 'Module 1 · Cloud Foundations & Environment Setup',
+    minutes: 24,
+    questionIds: ['ace-m1-001', 'ace-m1-006', 'ace-m1-011', 'ace-m1-016', 'ace-m1-021', 'ace-m1-026', 'ace-m1-031', 'ace-m1-036', 'ace-m1-041', 'ace-m1-046', 'ace-m1-051', 'ace-m1-056', 'ace-m1-061', 'ace-m1-066', 'ace-m1-071', 'ace-m1-076', 'ace-m1-081', 'ace-m1-086', 'ace-m1-091', 'ace-m1-096']
+  },
+  {
+    id: 'm1-set-2',
+    name: 'M1 · Set 2',
+    group: 'Module 1 · Cloud Foundations & Environment Setup',
+    minutes: 24,
+    questionIds: ['ace-m1-002', 'ace-m1-007', 'ace-m1-012', 'ace-m1-017', 'ace-m1-022', 'ace-m1-027', 'ace-m1-032', 'ace-m1-037', 'ace-m1-042', 'ace-m1-047', 'ace-m1-052', 'ace-m1-057', 'ace-m1-062', 'ace-m1-067', 'ace-m1-072', 'ace-m1-077', 'ace-m1-082', 'ace-m1-087', 'ace-m1-092', 'ace-m1-097']
+  },
+  {
+    id: 'm1-set-3',
+    name: 'M1 · Set 3',
+    group: 'Module 1 · Cloud Foundations & Environment Setup',
+    minutes: 24,
+    questionIds: ['ace-m1-003', 'ace-m1-008', 'ace-m1-013', 'ace-m1-018', 'ace-m1-023', 'ace-m1-028', 'ace-m1-033', 'ace-m1-038', 'ace-m1-043', 'ace-m1-048', 'ace-m1-053', 'ace-m1-058', 'ace-m1-063', 'ace-m1-068', 'ace-m1-073', 'ace-m1-078', 'ace-m1-083', 'ace-m1-088', 'ace-m1-093', 'ace-m1-098']
+  },
+  {
+    id: 'm1-set-4',
+    name: 'M1 · Set 4',
+    group: 'Module 1 · Cloud Foundations & Environment Setup',
+    minutes: 24,
+    questionIds: ['ace-m1-004', 'ace-m1-009', 'ace-m1-014', 'ace-m1-019', 'ace-m1-024', 'ace-m1-029', 'ace-m1-034', 'ace-m1-039', 'ace-m1-044', 'ace-m1-049', 'ace-m1-054', 'ace-m1-059', 'ace-m1-064', 'ace-m1-069', 'ace-m1-074', 'ace-m1-079', 'ace-m1-084', 'ace-m1-089', 'ace-m1-094', 'ace-m1-099']
+  },
+  {
+    id: 'm1-set-5',
+    name: 'M1 · Set 5',
+    group: 'Module 1 · Cloud Foundations & Environment Setup',
+    minutes: 24,
+    questionIds: ['ace-m1-005', 'ace-m1-010', 'ace-m1-015', 'ace-m1-020', 'ace-m1-025', 'ace-m1-030', 'ace-m1-035', 'ace-m1-040', 'ace-m1-045', 'ace-m1-050', 'ace-m1-055', 'ace-m1-060', 'ace-m1-065', 'ace-m1-070', 'ace-m1-075', 'ace-m1-080', 'ace-m1-085', 'ace-m1-090', 'ace-m1-095', 'ace-m1-100']
+  },
+  {
+    id: 'm2-set-1',
+    name: 'M2 · Set 1',
+    group: 'Module 2 · Compute Services',
+    minutes: 24,
+    questionIds: ['ace-m2-001', 'ace-m2-006', 'ace-m2-011', 'ace-m2-016', 'ace-m2-021', 'ace-m2-026', 'ace-m2-031', 'ace-m2-036', 'ace-m2-041', 'ace-m2-046', 'ace-m2-051', 'ace-m2-056', 'ace-m2-061', 'ace-m2-066', 'ace-m2-071', 'ace-m2-076', 'ace-m2-081', 'ace-m2-086', 'ace-m2-091', 'ace-m2-096']
+  },
+  {
+    id: 'm2-set-2',
+    name: 'M2 · Set 2',
+    group: 'Module 2 · Compute Services',
+    minutes: 24,
+    questionIds: ['ace-m2-002', 'ace-m2-007', 'ace-m2-012', 'ace-m2-017', 'ace-m2-022', 'ace-m2-027', 'ace-m2-032', 'ace-m2-037', 'ace-m2-042', 'ace-m2-047', 'ace-m2-052', 'ace-m2-057', 'ace-m2-062', 'ace-m2-067', 'ace-m2-072', 'ace-m2-077', 'ace-m2-082', 'ace-m2-087', 'ace-m2-092', 'ace-m2-097']
+  },
+  {
+    id: 'm2-set-3',
+    name: 'M2 · Set 3',
+    group: 'Module 2 · Compute Services',
+    minutes: 24,
+    questionIds: ['ace-m2-003', 'ace-m2-008', 'ace-m2-013', 'ace-m2-018', 'ace-m2-023', 'ace-m2-028', 'ace-m2-033', 'ace-m2-038', 'ace-m2-043', 'ace-m2-048', 'ace-m2-053', 'ace-m2-058', 'ace-m2-063', 'ace-m2-068', 'ace-m2-073', 'ace-m2-078', 'ace-m2-083', 'ace-m2-088', 'ace-m2-093', 'ace-m2-098']
+  },
+  {
+    id: 'm2-set-4',
+    name: 'M2 · Set 4',
+    group: 'Module 2 · Compute Services',
+    minutes: 24,
+    questionIds: ['ace-m2-004', 'ace-m2-009', 'ace-m2-014', 'ace-m2-019', 'ace-m2-024', 'ace-m2-029', 'ace-m2-034', 'ace-m2-039', 'ace-m2-044', 'ace-m2-049', 'ace-m2-054', 'ace-m2-059', 'ace-m2-064', 'ace-m2-069', 'ace-m2-074', 'ace-m2-079', 'ace-m2-084', 'ace-m2-089', 'ace-m2-094', 'ace-m2-099']
+  },
+  {
+    id: 'm2-set-5',
+    name: 'M2 · Set 5',
+    group: 'Module 2 · Compute Services',
+    minutes: 24,
+    questionIds: ['ace-m2-005', 'ace-m2-010', 'ace-m2-015', 'ace-m2-020', 'ace-m2-025', 'ace-m2-030', 'ace-m2-035', 'ace-m2-040', 'ace-m2-045', 'ace-m2-050', 'ace-m2-055', 'ace-m2-060', 'ace-m2-065', 'ace-m2-070', 'ace-m2-075', 'ace-m2-080', 'ace-m2-085', 'ace-m2-090', 'ace-m2-095', 'ace-m2-100']
+  },
+  {
+    id: 'm3-set-1',
+    name: 'M3 · Set 1',
+    group: 'Module 3 · Storage & Data Solutions',
+    minutes: 24,
+    questionIds: ['ace-m3-001', 'ace-m3-006', 'ace-m3-011', 'ace-m3-016', 'ace-m3-021', 'ace-m3-026', 'ace-m3-031', 'ace-m3-036', 'ace-m3-041', 'ace-m3-046', 'ace-m3-051', 'ace-m3-056', 'ace-m3-061', 'ace-m3-066', 'ace-m3-071', 'ace-m3-076', 'ace-m3-081', 'ace-m3-086', 'ace-m3-091', 'ace-m3-096']
+  },
+  {
+    id: 'm3-set-2',
+    name: 'M3 · Set 2',
+    group: 'Module 3 · Storage & Data Solutions',
+    minutes: 24,
+    questionIds: ['ace-m3-002', 'ace-m3-007', 'ace-m3-012', 'ace-m3-017', 'ace-m3-022', 'ace-m3-027', 'ace-m3-032', 'ace-m3-037', 'ace-m3-042', 'ace-m3-047', 'ace-m3-052', 'ace-m3-057', 'ace-m3-062', 'ace-m3-067', 'ace-m3-072', 'ace-m3-077', 'ace-m3-082', 'ace-m3-087', 'ace-m3-092', 'ace-m3-097']
+  },
+  {
+    id: 'm3-set-3',
+    name: 'M3 · Set 3',
+    group: 'Module 3 · Storage & Data Solutions',
+    minutes: 24,
+    questionIds: ['ace-m3-003', 'ace-m3-008', 'ace-m3-013', 'ace-m3-018', 'ace-m3-023', 'ace-m3-028', 'ace-m3-033', 'ace-m3-038', 'ace-m3-043', 'ace-m3-048', 'ace-m3-053', 'ace-m3-058', 'ace-m3-063', 'ace-m3-068', 'ace-m3-073', 'ace-m3-078', 'ace-m3-083', 'ace-m3-088', 'ace-m3-093', 'ace-m3-098']
+  },
+  {
+    id: 'm3-set-4',
+    name: 'M3 · Set 4',
+    group: 'Module 3 · Storage & Data Solutions',
+    minutes: 24,
+    questionIds: ['ace-m3-004', 'ace-m3-009', 'ace-m3-014', 'ace-m3-019', 'ace-m3-024', 'ace-m3-029', 'ace-m3-034', 'ace-m3-039', 'ace-m3-044', 'ace-m3-049', 'ace-m3-054', 'ace-m3-059', 'ace-m3-064', 'ace-m3-069', 'ace-m3-074', 'ace-m3-079', 'ace-m3-084', 'ace-m3-089', 'ace-m3-094', 'ace-m3-099']
+  },
+  {
+    id: 'm3-set-5',
+    name: 'M3 · Set 5',
+    group: 'Module 3 · Storage & Data Solutions',
+    minutes: 24,
+    questionIds: ['ace-m3-005', 'ace-m3-010', 'ace-m3-015', 'ace-m3-020', 'ace-m3-025', 'ace-m3-030', 'ace-m3-035', 'ace-m3-040', 'ace-m3-045', 'ace-m3-050', 'ace-m3-055', 'ace-m3-060', 'ace-m3-065', 'ace-m3-070', 'ace-m3-075', 'ace-m3-080', 'ace-m3-085', 'ace-m3-090', 'ace-m3-095', 'ace-m3-100']
+  },
+  {
+    id: 'm4-set-1',
+    name: 'M4 · Set 1',
+    group: 'Module 4 · Cloud Networking',
+    minutes: 24,
+    questionIds: ['ace-m4-001', 'ace-m4-006', 'ace-m4-011', 'ace-m4-016', 'ace-m4-021', 'ace-m4-026', 'ace-m4-031', 'ace-m4-036', 'ace-m4-041', 'ace-m4-046', 'ace-m4-051', 'ace-m4-056', 'ace-m4-061', 'ace-m4-066', 'ace-m4-071', 'ace-m4-076', 'ace-m4-081', 'ace-m4-086', 'ace-m4-091', 'ace-m4-096']
+  },
+  {
+    id: 'm4-set-2',
+    name: 'M4 · Set 2',
+    group: 'Module 4 · Cloud Networking',
+    minutes: 24,
+    questionIds: ['ace-m4-002', 'ace-m4-007', 'ace-m4-012', 'ace-m4-017', 'ace-m4-022', 'ace-m4-027', 'ace-m4-032', 'ace-m4-037', 'ace-m4-042', 'ace-m4-047', 'ace-m4-052', 'ace-m4-057', 'ace-m4-062', 'ace-m4-067', 'ace-m4-072', 'ace-m4-077', 'ace-m4-082', 'ace-m4-087', 'ace-m4-092', 'ace-m4-097']
+  },
+  {
+    id: 'm4-set-3',
+    name: 'M4 · Set 3',
+    group: 'Module 4 · Cloud Networking',
+    minutes: 24,
+    questionIds: ['ace-m4-003', 'ace-m4-008', 'ace-m4-013', 'ace-m4-018', 'ace-m4-023', 'ace-m4-028', 'ace-m4-033', 'ace-m4-038', 'ace-m4-043', 'ace-m4-048', 'ace-m4-053', 'ace-m4-058', 'ace-m4-063', 'ace-m4-068', 'ace-m4-073', 'ace-m4-078', 'ace-m4-083', 'ace-m4-088', 'ace-m4-093', 'ace-m4-098']
+  },
+  {
+    id: 'm4-set-4',
+    name: 'M4 · Set 4',
+    group: 'Module 4 · Cloud Networking',
+    minutes: 24,
+    questionIds: ['ace-m4-004', 'ace-m4-009', 'ace-m4-014', 'ace-m4-019', 'ace-m4-024', 'ace-m4-029', 'ace-m4-034', 'ace-m4-039', 'ace-m4-044', 'ace-m4-049', 'ace-m4-054', 'ace-m4-059', 'ace-m4-064', 'ace-m4-069', 'ace-m4-074', 'ace-m4-079', 'ace-m4-084', 'ace-m4-089', 'ace-m4-094', 'ace-m4-099']
+  },
+  {
+    id: 'm4-set-5',
+    name: 'M4 · Set 5',
+    group: 'Module 4 · Cloud Networking',
+    minutes: 24,
+    questionIds: ['ace-m4-005', 'ace-m4-010', 'ace-m4-015', 'ace-m4-020', 'ace-m4-025', 'ace-m4-030', 'ace-m4-035', 'ace-m4-040', 'ace-m4-045', 'ace-m4-050', 'ace-m4-055', 'ace-m4-060', 'ace-m4-065', 'ace-m4-070', 'ace-m4-075', 'ace-m4-080', 'ace-m4-085', 'ace-m4-090', 'ace-m4-095', 'ace-m4-100']
+  },
+  {
+    id: 'm5-set-1',
+    name: 'M5 · Set 1',
+    group: 'Module 5 · Operations, Observability & IaC',
+    minutes: 24,
+    questionIds: ['ace-m5-001', 'ace-m5-006', 'ace-m5-011', 'ace-m5-016', 'ace-m5-021', 'ace-m5-026', 'ace-m5-031', 'ace-m5-036', 'ace-m5-041', 'ace-m5-046', 'ace-m5-051', 'ace-m5-056', 'ace-m5-061', 'ace-m5-066', 'ace-m5-071', 'ace-m5-076', 'ace-m5-081', 'ace-m5-086', 'ace-m5-091', 'ace-m5-096']
+  },
+  {
+    id: 'm5-set-2',
+    name: 'M5 · Set 2',
+    group: 'Module 5 · Operations, Observability & IaC',
+    minutes: 24,
+    questionIds: ['ace-m5-002', 'ace-m5-007', 'ace-m5-012', 'ace-m5-017', 'ace-m5-022', 'ace-m5-027', 'ace-m5-032', 'ace-m5-037', 'ace-m5-042', 'ace-m5-047', 'ace-m5-052', 'ace-m5-057', 'ace-m5-062', 'ace-m5-067', 'ace-m5-072', 'ace-m5-077', 'ace-m5-082', 'ace-m5-087', 'ace-m5-092', 'ace-m5-097']
+  },
+  {
+    id: 'm5-set-3',
+    name: 'M5 · Set 3',
+    group: 'Module 5 · Operations, Observability & IaC',
+    minutes: 24,
+    questionIds: ['ace-m5-003', 'ace-m5-008', 'ace-m5-013', 'ace-m5-018', 'ace-m5-023', 'ace-m5-028', 'ace-m5-033', 'ace-m5-038', 'ace-m5-043', 'ace-m5-048', 'ace-m5-053', 'ace-m5-058', 'ace-m5-063', 'ace-m5-068', 'ace-m5-073', 'ace-m5-078', 'ace-m5-083', 'ace-m5-088', 'ace-m5-093', 'ace-m5-098']
+  },
+  {
+    id: 'm5-set-4',
+    name: 'M5 · Set 4',
+    group: 'Module 5 · Operations, Observability & IaC',
+    minutes: 24,
+    questionIds: ['ace-m5-004', 'ace-m5-009', 'ace-m5-014', 'ace-m5-019', 'ace-m5-024', 'ace-m5-029', 'ace-m5-034', 'ace-m5-039', 'ace-m5-044', 'ace-m5-049', 'ace-m5-054', 'ace-m5-059', 'ace-m5-064', 'ace-m5-069', 'ace-m5-074', 'ace-m5-079', 'ace-m5-084', 'ace-m5-089', 'ace-m5-094', 'ace-m5-099']
+  },
+  {
+    id: 'm5-set-5',
+    name: 'M5 · Set 5',
+    group: 'Module 5 · Operations, Observability & IaC',
+    minutes: 24,
+    questionIds: ['ace-m5-005', 'ace-m5-010', 'ace-m5-015', 'ace-m5-020', 'ace-m5-025', 'ace-m5-030', 'ace-m5-035', 'ace-m5-040', 'ace-m5-045', 'ace-m5-050', 'ace-m5-055', 'ace-m5-060', 'ace-m5-065', 'ace-m5-070', 'ace-m5-075', 'ace-m5-080', 'ace-m5-085', 'ace-m5-090', 'ace-m5-095', 'ace-m5-100']
+  },
+  {
+    id: 'm6-set-1',
+    name: 'M6 · Set 1',
+    group: 'Module 6 · Security & Full-Blueprint Mini Mock',
+    minutes: 24,
+    questionIds: ['ace-m6-001', 'ace-m6-006', 'ace-m6-011', 'ace-m6-016', 'ace-m6-021', 'ace-m6-026', 'ace-m6-031', 'ace-m6-036', 'ace-m6-041', 'ace-m6-046', 'ace-m6-051', 'ace-m6-056', 'ace-m6-061', 'ace-m6-066', 'ace-m6-071', 'ace-m6-076', 'ace-m6-081', 'ace-m6-086', 'ace-m6-091', 'ace-m6-096']
+  },
+  {
+    id: 'm6-set-2',
+    name: 'M6 · Set 2',
+    group: 'Module 6 · Security & Full-Blueprint Mini Mock',
+    minutes: 24,
+    questionIds: ['ace-m6-002', 'ace-m6-007', 'ace-m6-012', 'ace-m6-017', 'ace-m6-022', 'ace-m6-027', 'ace-m6-032', 'ace-m6-037', 'ace-m6-042', 'ace-m6-047', 'ace-m6-052', 'ace-m6-057', 'ace-m6-062', 'ace-m6-067', 'ace-m6-072', 'ace-m6-077', 'ace-m6-082', 'ace-m6-087', 'ace-m6-092', 'ace-m6-097']
+  },
+  {
+    id: 'm6-set-3',
+    name: 'M6 · Set 3',
+    group: 'Module 6 · Security & Full-Blueprint Mini Mock',
+    minutes: 24,
+    questionIds: ['ace-m6-003', 'ace-m6-008', 'ace-m6-013', 'ace-m6-018', 'ace-m6-023', 'ace-m6-028', 'ace-m6-033', 'ace-m6-038', 'ace-m6-043', 'ace-m6-048', 'ace-m6-053', 'ace-m6-058', 'ace-m6-063', 'ace-m6-068', 'ace-m6-073', 'ace-m6-078', 'ace-m6-083', 'ace-m6-088', 'ace-m6-093', 'ace-m6-098']
+  },
+  {
+    id: 'm6-set-4',
+    name: 'M6 · Set 4',
+    group: 'Module 6 · Security & Full-Blueprint Mini Mock',
+    minutes: 24,
+    questionIds: ['ace-m6-004', 'ace-m6-009', 'ace-m6-014', 'ace-m6-019', 'ace-m6-024', 'ace-m6-029', 'ace-m6-034', 'ace-m6-039', 'ace-m6-044', 'ace-m6-049', 'ace-m6-054', 'ace-m6-059', 'ace-m6-064', 'ace-m6-069', 'ace-m6-074', 'ace-m6-079', 'ace-m6-084', 'ace-m6-089', 'ace-m6-094', 'ace-m6-099']
+  },
+  {
+    id: 'm6-set-5',
+    name: 'M6 · Set 5',
+    group: 'Module 6 · Security & Full-Blueprint Mini Mock',
+    minutes: 24,
+    questionIds: ['ace-m6-005', 'ace-m6-010', 'ace-m6-015', 'ace-m6-020', 'ace-m6-025', 'ace-m6-030', 'ace-m6-035', 'ace-m6-040', 'ace-m6-045', 'ace-m6-050', 'ace-m6-055', 'ace-m6-060', 'ace-m6-065', 'ace-m6-070', 'ace-m6-075', 'ace-m6-080', 'ace-m6-085', 'ace-m6-090', 'ace-m6-095', 'ace-m6-100']
+  },
+  {
     id: 'tryout-1',
     name: 'Tryout 1',
+    group: 'Tryout · MD1–MD2',
     note: 'Modules MD1–MD2 · 60 min',
     minutes: 60,
     questionIds: ['ace-t01', 'ace-t02', 'ace-t03', 'ace-t04', 'ace-t05', 'ace-t06', 'ace-t07', 'ace-t08', 'ace-t09', 'ace-t10', 'ace-t11', 'ace-t12', 'ace-t13', 'ace-t14', 'ace-t15', 'ace-t16', 'ace-t17', 'ace-t18', 'ace-t19', 'ace-t20', 'ace-t21', 'ace-t22', 'ace-t23', 'ace-t24', 'ace-t25', 'ace-t26', 'ace-t27', 'ace-t28', 'ace-t29', 'ace-t30', 'ace-t31', 'ace-t32', 'ace-t33', 'ace-t34', 'ace-t35', 'ace-t36', 'ace-t37', 'ace-t38', 'ace-t39', 'ace-t40', 'ace-t41', 'ace-t42', 'ace-t43', 'ace-t44', 'ace-t45', 'ace-t46', 'ace-t47', 'ace-t48', 'ace-t49', 'ace-t50']
@@ -22,6 +235,7 @@ export const sets: PaperSet[] = [
   {
     id: 'tryout-2',
     name: 'Tryout 2',
+    group: 'Tryout · MD1–MD2',
     note: 'Modules MD1–MD2 · 60 min',
     minutes: 60,
     questionIds: ['ace-t51', 'ace-t54', 'ace-t57', 'ace-t60', 'ace-t63', 'ace-t66', 'ace-t69', 'ace-t72', 'ace-t75', 'ace-t78', 'ace-t81', 'ace-t84', 'ace-t87', 'ace-t90', 'ace-t93', 'ace-t96', 'ace-t99', 'ace-t102', 'ace-t105', 'ace-t108', 'ace-t111', 'ace-t114', 'ace-t117', 'ace-t120', 'ace-t123', 'ace-t126', 'ace-t129', 'ace-t132', 'ace-t135', 'ace-t138', 'ace-t141', 'ace-t144', 'ace-t147', 'ace-t150', 'ace-t153', 'ace-t156', 'ace-t159', 'ace-t162', 'ace-t165', 'ace-t168', 'ace-t171', 'ace-t174', 'ace-t177', 'ace-t180', 'ace-t183', 'ace-t186', 'ace-t189', 'ace-t192', 'ace-t195', 'ace-t198']
@@ -29,6 +243,7 @@ export const sets: PaperSet[] = [
   {
     id: 'tryout-3',
     name: 'Tryout 3',
+    group: 'Tryout · MD1–MD2',
     note: 'Modules MD1–MD2 · 60 min',
     minutes: 60,
     questionIds: ['ace-t52', 'ace-t55', 'ace-t58', 'ace-t61', 'ace-t64', 'ace-t67', 'ace-t70', 'ace-t73', 'ace-t76', 'ace-t79', 'ace-t82', 'ace-t85', 'ace-t88', 'ace-t91', 'ace-t94', 'ace-t97', 'ace-t100', 'ace-t103', 'ace-t106', 'ace-t109', 'ace-t112', 'ace-t115', 'ace-t118', 'ace-t121', 'ace-t124', 'ace-t127', 'ace-t130', 'ace-t133', 'ace-t136', 'ace-t139', 'ace-t142', 'ace-t145', 'ace-t148', 'ace-t151', 'ace-t154', 'ace-t157', 'ace-t160', 'ace-t163', 'ace-t166', 'ace-t169', 'ace-t172', 'ace-t175', 'ace-t178', 'ace-t181', 'ace-t184', 'ace-t187', 'ace-t190', 'ace-t193', 'ace-t196', 'ace-t199']
@@ -36,6 +251,7 @@ export const sets: PaperSet[] = [
   {
     id: 'tryout-4',
     name: 'Tryout 4',
+    group: 'Tryout · MD1–MD2',
     note: 'Modules MD1–MD2 · 60 min',
     minutes: 60,
     questionIds: ['ace-t53', 'ace-t56', 'ace-t59', 'ace-t62', 'ace-t65', 'ace-t68', 'ace-t71', 'ace-t74', 'ace-t77', 'ace-t80', 'ace-t83', 'ace-t86', 'ace-t89', 'ace-t92', 'ace-t95', 'ace-t98', 'ace-t101', 'ace-t104', 'ace-t107', 'ace-t110', 'ace-t113', 'ace-t116', 'ace-t119', 'ace-t122', 'ace-t125', 'ace-t128', 'ace-t131', 'ace-t134', 'ace-t137', 'ace-t140', 'ace-t143', 'ace-t146', 'ace-t149', 'ace-t152', 'ace-t155', 'ace-t158', 'ace-t161', 'ace-t164', 'ace-t167', 'ace-t170', 'ace-t173', 'ace-t176', 'ace-t179', 'ace-t182', 'ace-t185', 'ace-t188', 'ace-t191', 'ace-t194', 'ace-t197', 'ace-t200']

@@ -3,7 +3,7 @@
   import { REVIEWABLE_ATTEMPTS } from '@/state/storage';
   import { formatDate, formatDuration } from '@/utils/format';
   import { modeQuestionLabel, blueprintLabel } from '@/core';
-  import type { Section } from '@/types';
+  import type { PaperSet, Section } from '@/types';
 
   const exam = $derived(quiz.activeExam);
 
@@ -39,6 +39,20 @@
 
   const setMinutes = (count: number) => Math.round(count * (exam.setMinutesPerQuestion ?? 2.4));
   const setsDone = $derived(exam.sets.filter((s) => setStats[s.id]).length);
+
+  /** Sets under their group headings, in the order the exam lists them; ungrouped sets come last. */
+  const BANK_GROUP = 'Community bank';
+  const setGroups = $derived.by(() => {
+    const groups: { name: string; sets: PaperSet[] }[] = [];
+    for (const set of exam.sets) {
+      const name = set.group ?? BANK_GROUP;
+      let group = groups.find((g) => g.name === name);
+      if (!group) groups.push((group = { name, sets: [] }));
+      group.sets.push(set);
+    }
+    return groups;
+  });
+  const grouped = $derived(exam.sets.some((s) => s.group));
 
   // Drills follow the paper's own parts when it has them, with everything the
   // paper does not ask collected under one clearly-labelled extra group. An
@@ -182,39 +196,57 @@
       <header class="block-head">
         <h2><span class="num">{blockNo.sets}</span>Practice sets</h2>
         <p>
-          The whole bank, split into fixed sets of {exam.sets[0].questionIds.length}. A set always holds
-          the same questions — mixed across every section, never in bank order — but they come in a new
-          order each sitting. Work through them one by one; {setsDone} of {exam.sets.length} sat so far.
+          Fixed papers: a set always holds the same questions — mixed across the sections it covers,
+          never in bank order — but they come in a new order, with the options reshuffled, each sitting.
+          {#if grouped}Sets are grouped by where they come from.{/if}
+          Work through them one by one; {setsDone} of {exam.sets.length} sat so far.
         </p>
       </header>
 
-      <div class="sets">
-        {#each exam.sets as set (set.id)}
-          {@const stat = setStats[set.id]}
-          {@const count = set.questionIds.length}
-          {@const minutes = set.minutes ?? setMinutes(count)}
-          <article class="set card" class:done={stat && stat.best >= 70}>
-            <div class="set-head">
-              <h3>{set.name}</h3>
-              <span class="mono">{count} q</span>
+      {#snippet setCard(set: PaperSet)}
+        {@const stat = setStats[set.id]}
+        {@const count = set.questionIds.length}
+        {@const minutes = set.minutes ?? setMinutes(count)}
+        <article class="set card" class:done={stat && stat.best >= 70}>
+          <div class="set-head">
+            <h4>{set.name}</h4>
+            <span class="mono">{count} q</span>
+          </div>
+          {#if set.note}<p class="set-note">{set.note}</p>{/if}
+          <p class="set-meta">
+            {#if stat}
+              Best <strong>{stat.best}%</strong> · sat {stat.sat}×
+            {:else}
+              Not sat yet
+            {/if}
+          </p>
+          <div class="set-actions">
+            <button class="btn btn-primary sm" onclick={() => quiz.startSet(set.id, minutes)}>
+              Timed · {minutes} min
+            </button>
+            <button class="btn btn-ghost sm" onclick={() => quiz.startSet(set.id, 0)}>Study</button>
+          </div>
+        </article>
+      {/snippet}
+
+      {#if grouped}
+        {#each setGroups as group (group.name)}
+          {@const sat = group.sets.filter((s) => setStats[s.id]).length}
+          <details class="set-group" open={group.name !== BANK_GROUP}>
+            <summary>
+              <h3>{group.name}</h3>
+              <span class="mono">{group.sets.length} sets · {sat} sat</span>
+            </summary>
+            <div class="sets">
+              {#each group.sets as set (set.id)}{@render setCard(set)}{/each}
             </div>
-            {#if set.note}<p class="set-note">{set.note}</p>{/if}
-            <p class="set-meta">
-              {#if stat}
-                Best <strong>{stat.best}%</strong> · sat {stat.sat}×
-              {:else}
-                Not sat yet
-              {/if}
-            </p>
-            <div class="set-actions">
-              <button class="btn btn-primary sm" onclick={() => quiz.startSet(set.id, minutes)}>
-                Timed · {minutes} min
-              </button>
-              <button class="btn btn-ghost sm" onclick={() => quiz.startSet(set.id, 0)}>Study</button>
-            </div>
-          </article>
+          </details>
         {/each}
-      </div>
+      {:else}
+        <div class="sets">
+          {#each exam.sets as set (set.id)}{@render setCard(set)}{/each}
+        </div>
+      {/if}
     </section>
   {/if}
 
@@ -833,8 +865,51 @@
     gap: 8px;
   }
 
-  .set-head h3 {
+  .set-head h4 {
     font-size: var(--type-h4);
+  }
+
+  /* Groups of sets — the course modules, the tryouts, the community bank. */
+  .set-group + .set-group {
+    margin-top: 24px;
+  }
+
+  .set-group summary {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .set-group summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .set-group summary h3 {
+    font-size: var(--type-h4);
+  }
+
+  .set-group summary h3::before {
+    content: '▸';
+    display: inline-block;
+    width: 1.1em;
+    color: var(--text-tertiary);
+    transition: transform var(--dur-micro) var(--ease);
+  }
+
+  .set-group[open] summary h3::before {
+    transform: rotate(90deg);
+  }
+
+  .set-group summary .mono {
+    flex-shrink: 0;
+    color: var(--text-tertiary);
+    font-size: var(--type-label);
   }
 
   .set-head .mono {
