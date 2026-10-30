@@ -516,12 +516,12 @@ export const community: Question[] = [
     prompt: 'Your organization needs to analyze data in order to gather insights into its daily operations. You only want to pay for the data you store and the queries you perform. Which Google Cloud product should your organization choose for its data analytics warehouse?',
     options: [
       'Cloud SQL',
-      'Dataproc',
+      'Managed Service for Apache Spark',
       'Spanner',
       'BigQuery',
     ],
     answer: 3,
-    explanation: 'BigQuery separates storage from compute and bills for bytes stored and bytes processed, matching the pay-for-what-you-store-and-query requirement. Cloud SQL, Spanner and Dataproc bill for provisioned capacity.',
+    explanation: 'BigQuery separates storage from compute and bills for bytes stored and bytes processed, matching the pay-for-what-you-store-and-query requirement. Cloud SQL and Spanner bill for provisioned capacity, and Managed Service for Apache Spark is a Spark processing service, not a warehouse. Current names: Dataproc → Managed Service for Apache Spark.',
     votes: [{ pick: [3], pct: 100 }]
   },
   {
@@ -894,12 +894,12 @@ export const community: Question[] = [
     prompt: 'Your organization needs to process large amounts of data from an online application that operates continuously. You do not want to be required to provision infrastructure or create server clusters. What should your organization choose?',
     options: [
       'Compute Engine with BigQuery',
-      'Dataproc',
+      'Managed Service for Apache Spark',
       'Google Kubernetes Engine with Bigtable',
       'Dataflow',
     ],
     answer: 3,
-    explanation: 'Continuous processing of large data volumes with no servers or clusters to provision is Dataflow. Dataproc and GKE mean managing clusters.'
+    explanation: 'Continuous processing of large data volumes with no servers or clusters to provision is Dataflow. Managed Service for Apache Spark is built around Spark clusters (its serverless mode runs batch jobs), and GKE means managing clusters. Current names: Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'et-057',
@@ -2348,13 +2348,13 @@ export const community: Question[] = [
     verbatim: true,
     prompt: 'An organization needs a platform to create custom end-to-end artificial intelligence models. Which Google Cloud product or service should the organization use?',
     options: [
-      'Dataproc',
+      'Managed Service for Apache Spark',
       'Compute Engine',
       'Recommendations AI',
       'Gemini Enterprise Agent Platform',
     ],
     answer: 3,
-    explanation: 'Gemini Enterprise Agent Platform is the single platform for building custom models end to end: data, training, tuning, deployment and monitoring. Dataproc runs Spark and Hadoop, Compute Engine is raw virtual machines, and Recommendations AI is a finished application rather than a platform. Current names: Vertex AI → Gemini Enterprise Agent Platform.'
+    explanation: 'Gemini Enterprise Agent Platform is the single platform for building custom models end to end: data, training, tuning, deployment and monitoring. Managed Service for Apache Spark runs Spark and Hadoop, Compute Engine is raw virtual machines, and Recommendations AI is a finished application rather than a platform. Current names: Vertex AI → Gemini Enterprise Agent Platform; Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'et-154',
@@ -2679,12 +2679,12 @@ export const community: Question[] = [
     prompt: 'An organization is looking for a solution to help them build applications using their preferred programming language and tools. They also want to minimize time spent on infrastructure management. What solution should the organization use?',
     options: [
       'Cloud Run',
-      'Dataproc',
+      'Managed Service for Apache Spark',
       'Pub/Sub',
       'Bare Metal Solution',
     ],
     answer: 0,
-    explanation: 'Cloud Run takes a container built with whatever language and tools the team prefers and runs it without any infrastructure to manage. Dataproc runs Spark clusters, Pub/Sub carries messages, and Bare Metal Solution is hardware.'
+    explanation: 'Cloud Run takes a container built with whatever language and tools the team prefers and runs it without any infrastructure to manage. Managed Service for Apache Spark runs Spark workloads, Pub/Sub carries messages, and Bare Metal Solution is hardware. Current names: Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'et-176',

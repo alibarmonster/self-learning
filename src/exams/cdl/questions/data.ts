@@ -278,14 +278,14 @@ export const data: Question[] = [
     difficulty: 'medium',
     prompt: 'Which pair of services would you use to ingest a stream of events and process them in real time before loading them into BigQuery?',
     options: [
-      'Cloud Storage and Dataproc',
+      'Cloud Storage and Managed Service for Apache Spark',
       'Pub/Sub and Dataflow',
       'Pub/Sub and Dataprep',
       'Cloud SQL and Data Fusion'
     ],
     answer: 1,
     explanation:
-      'Pub/Sub is the messaging service that receives events from producers and delivers them to subscribers. Dataflow is the managed stream and batch processing service (built on Apache Beam) that transforms them on the way to BigQuery.'
+      'Pub/Sub is the messaging service that receives events from producers and delivers them to subscribers. Dataflow is the managed stream and batch processing service (built on Apache Beam) that transforms them on the way to BigQuery. Current names: Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'data-21',
@@ -382,10 +382,10 @@ export const data: Question[] = [
     difficulty: 'medium',
     prompt:
       'A credit card company has a weekly reporting system in place. They notice a spate of fraudulent transactions that went unnoticed previously; customers had been complaining but even they did not notice until late. The company concludes that fraudulent activity has to be detected and declined very quickly — within a few tens of seconds. What critical data processing technology can be used?',
-    options: ['Dataflow', 'Dataprep', 'Dataproc', 'Data Fusion'],
+    options: ['Dataflow', 'Dataprep', 'Managed Service for Apache Spark', 'Data Fusion'],
     answer: 0,
     explanation:
-      'The requirement is real-time stream processing: score each transaction as it arrives, not in a weekly batch. Dataflow is the managed streaming engine (Apache Beam) that does that, usually fed by Pub/Sub. Dataproc runs Hadoop/Spark clusters, Data Fusion is visual ETL, and Dataprep is a data-cleaning tool — none is built for sub-minute event processing.',
+      'The requirement is real-time stream processing: score each transaction as it arrives, not in a weekly batch. Dataflow is the managed streaming engine (Apache Beam) that does that, usually fed by Pub/Sub. Managed Service for Apache Spark could run Spark streaming jobs, but you write and run them on clusters; Data Fusion is visual ETL and Dataprep a data-cleaning tool. Current names: Dataproc → Managed Service for Apache Spark.',
     tip: '"Within seconds" or "as it happens" in a data question points to Pub/Sub + Dataflow.'
   },
   {

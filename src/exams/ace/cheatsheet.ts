@@ -633,7 +633,7 @@ export const cheatsheet: Cheatsheet = {
         ['Compute and data', 'Hyperdisk, VM Manager, GPUs vs TPUs, Eventarc, AlloyDB, Managed Service for Apache Kafka, NetApp Volumes, Managed Lustre, Database Center'],
         ['Networking', 'Cloud NGFW policies with secure tags and service accounts, Network Service Tiers, Fabric FAST for IaC'],
         ['Operations', 'Personalized Service Health, Managed Service for Prometheus, Active Assist, Cloud Hub, Query Insights, log analytics'],
-        ['Renamed', 'Cloud Functions → Cloud Run functions; Vertex AI → Gemini Enterprise Agent Platform (Agent Engine → Agent Runtime); Deployment Manager → Infrastructure Manager; Container Registry → Artifact Registry; Anthos → GKE fleets; Data Catalog → Knowledge Catalog; preemptible → Spot VMs']
+        ['Renamed', 'Cloud Functions → Cloud Run functions; Vertex AI → Gemini Enterprise Agent Platform (Agent Engine → Agent Runtime); Deployment Manager → Infrastructure Manager; Container Registry → Artifact Registry; Anthos → GKE fleets; Data Catalog → Knowledge Catalog; Dataproc → Managed Service for Apache Spark; preemptible → Spot VMs']
       ]
     },
     {

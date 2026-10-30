@@ -1216,9 +1216,9 @@ export const module6: ModuleQuestion[] = [
     topic: 'Data products',
     difficulty: 'medium',
     prompt: 'A team runs Apache Spark jobs on-premises and wants to move them to Google Cloud with as few code changes as possible. Which service fits?',
-    options: ['Dataproc', 'Dataflow', 'BigQuery', 'Cloud Composer'],
+    options: ['Managed Service for Apache Spark', 'Dataflow', 'BigQuery Data Transfer Service', 'Cloud Composer'],
     answer: 0,
-    explanation: 'Dataproc runs managed Spark and Hadoop clusters, as well as serverless Spark, so existing jobs move with little change. Dataflow runs Apache Beam pipelines, BigQuery would mean rewriting jobs in SQL, and Cloud Composer orchestrates rather than processes.'
+    explanation: 'Managed Service for Apache Spark (formerly Dataproc) runs Spark and Hadoop on managed clusters or serverless, so existing jobs move with little change. Dataflow runs Apache Beam pipelines, so the jobs would need rewriting, the BigQuery Data Transfer Service only schedules loads into BigQuery, and Cloud Composer orchestrates rather than processes.'
   },
   {
     id: 'ace-m6-082',

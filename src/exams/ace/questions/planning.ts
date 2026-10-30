@@ -285,10 +285,10 @@ export const planning: Question[] = [
       'Bigtable',
       'Cloud SQL',
       'Spanner',
-      'Dataproc'
+      'Managed Service for Apache Spark'
     ],
     answer: 1,
-    explanation: 'An inventory application needs a relational, transactional database, and with a regional market Cloud SQL provides that as a managed service at low cost. Spanner\'s global scale and cost are unnecessary, Bigtable is a NoSQL wide-column store, and Dataproc is a Spark and Hadoop service.',
+    explanation: 'An inventory application needs a relational, transactional database, and with a regional market Cloud SQL provides that as a managed service at low cost. Spanner\'s global scale and cost are unnecessary, Bigtable is a NoSQL wide-column store, and Managed Service for Apache Spark is a Spark and Hadoop service. Current names: Dataproc → Managed Service for Apache Spark.',
     tip: 'Regional relational OLTP is Cloud SQL; global scale or very high write throughput relational is Spanner.'
   },
   {
@@ -301,10 +301,10 @@ export const planning: Question[] = [
       'Bigtable',
       'BigQuery',
       'Spanner',
-      'Dataproc'
+      'Managed Service for Apache Spark'
     ],
     answer: 0,
-    explanation: 'Bigtable is a managed wide-column NoSQL database built for high-volume, low-latency writes and is compatible with the HBase API, making it the natural migration target. BigQuery is an analytics warehouse, Spanner is a relational database, and Dataproc can run HBase but is not a managed database service.'
+    explanation: 'Bigtable is a managed wide-column NoSQL database built for high-volume, low-latency writes and is compatible with the HBase API, making it the natural migration target. BigQuery is an analytics warehouse, Spanner is a relational database, and Managed Service for Apache Spark can run HBase but is not a managed database service. Current names: Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'ace-106',
@@ -1130,12 +1130,12 @@ export const planning: Question[] = [
     prompt: 'You are building an architecture for one of your client with a requirement of streaming millions of requests with high availability and durability along with HIPAA compliance. Which managed service will you prefer?',
     options: [
       'Cloud Run function',
-      'Cloud DataProc',
+      'Managed Service for Apache Spark',
       'Pub/Sub',
       'RabbitMQ'
     ],
     answer: 2,
-    explanation: 'Pub/Sub is a fully managed, globally available messaging service that handles millions of messages per second with durable storage, and it is covered by Google\'s HIPAA BAA. Cloud Run functions processes events rather than streaming them, Dataproc runs Hadoop and Spark, and RabbitMQ is self-managed rather than a Google managed service. Current names: Cloud Functions → Cloud Run functions.'
+    explanation: 'Pub/Sub is a fully managed, globally available messaging service that handles millions of messages per second with durable storage, and it is covered by Google\'s HIPAA BAA. Cloud Run functions processes events rather than streaming them, Managed Service for Apache Spark runs Hadoop and Spark, and RabbitMQ is self-managed rather than a Google managed service. Current names: Cloud Functions → Cloud Run functions; Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'ace-425',
@@ -1161,11 +1161,11 @@ export const planning: Question[] = [
     options: [
       'Compute Engine',
       'App Engine',
-      'Dataproc',
+      'Managed Service for Apache Spark',
       'Big Query'
     ],
     answer: 2,
-    explanation: 'Dataproc is the managed Hadoop and Spark service, so existing jobs migrate with little change. Compute Engine would mean running the cluster yourself, App Engine is for web apps, and BigQuery is a data warehouse rather than a Hadoop or Spark runtime.'
+    explanation: 'Managed Service for Apache Spark is the managed Hadoop and Spark service, so existing jobs migrate with little change. Compute Engine would mean running the cluster yourself, App Engine is for web apps, and BigQuery is a data warehouse rather than a Hadoop or Spark runtime. Current names: Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'ace-437',
@@ -1266,13 +1266,13 @@ export const planning: Question[] = [
     verbatim: true,
     prompt: 'In your company, there are massive data services that are currently running Hadoop/Spark on- premises. The Architects start their work on a Migration plan to Google Cloud. However, the big data team wants to use the existing workflows during the migration. The main focus is to continue working on their\n\nHadoop cluster and Spark jobs with the scaling and data processing capacity of Google Cloud. Which tool would be the right option to choose?',
     options: [
-      'Data flow',
-      'Data Proc',
-      'Data prep',
+      'Dataflow',
+      'Managed Service for Apache Spark',
+      'Dataprep',
       'Looker Studio'
     ],
     answer: 1,
-    explanation: 'Dataproc is Google\'s managed Hadoop and Spark service, so existing Hadoop clusters and Spark jobs can move over with little change and gain cloud scaling. Dataflow runs Apache Beam pipelines and would mean rewriting the jobs, Dataprep is a visual data-cleaning tool, and Looker Studio is for reporting. Current names: Data Studio → Looker Studio.'
+    explanation: 'Managed Service for Apache Spark is Google\'s managed Hadoop and Spark service, so existing Hadoop clusters and Spark jobs can move over with little change and gain cloud scaling. Dataflow runs Apache Beam pipelines and would mean rewriting the jobs, Dataprep is a visual data-cleaning tool, and Looker Studio is for reporting. Current names: Data Studio → Looker Studio; Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'ace-477',
@@ -1298,11 +1298,11 @@ export const planning: Question[] = [
     options: [
       'Use Jupyter notebooks, develop code and run it using Google Colab to display recommended products',
       'Use PyTorch and test it with Google CoLab setup and run ML algorithms to provide training data based on recommendation',
-      'Use SparkMLlib inside DataProc and host models in the Gemini Enterprise Agent Platform platform and enable Prediction APIs to suggest recommendations',
+      'Use Spark MLlib on Managed Service for Apache Spark, then host the model in Gemini Enterprise Agent Platform for online predictions',
       'Use Cloud Run functions to trigger based on events and provide recommendations'
     ],
     answer: 2,
-    explanation: 'This needs scalable model training and real-time serving. Spark MLlib on Dataproc trains on the collected data at scale, and Gemini Enterprise Agent Platform hosts the model behind an online prediction endpoint. Colab notebooks are for interactive experiments rather than production hosting, and Cloud Run functions alone have no model training or serving. Current names: Vertex AI → Gemini Enterprise Agent Platform; Cloud Functions → Cloud Run functions.'
+    explanation: 'This needs scalable model training and real-time serving. Spark MLlib on Managed Service for Apache Spark trains on the collected data at scale, and Gemini Enterprise Agent Platform hosts the model behind an online prediction endpoint. Colab notebooks are for interactive experiments rather than production hosting, and Cloud Run functions alone have no model training or serving. Current names: Vertex AI → Gemini Enterprise Agent Platform; Cloud Functions → Cloud Run functions; Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'ace-480',
@@ -1923,11 +1923,11 @@ export const planning: Question[] = [
     options: [
       '- Store the data in Bigtable.\n- Run SQL queries provided by Bigtable schema.',
       '- Store the data in BigQuery.\n- Run SQL queries in BigQuery.',
-      '- Create a Dataproc cluster.\n- Store the data in HDFS storage\n- Run SQL queries in Spark.',
-      '- Create a Dataproc cluster.\n- Store the data in Cloud Storage\n- Run SQL queries in Spark.'
+      '- Create a Managed Service for Apache Spark cluster.\n- Store the data in HDFS storage\n- Run SQL queries in Spark.',
+      '- Create a Managed Service for Apache Spark cluster.\n- Store the data in Cloud Storage\n- Run SQL queries in Spark.'
     ],
     answer: 1,
-    explanation: 'BigQuery is serverless, so it is always ready to run ad hoc SQL and with on-demand pricing you pay only for the queries you run. A Dataproc cluster that sits idle 23 hours a day wastes money, and HDFS data would be lost if the cluster were deleted. Bigtable is a NoSQL store and is not built for SQL analytics.'
+    explanation: 'BigQuery is serverless, so it is always ready to run ad hoc SQL and with on-demand pricing you pay only for the queries you run. A Managed Service for Apache Spark cluster that sits idle 23 hours a day wastes money, and HDFS data would be lost if the cluster were deleted. Bigtable is a NoSQL store and is not built for SQL analytics. Current names: Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'ace-656',

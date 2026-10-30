@@ -116,7 +116,7 @@ export const cheatsheet: Cheatsheet = {
       path: [
         ['Ingest a stream of events, decouple producers from consumers', 'Pub/Sub'],
         ['Transform data in a stream or batch (Apache Beam), serverless', 'Dataflow'],
-        ['Run existing Hadoop / Spark jobs with minimal change', 'Dataproc'],
+        ['Run existing Hadoop / Spark jobs with minimal change', 'Managed Service for Apache Spark (formerly Dataproc)'],
         ['Build ETL pipelines visually, no code', 'Cloud Data Fusion'],
         ['Move an on-prem database to Cloud SQL / Spanner with minimal downtime', 'Database Migration Service'],
         ['Move petabytes of files from on-prem or another cloud', 'Storage Transfer Service (online) or Transfer Appliance (offline)'],
@@ -126,8 +126,8 @@ export const cheatsheet: Cheatsheet = {
       columns: ['Product', 'Role', 'Pick it when', 'Not for'],
       rows: [
         ['Pub/Sub', 'Messaging / event ingestion', 'Many producers, many consumers, spikes, asynchronous delivery', 'Storing or querying data'],
-        ['Dataflow', 'Stream + batch processing', 'Real-time ETL, windowing, enrichment before BigQuery; fully managed', 'Teams that must keep Spark code unchanged (Dataproc)'],
-        ['Dataproc', 'Managed Hadoop / Spark', 'Existing Spark/Hadoop jobs, lift-and-shift of a cluster', 'Greenfield streaming (Dataflow is simpler)'],
+        ['Dataflow', 'Stream + batch processing', 'Real-time ETL, windowing, enrichment before BigQuery; fully managed', 'Teams that must keep Spark code unchanged (Managed Service for Apache Spark)'],
+        ['Managed Service for Apache Spark (formerly Dataproc)', 'Managed Spark / Hadoop, on clusters or serverless', 'Existing Spark/Hadoop jobs, lift-and-shift of a cluster', 'Greenfield streaming (Dataflow is simpler)'],
         ['Cloud Data Fusion', 'Visual ETL', 'Integration pipelines built by analysts without code', 'Custom streaming logic'],
         ['Looker', 'Enterprise BI', 'One definition of every metric (LookML), governed self-service, alerts into workflows', 'A one-off chart in an afternoon'],
         ['Looker Studio', 'Lightweight reporting', 'Fast dashboards on BigQuery, Sheets or Ads data; sharing like a doc', 'Governed metrics across a large organisation']

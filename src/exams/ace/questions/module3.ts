@@ -1154,9 +1154,9 @@ export const module3: ModuleQuestion[] = [
     topic: 'Data products',
     difficulty: 'easy',
     prompt: 'You need a managed service that runs the same Apache Beam pipeline in batch and in streaming mode, scaling workers automatically. Which product is it?',
-    options: ['Dataflow', 'Dataproc', 'Cloud Composer', 'BigQuery Data Transfer Service'],
+    options: ['Dataflow', 'Managed Service for Apache Spark', 'Cloud Composer', 'BigQuery Data Transfer Service'],
     answer: 0,
-    explanation: 'Dataflow is the managed runner for Apache Beam pipelines, batch and streaming, with autoscaling. Dataproc runs Spark and Hadoop clusters, Cloud Composer orchestrates workflows with Airflow, and the transfer service schedules loads into BigQuery.'
+    explanation: 'Dataflow is the managed runner for Apache Beam pipelines, batch and streaming, with autoscaling. Managed Service for Apache Spark (formerly Dataproc) runs Spark and Hadoop, Cloud Composer orchestrates workflows with Airflow, and the transfer service schedules loads into BigQuery.'
   },
   {
     id: 'ace-m3-082',

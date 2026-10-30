@@ -342,7 +342,7 @@ export const concepts: Cheatsheet = {
           meaning:
             'Kemampuan bergerak cepat: mencoba ide baru, mengubah, atau membatalkan dalam hitungan menit, bukan bulan. Di cloud, server baru tinggal klik — tidak perlu pesan hardware, menunggu pengiriman, lalu memasang.',
           analogy: 'Menyewa mobil lewat aplikasi (bisa hari ini juga) dibanding membeli mobil (survei, kredit, tunggu inden berbulan-bulan).',
-          example: 'Tim data membuat cluster Dataproc untuk eksperimen satu sore, lalu menghapusnya. Di data center sendiri, servernya baru datang bulan depan.',
+          example: 'Tim data membuat cluster Spark di Managed Service for Apache Spark untuk eksperimen satu sore, lalu menghapusnya. Di data center sendiri, servernya baru datang bulan depan.',
           exam: '“agility”, “experiment quickly”, “faster time to market”, “respond to change”'
         },
         {

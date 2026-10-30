@@ -51,7 +51,7 @@ export const SERVICES: Service[] = [
   // analytics
   S('bigquery', 'BigQuery', 'analytics', 'Data warehouse serverless: SQL atas data besar, bayar per data diproses atau slot.'),
   S('dataflow', 'Dataflow', 'analytics', 'Pipeline Apache Beam terkelola untuk ETL streaming dan batch, skala otomatis.'),
-  S('dataproc', 'Dataproc', 'analytics', 'Spark/Hadoop terkelola — untuk memindahkan job Spark/Hive yang sudah ada.'),
+  S('dataproc', 'Managed Service for Apache Spark', 'analytics', 'Spark/Hadoop terkelola (dulu Dataproc), di cluster atau serverless — untuk memindahkan job Spark/Hive yang sudah ada.'),
   S('composer', 'Cloud Composer', 'analytics', 'Apache Airflow terkelola untuk mengorkestrasi dan menjadwalkan pipeline data.'),
   S('looker', 'Looker', 'analytics', 'Platform BI dengan model semantik (LookML) dan dashboard terkelola; Looker Studio untuk laporan cepat.'),
   S('dts', 'BigQuery Data Transfer Service', 'analytics', 'Memuat data terjadwal dari SaaS (Google Ads, YouTube, S3, dll.) langsung ke BigQuery.'),

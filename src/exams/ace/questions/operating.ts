@@ -1013,11 +1013,11 @@ export const operating: Question[] = [
     options: [
       'Create a dataflow job that copies data from Bigtable and Cloud Storage for specific users.',
       'Create a dataflow job that copies data from Bigtable and Spanner for specific users.',
-      'Create a Dataproc cluster that runs a Spark job to extract data from Bigtable and Cloud Storage for specific users.',
+      'Create a Managed Service for Apache Spark cluster that runs a Spark job to extract data from Bigtable and Cloud Storage for specific users.',
       'Create two separate BigQuery external tables on Cloud Storage and Bigtable. Use the BigQuery console to join these tables through user fields, and apply appropriate filters.'
     ],
     answer: 3,
-    explanation: 'BigQuery can define external tables over Bigtable and over the Spanner backups in Cloud Storage, so the analyst can join and filter them with SQL without building a pipeline, the lightest option for a one-off request. Dataflow jobs or a Dataproc Spark cluster mean writing and running code and infrastructure for a single question. BigQuery federated queries against Spanner would be a modern alternative, but none of the options offers it.'
+    explanation: 'BigQuery can define external tables over Bigtable and over the Spanner backups in Cloud Storage, so the analyst can join and filter them with SQL without building a pipeline, the lightest option for a one-off request. Dataflow jobs or a Spark cluster on Managed Service for Apache Spark mean writing and running code and infrastructure for a single question. BigQuery federated queries against Spanner would be a modern alternative, but none of the options offers it. Current names: Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'ace-277',

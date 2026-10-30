@@ -372,11 +372,11 @@ export const deploying: Question[] = [
       'Bigtable',
       'Dataflow',
       'Pub/Sub',
-      'Dataproc'
+      'Managed Service for Apache Spark'
     ],
     answer: 3,
-    explanation: 'Dataproc is Google Cloud\'s managed Spark and Hadoop service, so existing Spark jobs can move with minimal changes and low operational overhead. Dataflow runs Apache Beam pipelines and would require rewriting jobs, while Bigtable and Pub/Sub are a database and a messaging service.',
-    tip: 'Existing Spark or Hadoop workloads map to Dataproc; new streaming or batch pipelines map to Dataflow.'
+    explanation: 'Managed Service for Apache Spark is Google Cloud\'s managed Spark and Hadoop service, so existing Spark jobs can move with minimal changes and low operational overhead. Dataflow runs Apache Beam pipelines and would require rewriting jobs, while Bigtable and Pub/Sub are a database and a messaging service. Current names: Dataproc → Managed Service for Apache Spark.',
+    tip: 'Existing Spark or Hadoop workloads map to Managed Service for Apache Spark; new streaming or batch pipelines map to Dataflow.'
   },
   {
     id: 'ace-095',
@@ -434,10 +434,10 @@ export const deploying: Question[] = [
       'Bigtable',
       'Pub/Sub',
       'Dataflow',
-      'Dataproc'
+      'Managed Service for Apache Spark'
     ],
     answer: 1,
-    explanation: 'Pub/Sub is a managed messaging service that buffers messages (retaining unacknowledged ones for up to 7 days by default) until subscribers process them, decoupling fast ingestion from processing. Dataflow processes data rather than queuing it, Bigtable is a database, and Dataproc runs Spark and Hadoop.'
+    explanation: 'Pub/Sub is a managed messaging service that buffers messages (retaining unacknowledged ones for up to 7 days by default) until subscribers process them, decoupling fast ingestion from processing. Dataflow processes data rather than queuing it, Bigtable is a database, and Managed Service for Apache Spark runs Spark and Hadoop. Current names: Dataproc → Managed Service for Apache Spark.'
   },
   {
     id: 'ace-104',
@@ -493,14 +493,14 @@ export const deploying: Question[] = [
     verbatim: true,
     prompt: 'A team of data scientists wants to migrate an on premises Spark cluster to Google Cloud. They would like to use a managed service. What Google Cloud service would you recommend?',
     options: [
-      'Cloud Looker Studio',
-      'Dataproc',
+      'Looker Studio',
+      'Managed Service for Apache Spark',
       'Dataflow',
       'Bigtable'
     ],
     answer: 1,
-    explanation: 'Dataproc is Google\'s managed Spark and Hadoop service, so existing Spark jobs move over with minimal changes. Dataflow runs Apache Beam pipelines rather than Spark, Bigtable is a NoSQL database, and Looker Studio is a reporting tool. Current names: Data Studio → Looker Studio.',
-    tip: 'Existing Spark or Hadoop means Dataproc; new streaming or batch pipelines with Beam mean Dataflow.'
+    explanation: 'Managed Service for Apache Spark is Google\'s managed Spark and Hadoop service, so existing Spark jobs move over with minimal changes. Dataflow runs Apache Beam pipelines rather than Spark, Bigtable is a NoSQL database, and Looker Studio is a reporting tool. Current names: Data Studio → Looker Studio; Dataproc → Managed Service for Apache Spark.',
+    tip: 'Existing Spark or Hadoop means Managed Service for Apache Spark; new streaming or batch pipelines with Beam mean Dataflow.'
   },
   {
     id: 'ace-125',
@@ -736,15 +736,15 @@ export const deploying: Question[] = [
     topic: 'VPC, DNS & connectivity',
     difficulty: 'medium',
     verbatim: true,
-    prompt: 'The technical team at a growing fintech startup, CloudLedger, manages a data processing application that runs on a Dataproc cluster within a Virtual Private Cloud (VPC) network. This network operates in a single subnet with the IP range 10.0.2.0/25. Due to IP address exhaustion in the current VPC network, no private IP addresses are available for further use. You need to introduce new VMs that will communicate with the Dataproc cluster while minimizing the complexity and number of steps required. What is the best course of action?',
+    prompt: 'The technical team at a growing fintech startup, CloudLedger, manages a data processing application that runs on a Managed Service for Apache Spark cluster within a Virtual Private Cloud (VPC) network. This network operates in a single subnet with the IP range 10.0.2.0/25. Due to IP address exhaustion in the current VPC network, no private IP addresses are available for further use. You need to introduce new VMs that will communicate with the Spark cluster while minimizing the complexity and number of steps required. What is the best course of action?',
     options: [
       'Modify the existing subnet range to 10.0.2.0/24.',
       'Create a new Secondary IP Range in the VPC and configure the VMs to use that range.',
-      'i. Create a new VPC network for the VMs. ii. Enable VPC Peering between the VMs\' VPC network and the Dataproc cluster VPC network.',
-      'i. Create a new VPC network for the VMs with a subnet of 10.0.2.0/16. ii. Enable VPC network Peering between the Dataproc VPC network and the VMs VPC network. iii. Configure a custom Route exchange.'
+      'i. Create a new VPC network for the VMs. ii. Enable VPC Peering between the VMs\' VPC network and the Spark cluster VPC network.',
+      'i. Create a new VPC network for the VMs with a subnet of 10.0.2.0/16. ii. Enable VPC network Peering between the Spark cluster VPC network and the VMs VPC network. iii. Configure a custom Route exchange.'
     ],
     answer: 0,
-    explanation: 'A subnet\'s primary range can be expanded in place without downtime, and widening 10.0.2.0/25 to 10.0.2.0/24 doubles the addresses while existing VMs keep theirs. Secondary ranges are used for alias IPs such as GKE pods, not for VM primary interfaces. Creating a new VPC with peering adds steps, and the /16 version would overlap the Dataproc range, which peering does not allow.',
+    explanation: 'A subnet\'s primary range can be expanded in place without downtime, and widening 10.0.2.0/25 to 10.0.2.0/24 doubles the addresses while existing VMs keep theirs. Secondary ranges are used for alias IPs such as GKE pods, not for VM primary interfaces. Creating a new VPC with peering adds steps, and the /16 version would overlap the cluster\'s range, which peering does not allow. Current names: Dataproc → Managed Service for Apache Spark.',
     tip: 'Subnet primary ranges can be expanded but never shrunk.'
   },
   {
