@@ -13,6 +13,19 @@
   const metas = $derived<LessonMeta[]>(exam.lessons ?? []);
   const meta = $derived(metas.find((m) => m.id === quiz.lessonId));
 
+  /** Lessons under their hub headings, in list order; lessons without a group are deep dives. */
+  const DEEP_DIVES = 'Deep dives';
+  const hubGroups = $derived.by(() => {
+    const groups: { name: string; lessons: LessonMeta[] }[] = [];
+    for (const m of metas) {
+      const name = m.group ?? DEEP_DIVES;
+      let group = groups.find((g) => g.name === name);
+      if (!group) groups.push((group = { name, lessons: [] }));
+      group.lessons.push(m);
+    }
+    return groups;
+  });
+
   let lesson = $state<Lesson | null>(null);
   let failed = $state(false);
 
@@ -112,26 +125,41 @@
 {#if !meta}
   <div class="page hub rise" lang="en">
     <header class="head">
-      <p class="eyebrow">{exam.short} · Deep dive</p>
-      <h1>Deep dives</h1>
+      <p class="eyebrow">{exam.short} · Learn</p>
+      <h1>{hubGroups.length > 1 ? 'Learn' : 'Deep dives'}</h1>
       <p class="lede">
-        A cheat sheet is shorthand for remembering. These pages are for understanding: one service taught from the ground up —
-        concepts, components, commands, how to read what is going on — then case studies and questions to check yourself.
+        A cheat sheet is shorthand for remembering; these pages are for understanding.
+        {#if hubGroups.length > 1}
+          <strong>Tryout prep</strong> follows the course one module at a time: the decisions its try-out turns on, the commands,
+          and the cue words that point at the answer, ending with a quick check.
+          <strong>Deep dives</strong> take one service from the ground up — concepts, components, commands, how to read what is
+          going on — then case studies and questions to check yourself.
+        {:else}
+          One service taught from the ground up — concepts, components, commands, how to read what is going on — then case
+          studies and questions to check yourself.
+        {/if}
       </p>
     </header>
-    <ul class="cards">
-      {#each metas as m (m.id)}
-        {@const done = Object.keys(read<Record<string, true>>(readKey(m.id), {})).length}
-        <li>
-          <button class="card lesson-card" onclick={() => quiz.openLesson(m.id)}>
-            <span class="meta"><span class="level">{m.level}</span><span class="mins mono">~{m.minutes} min</span>{#if done}<span class="tick">{done} sections read</span>{/if}</span>
-            <strong>{m.title}</strong>
-            <span class="summary">{m.summary}</span>
-            <span class="topics">{#each m.topics as t (t)}<span>{t}</span>{/each}</span>
-          </button>
-        </li>
-      {/each}
-    </ul>
+    {#each hubGroups as group (group.name)}
+      <section class="lesson-group">
+        {#if hubGroups.length > 1}
+          <h2>{group.name}<span class="mono">{group.lessons.length} lessons</span></h2>
+        {/if}
+        <ul class="cards">
+          {#each group.lessons as m (m.id)}
+            {@const done = Object.keys(read<Record<string, true>>(readKey(m.id), {})).length}
+            <li>
+              <button class="card lesson-card" onclick={() => quiz.openLesson(m.id)}>
+                <span class="meta"><span class="level">{m.level}</span><span class="mins mono">~{m.minutes} min</span>{#if done}<span class="tick">{done} sections read</span>{/if}</span>
+                <strong>{m.title}</strong>
+                <span class="summary">{m.summary}</span>
+                <span class="topics">{#each m.topics as t (t)}<span>{t}</span>{/each}</span>
+              </button>
+            </li>
+          {/each}
+        </ul>
+      </section>
+    {/each}
   </div>
 {:else if failed}
   <p class="page loading">The lesson failed to load. Reload the page.</p>
@@ -141,7 +169,7 @@
   <div class="page lesson rise" lang={lesson.lang}>
     <button class="btn btn-ghost crumb" onclick={() => quiz.openLesson()}><span aria-hidden="true">‹</span> All lessons</button>
     <header class="head">
-      <p class="eyebrow">Deep dive · {meta.level} · ~{meta.minutes} min</p>
+      <p class="eyebrow">{meta.group ?? 'Deep dive'} · {meta.level} · ~{meta.minutes} min</p>
       <h1>{lesson.title}</h1>
       <p class="lede">{lesson.intro}</p>
       <div class="progress">
@@ -384,6 +412,27 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 12px;
+  }
+
+  .lesson-group h2 {
+    margin-top: 40px;
+    padding-bottom: 8px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--line);
+    font-size: var(--type-h4);
+  }
+
+  .lesson-group h2 .mono {
+    flex-shrink: 0;
+    font-size: var(--type-label);
+    color: var(--text-tertiary);
+  }
+
+  .lesson-group h2 + .cards {
+    margin-top: 16px;
   }
 
   .lesson-card {

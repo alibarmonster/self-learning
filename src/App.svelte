@@ -193,7 +193,7 @@
               class:active={quiz.view === 'learn'}
               onclick={() => (quiz.view === 'learn' && !quiz.lessonId ? (quiz.view = 'home') : quiz.openLesson())}
             >
-              Deep dive
+              Learn
             </button>
           {/if}
           {#if quiz.exam.lab}

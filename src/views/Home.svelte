@@ -53,6 +53,8 @@
     return groups;
   });
   const grouped = $derived(exam.sets.some((s) => s.group));
+  /** Lessons that prepare for a set group (see LessonMeta.prepares), linked under its heading. */
+  const prepFor = (group: string) => (exam.lessons ?? []).filter((l) => l.prepares?.includes(group));
 
   // Drills follow the paper's own parts when it has them, with everything the
   // paper does not ask collected under one clearly-labelled extra group. An
@@ -232,11 +234,18 @@
       {#if grouped}
         {#each setGroups as group (group.name)}
           {@const sat = group.sets.filter((s) => setStats[s.id]).length}
+          {@const preps = prepFor(group.name)}
           <details class="set-group" open={group.name !== BANK_GROUP}>
             <summary>
               <h3>{group.name}</h3>
               <span class="mono">{group.sets.length} sets · {sat} sat</span>
             </summary>
+            {#if preps.length}
+              <p class="set-prep">
+                {preps.length > 1 ? 'Prep lessons:' : 'Prep lesson:'}
+                {#each preps as l, i (l.id)}{#if i}<span aria-hidden="true">{' · '}</span>{/if}<a href={`#/${exam.id}/learn/${l.id}`}>{l.level}</a> <span class="mono">~{l.minutes} min</span>{/each}
+              </p>
+            {/if}
             <div class="sets">
               {#each group.sets as set (set.id)}{@render setCard(set)}{/each}
             </div>
@@ -908,6 +917,22 @@
 
   .set-group summary .mono {
     flex-shrink: 0;
+    color: var(--text-tertiary);
+    font-size: var(--type-label);
+  }
+
+  .set-prep {
+    margin: -4px 0 14px;
+    font-size: var(--type-small);
+    color: var(--text-secondary);
+  }
+
+  .set-prep a {
+    color: var(--text);
+    text-underline-offset: 3px;
+  }
+
+  .set-prep .mono {
     color: var(--text-tertiary);
     font-size: var(--type-label);
   }

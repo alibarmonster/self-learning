@@ -157,5 +157,9 @@ export interface LessonMeta {
   minutes: number;
   level: string;
   topics: string[];
+  /** Heading the lesson is listed under on the hub, e.g. the course's tryout prep; lessons without one are deep dives. */
+  group?: string;
+  /** Practice set groups (`PaperSet.group`) this lesson prepares for; the home page links each of them back here. */
+  prepares?: string[];
   load: () => Promise<{ lesson: Lesson }>;
 }

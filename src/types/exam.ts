@@ -116,7 +116,7 @@ export interface ExamDefinition {
   extraSheets?: NamedSheet[];
   /** Offer the simulated Google Cloud lab (terminal, topology, architecture). */
   lab?: boolean;
-  /** Deep-dive lessons, one service each, at #/<exam>/learn/<id>. */
+  /** Lessons at #/<exam>/learn/<id>: tryout prep per course module, and deep dives on one service each. */
   lessons?: LessonMeta[];
 }
 
