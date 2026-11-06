@@ -6,7 +6,7 @@
  * and every product can be reached, and practice links that point at a lab
  * scenario that exists. Run with `bun scripts/lessons-check.ts`.
  */
-import { GOOGLE_CLOUD_LESSONS } from '../src/lessons';
+import { ALL_LESSONS } from '../src/lessons';
 import { CMD_BY_ID } from '../src/lab/cmd/bank';
 import { TERM_BY_ID } from '../src/lab/term/scenarios';
 import { CANVAS_BY_ID } from '../src/lab/canvas/scenarios';
@@ -33,7 +33,7 @@ const balanced = (svg: string) => {
   return stack.length === 0;
 };
 
-const LESSON_IDS = new Set(GOOGLE_CLOUD_LESSONS.map((m) => m.id));
+const LESSON_IDS = new Set(ALL_LESSONS.map((m) => m.id));
 
 /** Whether an in-app link (#/ace/lab/…, #/ace/learn/…, #/ace/cheatsheet) goes somewhere real. */
 function linkKnown(href: string): boolean {
@@ -46,7 +46,7 @@ function linkKnown(href: string): boolean {
   );
 }
 
-for (const meta of GOOGLE_CLOUD_LESSONS) {
+for (const meta of ALL_LESSONS) {
   const { lesson } = await meta.load();
   if (lesson.id !== meta.id) fail(`${meta.id}: lesson id is ${lesson.id}`);
   const ids = new Set<string>();

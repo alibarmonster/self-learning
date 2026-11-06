@@ -1,6 +1,6 @@
 import { defineExam } from '@/core';
 import { GOOGLE_CLOUD_SHEETS } from '@/sheets';
-import { GOOGLE_CLOUD_LESSONS } from '@/lessons';
+import { ACE_LESSONS } from '@/lessons';
 import type { Mode, Section } from '@/types';
 import { cheatsheet } from './cheatsheet';
 import { sets } from './sets';
@@ -191,5 +191,5 @@ export const ace = defineExam({
   /** Command reference and plain-language concepts, as extra tabs. */
   extraSheets: GOOGLE_CLOUD_SHEETS,
   lab: true,
-  lessons: GOOGLE_CLOUD_LESSONS
+  lessons: ACE_LESSONS
 });

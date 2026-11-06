@@ -1,15 +1,24 @@
 import type { LessonMeta } from '@/types';
 
 /**
- * Lessons shared by the Google Cloud exams: tryout prep for each of the six
- * course modules (each one names the practice set groups it prepares for),
- * then the deep dives. Only this list ships in the main bundle; each lesson's
- * content is fetched when it is opened.
+ * Lessons for the Google Cloud exams. Each exam lists its own: ACE gets tryout
+ * prep for the six course modules (each naming the practice set groups it
+ * prepares for), the exam guide and the deep dives; PCA gets its case studies
+ * and the deep dives that apply to it. Only these lists ship in the main
+ * bundle; each lesson's content is fetched when it is opened.
  */
 const PREP = 'Tryout prep';
+const CASES = 'Case studies';
 const TRYOUT_MD1_MD2 = 'Tryout · MD1–MD2';
 
-export const GOOGLE_CLOUD_LESSONS: LessonMeta[] = [
+/** A line under each group heading on the Learn hub; lessons without a group are deep dives. */
+export const LESSON_GROUPS: Record<string, string> = {
+  [PREP]: 'Follows the course one module at a time: the decisions its try-out turns on, the commands, and the cue words that point at the answer, ending with a quick check.',
+  [CASES]: 'The case studies in the exam guide, each summarised in our own words and mapped requirement by requirement to the architecture the exam expects.',
+  'Deep dives': 'One topic from the ground up — a service, or the exam guide itself — with the concepts, the commands, worked cases and questions to check yourself.'
+};
+
+const TRYOUT_PREP: LessonMeta[] = [
   {
     id: 'tryout-m1',
     title: 'Tryout Prep · Module 1: Cloud Foundations & Environment Setup',
@@ -75,16 +84,31 @@ export const GOOGLE_CLOUD_LESSONS: LessonMeta[] = [
     group: PREP,
     prepares: ['Module 6 · Security & Full-Blueprint Mini Mock'],
     load: () => import('./tryout-m6')
-  },
-  {
-    id: 'ace-guide',
-    title: 'The ACE Exam Guide, Explained',
-    summary: 'Every consideration in Google’s current Associate Cloud Engineer guide — all four sections, 94 items — explained with the commands, how the exam asks it, and where to go deeper.',
-    minutes: 90,
-    level: 'All levels',
-    topics: ['Exam guide', 'Section 1–4', 'gcloud', 'Exam cues'],
-    load: () => import('./aceguide')
-  },
+  }
+];
+
+const ACE_GUIDE: LessonMeta = {
+  id: 'ace-guide',
+  title: 'The ACE Exam Guide, Explained',
+  summary: 'Every consideration in Google’s current Associate Cloud Engineer guide — all four sections, 94 items — explained with the commands, how the exam asks it, and where to go deeper.',
+  minutes: 90,
+  level: 'All levels',
+  topics: ['Exam guide', 'Section 1–4', 'gcloud', 'Exam cues'],
+  load: () => import('./aceguide')
+};
+
+const PCA_CASES: LessonMeta = {
+  id: 'pca-cases',
+  title: 'The PCA Case Studies, Explained',
+  summary: 'How to read a case study, then Altostrat Media, Cymbal Retail, EHR Healthcare and KnightMotives Automotive one by one: the company, what its current systems imply, and the architecture behind each requirement.',
+  minutes: 40,
+  level: 'Guide v6.1',
+  topics: ['Case studies', 'Altostrat Media', 'Cymbal Retail', 'EHR Healthcare', 'KnightMotives Automotive'],
+  group: CASES,
+  load: () => import('./pca-cases')
+};
+
+const DEEP_DIVES: LessonMeta[] = [
   {
     id: 'gke',
     title: 'Getting Started with Google Kubernetes Engine',
@@ -122,3 +146,12 @@ export const GOOGLE_CLOUD_LESSONS: LessonMeta[] = [
     load: () => import('./loadbalancing')
   }
 ];
+
+/** Associate Cloud Engineer: tryout prep per course module, the exam guide, the deep dives. */
+export const ACE_LESSONS: LessonMeta[] = [...TRYOUT_PREP, ACE_GUIDE, ...DEEP_DIVES];
+
+/** Professional Cloud Architect: the case studies, then the deep dives that apply to it. */
+export const PCA_LESSONS: LessonMeta[] = [PCA_CASES, ...DEEP_DIVES];
+
+/** Every lesson once, for the checks. */
+export const ALL_LESSONS: LessonMeta[] = [...new Map([...ACE_LESSONS, ...PCA_LESSONS].map((l) => [l.id, l])).values()];

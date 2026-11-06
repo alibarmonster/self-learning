@@ -2,6 +2,7 @@
   import { quiz } from '@/state/quiz.svelte';
   import { read, write } from '@/state/storage';
   import type { Lesson, LessonBlock, LessonMeta } from '@/types';
+  import { LESSON_GROUPS } from '@/lessons';
   import CidrCalc from './learn/CidrCalc.svelte';
   import FirewallDrill from './learn/FirewallDrill.svelte';
   import ScaleCalc from './learn/ScaleCalc.svelte';
@@ -25,6 +26,18 @@
     }
     return groups;
   });
+
+  /**
+   * Lessons are written with one exam's links (#/ace/…). Point lab, cheat sheet
+   * and lesson links at the exam being studied when it has that page too.
+   */
+  function localHref(href: string): string {
+    const m = /^#\/[^/]+\/(lab|cheatsheet|learn)(\/.*)?$/.exec(href);
+    if (!m) return href;
+    const [, area, rest = ''] = m;
+    const here = area === 'lab' ? !!exam.lab : area === 'cheatsheet' ? exam.sheets.length > 0 : metas.some((l) => rest === `/${l.id}`);
+    return here ? `#/${exam.id}/${area}${rest}` : href;
+  }
 
   let lesson = $state<Lesson | null>(null);
   let failed = $state(false);
@@ -129,21 +142,14 @@
       <h1>{hubGroups.length > 1 ? 'Learn' : 'Deep dives'}</h1>
       <p class="lede">
         A cheat sheet is shorthand for remembering; these pages are for understanding.
-        {#if hubGroups.length > 1}
-          <strong>Tryout prep</strong> follows the course one module at a time: the decisions its try-out turns on, the commands,
-          and the cue words that point at the answer, ending with a quick check.
-          <strong>Deep dives</strong> take one service from the ground up — concepts, components, commands, how to read what is
-          going on — then case studies and questions to check yourself.
-        {:else}
-          One service taught from the ground up — concepts, components, commands, how to read what is going on — then case
-          studies and questions to check yourself.
-        {/if}
+        {#if hubGroups.length === 1}{LESSON_GROUPS[hubGroups[0].name] ?? ''}{/if}
       </p>
     </header>
     {#each hubGroups as group (group.name)}
       <section class="lesson-group">
         {#if hubGroups.length > 1}
-          <h2>{group.name}<span class="mono">{group.lessons.length} lessons</span></h2>
+          <h2>{group.name}<span class="mono">{group.lessons.length} {group.lessons.length === 1 ? 'lesson' : 'lessons'}</span></h2>
+          {#if LESSON_GROUPS[group.name]}<p class="group-note">{LESSON_GROUPS[group.name]}</p>{/if}
         {/if}
         <ul class="cards">
           {#each group.lessons as m (m.id)}
@@ -339,7 +345,7 @@
           <ul class="links">
             {#each lesson.practice as l (l.href)}
               <li>
-                <a class="card link-card" href={l.href}>
+                <a class="card link-card" href={localHref(l.href)}>
                   <strong>{l.label}</strong>
                   {#if l.note}<span>{l.note}</span>{/if}
                 </a>
@@ -431,7 +437,16 @@
     color: var(--text-tertiary);
   }
 
-  .lesson-group h2 + .cards {
+  .group-note {
+    margin-top: 10px;
+    max-width: 780px;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+
+  .lesson-group h2 + .cards,
+  .group-note + .cards {
     margin-top: 16px;
   }
 

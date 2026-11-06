@@ -3,9 +3,10 @@ import type { ExamEntry } from '@/types';
 import { EXAM_DATA } from './registry';
 import AppleAbout from './apple/About.svelte';
 import CdlAbout from './cdl/About.svelte';
+import PcaAbout from './pca/About.svelte';
 
 /** Exams with no About page yet simply do not appear here. */
-const ABOUT: Record<string, Component> = { apple: AppleAbout, cdl: CdlAbout };
+const ABOUT: Record<string, Component> = { apple: AppleAbout, cdl: CdlAbout, pca: PcaAbout };
 
 /** The exams with their About pages attached, in picker order. */
 export const EXAMS: ExamEntry[] = EXAM_DATA.map((exam) => ({ ...exam, about: ABOUT[exam.id] }));

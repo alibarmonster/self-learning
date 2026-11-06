@@ -14,5 +14,6 @@ import type { Exam } from '@/types';
 import { apple } from './apple';
 import { cdl } from './cdl';
 import { ace } from './ace';
+import { pca } from './pca';
 
-export const EXAM_DATA: Exam[] = [apple, cdl, ace];
+export const EXAM_DATA: Exam[] = [apple, cdl, ace, pca];
