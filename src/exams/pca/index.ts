@@ -1,8 +1,9 @@
 import { defineExam } from '@/core';
-import { GOOGLE_CLOUD_SHEETS } from '@/sheets';
 import { PCA_LESSONS } from '@/lessons';
 import type { Mode, Section } from '@/types';
 import { cheatsheet } from './cheatsheet';
+import { commands } from './commands';
+import { concepts } from './concepts';
 import { sets } from './sets';
 import { design } from './questions/design';
 import { provisioning } from './questions/provisioning';
@@ -202,7 +203,11 @@ export const pca = defineExam({
   focusTopicIds: [],
   cheatsheet,
   /** Command reference and plain-language concepts, as extra tabs. */
-  extraSheets: GOOGLE_CLOUD_SHEETS,
+  /** PCA's own Commands and Concepts tabs; ACE and CDL keep the shared ones. */
+  extraSheets: [
+    { id: 'commands', label: 'Commands', sheet: commands },
+    { id: 'concepts', label: 'Concepts', sheet: concepts }
+  ],
   lab: true,
   lessons: PCA_LESSONS
 });

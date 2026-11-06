@@ -529,17 +529,287 @@ export const lesson: Lesson = {
       sections: [
         {
           id: 's11-messaging',
-          title: 'S11-01 · Pub/Sub, Managed Service for Apache Kafka and Dataflow',
+          title: 'S11-01 · Pub/Sub: topics, subscriptions and delivery',
+          blocks: [
+            {
+              kind: 'p',
+              text: '**Pub/Sub** is Google’s global, serverless, asynchronous messaging service. It decouples the code that produces events from the code that consumes them: producers never wait for consumers, and either side can scale or fail on its own.'
+            },
+            {
+              kind: 'table',
+              caption: 'The four building blocks',
+              columns: ['Piece', 'What it is'],
+              rows: [
+                ['**Topic**', 'The named resource publishers send to. A message is data (up to **10 MB**) plus optional key-value **attributes**.'],
+                ['**Subscription**', 'A named stream of messages from one topic. **Each subscription gets its own copy of every message** (fan-out); consumers sharing one subscription split the messages between them.'],
+                ['**Ack and redelivery**', 'The subscriber acknowledges each message within the **ack deadline**. An unacked message is delivered again, so delivery is **at-least-once** by default.'],
+                ['**Schema**', 'An optional Avro or Protocol Buffer schema on the topic, which rejects published messages that do not match.']
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'How messages are kept and delivered',
+              columns: ['Setting', 'Value', 'What it means'],
+              rows: [
+                ['Durability', 'Stored across zones of a region', 'A message is synchronously written to at least two zones before the publish succeeds'],
+                ['Ack deadline', '**10 to 600 seconds**', 'Extend it for slow handlers; when it expires, the message is redelivered'],
+                ['Subscription retention', 'Unacked messages up to **7 days**', 'How long a message waits for a slow or broken consumer'],
+                ['Topic retention', 'Up to **31 days**', 'Keeps messages on the topic so a subscription can replay them with seek, even ones already acked'],
+                ['Message size', '**10 MB**', 'Larger payloads go in Cloud Storage; publish the object path instead'],
+                ['Scope', 'Global', 'Publish and subscribe from any region; a **message storage policy** limits where messages rest']
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Subscription types: match the consumer',
+              columns: ['Type', 'How it works', 'Best for'],
+              rows: [
+                ['**Pull**', 'The subscriber calls the API to fetch messages', 'High throughput, batch workers, Dataflow'],
+                ['**Push**', 'Pub/Sub sends an HTTPS POST to an endpoint', 'Cloud Run, serverless webhooks'],
+                ['**BigQuery**', 'Writes each message straight into a table', 'Ingest into analytics with no code'],
+                ['**Cloud Storage**', 'Batches messages into files in a bucket', 'Archive or a data lake landing zone'],
+                ['No subscription', 'Nothing is attached to the topic', 'Messages are not delivered or kept (unless topic retention is on)']
+              ]
+            },
+            {
+              kind: 'callout',
+              tone: 'warn',
+              text: 'A new subscription only receives messages published **after** it was created. To read older ones, the topic needs **retention** and the subscription must **seek** back to a time.'
+            },
+            {
+              kind: 'code',
+              title: 'Topics, subscriptions and a test message',
+              lines: [
+                '# A topic and a pull subscription',
+                '$ gcloud pubsub topics create orders',
+                '$ gcloud pubsub subscriptions create orders-pull --topic=orders \\',
+                '    --ack-deadline=60 --message-retention-duration=7d',
+                '# Push to a Cloud Run service',
+                '$ gcloud pubsub subscriptions create orders-push --topic=orders \\',
+                '    --push-endpoint=https://orders-worker-abc123-et.a.run.app/events',
+                '# BigQuery subscription: no code at all',
+                '$ gcloud pubsub subscriptions create orders-bq --topic=orders \\',
+                '    --bigquery-table=ace-lab-123:sales.orders_raw',
+                '# Publish and pull a test message',
+                `$ gcloud pubsub topics publish orders --message='{"id":1,"total":250}'`,
+                '$ gcloud pubsub subscriptions pull orders-pull --auto-ack --limit=5'
+              ]
+            },
+            {
+              kind: 'quiz',
+              q: 'Billing and shipping both need every order event published to the `orders` topic. How should they consume it?',
+              options: ['Both read from one shared subscription', 'Each gets its own subscription on the topic', 'Create a second topic and publish everything twice', 'Use one push subscription that calls both services'],
+              answer: 1,
+              explain: 'Each subscription receives its own copy of every message, which is how Pub/Sub fans out. Consumers on one shared subscription split the messages between them.'
+            }
+          ]
+        },
+        {
+          id: 's11-pubsub-reliability',
+          title: 'S11-01 · Pub/Sub reliability: dead letters, ordering, exactly-once, replay',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Exam scenarios about Pub/Sub usually hinge on one subscription setting. Learn which problem each one solves.'
+            },
+            {
+              kind: 'table',
+              caption: 'The reliability settings',
+              columns: ['Setting', 'What it does', 'The scenario'],
+              rows: [
+                ['**Dead-letter topic**', 'After **5 to 100** failed delivery attempts, the message moves to a separate topic', 'A malformed message is redelivered forever and blocks the consumer'],
+                ['**Message ordering**', 'With ordering on the subscription and an **ordering key** on each publish, messages with the same key arrive in publish order', '"Events for the same customer must be processed in order"'],
+                ['**Exactly-once delivery**', 'No redelivery after a successful ack; **pull subscriptions only**', '"Duplicates must not be processed"'],
+                ['**Retention**', 'Unacked messages kept up to 7 days; topic retention up to 31 days', 'A consumer was down for two days'],
+                ['**Seek and snapshots**', 'Move a subscription back to a time or a snapshot to replay messages, or forward to skip them', 'A bug corrupted results; reprocess the last six hours'],
+                ['**Filters**', 'Deliver only messages whose attributes match an expression', 'One consumer only cares about `region = "id"`']
+              ]
+            },
+            {
+              kind: 'code',
+              title: 'Reliability settings with gcloud',
+              lines: [
+                '# Dead-letter topic after 5 attempts',
+                '$ gcloud pubsub topics create orders-dlq',
+                '$ gcloud pubsub subscriptions update orders-pull \\',
+                '    --dead-letter-topic=orders-dlq --max-delivery-attempts=5',
+                '# Exactly-once and ordering are chosen when the subscription is created',
+                '$ gcloud pubsub subscriptions create orders-eo --topic=orders --enable-exactly-once-delivery',
+                '$ gcloud pubsub subscriptions create orders-ord --topic=orders --enable-message-ordering',
+                '# Only matching messages',
+                `$ gcloud pubsub subscriptions create orders-id --topic=orders --message-filter='attributes.region = "id"'`,
+                '# Replay: keep 7 days on the topic, then seek the subscription back',
+                '$ gcloud pubsub topics update orders --message-retention-duration=7d',
+                '$ gcloud pubsub subscriptions seek orders-pull --time=2026-10-28T02:00:00Z'
+              ]
+            },
+            {
+              kind: 'callout',
+              tone: 'warn',
+              text: 'For dead-lettering to work, the **Pub/Sub service agent** (`service-PROJECT_NUMBER@gcp-sa-pubsub.iam.gserviceaccount.com`) needs **Publisher** on the dead-letter topic and **Subscriber** on the source subscription. The console grants both; with gcloud you grant them yourself.'
+            },
+            {
+              kind: 'list',
+              items: [
+                '**Single message transforms (SMTs)** run light changes inside Pub/Sub itself, so a separate Dataflow job is not needed for them. A **JavaScript UDF** modifies or filters each message, and the **AI inference** transform adds a model’s prediction to each message.',
+                '**Import topics** pull data into Pub/Sub from Amazon Kinesis, Amazon MSK, Azure Event Hubs, Confluent Cloud or Cloud Storage.',
+                '**Bigtable subscriptions** (Preview in 2026) write messages straight into a Bigtable table, like BigQuery subscriptions do for BigQuery.'
+              ]
+            },
+            {
+              kind: 'quiz',
+              q: 'A subscriber keeps failing on one malformed message, which is redelivered endlessly and holds up processing. What should you configure?',
+              options: ['A longer ack deadline', 'A dead-letter topic with a maximum number of delivery attempts', 'Message ordering', 'A push subscription instead of pull'],
+              answer: 1,
+              explain: 'After the set number of attempts (5 to 100) the message moves to the dead-letter topic, where it can be inspected, and the rest of the stream keeps flowing.'
+            },
+            {
+              kind: 'quiz',
+              q: 'Messages with the same customer ID must be processed in the order they were published. What should be configured?',
+              options: ['Exactly-once delivery', 'A dead-letter topic', 'A longer ack deadline', 'Message ordering on the subscription, and an ordering key on each message'],
+              answer: 3,
+              explain: 'Ordering is per key: the subscription must have ordering enabled and the publisher must set the customer ID as the ordering key. Exactly-once prevents duplicates; it does not order messages.'
+            }
+          ]
+        },
+        {
+          id: 's11-dataflow',
+          title: 'S11-01 · Dataflow: running, watching and stopping pipelines',
+          blocks: [
+            {
+              kind: 'p',
+              text: '**Dataflow** is Google’s fully managed runner for **Apache Beam**. You write a pipeline once, in Java, Python, Go or YAML, and the same code runs as **batch** or **streaming**. Dataflow provisions the workers, fuses and rebalances the steps, and autoscales.'
+            },
+            {
+              kind: 'steps',
+              items: [
+                { title: 'Write it in Beam', text: 'One programming model for batch and streaming.' },
+                { title: 'Read from a source', text: 'Pub/Sub, Managed Kafka, Cloud Storage, BigQuery, JDBC databases and more, through Beam I/O connectors.' },
+                { title: 'Transform', text: '`ParDo` for per-element work, `GroupByKey` and combiners, **windows** and **triggers** for streams. Dataflow fuses steps and rebalances work between workers.' },
+                { title: 'Write to a sink', text: 'BigQuery, Bigtable, Cloud Storage, Pub/Sub. Workers scale with the backlog.' }
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Batch or streaming',
+              columns: ['', 'Batch', 'Streaming'],
+              rows: [
+                ['Input', 'Bounded: files in Cloud Storage, a BigQuery table', 'Unbounded: a Pub/Sub or Kafka topic'],
+                ['End of the job', 'Finishes with state **Done** when all data is processed', 'Runs until you **drain** or **cancel** it'],
+                ['Typical use', 'Nightly ETL, backfills, reprocessing', 'Real-time dashboards, enrichment, alerting'],
+                ['Special features', '**FlexRS**: cheaper, delay-tolerant batch on a mix of VM types', '**Windows** and **watermarks** handle late data; watch **data freshness** and **system latency**']
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Performance and cost levers: tune before adding workers',
+              columns: ['Lever', 'What it does'],
+              rows: [
+                ['**Streaming Engine**', 'Moves state and shuffle off the workers into the service, so streaming jobs scale faster and use smaller workers'],
+                ['**Autoscaling**', 'Adds and removes workers as the backlog and CPU change; set a maximum to cap cost'],
+                ['**FlexRS**', 'Runs delay-tolerant batch jobs at a lower price'],
+                ['**Templates and job builder**', 'Google-provided classic and Flex templates, and a visual job builder in the console, for common pipelines with no code'],
+                ['**Region**', 'Run the job in the same region as its sources and sinks'],
+                ['**Worker identity**', 'A dedicated worker service account and private IPs only (`--disable-public-ips`) for security']
+              ]
+            },
+            {
+              kind: 'code',
+              title: 'Launching a Google-provided template',
+              lines: [
+                '# Flex template: Pub/Sub subscription -> BigQuery',
+                '$ gcloud dataflow flex-template run orders-stream --region=asia-southeast2 \\',
+                '    --template-file-gcs-location=gs://dataflow-templates-asia-southeast2/latest/flex/PubSub_to_BigQuery_Flex \\',
+                '    --parameters=inputSubscription=projects/ace-lab-123/subscriptions/orders-pull,outputTableSpec=ace-lab-123:sales.orders',
+                '# Classic template: Cloud Storage text -> BigQuery uses `gcloud dataflow jobs run --gcs-location=...`'
+              ]
+            },
+            {
+              kind: 'code',
+              title: 'Reviewing and stopping a job',
+              lines: [
+                '$ gcloud dataflow jobs list --region=asia-southeast2 --status=active',
+                '$ gcloud dataflow jobs describe 2026-10-30_01_02_03-1234567890 --region=asia-southeast2',
+                '# Stop a streaming job safely: finish in-flight data first',
+                '$ gcloud dataflow jobs drain 2026-10-30_01_02_03-1234567890 --region=asia-southeast2',
+                '# Stop immediately: in-flight data is lost',
+                '$ gcloud dataflow jobs cancel 2026-10-30_01_02_03-1234567890 --region=asia-southeast2'
+              ]
+            },
+            {
+              kind: 'list',
+              items: [
+                '**Job states**: Queued, Running, Draining, Cancelling, then Done, Failed, Cancelled, Drained or Updated.',
+                '**In the console**, the job page shows the **job graph** with each step’s throughput, step metrics, autoscaling history and worker logs. For streaming, **data freshness** and **system latency** tell you whether the job is falling behind.'
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Stopping and updating: decide by what happens to data in flight',
+              columns: ['Action', 'Effect', 'Use when'],
+              rows: [
+                ['**Drain**', 'Stops reading new data, finishes what is in flight, then stops', 'A planned stop or an incompatible code change on a streaming job'],
+                ['**Cancel**', 'Stops at once; buffered data is lost', 'A faulty job whose input can be replayed'],
+                ['**Update**', 'Replaces a running streaming job with a compatible new version, keeping its state', 'A small pipeline change without a restart'],
+                ['**Snapshot**', 'Saves a streaming job’s state for a later restart', 'Before a risky change, or to move the job']
+              ]
+            },
+            {
+              kind: 'quiz',
+              q: 'A streaming Dataflow job must be stopped for a code change without losing messages it has already read from Pub/Sub. Which action should you take?',
+              options: ['`gcloud dataflow jobs cancel`', '`gcloud dataflow jobs drain`', 'Delete the subscription', 'Scale the workers to zero'],
+              answer: 1,
+              explain: 'Drain finishes processing buffered data before stopping. Cancel drops it.'
+            },
+            {
+              kind: 'quiz',
+              q: 'Order events must be parsed, enriched and windowed before they land in BigQuery, with no servers to manage. What fits best?',
+              options: ['A Pub/Sub BigQuery subscription', 'A Dataflow streaming pipeline', 'A Cloud Storage subscription', 'Transfer Appliance'],
+              answer: 1,
+              explain: 'A BigQuery subscription writes messages as they are, with at most simple transforms. Enrichment and windowing need a pipeline, and Dataflow runs it serverlessly.'
+            }
+          ]
+        },
+        {
+          id: 's11-kafka',
+          title: 'S11-01 · Managed Service for Apache Kafka, and which service to pick',
           blocks: [
             {
               kind: 'table',
-              caption: 'Messaging: which service',
-              columns: ['', 'Pub/Sub', 'Managed Service for Apache Kafka'],
+              caption: 'Managed Service for Apache Kafka in four lines',
+              columns: ['', ''],
               rows: [
-                ['What', 'Google’s global, serverless messaging', 'Real Apache Kafka clusters that Google runs'],
-                ['You size', 'Nothing: it scales on its own', 'vCPUs (minimum 3) and memory (1–8 GiB per vCPU) per cluster; partitions per topic'],
-                ['Pick when', 'New event-driven designs, fan-out, push to Cloud Run, BigQuery subscriptions', 'Existing Kafka apps and tools, Kafka APIs, migrations with no code change, Kafka Connect'],
-                ['Extras', 'Dead letters, ordering keys, exactly-once (pull), filters, seek and replay, import topics', 'IAM authentication, Private Service Connect in your subnets, Kafka Connect clusters (BigQuery and Cloud Storage sinks, MirrorMaker 2)']
+                ['What you manage', 'Cluster size (vCPUs, minimum 3, and 1–8 GiB of memory per vCPU), topics, partitions and consumer groups. Google runs the brokers, patching and storage.'],
+                ['Networking', 'Clients reach the cluster privately, through **Private Service Connect** endpoints in the subnets you list.'],
+                ['Compatibility', 'Standard Kafka clients, **Kafka Connect** and existing tooling work unchanged, which makes migrations easy.'],
+                ['Security and integration', 'Clients authenticate with **IAM** or mTLS. Connectors move data to and from BigQuery, Cloud Storage and Pub/Sub, and MirrorMaker 2 replicates from other Kafka clusters.']
+              ]
+            },
+            {
+              kind: 'code',
+              title: 'A cluster, a topic and its consumer groups',
+              lines: [
+                '$ gcloud managed-kafka clusters create orders-kafka --location=asia-southeast2 \\',
+                '    --cpu=3 --memory=3GiB --subnets=projects/ace-lab-123/regions/asia-southeast2/subnetworks/data-jkt',
+                '$ gcloud managed-kafka topics create orders --cluster=orders-kafka --location=asia-southeast2 \\',
+                '    --partitions=6 --replication-factor=3',
+                '$ gcloud managed-kafka consumer-groups list --cluster=orders-kafka --location=asia-southeast2'
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Pub/Sub, Kafka or something else?',
+              columns: ['The scenario says…', 'Use'],
+              rows: [
+                ['New event-driven app, no operations wanted', 'Pub/Sub (serverless, global, no partitions to size)'],
+                ['Existing Kafka producers and consumers, no code change', 'Managed Service for Apache Kafka'],
+                ['Needs the Kafka Connect or Kafka Streams ecosystem', 'Managed Service for Apache Kafka'],
+                ['Push events to Cloud Run, or straight into BigQuery', 'Pub/Sub push or BigQuery subscription'],
+                ['Stream transforms, windowing, joins', 'Dataflow, reading from either'],
+                ['Existing Spark or Hadoop jobs', 'Managed Service for Apache Spark (formerly Dataproc), not Dataflow'],
+                ['Replicate database changes (CDC) into BigQuery', 'Datastream'],
+                ['Visual, code-free ETL', 'Cloud Data Fusion'],
+                ['Scheduled loads from SaaS sources into BigQuery', 'BigQuery Data Transfer Service']
               ]
             },
             {
@@ -547,162 +817,450 @@ export const lesson: Lesson = {
               text: '**Pub/Sub Lite** was turned down in March 2026. Its replacements are Pub/Sub, or Managed Service for Apache Kafka for Kafka-style partitioned streams.'
             },
             {
-              kind: 'code',
-              title: 'Managed Kafka',
-              lines: [
-                '$ gcloud managed-kafka clusters create orders-kafka --location=asia-southeast2 \\',
-                '    --cpu=3 --memory=3GiB --subnets=projects/ace-lab-123/regions/asia-southeast2/subnetworks/data-jkt',
-                '$ gcloud managed-kafka topics create orders --cluster=orders-kafka --location=asia-southeast2 \\',
-                '    --partitions=6 --replication-factor=3'
-              ]
-            },
-            {
-              kind: 'list',
-              items: [
-                '**Dataflow** runs **Apache Beam** pipelines, batch and streaming with the same code, on autoscaled workers you never manage. Start from **Google-provided templates** (Pub/Sub to BigQuery, Cloud Storage text to BigQuery and others), **Flex Templates** or the job builder in the console.',
-                '**Reviewing a job**: the console job page shows the **job graph** with each step’s throughput, the **data freshness** and **system lag** for streaming, autoscaling history, worker logs and errors. The job states are Running, Draining, Cancelling, Done, Failed and Cancelled.',
-                '**Stopping a streaming job**: **Drain** stops reading new data but finishes what is in flight, with no data loss. **Cancel** stops at once and drops buffered data. A running streaming job can be **updated** in place with new code.'
-              ]
-            },
-            {
-              kind: 'code',
-              title: 'Dataflow: a template job, then watching it',
-              lines: [
-                '$ gcloud dataflow jobs run orders-stream --region=asia-southeast2 \\',
-                '    --gcs-location=gs://dataflow-templates-asia-southeast2/latest/PubSub_Subscription_to_BigQuery \\',
-                '    --parameters=inputSubscription=projects/ace-lab-123/subscriptions/orders-df,outputTableSpec=ace-lab-123:sales.orders_stream',
-                '$ gcloud dataflow jobs list --region=asia-southeast2 --status=active',
-                '$ gcloud dataflow jobs describe 2026-10-30_01_02_03-1234567890 --region=asia-southeast2',
-                '$ gcloud dataflow jobs drain 2026-10-30_01_02_03-1234567890 --region=asia-southeast2'
-              ]
-            },
-            {
-              kind: 'table',
-              caption: 'Which pipeline tool',
-              columns: ['Need', 'Use'],
-              rows: [
-                ['New batch or streaming pipelines, serverless', 'Dataflow (Apache Beam)'],
-                ['Existing Spark or Hadoop jobs', 'Managed Service for Apache Spark (formerly Dataproc), on clusters or serverless'],
-                ['Replicate database changes (CDC) into BigQuery', 'Datastream'],
-                ['Visual, code-free ETL', 'Cloud Data Fusion'],
-                ['Scheduled loads from SaaS sources into BigQuery', 'BigQuery Data Transfer Service'],
-                ['Stream Pub/Sub messages into a table with no code', 'A Pub/Sub BigQuery subscription']
-              ]
-            },
-            {
               kind: 'callout',
               tone: 'exam',
-              text: '"Lift existing Kafka producers and consumers with no code change" → Managed Service for Apache Kafka. "Real-time pipeline from Pub/Sub to BigQuery with transformations" → Dataflow. "Stop a streaming pipeline without losing data" → drain. "Run existing Spark jobs" → Managed Service for Apache Spark. "Is the streaming job falling behind?" → system lag and data freshness on the job page.'
+              text: '"Lift existing Kafka producers and consumers with no code change" → Managed Service for Apache Kafka. "Real-time pipeline from Pub/Sub to BigQuery with transformations" → Dataflow. "Stop a streaming pipeline without losing data" → drain. "Run existing Spark jobs" → Managed Service for Apache Spark. "Is the streaming job falling behind?" → system latency and data freshness on the job page.'
             },
             {
               kind: 'quiz',
-              q: 'You must replace a streaming Dataflow job with a new version and must not lose in-flight data. The new code is not compatible with an in-place update. What do you do with the old job?',
-              options: ['Cancel it', 'Drain it, then start the new job', 'Delete its subscription', 'Scale it to zero workers'],
+              q: 'A team runs dozens of Kafka producers and consumers on-premises and wants to move them to Google Cloud with no code change and no brokers to manage. What should they use?',
+              options: ['Pub/Sub with a push subscription', 'Managed Service for Apache Kafka', 'Dataflow with a Kafka template', 'Kafka on Compute Engine VMs'],
               answer: 1,
-              explain: 'Drain finishes processing buffered data before stopping. Cancel drops it.'
+              explain: 'Managed Kafka speaks the Kafka protocol, so the clients only need new connection settings, and Google runs the brokers. Pub/Sub would need code changes; VMs keep the operations work.'
             }
           ]
         },
         {
           id: 's11-cmek',
-          title: 'S11-02 · Customer-managed encryption keys (CMEK)',
+          title: 'S11-02 · Encryption keys: Google-managed, CMEK or CSEK',
+          blocks: [
+            {
+              kind: 'p',
+              text: 'Everything in Google Cloud is **encrypted at rest by default**. The question in an exam scenario is never "is it encrypted?" but **who controls the key**.'
+            },
+            {
+              kind: 'table',
+              caption: 'Encryption at rest: the three options',
+              columns: ['', 'Google-managed (default)', 'CMEK', 'CSEK'],
+              rows: [
+                ['Key stored in', 'Google’s internal key management', 'Cloud KMS, in your project', 'Nowhere at Google: you send it with each request'],
+                ['Your control', 'None needed', 'Rotate, disable, destroy, audit', 'Full; lose the key and the data is lost'],
+                ['Services', 'All', 'Most storage and database services', 'Cloud Storage and Compute Engine only'],
+                ['Protection level', 'Software', 'Software, HSM, or external (Cloud EKM)', 'Your own key material'],
+                ['Effort', 'Zero', 'Moderate: IAM for the service agent, key location', 'High: you distribute and keep the keys']
+              ]
+            },
+            {
+              kind: 'steps',
+              items: [
+                { title: 'Data key', text: 'The service encrypts your data with a **data encryption key (DEK)**.' },
+                { title: 'Wrap', text: 'Cloud KMS encrypts ("wraps") the DEK with your **customer key**, the **key encryption key (KEK)**.' },
+                { title: 'Store', text: 'The wrapped DEK is stored next to the data. Your key never leaves Cloud KMS.' },
+                { title: 'Read', text: 'To read, the service asks Cloud KMS to unwrap the DEK, acting as its **service agent**. Disable the key and that call fails, so the data is unreadable.' }
+              ]
+            },
+            {
+              kind: 'p',
+              text: 'This is **envelope encryption**. CMEK keys are symmetric 256-bit AES-GCM keys, and the key material stays inside the Cloud KMS boundary.'
+            },
+            {
+              kind: 'table',
+              caption: 'The Cloud KMS hierarchy',
+              columns: ['Level', 'What to know'],
+              rows: [
+                ['**Location**', 'A region or multi-region. Keys stay where they are created, so create them where the protected data lives'],
+                ['**Key ring**', 'Groups keys by location and purpose. Key rings can be deleted since August 2026; older material says they cannot'],
+                ['**Key**', 'Has a purpose (encryption for CMEK) and a **protection level**, fixed when it is created'],
+                ['**Key version**', 'The actual key material. Rotation adds a new **primary** version; older versions still decrypt until destroyed']
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Protection levels: more assurance, more cost and effort',
+              columns: ['Level', 'Where the key material lives', 'Notes'],
+              rows: [
+                ['**Software**', 'Cloud KMS software', 'The default for most CMEK keys, lowest cost'],
+                ['**HSM**', 'Multi-tenant Cloud HSM (FIPS 140-2 Level 3)', 'Hardware-backed keys for stricter compliance'],
+                ['**Single-tenant HSM**', 'A dedicated HSM instance', 'GA in December 2025 in a few regions; quorum approval; extra cost'],
+                ['**External (Cloud EKM)**', 'A partner key manager outside Google', 'The key never enters Google; Google calls the partner for each operation']
+              ]
+            },
+            {
+              kind: 'quiz',
+              q: 'A bank must be able to make its data in Google Cloud unreadable at any time by revoking the key, and the key must stay in Google Cloud. Which option fits?',
+              options: ['Google-managed keys', 'CMEK in Cloud KMS', 'CSEK', 'Client-side encryption in the application'],
+              answer: 1,
+              explain: 'CMEK keeps the key in Cloud KMS under the bank’s control: disabling the key version blocks every read. Default keys give no such control, and CSEK keeps keys outside Google.'
+            }
+          ]
+        },
+        {
+          id: 's11-cmek-setup',
+          title: 'S11-02 · Setting up CMEK on each service',
+          blocks: [
+            {
+              kind: 'steps',
+              items: [
+                { title: 'Create a key ring', text: 'In the same location as the data, for example `asia-southeast2` for Jakarta resources.', code: ['gcloud kms keyrings create data-keys --location=asia-southeast2'] },
+                { title: 'Create a key', text: 'Purpose encryption, a protection level, and an automatic rotation period.', code: ['gcloud kms keys create storage-key --keyring=data-keys --location=asia-southeast2 --purpose=encryption --protection-level=software --rotation-period=90d --next-rotation-time=2026-12-01T00:00:00Z'] },
+                { title: 'Grant the service agent', text: 'The **service agent** of the product that will use the key needs **Cloud KMS CryptoKey Encrypter/Decrypter**, granted on the key. You and your app do not need it.' },
+                { title: 'Attach the key to the resource', text: 'Set it on the bucket, dataset, instance or disk, often only when the resource is created.' }
+              ]
+            },
+            {
+              kind: 'code',
+              title: 'Granting a service agent access to the key',
+              lines: [
+                '# Create (or look up) the service agent of the target service',
+                '$ gcloud beta services identity create --service=sqladmin.googleapis.com',
+                '# Grant Encrypter/Decrypter on the key, not on the project',
+                '$ gcloud kms keys add-iam-policy-binding sql-key --keyring=data-keys --location=asia-southeast2 \\',
+                '    --member=serviceAccount:service-123456789012@gcp-sa-cloud-sql.iam.gserviceaccount.com \\',
+                '    --role=roles/cloudkms.cryptoKeyEncrypterDecrypter',
+                '$ gcloud kms keys get-iam-policy sql-key --keyring=data-keys --location=asia-southeast2'
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Where the key is set in each service',
+              columns: ['Service', 'Where', 'Flag or note'],
+              rows: [
+                ['Cloud Storage', 'Bucket default key', '`--default-encryption-key`; new objects use it. Authorize the service agent first'],
+                ['BigQuery', 'Dataset default key (or per table)', '`bq mk -d --default_kms_key`; new tables inherit it'],
+                ['Cloud SQL', 'At instance creation only', '`--disk-encryption-key`; cannot be added to an existing instance'],
+                ['AlloyDB, Spanner', 'At cluster or database creation', 'Decide before deploying'],
+                ['Compute Engine', 'Disk, image or snapshot', '`--kms-key` when it is created'],
+                ['Pub/Sub', 'Topic', '`--topic-encryption-key`'],
+                ['Dataflow', 'Job', '`--dataflow-kms-key` encrypts job state and temporary data'],
+                ['GKE', 'Boot disks and application-layer secrets', 'Node pool `--boot-disk-kms-key`; cluster `--database-encryption-key` for Secrets']
+              ]
+            },
+            {
+              kind: 'code',
+              title: 'CMEK on six products',
+              lines: [
+                '# Cloud Storage: authorise its service agent, then set the bucket default',
+                `$ gcloud storage service-agent --authorize-cmek=${KEY}/storage-key`,
+                `$ gcloud storage buckets update gs://ace-lab-web --default-encryption-key=${KEY}/storage-key`,
+                '# BigQuery: a dataset whose new tables use the key',
+                `$ bq mk -d --default_kms_key=${KEY}/bq-key ace-lab-123:sales_secure`,
+                '# Compute Engine disk',
+                `$ gcloud compute disks create secure-1 --zone=asia-southeast2-a --size=100GB --kms-key=${KEY}/disk-key`,
+                '# Cloud SQL: only when the instance is created',
+                `$ gcloud sql instances create secure-db --database-version=POSTGRES_16 --edition=ENTERPRISE --region=asia-southeast2 --tier=db-custom-2-8192 --disk-encryption-key=${KEY}/sql-key`,
+                '# Pub/Sub topic',
+                `$ gcloud pubsub topics create orders-secure --topic-encryption-key=${KEY}/pubsub-key`,
+                '# Dataflow job',
+                `$ gcloud dataflow flex-template run secure-job --region=asia-southeast2 --dataflow-kms-key=${KEY}/df-key \\`,
+                '    --template-file-gcs-location=gs://dataflow-templates-asia-southeast2/latest/flex/PubSub_to_BigQuery_Flex'
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Troubleshooting CMEK: identity, location or key state',
+              columns: ['Symptom', 'Cause'],
+              rows: [
+                ['Permission denied on the key, even though you are a KMS admin', 'The **service agent** lacks Encrypter/Decrypter on the key'],
+                ['The resource cannot use the key', '**Location mismatch**: the key must be in a location compatible with the resource'],
+                ['Data suddenly unreadable', 'The key version was **disabled** or **destroyed**, or the service agent’s role was revoked'],
+                ['Cannot switch an existing Cloud SQL instance to CMEK', 'The key is fixed **at creation**: create a new instance and migrate'],
+                ['Who used the key, and when?', '**Cloud Audit Logs** for Cloud KMS record encrypt and decrypt calls']
+              ]
+            },
+            {
+              kind: 'quiz',
+              q: 'You set a CMEK key on a new Cloud SQL instance, and creation fails with a permission error on the key. Your user is a Cloud KMS admin. What is missing?',
+              options: ['`roles/cloudkms.admin` for your user', 'Cloud KMS CryptoKey Encrypter/Decrypter for the Cloud SQL service agent, on the key', 'A CSEK key in the request', 'A multi-region key ring'],
+              answer: 1,
+              explain: 'The service encrypts on your behalf through its service agent, so the agent needs the role. Your own role is irrelevant, and the key must be in the instance’s region.'
+            }
+          ]
+        },
+        {
+          id: 's11-cmek-lifecycle',
+          title: 'S11-02 · Governing keys: Autokey, organization policy, rotation and destruction',
           blocks: [
             {
               kind: 'table',
-              caption: 'Encryption at rest: the options',
-              columns: ['Option', 'Who holds the key', 'Use when'],
+              caption: 'Manual CMEK or Autokey',
+              columns: ['Manual CMEK', 'Cloud KMS Autokey'],
               rows: [
-                ['Google default encryption', 'Google, automatically', 'Always on; nothing to configure'],
-                ['**CMEK** (Cloud KMS)', 'You control a key in Cloud KMS (software, Cloud HSM, or external with Cloud EKM)', 'You must control rotation, disable access, or prove key ownership'],
-                ['Cloud KMS **Autokey**', 'Cloud KMS creates CMEK keys for you as resources are created', 'CMEK everywhere without managing keys by hand'],
-                ['**CSEK**', 'You supply the raw key on every request; Google never stores it', 'Cloud Storage and Compute Engine only. Lose the key, lose the data']
+                ['Admins create key rings and keys in advance', 'Keys are created on demand, when the resource is created'],
+                ['Service agent grants are made by hand', 'Service agent roles are granted automatically'],
+                ['Naming and rotation set key by key', 'Every key follows one consistent pattern'],
+                ['Full control over each key and level', 'Keys in a dedicated key project, or in the same project (GA July 2026)'],
+                ['Fits small, fixed environments', 'Fits large environments with many teams; enabled per folder or project']
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Enforce CMEK centrally instead of trusting each team',
+              columns: ['Control', 'What it does'],
+              rows: [
+                ['`gcp.restrictNonCmekServices`', 'Organization policy that **denies new resources** in the listed services unless a CMEK key is set'],
+                ['`gcp.restrictCmekCryptoKeyProjects`', 'Organization policy that limits **which projects may hold** the keys used for CMEK'],
+                ['Cloud Audit Logs', 'Record key use; alert on key **disable** and **destroy** events'],
+                ['Separation of duties', 'KMS admins manage keys (often in a separate project); data owners only use them']
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Key version states: treat disable and destroy like deleting data',
+              columns: ['State', 'Effect', 'Reversible?'],
+              rows: [
+                ['**Enabled**', 'Used to encrypt and decrypt', '—'],
+                ['**Disabled**', 'Cannot be used; data it protects is unreadable', 'Yes: enable it again'],
+                ['**Scheduled for destruction**', 'Disabled during a waiting period, **30 days** by default', 'Yes: **restore** before the wait ends'],
+                ['**Destroyed**', 'Key material is gone; the data is permanently unreadable', 'No'],
+                ['**Deleted**', 'The key or version resource is removed (GA March 2026)', 'No, and the name cannot be reused']
+              ]
+            },
+            {
+              kind: 'code',
+              title: 'Rotate, disable, destroy and restore',
+              lines: [
+                '# Rotate now: add a new primary version (new data uses it; old data is not re-encrypted)',
+                '$ gcloud kms keys versions create --key=storage-key --keyring=data-keys --location=asia-southeast2 --primary',
+                '# Disable a version (reversible)',
+                '$ gcloud kms keys versions disable 1 --key=storage-key --keyring=data-keys --location=asia-southeast2',
+                '# Schedule destruction, then cancel it within the waiting period',
+                '$ gcloud kms keys versions destroy 1 --key=storage-key --keyring=data-keys --location=asia-southeast2',
+                '$ gcloud kms keys versions restore 1 --key=storage-key --keyring=data-keys --location=asia-southeast2'
               ]
             },
             {
               kind: 'list',
               items: [
-                '**Structure**: a **key ring** in a location holds **keys**, and each key has **versions**. The key’s location must match the data’s location, for example an `asia-southeast2` key for an `asia-southeast2` bucket.',
-                '**Who uses the key**: the product’s **service agent** (not you, not your app) needs **Cloud KMS CryptoKey Encrypter/Decrypter** on the key.',
-                '**Rotation** makes a new primary version for new data. Old versions still decrypt old data, and nothing is re-encrypted automatically.',
-                '**Disabling** a version makes data encrypted with it unreadable until you re-enable it. **Destroying** is scheduled, 30 days by default, so it can still be cancelled.',
-                '**When to choose CMEK**: some products take it only **at creation** (Cloud SQL, AlloyDB clusters, Spanner databases), so decide early. Keep keys in a separate project for separation of duties. The organization policies `gcp.restrictNonCmekServices` and `gcp.restrictCmekCryptoKeyProjects` enforce CMEK.'
-              ]
-            },
-            {
-              kind: 'code',
-              title: 'A key ring, a key, and CMEK on four products',
-              lines: [
-                '$ gcloud kms keyrings create data-keys --location=asia-southeast2',
-                '$ gcloud kms keys create storage-key --keyring=data-keys --location=asia-southeast2 \\',
-                '    --purpose=encryption --rotation-period=90d --next-rotation-time=2026-12-01T00:00:00Z',
-                '# Cloud Storage: authorise its service agent, then set the bucket default',
-                `$ gcloud storage service-agent --authorize-cmek=${KEY}/storage-key`,
-                `$ gcloud storage buckets update gs://ace-lab-web --default-encryption-key=${KEY}/storage-key`,
-                '# BigQuery dataset default (the BigQuery service agent needs Encrypter/Decrypter on the key)',
-                `$ bq update --default_kms_key=${KEY}/bq-key ace-lab-123:sales`,
-                '# A Compute Engine disk',
-                `$ gcloud compute disks create secure-1 --zone=asia-southeast2-a --size=100GB --kms-key=${KEY}/disk-key`,
-                '# Cloud SQL: only when the instance is created',
-                `$ gcloud sql instances create secure-db --database-version=MYSQL_8_0 --edition=ENTERPRISE --region=asia-southeast2 --tier=db-custom-2-8192 --disk-encryption-key=${KEY}/sql-key`,
-                '$ gcloud kms keys versions disable 1 --key=storage-key --keyring=data-keys --location=asia-southeast2'
+                '**Rotation** adds a new primary version for new data. Existing data stays readable with the older versions, and nothing is re-encrypted automatically. Destroy an old version only after the data that uses it has been re-encrypted.',
+                'Do not put the key in a different region from a regional resource: CMEK needs compatible locations.',
+                'Some products take a key only **at creation** (Cloud SQL, AlloyDB clusters, Spanner databases), so decide early.'
               ]
             },
             {
               kind: 'callout',
               tone: 'exam',
-              text: '"The company must control and rotate the encryption keys" → CMEK with Cloud KMS. "Keys must stay outside Google" → Cloud EKM. "Keys in a hardware security module" → Cloud HSM protection level. "CMEK fails with permission denied" → the service agent lacks Encrypter/Decrypter on the key, or the key is in the wrong location. "Revoke access to the data immediately" → disable the key version.'
+              text: '"The company must control and rotate the encryption keys" → CMEK with Cloud KMS. "Keys must stay outside Google" → Cloud EKM. "Keys in a hardware security module" → HSM protection level. "No bucket may be created without CMEK" → `gcp.restrictNonCmekServices`. "Revoke access to the data immediately" → disable the key version. "A key was scheduled for destruction by mistake" → restore it before the wait ends.'
             },
             {
               kind: 'quiz',
-              q: 'You set a CMEK key as the default for a bucket, and uploads now fail with a permission error on the key. What is missing?',
-              options: ['Your user needs Cloud KMS Admin', 'The Cloud Storage service agent needs Cloud KMS CryptoKey Encrypter/Decrypter on the key', 'The bucket must use fine-grained ACLs', 'The key must be in the `global` location'],
+              q: 'A security team requires that no new Cloud Storage bucket in a folder can be created without a customer-managed key. What should be used?',
+              options: ['Object Versioning', 'The `gcp.restrictNonCmekServices` organization policy', 'A retention policy', 'Uniform bucket-level access'],
               answer: 1,
-              explain: 'Cloud Storage encrypts with the key on your behalf through its service agent, which must be granted the encrypter/decrypter role. The key must also be in a matching location.'
+              explain: 'The constraint rejects new resources in the listed services that have no CMEK key, enforced for the whole folder.'
+            },
+            {
+              kind: 'quiz',
+              q: 'A key version protecting production data was scheduled for destruction by mistake. What should the team do?',
+              options: ['Restore the key version before the waiting period ends', 'Create a new key ring', 'Rotate the key', 'Switch the resources to CSEK'],
+              answer: 0,
+              explain: 'Destruction waits 30 days by default, and `gcloud kms keys versions restore` cancels it. Rotating adds a new version but cannot decrypt data protected by the old one once it is destroyed.'
             }
           ]
         },
         {
           id: 's11-redundancy',
-          title: 'S11-03 · Multi-region redundancy patterns',
+          title: 'S11-03 · RPO, RTO and disaster recovery strategies',
           blocks: [
             {
-              kind: 'p',
-              text: 'Two numbers frame every design. The **RPO** (recovery point objective) is how much recent data you can afford to lose. The **RTO** (recovery time objective) is how long you can be down. Zonal redundancy survives a zone, not a region. For a region failure you need a copy somewhere else.'
+              kind: 'table',
+              caption: 'Every DR design starts with two business numbers',
+              columns: ['Term', 'Meaning'],
+              rows: [
+                ['**RPO** (recovery point objective)', 'How much recent data you can afford to lose, measured in time'],
+                ['**RTO** (recovery time objective)', 'How long you can afford to be down'],
+                ['**3-2-1 rule**', 'Three copies of the data, on two kinds of media, with one copy off-site or in another region']
+              ]
             },
             {
               kind: 'table',
-              caption: 'From zone-safe to region-safe, product by product',
-              columns: ['Product', 'Survives a zone', 'Survives a region'],
+              caption: 'DR strategies: a lower RTO and RPO always costs more',
+              columns: ['Pattern', 'State of the recovery region', 'Typical RTO', 'Cost'],
               rows: [
-                ['Cloud Storage', 'Any bucket (regional buckets span zones)', 'Dual-region (turbo replication for a 15-minute RPO) or multi-region'],
-                ['Cloud SQL', 'HA (regional) configuration', 'Cross-region read replica you promote; backups stored in another region'],
-                ['AlloyDB', 'Primary instance with HA', 'Secondary cluster in another region'],
-                ['Spanner', 'Regional configuration', 'Multi-region configuration (Enterprise Plus)'],
-                ['Firestore', 'Regional location', 'Multi-region location'],
-                ['Bigtable', 'Clusters in two zones', 'Clusters in other regions with multi-cluster routing'],
-                ['BigQuery', 'Built in', 'Multi-region dataset (`US`/`EU`), cross-region replication, or managed disaster recovery'],
-                ['Compute', 'Regional MIG, regional disk', 'MIGs in two regions behind a global load balancer; snapshots stored multi-regionally']
+                ['**Backup and restore**', 'Nothing running; backups copied there', 'Hours', 'Lowest'],
+                ['**Pilot light**', 'Data replicated; compute switched off', 'Tens of minutes', 'Low'],
+                ['**Warm standby**', 'A scaled-down copy is running', 'Minutes', 'Medium'],
+                ['**Active-active**', 'Full capacity in two or more regions', 'Near zero', 'Highest']
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Failure domains: choose the smallest one that meets the targets',
+              columns: ['Domain', 'What survives'],
+              rows: [
+                ['**Zone**', 'Nothing zonal: a single VM or zonal disk fails with its zone. Spread instances across zones'],
+                ['**Region**', 'Regional MIGs, regional disks and Cloud SQL HA survive the loss of one zone, not the region'],
+                ['**Multi-region**', 'Survives a regional outage, at the price of latency, replication cost and design work'],
+                ['**Global**', 'Global resources such as the external Application Load Balancer outlive a region; check each one']
+              ]
+            },
+            {
+              kind: 'quiz',
+              q: 'A regional outage must be survived with minutes of downtime and almost no data loss, and cost is not the main concern. Which pattern fits?',
+              options: ['Backup and restore', 'Pilot light', 'Active-active across two regions', 'A single region with HA'],
+              answer: 2,
+              explain: 'Only active-active (or a very warm standby) gives near-zero RTO and RPO for a region failure. HA in one region survives only a zone.'
+            }
+          ]
+        },
+        {
+          id: 's11-redundancy-products',
+          title: 'S11-03 · Redundancy product by product, and configuring it',
+          blocks: [
+            {
+              kind: 'table',
+              caption: 'From zone-safe to region-safe',
+              columns: ['Product', 'Survives a zone', 'Survives a region', 'Failover'],
+              rows: [
+                ['Cloud Storage', 'Any bucket (regional buckets span zones)', 'Dual-region or multi-region bucket', 'Automatic'],
+                ['Cloud SQL', 'HA (regional) configuration', 'Cross-region read replica; backups in another region', 'Promote the replica, or DR switchover'],
+                ['AlloyDB', 'Primary instance with HA', 'Secondary cluster in another region', 'Promote the secondary'],
+                ['Spanner', 'Regional configuration', 'Dual-region or multi-region configuration (Enterprise Plus)', 'Automatic, synchronous'],
+                ['Firestore', 'Regional location', 'Multi-region location such as `nam5` or `eur3`', 'Automatic'],
+                ['Bigtable', 'Clusters in two zones', 'A cluster in another region with multi-cluster routing', 'Automatic'],
+                ['Memorystore for Valkey', 'Replicas across zones', 'Cross-region replication', 'Promote the secondary'],
+                ['BigQuery', 'Built in', 'Multi-region dataset, cross-region replica, or managed disaster recovery', 'Promote the replica'],
+                ['Pub/Sub', 'Built in', 'Global service; a storage policy limits the regions', 'Automatic within the allowed regions'],
+                ['Compute disks', 'Regional persistent disk', 'Snapshots stored in another region', 'Restore the snapshot there']
+              ]
+            },
+            {
+              kind: 'callout',
+              tone: 'warn',
+              text: 'Most locations are chosen **at creation** and cannot be changed later: a bucket, a BigQuery dataset, a Spanner configuration. Plan redundancy before deploying.'
+            },
+            {
+              kind: 'table',
+              caption: 'Cloud Storage locations and replication',
+              columns: ['Location', 'Replication', 'RPO', 'Notes'],
+              rows: [
+                ['Region', 'Across zones in one region', 'No cross-region copy', 'Lowest cost; Jakarta (`asia-southeast2`) is a region only'],
+                ['Dual-region', 'Asynchronous to the second region', 'Up to 12 hours; usually within an hour', 'Predefined pairs such as `ASIA1` (Tokyo and Osaka), or two regions you choose'],
+                ['Dual-region + **turbo replication**', 'Asynchronous, premium', '**15 minutes**, covered by the SLA', 'Dual-region buckets only'],
+                ['Multi-region', 'Asynchronous across regions', 'Default replication', 'No turbo option']
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Compute and network redundancy: stateless tiers move with traffic, stateful ones need replicated data',
+              columns: ['Layer', 'Pattern', 'On failure'],
+              rows: [
+                ['Instances', 'Regional managed instance group', 'VMs spread across zones and autoheal'],
+                ['Traffic', 'Global load balancer with backends in two regions', 'Health checks move traffic to the healthy region'],
+                ['DNS', 'Cloud DNS **failover routing policy**', 'Health-checked records switch to the backup'],
+                ['Disks', 'Regional disks; snapshots in another region', 'Restore the snapshot in the recovery region'],
+                ['GKE', 'Regional clusters; multi-cluster Gateway', 'Traffic moves between clusters']
+              ]
+            },
+            {
+              kind: 'code',
+              title: 'Configuring multi-region resources',
+              lines: [
+                '# Dual-region bucket with turbo replication',
+                '$ gcloud storage buckets create gs://ace-lab-dr --location=ASIA1 --rpo=ASYNC_TURBO',
+                '# Cloud SQL cross-region read replica, promoted during a regional outage',
+                '$ gcloud sql instances create shop-db-sg --master-instance-name=shop-db --region=asia-southeast1',
+                '$ gcloud sql instances promote-replica shop-db-sg',
+                '# Pub/Sub: only keep messages in Jakarta and Singapore',
+                '$ gcloud pubsub topics update orders --message-storage-policy-allowed-regions=asia-southeast2,asia-southeast1',
+                '# Regional MIG across zones',
+                '$ gcloud compute instance-groups managed create web-mig --region=asia-southeast2 --size=3 --template=web-tpl',
+                '# Daily snapshots stored in Singapore',
+                '$ gcloud compute resource-policies create snapshot-schedule daily-snap --region=asia-southeast2 \\',
+                '    --daily-schedule --start-time=18:00 --storage-location=asia-southeast1 --max-retention-days=14',
+                '# Spanner across Tokyo and Osaka (Enterprise Plus)',
+                '$ gcloud spanner instances create ledger --config=asia1 --edition=ENTERPRISE_PLUS \\',
+                '    --processing-units=1000 --description=Ledger'
+              ]
+            },
+            {
+              kind: 'quiz',
+              q: 'A dual-region bucket must copy newly written objects to the second region within a guaranteed 15 minutes. What should you enable?',
+              options: ['Object Versioning', 'Turbo replication', 'Autoclass', 'Soft delete'],
+              answer: 1,
+              explain: 'Turbo replication (`--rpo=ASYNC_TURBO`) is the only option with a 15-minute RPO, and only for dual-region buckets. Default replication can take up to 12 hours.'
+            },
+            {
+              kind: 'quiz',
+              q: 'A Cloud SQL instance has HA enabled in `asia-southeast2`. Is the database protected if the whole region becomes unavailable?',
+              options: ['Yes, HA fails over to another region', 'No, HA is zonal protection; add a cross-region replica', 'Yes, if automated backups are on', 'Only with the Enterprise Plus edition'],
+              answer: 1,
+              explain: 'The HA standby is in another zone of the same region. A region failure needs a replica, or backups, somewhere else.'
+            }
+          ]
+        },
+        {
+          id: 's11-dr-ops',
+          title: 'S11-03 · Failing over, data residency and DR testing',
+          blocks: [
+            {
+              kind: 'steps',
+              items: [
+                { title: 'Create a replica', text: 'Add a cross-region read replica of the primary in the recovery region.' },
+                { title: 'Replicate', text: 'Replication is **asynchronous**, so a failover can lose the latest transactions.' },
+                { title: 'Switch over or fail over', text: 'A **switchover** is planned and waits for the replica to catch up, losing nothing. A **failover** (promoting the replica) is for an outage and may lose data.' },
+                { title: 'Re-protect', text: 'Afterwards, add a new replica so the new primary is protected again. PITR is re-enabled automatically, but asynchronously.' }
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'BigQuery managed disaster recovery (Enterprise Plus only)',
+              columns: ['', ''],
+              rows: [
+                ['Needs', 'An **Enterprise Plus** reservation in the primary region, with the datasets attached to it'],
+                ['RPO', 'About **15 minutes** for each replicated dataset (turbo replication)'],
+                ['RTO', 'About **5 minutes**: compute capacity is ready in the secondary region once failover starts'],
+                ['Cost', 'You pay for primary compute; the secondary’s baseline adds none. Storage and replication are billed']
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Soft or hard failover in BigQuery (no more than one per 10 minutes)',
+              columns: ['Soft failover', 'Hard failover'],
+              rows: [
+                ['Waits until every change has reached the secondary', 'Promotes the secondary immediately'],
+                ['Both regions must be available', 'Works even when the primary is offline'],
+                ['No data loss', 'Unreplicated data, and access grants, can be lost'],
+                ['For planned tests and moves', 'For a real regional outage']
+              ]
+            },
+            {
+              kind: 'table',
+              caption: 'Data residency against redundancy: the law can rule out DR regions',
+              columns: ['Data must stay in Indonesia', 'Cross-region DR is allowed'],
+              rows: [
+                ['Every resource in `asia-southeast2` (Jakarta)', 'A replica in Singapore (`asia-southeast1`)'],
+                ['Spread across zones: regional MIGs and disks, Cloud SQL HA, a regional bucket', 'Dual-region buckets, multi-region configurations'],
+                ['Enforce it with the `gcp.resourceLocations` organization policy', 'A Pub/Sub storage policy limits where messages rest'],
+                ['Keep backups in Jakarta too', 'Confirm the legal basis first, and document RPO and RTO per region pair']
               ]
             },
             {
               kind: 'list',
               items: [
-                '**Active-passive**: replicate to a second region, then promote and move traffic on failure. It is cheaper, but RTO and RPO are minutes.',
-                '**Active-active**: a multi-region database (Spanner, Firestore) and a global load balancer. It has near-zero RPO and RTO, and costs more.',
-                '**Backups as the last line**: copies in another region, immutable **backup vaults** in Backup and DR Service, and a tested restore. An untested backup is a hope, not a plan.'
+                'A design counts only when a test has **measured** the recovery. Write **runbooks** with owners, commands and decision points for each step.',
+                'Test failover on a schedule and record the measured RTO and RPO. Run **game days**: a zone failure first, then a regional one.',
+                'An untested replica is not a plan: check that it can be promoted and that the application can reach it.',
+                'Monitor **replication lag** and alert before the RPO is missed. Plan the **failback** to the primary region as its own procedure.'
               ]
             },
             {
               kind: 'callout',
               tone: 'exam',
-              text: '"Survive the loss of a whole region" → a cross-region replica or a multi-region configuration. HA alone is only zonal. "Lowest RPO for objects across two named regions" → dual-region with turbo replication. "Global relational database with no data loss on a region failure" → Spanner multi-region.'
+              text: '"Survive the loss of a whole region" → a cross-region replica or a multi-region configuration; HA alone is zonal. "Lowest RPO for objects across two named regions" → dual-region with turbo replication. "Global relational database with no data loss on a region failure" → Spanner multi-region. "Planned BigQuery failover test with no data loss" → soft failover. "Data may not leave Indonesia" → zonal redundancy inside `asia-southeast2` and `gcp.resourceLocations`.'
             },
             {
               kind: 'quiz',
-              q: 'A Cloud SQL instance has HA enabled in `asia-southeast2`. Is the database protected if the whole region becomes unavailable?',
-              options: ['Yes, HA fails over to another region', 'No, HA is zonal protection; add a cross-region replica in another region', 'Yes, if automated backups are on', 'Only if the instance uses Enterprise Plus'],
+              q: 'A BigQuery team wants a planned failover test with no data loss. Which option fits?',
+              options: ['Hard failover', 'Soft failover', 'A table snapshot', 'A copy job'],
               answer: 1,
-              explain: 'The HA standby is in another zone of the same region. A region failure needs a replica (or backups) somewhere else.'
+              explain: 'Soft failover waits until all changes are replicated, so nothing is lost. It needs both regions available, which a planned test has.'
+            },
+            {
+              kind: 'quiz',
+              q: 'Regulation requires all data to stay in Indonesia. Which design keeps redundancy inside that rule?',
+              options: ['A dual-region `ASIA1` bucket', 'A cross-region replica in Singapore', 'Resources in `asia-southeast2` spread across zones', 'A `US` multi-region dataset'],
+              answer: 2,
+              explain: 'Jakarta is the only Google Cloud region in Indonesia, so redundancy has to come from its zones. Every other option stores data abroad.'
             }
           ]
         }

@@ -127,6 +127,16 @@
   }
   let tocOpen = $state(false);
 
+  /**
+   * Parts of the contents fold away so a long lesson does not mean scrolling
+   * the sidebar. A part the reader has not toggled is open while it holds the
+   * section being read (the first part before any is).
+   */
+  let openParts = $state<Record<string, boolean>>({});
+  function partOpen(part: { id: string; sections: { id: string }[] }, pi: number) {
+    return openParts[part.id] ?? (current ? part.sections.some((s) => s.id === current) : pi === 0);
+  }
+
 
   const lineKind = (l: string) => (l.startsWith('$ ') ? 'cmd' : l.startsWith('# ') ? 'note' : 'out');
   const TONE: Record<string, string> = { analogy: 'Analogy', exam: 'On the exam', tip: 'Tip', warn: 'Watch out' };
@@ -189,8 +199,14 @@
         <button class="toc-toggle" onclick={() => (tocOpen = !tocOpen)} aria-expanded={tocOpen}>Contents <span aria-hidden="true">{tocOpen ? '▴' : '▾'}</span></button>
         <div class="toc-body" class:open={tocOpen}>
           {#each lesson.parts as part, pi (part.id)}
-            <p class="toc-part"><span class="mono">{pi + 1}</span> {part.title}</p>
-            <ul>
+            {@const open = partOpen(part, pi)}
+            {@const partRead = part.sections.filter((s) => readSet[s.id]).length}
+            <button class="toc-part toc-fold" aria-expanded={open} onclick={() => (openParts = { ...openParts, [part.id]: !open })}>
+              <span class="chev" aria-hidden="true">{open ? '▾' : '▸'}</span>
+              <span class="fold-title"><span class="mono">{pi + 1}</span> {part.title}</span>
+              <span class="fold-count mono">{partRead}/{part.sections.length}</span>
+            </button>
+            <ul hidden={!open}>
               {#each part.sections as s (s.id)}
                 <li>
                   <button class:current={current === s.id} class:read={readSet[s.id]} onclick={() => jump(s.id)}>
@@ -551,6 +567,38 @@
 
   .toc-part:first-child {
     margin-top: 0;
+  }
+
+  .toc-fold {
+    width: 100%;
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    padding: 4px 6px;
+    border: 0;
+    background: none;
+    text-align: left;
+    line-height: 1.4;
+    font-family: inherit;
+  }
+
+  .toc-fold:hover {
+    color: var(--text);
+  }
+
+  .chev {
+    flex: none;
+    width: 10px;
+  }
+
+  .fold-title {
+    flex: 1;
+  }
+
+  .fold-count {
+    flex: none;
+    font-weight: 500;
+    letter-spacing: 0;
   }
 
   .toc ul {
