@@ -14,6 +14,7 @@ import { tryoutSetup } from './questions/tryout-setup';
 import { tryoutPlanning } from './questions/tryout-planning';
 import { tryoutOperating } from './questions/tryout-operating';
 import { tryoutAccess } from './questions/tryout-access';
+import { tryoutMd34 } from './questions/tryout-md34';
 import { inSection } from './questions/module-types';
 import { module1 } from './questions/module1';
 import { module2 } from './questions/module2';
@@ -34,13 +35,14 @@ import { module6 } from './questions/module6';
  *
  * The bank is 666 questions from a community dump, plus 200 written for the
  * course tryout (questions/tryout*.ts, 50 per section) and 600 for the six module
- * try-outs of the course syllabus (questions/module1-6.ts, 100 per module), each
+ * try-outs of the course syllabus (questions/module1-6.ts, 100 per module) and 20
+ * for the combined MD3–MD4 tryout (questions/tryout-md34.ts), each
  * assigned to the section
  * its decision belongs to, with every key reviewed — see questions/*.ts. The
  * real paper interleaves the sections, so the exam is `mixed`.
  */
-/** The module try-outs, each question tagged with its section. */
-const MODULES = [...module1, ...module2, ...module3, ...module4, ...module5, ...module6];
+/** The module try-outs and the combined MD3–MD4 tryout, each question tagged with its section. */
+const MODULES = [...module1, ...module2, ...module3, ...module4, ...module5, ...module6, ...tryoutMd34];
 
 const SECTIONS: Section[] = [
   {
@@ -141,7 +143,7 @@ export const ace = defineExam({
   short: 'ACE',
   tagline: 'Google Cloud · associate certification',
   blurb:
-    'A timed simulator for Google\'s hands-on cloud certification: 50–60 questions in two hours about deploying, operating and securing real projects, from a 1,466-question bank with a reviewed key and an explanation on every question.',
+    'A timed simulator for Google\'s hands-on cloud certification: 50–60 questions in two hours about deploying, operating and securing real projects, from a 1,486-question bank with a reviewed key and an explanation on every question.',
   icon: 'AC',
   fullModeId: 'full',
   mixed: true,
@@ -149,7 +151,7 @@ export const ace = defineExam({
   sections: SECTIONS,
   sectionAliases: { deploying: 'planning' },
   modes: MODES,
-  /** Module try-outs (6 × 5 sets of 20), four tryout sets, then the community bank in 13 fixed sets of 50 and a final 16 — see sets.ts. */
+  /** Module try-outs (6 × 5 sets of 20), four tryout sets, the MD3–MD4 tryout, then the community bank in 13 fixed sets of 50 and a final 16 — see sets.ts. */
   sets,
   setMinutesPerQuestion: 2.4,
   home: {

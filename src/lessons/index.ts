@@ -49,18 +49,18 @@ const TRYOUT_PREP: LessonMeta[] = [
     level: 'Module 3',
     topics: ['Cloud Storage', 'Cloud SQL', 'Spanner', 'BigQuery', 'Dataflow', 'CMEK'],
     group: PREP,
-    prepares: ['Module 3 · Storage & Data Solutions'],
+    prepares: ['Module 3 · Storage & Data Solutions', 'Tryout · MD3–MD4'],
     load: () => import('./tryout-m3')
   },
   {
     id: 'tryout-m4',
     title: 'Tryout Prep · Module 4: Cloud Networking',
-    summary: 'Sessions 13–17: custom VPCs, IPs and routes, firewall rules and Cloud NGFW with secure tags, Shared VPC vs peering, VPN and Interconnect, Cloud DNS and NAT, network tiers, load balancers with CDN and Cloud Armor — with a subnet calculator, a firewall exercise and a load balancer picker.',
+    summary: 'Sessions 13–17: custom VPCs, IPs and routes, firewall rules and Cloud NGFW with secure tags, Shared VPC vs peering, VPN and Interconnect, Cloud DNS and NAT, network tiers, load balancers with CDN and Cloud Armor, and the MD4-LAB01 segmented VPC lab — with a subnet calculator, two firewall exercises and a load balancer picker.',
     minutes: 70,
     level: 'Module 4',
     topics: ['VPC', 'Cloud NGFW', 'Shared VPC', 'HA VPN', 'Cloud NAT', 'Load balancing'],
     group: PREP,
-    prepares: ['Module 4 · Cloud Networking'],
+    prepares: ['Module 4 · Cloud Networking', 'Tryout · MD3–MD4'],
     load: () => import('./tryout-m4')
   },
   {

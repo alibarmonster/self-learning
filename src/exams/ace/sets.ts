@@ -9,7 +9,9 @@
  * 24 minutes (the tryout's pace). Then the four Tryout sets: 200 questions written for the course modules
  * (questions/tryout*.ts), 50 per set, every set mixing all four sections, on the
  * tryout's own clock of 60 minutes. Tryout 1 is questions/tryout.ts; Tryout 2–4
- * deal the other 150 out section by section, so each gets an even share.
+ * deal the other 150 out section by section, so each gets an even share. Tryout
+ * MD3–MD4 (questions/tryout-md34.ts) is the combined Module 3 + 4 try-out of
+ * 20 November 2026: ten sections, two questions each, 24 minutes.
  */
 import type { PaperSet } from '@/types';
 
@@ -255,6 +257,14 @@ export const sets: PaperSet[] = [
     note: 'Modules MD1–MD2 · 60 min',
     minutes: 60,
     questionIds: ['ace-t53', 'ace-t56', 'ace-t59', 'ace-t62', 'ace-t65', 'ace-t68', 'ace-t71', 'ace-t74', 'ace-t77', 'ace-t80', 'ace-t83', 'ace-t86', 'ace-t89', 'ace-t92', 'ace-t95', 'ace-t98', 'ace-t101', 'ace-t104', 'ace-t107', 'ace-t110', 'ace-t113', 'ace-t116', 'ace-t119', 'ace-t122', 'ace-t125', 'ace-t128', 'ace-t131', 'ace-t134', 'ace-t137', 'ace-t140', 'ace-t143', 'ace-t146', 'ace-t149', 'ace-t152', 'ace-t155', 'ace-t158', 'ace-t161', 'ace-t164', 'ace-t167', 'ace-t170', 'ace-t173', 'ace-t176', 'ace-t179', 'ace-t182', 'ace-t185', 'ace-t188', 'ace-t191', 'ace-t194', 'ace-t197', 'ace-t200']
+  },
+  {
+    id: 'tryout-md34',
+    name: 'Tryout MD3–MD4',
+    group: 'Tryout · MD3–MD4',
+    note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
+    minutes: 24,
+    questionIds: ['ace-t34-01', 'ace-t34-02', 'ace-t34-03', 'ace-t34-04', 'ace-t34-05', 'ace-t34-06', 'ace-t34-07', 'ace-t34-08', 'ace-t34-09', 'ace-t34-10', 'ace-t34-11', 'ace-t34-12', 'ace-t34-13', 'ace-t34-14', 'ace-t34-15', 'ace-t34-16', 'ace-t34-17', 'ace-t34-18', 'ace-t34-19', 'ace-t34-20']
   },
   {
     id: 'set-01',
