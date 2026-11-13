@@ -11,7 +11,8 @@
  * tryout's own clock of 60 minutes. Tryout 1 is questions/tryout.ts; Tryout 2–4
  * deal the other 150 out section by section, so each gets an even share. Tryout
  * MD3–MD4 (questions/tryout-md34.ts) is the combined Module 3 + 4 try-out of
- * 20 November 2026: ten sections, two questions each, 24 minutes.
+ * 20 November 2026: ten sets of 20, each with two questions from every one of
+ * the ten sections, 24 minutes each.
  */
 import type { PaperSet } from '@/types';
 
@@ -260,11 +261,83 @@ export const sets: PaperSet[] = [
   },
   {
     id: 'tryout-md34',
-    name: 'Tryout MD3–MD4',
+    name: 'MD3–MD4 · Set 1',
     group: 'Tryout · MD3–MD4',
     note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
     minutes: 24,
     questionIds: ['ace-t34-01', 'ace-t34-02', 'ace-t34-03', 'ace-t34-04', 'ace-t34-05', 'ace-t34-06', 'ace-t34-07', 'ace-t34-08', 'ace-t34-09', 'ace-t34-10', 'ace-t34-11', 'ace-t34-12', 'ace-t34-13', 'ace-t34-14', 'ace-t34-15', 'ace-t34-16', 'ace-t34-17', 'ace-t34-18', 'ace-t34-19', 'ace-t34-20']
+  },
+  {
+    id: 'tryout-md34-2',
+    name: 'MD3–MD4 · Set 2',
+    group: 'Tryout · MD3–MD4',
+    note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
+    minutes: 24,
+    questionIds: ['ace-t34-021', 'ace-t34-022', 'ace-t34-039', 'ace-t34-040', 'ace-t34-057', 'ace-t34-058', 'ace-t34-075', 'ace-t34-076', 'ace-t34-093', 'ace-t34-094', 'ace-t34-111', 'ace-t34-112', 'ace-t34-129', 'ace-t34-130', 'ace-t34-147', 'ace-t34-148', 'ace-t34-165', 'ace-t34-166', 'ace-t34-183', 'ace-t34-184']
+  },
+  {
+    id: 'tryout-md34-3',
+    name: 'MD3–MD4 · Set 3',
+    group: 'Tryout · MD3–MD4',
+    note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
+    minutes: 24,
+    questionIds: ['ace-t34-023', 'ace-t34-024', 'ace-t34-041', 'ace-t34-042', 'ace-t34-059', 'ace-t34-060', 'ace-t34-077', 'ace-t34-078', 'ace-t34-095', 'ace-t34-096', 'ace-t34-113', 'ace-t34-114', 'ace-t34-131', 'ace-t34-132', 'ace-t34-149', 'ace-t34-150', 'ace-t34-167', 'ace-t34-168', 'ace-t34-185', 'ace-t34-186']
+  },
+  {
+    id: 'tryout-md34-4',
+    name: 'MD3–MD4 · Set 4',
+    group: 'Tryout · MD3–MD4',
+    note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
+    minutes: 24,
+    questionIds: ['ace-t34-025', 'ace-t34-026', 'ace-t34-043', 'ace-t34-044', 'ace-t34-061', 'ace-t34-062', 'ace-t34-079', 'ace-t34-080', 'ace-t34-097', 'ace-t34-098', 'ace-t34-115', 'ace-t34-116', 'ace-t34-133', 'ace-t34-134', 'ace-t34-151', 'ace-t34-152', 'ace-t34-169', 'ace-t34-170', 'ace-t34-187', 'ace-t34-188']
+  },
+  {
+    id: 'tryout-md34-5',
+    name: 'MD3–MD4 · Set 5',
+    group: 'Tryout · MD3–MD4',
+    note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
+    minutes: 24,
+    questionIds: ['ace-t34-027', 'ace-t34-028', 'ace-t34-045', 'ace-t34-046', 'ace-t34-063', 'ace-t34-064', 'ace-t34-081', 'ace-t34-082', 'ace-t34-099', 'ace-t34-100', 'ace-t34-117', 'ace-t34-118', 'ace-t34-135', 'ace-t34-136', 'ace-t34-153', 'ace-t34-154', 'ace-t34-171', 'ace-t34-172', 'ace-t34-189', 'ace-t34-190']
+  },
+  {
+    id: 'tryout-md34-6',
+    name: 'MD3–MD4 · Set 6',
+    group: 'Tryout · MD3–MD4',
+    note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
+    minutes: 24,
+    questionIds: ['ace-t34-029', 'ace-t34-030', 'ace-t34-047', 'ace-t34-048', 'ace-t34-065', 'ace-t34-066', 'ace-t34-083', 'ace-t34-084', 'ace-t34-101', 'ace-t34-102', 'ace-t34-119', 'ace-t34-120', 'ace-t34-137', 'ace-t34-138', 'ace-t34-155', 'ace-t34-156', 'ace-t34-173', 'ace-t34-174', 'ace-t34-191', 'ace-t34-192']
+  },
+  {
+    id: 'tryout-md34-7',
+    name: 'MD3–MD4 · Set 7',
+    group: 'Tryout · MD3–MD4',
+    note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
+    minutes: 24,
+    questionIds: ['ace-t34-031', 'ace-t34-032', 'ace-t34-049', 'ace-t34-050', 'ace-t34-067', 'ace-t34-068', 'ace-t34-085', 'ace-t34-086', 'ace-t34-103', 'ace-t34-104', 'ace-t34-121', 'ace-t34-122', 'ace-t34-139', 'ace-t34-140', 'ace-t34-157', 'ace-t34-158', 'ace-t34-175', 'ace-t34-176', 'ace-t34-193', 'ace-t34-194']
+  },
+  {
+    id: 'tryout-md34-8',
+    name: 'MD3–MD4 · Set 8',
+    group: 'Tryout · MD3–MD4',
+    note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
+    minutes: 24,
+    questionIds: ['ace-t34-033', 'ace-t34-034', 'ace-t34-051', 'ace-t34-052', 'ace-t34-069', 'ace-t34-070', 'ace-t34-087', 'ace-t34-088', 'ace-t34-105', 'ace-t34-106', 'ace-t34-123', 'ace-t34-124', 'ace-t34-141', 'ace-t34-142', 'ace-t34-159', 'ace-t34-160', 'ace-t34-177', 'ace-t34-178', 'ace-t34-195', 'ace-t34-196']
+  },
+  {
+    id: 'tryout-md34-9',
+    name: 'MD3–MD4 · Set 9',
+    group: 'Tryout · MD3–MD4',
+    note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
+    minutes: 24,
+    questionIds: ['ace-t34-035', 'ace-t34-036', 'ace-t34-053', 'ace-t34-054', 'ace-t34-071', 'ace-t34-072', 'ace-t34-089', 'ace-t34-090', 'ace-t34-107', 'ace-t34-108', 'ace-t34-125', 'ace-t34-126', 'ace-t34-143', 'ace-t34-144', 'ace-t34-161', 'ace-t34-162', 'ace-t34-179', 'ace-t34-180', 'ace-t34-197', 'ace-t34-198']
+  },
+  {
+    id: 'tryout-md34-10',
+    name: 'MD3–MD4 · Set 10',
+    group: 'Tryout · MD3–MD4',
+    note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
+    minutes: 24,
+    questionIds: ['ace-t34-037', 'ace-t34-038', 'ace-t34-055', 'ace-t34-056', 'ace-t34-073', 'ace-t34-074', 'ace-t34-091', 'ace-t34-092', 'ace-t34-109', 'ace-t34-110', 'ace-t34-127', 'ace-t34-128', 'ace-t34-145', 'ace-t34-146', 'ace-t34-163', 'ace-t34-164', 'ace-t34-181', 'ace-t34-182', 'ace-t34-199', 'ace-t34-200']
   },
   {
     id: 'set-01',

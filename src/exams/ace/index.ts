@@ -143,7 +143,7 @@ export const ace = defineExam({
   short: 'ACE',
   tagline: 'Google Cloud · associate certification',
   blurb:
-    'A timed simulator for Google\'s hands-on cloud certification: 50–60 questions in two hours about deploying, operating and securing real projects, from a 1,486-question bank with a reviewed key and an explanation on every question.',
+    'A timed simulator for Google\'s hands-on cloud certification: 50–60 questions in two hours about deploying, operating and securing real projects, from a 1,666-question bank with a reviewed key and an explanation on every question.',
   icon: 'AC',
   fullModeId: 'full',
   mixed: true,
