@@ -341,6 +341,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud monitoring dashboards create --config-from-file=shop-dashboard.json',
                     'gcloud monitoring dashboards list --format="value(displayName)"'
+                  ],
+                  flags: [
+                    { cmd: 'dashboards create', flags: ['--config-from-file=shop-dashboard.json'] },
+                    { cmd: 'dashboards list', flags: ['--format="value(displayName)"'] }
                   ]
                 },
                 {
@@ -354,6 +358,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud beta monitoring channels create --display-name="on-call" --type=email --channel-labels=email_address=oncall@example.com',
                     'gcloud beta monitoring channels list --format="value(name,displayName)"'
+                  ],
+                  flags: [
+                    { cmd: 'channels create', flags: ['--display-name=on-call', '--type=email', '--channel-labels=email_address=oncall@example.com'] },
+                    { cmd: 'channels list', flags: ['--format="value(name,displayName)"'] }
                   ]
                 },
                 {
@@ -367,6 +375,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud monitoring policies create --policy-from-file=error-alert.json'
+                  ],
+                  flags: [
+                    { cmd: 'policies create', flags: ['--policy-from-file=error-alert.json'] }
                   ]
                 },
                 {
@@ -379,6 +390,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud monitoring uptime create shop-uptime --resource-type=uptime-url --resource-labels=host=shop.example.com --protocol=https --path=/healthz'
+                  ],
+                  flags: [
+                    { cmd: 'uptime create shop-uptime', flags: ['--resource-type=uptime-url', '--resource-labels=host=shop.example.com', '--protocol=https', '--path=/healthz'] }
                   ]
                 },
                 {
@@ -390,6 +404,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud logging read \'resource.type="cloud_run_revision" AND severity>=ERROR\' --freshness=1h --limit=20'
+                  ],
+                  flags: [
+                    { cmd: 'logging read', flags: ['--freshness=1h', '--limit=20'] }
                   ]
                 },
                 {
@@ -402,6 +419,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud logging metrics create checkout_errors --description="Checkout errors" --log-filter=\'resource.type="cloud_run_revision" AND resource.labels.service_name="checkout" AND severity>=ERROR\''
+                  ],
+                  flags: [
+                    { cmd: 'metrics create checkout_errors', flags: ['--description="Checkout errors"', '--log-filter=\'resource.type="cloud_run_revision" AND resource.labels.service_name="checkout" AND severity>=ERROR\''] }
                   ]
                 },
                 {
@@ -415,6 +435,10 @@ export const lesson: Lesson = {
                   code: [
                     'bq --location=asia-southeast2 mk --dataset ace-lab-123:audit',
                     'gcloud logging sinks create audit-bq bigquery.googleapis.com/projects/ace-lab-123/datasets/audit --log-filter=\'logName:"cloudaudit.googleapis.com"\''
+                  ],
+                  flags: [
+                    { cmd: 'bq mk ace-lab-123:audit', flags: ['--location=asia-southeast2', '--dataset'] },
+                    { cmd: 'sinks create audit-bq bigquery.googleapis.com/projects/ace-lab-123/datasets/audit', flags: ['--log-filter=\'logName:"cloudaudit.googleapis.com"\''] }
                   ]
                 },
                 {
@@ -429,6 +453,10 @@ export const lesson: Lesson = {
                     'WI=$(gcloud logging sinks describe audit-bq --format="value(writerIdentity)")',
                     'gcloud projects add-iam-policy-binding ace-lab-123 --member=$WI --role=roles/bigquery.dataEditor',
                     'bq ls ace-lab-123:audit'
+                  ],
+                  flags: [
+                    { cmd: 'sinks describe audit-bq', flags: ['--format="value(writerIdentity)"'] },
+                    { cmd: 'projects add-iam-policy-binding ace-lab-123', flags: ['--member=$WI', '--role=roles/bigquery.dataEditor'] }
                   ]
                 }
               ]
@@ -749,6 +777,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud projects add-iam-policy-binding ace-lab-123 --member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/logging.logWriter',
                     'gcloud projects add-iam-policy-binding ace-lab-123 --member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/monitoring.metricWriter'
+                  ],
+                  flags: [
+                    { cmd: 'projects add-iam-policy-binding ace-lab-123', flags: ['--member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com', '--role=roles/logging.logWriter'] },
+                    { cmd: 'projects add-iam-policy-binding ace-lab-123', flags: ['--member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com', '--role=roles/monitoring.metricWriter'] }
                   ]
                 },
                 {
@@ -765,6 +797,11 @@ export const lesson: Lesson = {
                     'sudo bash add-google-cloud-ops-agent-repo.sh --also-install',
                     '# then roll the group onto the new template',
                     'gcloud compute instance-groups managed rolling-action start-update web-mig --region=asia-southeast2 --version=template=web-t2'
+                  ],
+                  flags: [
+                    { cmd: 'curl https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh', flags: ['-sSO'] },
+                    { cmd: 'bash add-google-cloud-ops-agent-repo.sh', flags: ['--also-install'] },
+                    { cmd: 'managed rolling-action start-update web-mig', flags: ['--region=asia-southeast2', '--version=template=web-t2'] }
                   ]
                 },
                 {
@@ -778,6 +815,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud logging metrics create app_errors --description="App errors" --log-filter=\'resource.type="gce_instance" AND severity>=ERROR\'',
                     'gcloud monitoring uptime create web-uptime --resource-type=uptime-url --resource-labels=host=shop.example.com --protocol=https --path=/healthz'
+                  ],
+                  flags: [
+                    { cmd: 'metrics create app_errors', flags: ['--description="App errors"', '--log-filter=\'resource.type="gce_instance" AND severity>=ERROR\''] },
+                    { cmd: 'uptime create web-uptime', flags: ['--resource-type=uptime-url', '--resource-labels=host=shop.example.com', '--protocol=https', '--path=/healthz'] }
                   ]
                 },
                 {
@@ -799,6 +840,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud storage buckets create gs://ace-lab-123-tfstate --location=asia-southeast2 --uniform-bucket-level-access',
                     'gcloud storage buckets update gs://ace-lab-123-tfstate --versioning'
+                  ],
+                  flags: [
+                    { cmd: 'buckets create gs://ace-lab-123-tfstate', flags: ['--location=asia-southeast2', '--uniform-bucket-level-access'] },
+                    { cmd: 'buckets update gs://ace-lab-123-tfstate', flags: ['--versioning'] }
                   ]
                 },
                 {
@@ -811,6 +856,9 @@ export const lesson: Lesson = {
                   code: [
                     'terraform init',
                     'terraform plan -out=plan.tfplan'
+                  ],
+                  flags: [
+                    { cmd: 'terraform plan', flags: ['-out=plan.tfplan'] }
                   ]
                 },
                 {

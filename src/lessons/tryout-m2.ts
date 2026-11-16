@@ -418,6 +418,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud compute firewall-rules create allow-iap-ssh --network=default --direction=INGRESS --allow=tcp:22 --source-ranges=35.235.240.0/20'
+                  ],
+                  flags: [
+                    { cmd: 'firewall-rules create allow-iap-ssh', flags: ['--network=default', '--direction=INGRESS', '--allow=tcp:22', '--source-ranges=35.235.240.0/20'] }
                   ]
                 },
                 {
@@ -431,6 +434,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud compute instances create lab-1 --zone=asia-southeast2-a --machine-type=e2-small --no-address --image-family=debian-12 --image-project=debian-cloud'
+                  ],
+                  flags: [
+                    { cmd: 'instances create lab-1', flags: ['--zone=asia-southeast2-a', '--machine-type=e2-small', '--no-address', '--image-family=debian-12', '--image-project=debian-cloud'] }
                   ]
                 },
                 {
@@ -445,6 +451,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud compute routers create lab-router --network=default --region=asia-southeast2',
                     'gcloud compute routers nats create lab-nat --router=lab-router --region=asia-southeast2 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges'
+                  ],
+                  flags: [
+                    { cmd: 'routers create lab-router', flags: ['--network=default', '--region=asia-southeast2'] },
+                    { cmd: 'nats create lab-nat', flags: ['--router=lab-router', '--region=asia-southeast2', '--auto-allocate-nat-external-ips', '--nat-all-subnet-ip-ranges'] }
                   ]
                 },
                 {
@@ -459,6 +469,10 @@ export const lesson: Lesson = {
                     'gcloud compute ssh lab-1 --zone=asia-southeast2-a --tunnel-through-iap',
                     '# on the VM',
                     'sudo apt-get update && sudo apt-get install -y nginx stress-ng'
+                  ],
+                  flags: [
+                    { cmd: 'compute ssh lab-1', flags: ['--zone=asia-southeast2-a', '--tunnel-through-iap'] },
+                    { cmd: 'apt-get install nginx stress-ng', flags: ['-y'] }
                   ]
                 },
                 {
@@ -471,6 +485,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud compute disks create lab-data --zone=asia-southeast2-a --size=50GB --type=pd-balanced',
                     'gcloud compute instances attach-disk lab-1 --disk=lab-data --zone=asia-southeast2-a'
+                  ],
+                  flags: [
+                    { cmd: 'disks create lab-data', flags: ['--zone=asia-southeast2-a', '--size=50GB', '--type=pd-balanced'] },
+                    { cmd: 'attach-disk lab-1', flags: ['--disk=lab-data', '--zone=asia-southeast2-a'] }
                   ]
                 },
                 {
@@ -486,6 +504,10 @@ export const lesson: Lesson = {
                     'sudo mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/sdb',
                     'sudo mkdir -p /mnt/data && sudo mount -o discard,defaults /dev/sdb /mnt/data',
                     'echo "UUID=$(sudo blkid -s UUID -o value /dev/sdb) /mnt/data ext4 discard,defaults,nofail 0 2" | sudo tee -a /etc/fstab'
+                  ],
+                  flags: [
+                    { cmd: 'mkfs.ext4 /dev/sdb', flags: ['-m 0', '-E lazy_itable_init=0,lazy_journal_init=0,discard'] },
+                    { cmd: 'mount /dev/sdb /mnt/data', flags: ['-o discard,defaults'] }
                   ]
                 },
                 {
@@ -497,6 +519,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud compute snapshots create lab-data-1 --source-disk=lab-data --source-disk-zone=asia-southeast2-a'
+                  ],
+                  flags: [
+                    { cmd: 'snapshots create lab-data-1', flags: ['--source-disk=lab-data', '--source-disk-zone=asia-southeast2-a'] }
                   ]
                 },
                 {
@@ -511,6 +536,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud compute resource-policies create snapshot-schedule daily-7d --region=asia-southeast2 --daily-schedule --start-time=02:00 --max-retention-days=7',
                     'gcloud compute disks add-resource-policies lab-data --resource-policies=daily-7d --zone=asia-southeast2-a'
+                  ],
+                  flags: [
+                    { cmd: 'resource-policies create snapshot-schedule daily-7d', flags: ['--region=asia-southeast2', '--daily-schedule', '--start-time=02:00', '--max-retention-days=7'] },
+                    { cmd: 'disks add-resource-policies lab-data', flags: ['--resource-policies=daily-7d', '--zone=asia-southeast2-a'] }
                   ]
                 },
                 {
@@ -525,6 +554,11 @@ export const lesson: Lesson = {
                     'gcloud compute instances stop lab-1 --zone=asia-southeast2-a',
                     'gcloud compute images create web-v1 --source-disk=lab-1 --source-disk-zone=asia-southeast2-a --family=web',
                     'gcloud compute instance-templates create web-t1 --machine-type=e2-small --image-family=web --tags=http-server --no-address'
+                  ],
+                  flags: [
+                    { cmd: 'stop lab-1', flags: ['--zone=asia-southeast2-a'] },
+                    { cmd: 'images create web-v1', flags: ['--source-disk=lab-1', '--source-disk-zone=asia-southeast2-a', '--family=web'] },
+                    { cmd: 'instance-templates create web-t1', flags: ['--machine-type=e2-small', '--image-family=web', '--tags=http-server', '--no-address'] }
                   ]
                 },
                 {
@@ -538,6 +572,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud compute health-checks create http web-hc --port=80 --request-path=/',
                     'gcloud compute firewall-rules create allow-hc --network=default --direction=INGRESS --allow=tcp:80 --source-ranges=130.211.0.0/22,35.191.0.0/16 --target-tags=http-server'
+                  ],
+                  flags: [
+                    { cmd: 'health-checks create http web-hc', flags: ['--port=80', '--request-path=/'] },
+                    { cmd: 'firewall-rules create allow-hc', flags: ['--network=default', '--direction=INGRESS', '--allow=tcp:80', '--source-ranges=130.211.0.0/22,35.191.0.0/16', '--target-tags=http-server'] }
                   ]
                 },
                 {
@@ -551,6 +589,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud compute instance-groups managed create web-mig --region=asia-southeast2 --template=web-t1 --size=2 --health-check=web-hc --initial-delay=180'
+                  ],
+                  flags: [
+                    { cmd: 'managed create web-mig', flags: ['--region=asia-southeast2', '--template=web-t1', '--size=2', '--health-check=web-hc', '--initial-delay=180'] }
                   ]
                 },
                 {
@@ -562,6 +603,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud compute instance-groups managed set-autoscaling web-mig --region=asia-southeast2 --min-num-replicas=2 --max-num-replicas=6 --target-cpu-utilization=0.6'
+                  ],
+                  flags: [
+                    { cmd: 'managed set-autoscaling web-mig', flags: ['--region=asia-southeast2', '--min-num-replicas=2', '--max-num-replicas=6', '--target-cpu-utilization=0.6'] }
                   ]
                 },
                 {
@@ -576,6 +620,10 @@ export const lesson: Lesson = {
                     'stress-ng --cpu 2 --timeout 600',
                     '# from Cloud Shell',
                     'gcloud compute instance-groups managed list-instances web-mig --region=asia-southeast2'
+                  ],
+                  flags: [
+                    { cmd: 'stress-ng', flags: ['--cpu 2', '--timeout 600'] },
+                    { cmd: 'list-instances web-mig', flags: ['--region=asia-southeast2'] }
                   ]
                 }
               ]
@@ -974,6 +1022,9 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud services enable artifactregistry.googleapis.com cloudbuild.googleapis.com run.googleapis.com container.googleapis.com',
                     'gcloud artifacts repositories create apps --repository-format=docker --location=asia-southeast2'
+                  ],
+                  flags: [
+                    { cmd: 'repositories create apps', flags: ['--repository-format=docker', '--location=asia-southeast2'] }
                   ]
                 },
                 {
@@ -985,6 +1036,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     `gcloud builds submit --tag ${AR}/web:v1`
+                  ],
+                  flags: [
+                    { cmd: 'builds submit', flags: [`--tag ${AR}/web:v1`] }
                   ]
                 },
                 {
@@ -1013,6 +1067,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud compute health-checks create http web-hc --port=80',
                     'gcloud compute firewall-rules create allow-hc --network=default --allow=tcp:80 --source-ranges=130.211.0.0/22,35.191.0.0/16 --target-tags=http-server'
+                  ],
+                  flags: [
+                    { cmd: 'health-checks create http web-hc', flags: ['--port=80'] },
+                    { cmd: 'firewall-rules create allow-hc', flags: ['--network=default', '--allow=tcp:80', '--source-ranges=130.211.0.0/22,35.191.0.0/16', '--target-tags=http-server'] }
                   ]
                 },
                 {
@@ -1028,6 +1086,11 @@ export const lesson: Lesson = {
                     'gcloud compute instance-templates create web-c1 --machine-type=e2-small --image-family=cos-stable --image-project=cos-cloud --tags=http-server --metadata-from-file=startup-script=run-web.sh',
                     'gcloud compute instance-groups managed create web-mig --region=asia-southeast2 --template=web-c1 --size=2 --health-check=web-hc',
                     'gcloud compute instance-groups set-named-ports web-mig --region=asia-southeast2 --named-ports=http:80'
+                  ],
+                  flags: [
+                    { cmd: 'instance-templates create web-c1', flags: ['--machine-type=e2-small', '--image-family=cos-stable', '--image-project=cos-cloud', '--tags=http-server', '--metadata-from-file=startup-script=run-web.sh'] },
+                    { cmd: 'managed create web-mig', flags: ['--region=asia-southeast2', '--template=web-c1', '--size=2', '--health-check=web-hc'] },
+                    { cmd: 'instance-groups set-named-ports web-mig', flags: ['--region=asia-southeast2', '--named-ports=http:80'] }
                   ]
                 },
                 {
@@ -1045,6 +1108,13 @@ export const lesson: Lesson = {
                     'gcloud compute url-maps create web-map --default-service=web-be',
                     'gcloud compute target-http-proxies create web-proxy --url-map=web-map',
                     'gcloud compute forwarding-rules create web-fr --global --load-balancing-scheme=EXTERNAL_MANAGED --target-http-proxy=web-proxy --ports=80'
+                  ],
+                  flags: [
+                    { cmd: 'backend-services create web-be', flags: ['--global', '--protocol=HTTP', '--port-name=http', '--health-checks=web-hc', '--load-balancing-scheme=EXTERNAL_MANAGED'] },
+                    { cmd: 'add-backend web-be', flags: ['--global', '--instance-group=web-mig', '--instance-group-region=asia-southeast2'] },
+                    { cmd: 'url-maps create web-map', flags: ['--default-service=web-be'] },
+                    { cmd: 'target-http-proxies create web-proxy', flags: ['--url-map=web-map'] },
+                    { cmd: 'forwarding-rules create web-fr', flags: ['--global', '--load-balancing-scheme=EXTERNAL_MANAGED', '--target-http-proxy=web-proxy', '--ports=80'] }
                   ]
                 },
                 {
@@ -1057,6 +1127,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud container clusters create-auto web-ap --region=asia-southeast2',
                     'gcloud container clusters get-credentials web-ap --region=asia-southeast2'
+                  ],
+                  flags: [
+                    { cmd: 'clusters create-auto web-ap', flags: ['--region=asia-southeast2'] },
+                    { cmd: 'clusters get-credentials web-ap', flags: ['--region=asia-southeast2'] }
                   ]
                 },
                 {
@@ -1072,6 +1146,12 @@ export const lesson: Lesson = {
                     'kubectl set resources deployment web --requests=cpu=250m,memory=512Mi',
                     'kubectl expose deployment web --type=LoadBalancer --port=80 --target-port=8080',
                     'kubectl get service web --watch'
+                  ],
+                  flags: [
+                    { cmd: 'kubectl create deployment web', flags: [`--image=${AR}/web:v1`, '--replicas=2'] },
+                    { cmd: 'kubectl set resources deployment web', flags: ['--requests=cpu=250m,memory=512Mi'] },
+                    { cmd: 'kubectl expose deployment web', flags: ['--type=LoadBalancer', '--port=80', '--target-port=8080'] },
+                    { cmd: 'kubectl get service web', flags: ['--watch'] }
                   ]
                 },
                 {
@@ -1084,6 +1164,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     `gcloud run deploy web --image=${AR}/web:v1 --region=asia-southeast2 --allow-unauthenticated`
+                  ],
+                  flags: [
+                    { cmd: 'run deploy web', flags: [`--image=${AR}/web:v1`, '--region=asia-southeast2', '--allow-unauthenticated'] }
                   ]
                 },
                 {
@@ -1100,6 +1183,13 @@ export const lesson: Lesson = {
                     'gcloud run services update-traffic web --region=asia-southeast2 --to-tags=v2=10',
                     'gcloud run services update-traffic web --region=asia-southeast2 --to-tags=v2=50',
                     'gcloud run services update-traffic web --region=asia-southeast2 --to-latest'
+                  ],
+                  flags: [
+                    { cmd: 'builds submit', flags: [`--tag ${AR}/web:v2`] },
+                    { cmd: 'run deploy web', flags: [`--image=${AR}/web:v2`, '--region=asia-southeast2', '--no-traffic', '--tag=v2'] },
+                    { cmd: 'run services update-traffic web', flags: ['--region=asia-southeast2', '--to-tags=v2=10'] },
+                    { cmd: 'run services update-traffic web', flags: ['--region=asia-southeast2', '--to-tags=v2=50'] },
+                    { cmd: 'run services update-traffic web', flags: ['--region=asia-southeast2', '--to-latest'] }
                   ]
                 },
                 {

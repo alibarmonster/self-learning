@@ -1288,6 +1288,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud storage buckets create gs://ace-lab-raw --location=asia-southeast2 --uniform-bucket-level-access'
+                  ],
+                  flags: [
+                    { cmd: 'buckets create gs://ace-lab-raw', flags: ['--location=asia-southeast2', '--uniform-bucket-level-access'] }
                   ]
                 },
                 {
@@ -1308,6 +1311,10 @@ export const lesson: Lesson = {
                     'EOF',
                     'gcloud storage buckets update gs://ace-lab-raw --lifecycle-file=lifecycle.json',
                     'gcloud storage buckets describe gs://ace-lab-raw --format="default(lifecycle_config)"'
+                  ],
+                  flags: [
+                    { cmd: 'buckets update gs://ace-lab-raw', flags: ['--lifecycle-file=lifecycle.json'] },
+                    { cmd: 'buckets describe gs://ace-lab-raw', flags: ['--format="default(lifecycle_config)"'] }
                   ]
                 },
                 {
@@ -1333,6 +1340,11 @@ export const lesson: Lesson = {
                     'bq --location=asia-southeast2 mk --dataset ace-lab-123:sales',
                     'bq load --source_format=CSV --autodetect sales.orders gs://ace-lab-raw/orders.csv',
                     'bq query --use_legacy_sql=false \'SELECT COUNT(*) FROM sales.orders\''
+                  ],
+                  flags: [
+                    { cmd: 'bq mk ace-lab-123:sales', flags: ['--location=asia-southeast2', '--dataset'] },
+                    { cmd: 'bq load sales.orders gs://ace-lab-raw/orders.csv', flags: ['--source_format=CSV', '--autodetect'] },
+                    { cmd: 'bq query', flags: ['--use_legacy_sql=false'] }
                   ]
                 },
                 {
@@ -1347,6 +1359,10 @@ export const lesson: Lesson = {
                     'gcloud services enable servicenetworking.googleapis.com sqladmin.googleapis.com',
                     'gcloud compute addresses create google-managed-services-default --global --purpose=VPC_PEERING --prefix-length=16 --network=default',
                     'gcloud services vpc-peerings connect --service=servicenetworking.googleapis.com --ranges=google-managed-services-default --network=default'
+                  ],
+                  flags: [
+                    { cmd: 'addresses create google-managed-services-default', flags: ['--global', '--purpose=VPC_PEERING', '--prefix-length=16', '--network=default'] },
+                    { cmd: 'vpc-peerings connect', flags: ['--service=servicenetworking.googleapis.com', '--ranges=google-managed-services-default', '--network=default'] }
                   ]
                 },
                 {
@@ -1360,6 +1376,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud sql instances create shop-db --database-version=POSTGRES_16 --edition=ENTERPRISE --tier=db-custom-2-8192 --region=asia-southeast2 --availability-type=REGIONAL --enable-point-in-time-recovery --network=default --no-assign-ip'
+                  ],
+                  flags: [
+                    { cmd: 'instances create shop-db', flags: ['--database-version=POSTGRES_16', '--edition=ENTERPRISE', '--tier=db-custom-2-8192', '--region=asia-southeast2', '--availability-type=REGIONAL', '--enable-point-in-time-recovery', '--network=default', '--no-assign-ip'] }
                   ]
                 },
                 {
@@ -1373,6 +1392,9 @@ export const lesson: Lesson = {
                     'gcloud sql databases create shop --instance=shop-db',
                     '-- in Cloud SQL Studio, database shop',
                     'CREATE TABLE customers (id INT PRIMARY KEY, name TEXT, city TEXT);'
+                  ],
+                  flags: [
+                    { cmd: 'databases create shop', flags: ['--instance=shop-db'] }
                   ]
                 },
                 {
@@ -1387,6 +1409,11 @@ export const lesson: Lesson = {
                     'SA=$(gcloud sql instances describe shop-db --format="value(serviceAccountEmailAddress)")',
                     'gcloud storage buckets add-iam-policy-binding gs://ace-lab-raw --member=serviceAccount:$SA --role=roles/storage.objectViewer',
                     'gcloud sql import csv shop-db gs://ace-lab-raw/customers.csv --database=shop --table=customers'
+                  ],
+                  flags: [
+                    { cmd: 'instances describe shop-db', flags: ['--format="value(serviceAccountEmailAddress)"'] },
+                    { cmd: 'buckets add-iam-policy-binding gs://ace-lab-raw', flags: ['--member=serviceAccount:$SA', '--role=roles/storage.objectViewer'] },
+                    { cmd: 'sql import csv shop-db gs://ace-lab-raw/customers.csv', flags: ['--database=shop', '--table=customers'] }
                   ]
                 },
                 {
@@ -1400,6 +1427,9 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud sql backups create --instance=shop-db --description="before drill"',
                     'date -u +%Y-%m-%dT%H:%M:%SZ'
+                  ],
+                  flags: [
+                    { cmd: 'backups create', flags: ['--instance=shop-db', '--description="before drill"'] }
                   ]
                 },
                 {
@@ -1413,6 +1443,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud sql instances clone shop-db shop-db-drill --point-in-time="2026-10-30T02:59:00Z"',
                     'gcloud sql operations list --instance=shop-db-drill --limit=5'
+                  ],
+                  flags: [
+                    { cmd: 'instances clone shop-db shop-db-drill', flags: ['--point-in-time=2026-10-30T02:59:00Z'] },
+                    { cmd: 'operations list', flags: ['--instance=shop-db-drill', '--limit=5'] }
                   ]
                 },
                 {
@@ -1428,6 +1462,12 @@ export const lesson: Lesson = {
                     'gcloud sql instances delete shop-db --quiet',
                     'bq rm -r -f ace-lab-123:sales',
                     'gcloud storage rm -r gs://ace-lab-raw'
+                  ],
+                  flags: [
+                    { cmd: 'instances delete shop-db-drill', flags: ['--quiet'] },
+                    { cmd: 'instances delete shop-db', flags: ['--quiet'] },
+                    { cmd: 'bq rm ace-lab-123:sales', flags: ['-r', '-f'] },
+                    { cmd: 'storage rm', flags: ['-r'] }
                   ]
                 }
               ]

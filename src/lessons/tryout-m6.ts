@@ -473,6 +473,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud iam roles create labInstanceViewer --project=ace-lab-123 --title="Lab instance viewer" --permissions=compute.instances.get,compute.instances.list --stage=GA'
+                  ],
+                  flags: [
+                    { cmd: 'roles create labInstanceViewer', flags: ['--project=ace-lab-123', '--title="Lab instance viewer"', '--permissions=compute.instances.get,compute.instances.list', '--stage=GA'] }
                   ]
                 },
                 {
@@ -486,6 +489,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud projects add-iam-policy-binding ace-lab-123 --member=group:lab-viewers@example.com --role=projects/ace-lab-123/roles/labInstanceViewer',
                     'gcloud policy-troubleshoot iam //cloudresourcemanager.googleapis.com/projects/ace-lab-123 --principal-email=viewer@example.com --permission=compute.instances.delete'
+                  ],
+                  flags: [
+                    { cmd: 'projects add-iam-policy-binding ace-lab-123', flags: ['--member=group:lab-viewers@example.com', '--role=projects/ace-lab-123/roles/labInstanceViewer'] },
+                    { cmd: 'policy-troubleshoot iam //cloudresourcemanager.googleapis.com/projects/ace-lab-123', flags: ['--principal-email=viewer@example.com', '--permission=compute.instances.delete'] }
                   ]
                 },
                 {
@@ -500,6 +507,11 @@ export const lesson: Lesson = {
                     'gcloud iam service-accounts create orders-sa --display-name="orders"',
                     'gcloud pubsub topics add-iam-policy-binding orders --member=serviceAccount:orders-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/pubsub.publisher',
                     'gcloud storage buckets add-iam-policy-binding gs://ace-lab-assets --member=serviceAccount:orders-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/storage.objectViewer'
+                  ],
+                  flags: [
+                    { cmd: 'service-accounts create orders-sa', flags: ['--display-name=orders'] },
+                    { cmd: 'topics add-iam-policy-binding orders', flags: ['--member=serviceAccount:orders-sa@ace-lab-123.iam.gserviceaccount.com', '--role=roles/pubsub.publisher'] },
+                    { cmd: 'buckets add-iam-policy-binding gs://ace-lab-assets', flags: ['--member=serviceAccount:orders-sa@ace-lab-123.iam.gserviceaccount.com', '--role=roles/storage.objectViewer'] }
                   ]
                 },
                 {
@@ -515,6 +527,12 @@ export const lesson: Lesson = {
                     'gcloud projects add-iam-policy-binding ace-lab-123 --member=group:admins@example.com --role=roles/iap.tunnelResourceAccessor',
                     'gcloud compute backend-services update web-be --global --iap=enabled',
                     'gcloud iap web add-iam-policy-binding --resource-type=backend-services --service=web-be --member=group:staff@example.com --role=roles/iap.httpsResourceAccessor'
+                  ],
+                  flags: [
+                    { cmd: 'firewall-rules create allow-iap-ssh', flags: ['--network=prod-vpc', '--allow=tcp:22', '--source-ranges=35.235.240.0/20'] },
+                    { cmd: 'projects add-iam-policy-binding ace-lab-123', flags: ['--member=group:admins@example.com', '--role=roles/iap.tunnelResourceAccessor'] },
+                    { cmd: 'backend-services update web-be', flags: ['--global', '--iap=enabled'] },
+                    { cmd: 'web add-iam-policy-binding', flags: ['--resource-type=backend-services', '--service=web-be', '--member=group:staff@example.com', '--role=roles/iap.httpsResourceAccessor'] }
                   ]
                 },
                 {
@@ -527,6 +545,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud compute routers create prod-router --network=prod-vpc --region=asia-southeast2',
                     'gcloud compute routers nats create prod-nat --router=prod-router --region=asia-southeast2 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges'
+                  ],
+                  flags: [
+                    { cmd: 'routers create prod-router', flags: ['--network=prod-vpc', '--region=asia-southeast2'] },
+                    { cmd: 'nats create prod-nat', flags: ['--router=prod-router', '--region=asia-southeast2', '--auto-allocate-nat-external-ips', '--nat-all-subnet-ip-ranges'] }
                   ]
                 },
                 {
@@ -544,6 +566,11 @@ export const lesson: Lesson = {
                     'kubectl create serviceaccount orders',
                     'gcloud iam service-accounts add-iam-policy-binding orders-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/iam.workloadIdentityUser --member="serviceAccount:ace-lab-123.svc.id.goog[default/orders]"',
                     'kubectl annotate serviceaccount orders iam.gke.io/gcp-service-account=orders-sa@ace-lab-123.iam.gserviceaccount.com'
+                  ],
+                  flags: [
+                    { cmd: 'clusters create-auto secure-ap', flags: ['--region=asia-southeast2', '--network=prod-vpc', '--subnetwork=app-jkt', '--enable-private-nodes'] },
+                    { cmd: 'clusters get-credentials secure-ap', flags: ['--region=asia-southeast2'] },
+                    { cmd: 'service-accounts add-iam-policy-binding orders-sa@ace-lab-123.iam.gserviceaccount.com', flags: ['--role=roles/iam.workloadIdentityUser', '--member=serviceAccount:ace-lab-123.svc.id.goog[default/orders]'] }
                   ]
                 },
                 {
@@ -557,6 +584,11 @@ export const lesson: Lesson = {
                     'gcloud secrets create db-pass --replication-policy=automatic',
                     'printf \'%s\' \'S3cret!\' | gcloud secrets versions add db-pass --data-file=-',
                     'gcloud secrets add-iam-policy-binding db-pass --member=serviceAccount:orders-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/secretmanager.secretAccessor'
+                  ],
+                  flags: [
+                    { cmd: 'secrets create db-pass', flags: ['--replication-policy=automatic'] },
+                    { cmd: 'versions add db-pass', flags: ['--data-file=-'] },
+                    { cmd: 'secrets add-iam-policy-binding db-pass', flags: ['--member=serviceAccount:orders-sa@ace-lab-123.iam.gserviceaccount.com', '--role=roles/secretmanager.secretAccessor'] }
                   ]
                 },
                 {
@@ -573,6 +605,12 @@ export const lesson: Lesson = {
                     'gcloud kms keys create files-key --keyring=lab-ring --location=asia-southeast2 --purpose=encryption',
                     'gcloud storage service-agent --project=ace-lab-123 --authorize-cmek=projects/ace-lab-123/locations/asia-southeast2/keyRings/lab-ring/cryptoKeys/files-key',
                     'gcloud storage buckets update gs://ace-lab-files --default-encryption-key=projects/ace-lab-123/locations/asia-southeast2/keyRings/lab-ring/cryptoKeys/files-key'
+                  ],
+                  flags: [
+                    { cmd: 'keyrings create lab-ring', flags: ['--location=asia-southeast2'] },
+                    { cmd: 'keys create files-key', flags: ['--keyring=lab-ring', '--location=asia-southeast2', '--purpose=encryption'] },
+                    { cmd: 'storage service-agent', flags: ['--project=ace-lab-123', '--authorize-cmek=projects/ace-lab-123/locations/asia-southeast2/keyRings/lab-ring/cryptoKeys/files-key'] },
+                    { cmd: 'buckets update gs://ace-lab-files', flags: ['--default-encryption-key=projects/ace-lab-123/locations/asia-southeast2/keyRings/lab-ring/cryptoKeys/files-key'] }
                   ]
                 }
               ]

@@ -670,20 +670,46 @@ export const lesson: Lesson = {
               ]
             },
             {
-              kind: 'p',
-              text: '**Setup in Cloud Shell.** Check which account is active, set the lab project, export three variables (`PFX` as `terra-` plus your name, `REGION=asia-southeast2`, `ZONE=asia-southeast2-a`), make the region and zone the gcloud defaults, and enable the Compute Engine and Network Management APIs.'
-            },
-            {
-              kind: 'code',
-              reveal: true,
-              title: 'Setup in Cloud Shell',
-              lines: [
-                '$ gcloud auth list',
-                '$ gcloud config set project PROJECT_ID',
-                '# prefix: terra- plus your name, lowercase, dashes',
-                '$ export PFX=terra-nama REGION=asia-southeast2 ZONE=asia-southeast2-a',
-                '$ gcloud config set compute/region $REGION && gcloud config set compute/zone $ZONE',
-                '$ gcloud services enable compute.googleapis.com networkmanagement.googleapis.com'
+              kind: 'steps',
+              lab: true,
+              items: [
+                {
+                  title: 'Setup · Check the account, then set the project',
+                  text: 'Make sure Cloud Shell is signed in as the right account before anything is created, then point gcloud at the lab project.',
+                  spec: [
+                    'Active account: the one marked `*` in the account list',
+                    'Project: your lab project ID'
+                  ],
+                  code: [
+                    'gcloud auth list',
+                    'gcloud config set project PROJECT_ID'
+                  ]
+                },
+                {
+                  title: 'Setup · Export the lab variables and gcloud defaults',
+                  text: 'Every name in the lab starts with your prefix, so names never clash. The region and zone become gcloud defaults so later commands can leave them out.',
+                  spec: [
+                    '`PFX` = `terra-` plus your name, lowercase with dashes',
+                    '`REGION` = `asia-southeast2`, `ZONE` = `asia-southeast2-a`',
+                    'Defaults: the `compute/region` and `compute/zone` properties'
+                  ],
+                  code: [
+                    'export PFX=terra-nama REGION=asia-southeast2 ZONE=asia-southeast2-a',
+                    'gcloud config set compute/region $REGION',
+                    'gcloud config set compute/zone $ZONE'
+                  ]
+                },
+                {
+                  title: 'Setup · Enable the two APIs',
+                  text: 'Compute Engine for the networks and VMs; Network Management for the Connectivity Tests in Task 5.',
+                  spec: [
+                    '`compute.googleapis.com`',
+                    '`networkmanagement.googleapis.com`'
+                  ],
+                  code: [
+                    'gcloud services enable compute.googleapis.com networkmanagement.googleapis.com'
+                  ]
+                }
               ]
             },
             {
@@ -713,6 +739,11 @@ export const lesson: Lesson = {
                     'gcloud compute networks create $PFX-prod --subnet-mode=custom',
                     'gcloud compute networks subnets create $PFX-web --network=$PFX-prod --region=$REGION --range=10.10.1.0/24',
                     'gcloud compute networks subnets create $PFX-app --network=$PFX-prod --region=$REGION --range=10.10.2.0/24'
+                  ],
+                  flags: [
+                    { cmd: 'networks create $PFX-prod', flags: ['--subnet-mode=custom'] },
+                    { cmd: 'subnets create $PFX-web', flags: ['--network=$PFX-prod', '--region=$REGION', '--range=10.10.1.0/24'] },
+                    { cmd: 'subnets create $PFX-app', flags: ['--network=$PFX-prod', '--region=$REGION', '--range=10.10.2.0/24'] }
                   ]
                 },
                 {
@@ -728,6 +759,12 @@ export const lesson: Lesson = {
                     'gcloud compute networks subnets create $PFX-db --network=$PFX-data --region=$REGION --range=10.20.1.0/24',
                     'gcloud compute networks list --filter="name~^$PFX"',
                     'gcloud compute networks subnets list --filter="name~^$PFX"'
+                  ],
+                  flags: [
+                    { cmd: 'networks create $PFX-data', flags: ['--subnet-mode=custom'] },
+                    { cmd: 'subnets create $PFX-db', flags: ['--network=$PFX-data', '--region=$REGION', '--range=10.20.1.0/24'] },
+                    { cmd: 'networks list', flags: ['--filter="name~^$PFX"'] },
+                    { cmd: 'subnets list', flags: ['--filter="name~^$PFX"'] }
                   ]
                 },
                 {
@@ -763,6 +800,13 @@ export const lesson: Lesson = {
                     'gcloud compute instances create $PFX-probe --machine-type=e2-micro --subnet=$PFX-web --no-address --image-family=debian-12 --image-project=debian-cloud --metadata-from-file=startup-script=serve.sh',
                     'gcloud compute instances create $PFX-db --machine-type=e2-micro --subnet=$PFX-db --no-address --image-family=debian-12 --image-project=debian-cloud --metadata-from-file=startup-script=serve.sh',
                     'gcloud compute instances list --filter="name~^$PFX"'
+                  ],
+                  flags: [
+                    { cmd: 'instances create $PFX-web', flags: ['--machine-type=e2-micro', '--subnet=$PFX-web', '--tags=web', '--image-family=debian-12', '--image-project=debian-cloud', '--metadata-from-file=startup-script=serve.sh'] },
+                    { cmd: 'instances create $PFX-app', flags: ['--machine-type=e2-micro', '--subnet=$PFX-app', '--tags=app', '--no-address', '--image-family=debian-12', '--image-project=debian-cloud', '--metadata-from-file=startup-script=serve.sh'] },
+                    { cmd: 'instances create $PFX-probe', flags: ['--machine-type=e2-micro', '--subnet=$PFX-web', '--no-address', '--image-family=debian-12', '--image-project=debian-cloud', '--metadata-from-file=startup-script=serve.sh'] },
+                    { cmd: 'instances create $PFX-db', flags: ['--machine-type=e2-micro', '--subnet=$PFX-db', '--no-address', '--image-family=debian-12', '--image-project=debian-cloud', '--metadata-from-file=startup-script=serve.sh'] },
+                    { cmd: 'instances list', flags: ['--filter="name~^$PFX"'] }
                   ]
                 },
                 {
@@ -777,6 +821,11 @@ export const lesson: Lesson = {
                     'gcloud compute firewall-rules create $PFX-allow-iap --network=$PFX-prod --allow=tcp:22 --source-ranges=35.235.240.0/20',
                     'gcloud compute firewall-rules create $PFX-allow-http --network=$PFX-prod --allow=tcp:80 --source-ranges=0.0.0.0/0 --target-tags=web',
                     'gcloud compute firewall-rules create $PFX-allow-icmp --network=$PFX-prod --allow=icmp --source-ranges=10.10.0.0/16'
+                  ],
+                  flags: [
+                    { cmd: 'firewall-rules create $PFX-allow-iap', flags: ['--network=$PFX-prod', '--allow=tcp:22', '--source-ranges=35.235.240.0/20'] },
+                    { cmd: 'firewall-rules create $PFX-allow-http', flags: ['--network=$PFX-prod', '--allow=tcp:80', '--source-ranges=0.0.0.0/0', '--target-tags=web'] },
+                    { cmd: 'firewall-rules create $PFX-allow-icmp', flags: ['--network=$PFX-prod', '--allow=icmp', '--source-ranges=10.10.0.0/16'] }
                   ]
                 },
                 {
@@ -791,6 +840,11 @@ export const lesson: Lesson = {
                     'gcloud compute firewall-rules create $PFX-allow-app --network=$PFX-prod --allow=tcp:8080 --enable-logging --source-tags=web --target-tags=app',
                     'gcloud compute firewall-rules create $PFX-deny-app --network=$PFX-prod --action=DENY --rules=tcp:8080 --priority=2000 --enable-logging --source-ranges=0.0.0.0/0 --target-tags=app',
                     'gcloud compute firewall-rules create $PFX-data-iap --network=$PFX-data --allow=tcp:22 --source-ranges=35.235.240.0/20'
+                  ],
+                  flags: [
+                    { cmd: 'firewall-rules create $PFX-allow-app', flags: ['--network=$PFX-prod', '--allow=tcp:8080', '--enable-logging', '--source-tags=web', '--target-tags=app'] },
+                    { cmd: 'firewall-rules create $PFX-deny-app', flags: ['--network=$PFX-prod', '--action=DENY', '--rules=tcp:8080', '--priority=2000', '--enable-logging', '--source-ranges=0.0.0.0/0', '--target-tags=app'] },
+                    { cmd: 'firewall-rules create $PFX-data-iap', flags: ['--network=$PFX-data', '--allow=tcp:22', '--source-ranges=35.235.240.0/20'] }
                   ]
                 }
               ]
@@ -848,26 +902,92 @@ export const lesson: Lesson = {
               ]
             },
             {
-              kind: 'p',
-              text: '**Task 4.** List the VMs to get their IPs. Open two Cloud Shell tabs and SSH through IAP into `$PFX-web` and `$PFX-probe` (`--tunnel-through-iap`). Run Test 1 from Cloud Shell, Tests 2 to 5 inside the web VM and Test 6 inside the probe VM, with `curl -m 5` for ports and `ping -c 3` for ICMP.'
-            },
-            {
-              kind: 'code',
-              reveal: true,
-              title: 'Connect with IAP and run the tests',
-              lines: [
-                '$ gcloud compute instances list --filter="name~^$PFX"',
-                '$ gcloud compute ssh $PFX-web --tunnel-through-iap      # tab 1',
-                '$ gcloud compute ssh $PFX-probe --tunnel-through-iap    # tab 2',
-                '# Test 1, from Cloud Shell',
-                '$ curl -m 5 http://WEB_EXTERNAL_IP',
-                '# Tests 2 to 5, in the web VM',
-                '$ curl -m 5 http://APP_INTERNAL_IP:8080',
-                '$ ping -c 3 APP_INTERNAL_IP',
-                '$ curl -m 5 http://APP_INTERNAL_IP:80',
-                '$ ping -c 3 DB_INTERNAL_IP; curl -m 5 http://DB_INTERNAL_IP:8080',
-                '# Test 6, in the probe VM',
-                '$ curl -m 5 http://APP_INTERNAL_IP:8080'
+              kind: 'steps',
+              lab: true,
+              items: [
+                {
+                  title: 'Task 4a · List the VMs and note their IPs',
+                  text: 'The tests need the web VM’s external IP and the internal IPs of app and db. List only your VMs by filtering on the prefix.',
+                  spec: [
+                    'Filter: names that start with `$PFX` (`--filter="name~^$PFX"`)',
+                    'Write down `WEB_EXTERNAL_IP`, `APP_INTERNAL_IP`, `DB_INTERNAL_IP`'
+                  ],
+                  code: [
+                    'gcloud compute instances list --filter="name~^$PFX"'
+                  ],
+                  flags: [
+                    { cmd: 'instances list', flags: ['--filter="name~^$PFX"'] }
+                  ]
+                },
+                {
+                  title: 'Task 4b · SSH into web and probe through IAP',
+                  text: 'Neither session needs an external IP on the target: IAP TCP forwarding carries SSH. Use two Cloud Shell tabs, one per VM.',
+                  spec: [
+                    'Must exist first: firewall rule `$PFX-allow-iap` (tcp:22 from `35.235.240.0/20`) and the IAP-secured Tunnel User role',
+                    'Tab 1: `$PFX-web`; tab 2: `$PFX-probe`',
+                    'Flag: `--tunnel-through-iap`'
+                  ],
+                  code: [
+                    'gcloud compute ssh $PFX-web --tunnel-through-iap',
+                    'gcloud compute ssh $PFX-probe --tunnel-through-iap'
+                  ],
+                  flags: [
+                    { cmd: 'compute ssh $PFX-web', flags: ['--tunnel-through-iap'] },
+                    { cmd: 'compute ssh $PFX-probe', flags: ['--tunnel-through-iap'] }
+                  ]
+                },
+                {
+                  title: 'Task 4c · Test 1 from Cloud Shell',
+                  text: 'Cloud Shell is on the internet side, so this proves `allow-http` lets port 80 reach the web VM.',
+                  spec: [
+                    '`curl` to `http://WEB_EXTERNAL_IP` with a 5-second limit (`-m 5`)',
+                    'Expected: the web VM’s hostname'
+                  ],
+                  code: [
+                    'curl -m 5 http://WEB_EXTERNAL_IP'
+                  ],
+                  flags: [
+                    { cmd: 'curl http://WEB_EXTERNAL_IP', flags: ['-m 5'] }
+                  ]
+                },
+                {
+                  title: 'Task 4d · Tests 2 to 5 inside the web VM',
+                  text: 'Run these in tab 1. Each one checks a different rule, or the lack of one.',
+                  spec: [
+                    'Test 2: tcp:8080 to app → page returns (`allow-app`)',
+                    'Test 3: ping app 3 times (`-c 3`) → replies (`allow-icmp`)',
+                    'Test 4: tcp:80 to app → timeout (implied deny ingress)',
+                    'Test 5: ping and tcp:8080 to db → no reply (no route between the networks)'
+                  ],
+                  code: [
+                    'curl -m 5 http://APP_INTERNAL_IP:8080',
+                    'ping -c 3 APP_INTERNAL_IP',
+                    'curl -m 5 http://APP_INTERNAL_IP:80',
+                    'ping -c 3 DB_INTERNAL_IP',
+                    'curl -m 5 http://DB_INTERNAL_IP:8080'
+                  ],
+                  flags: [
+                    { cmd: 'curl http://APP_INTERNAL_IP:8080', flags: ['-m 5'] },
+                    { cmd: 'ping APP_INTERNAL_IP', flags: ['-c 3'] },
+                    { cmd: 'curl http://APP_INTERNAL_IP:80', flags: ['-m 5'] },
+                    { cmd: 'ping DB_INTERNAL_IP', flags: ['-c 3'] },
+                    { cmd: 'curl http://DB_INTERNAL_IP:8080', flags: ['-m 5'] }
+                  ]
+                },
+                {
+                  title: 'Task 4e · Test 6 inside the probe VM',
+                  text: 'Run this in tab 2. The probe shares the web subnet but has no `web` tag, so `allow-app` skips it and `deny-app` catches it.',
+                  spec: [
+                    'tcp:8080 to app with `-m 5`',
+                    'Expected: timeout, logged by `deny-app`'
+                  ],
+                  code: [
+                    'curl -m 5 http://APP_INTERNAL_IP:8080'
+                  ],
+                  flags: [
+                    { cmd: 'curl http://APP_INTERNAL_IP:8080', flags: ['-m 5'] }
+                  ]
+                }
               ]
             },
             {
@@ -886,26 +1006,59 @@ export const lesson: Lesson = {
               text: '**Timeout vs refused**: a silent timeout means the firewall dropped the packet. "Connection refused" means the firewall **allowed** it and nothing is listening on that port, so look at the server, not the rules.'
             },
             {
-              kind: 'p',
-              text: '**Task 5.** In Logs Explorer, filter the firewall log (`compute.googleapis.com/firewall`) for entries whose rule is `deny-app`. Then create one Connectivity Test per path, all TCP to port 8080: `web → app`, `probe → app` and `web → db`, named `$PFX-web-app` and so on, and read each result.'
-            },
-            {
-              kind: 'code',
-              reveal: true,
-              title: 'Task 5: firewall logs, then Connectivity Tests',
-              lines: [
-                '# Logs Explorer query (entries take a minute or two)',
-                'resource.type="gce_subnetwork"',
-                'logName:"compute.googleapis.com%2Ffirewall"',
-                'jsonPayload.rule_details.reference:"deny-app"',
-                '# The same filter with gcloud',
-                "$ gcloud logging read 'resource.type=\"gce_subnetwork\" AND jsonPayload.rule_details.reference:\"deny-app\"' --limit=3 --freshness=1h",
-                '# One Connectivity Test per path, analysed without sending traffic',
-                '$ B=projects/$(gcloud config get-value project)/zones/$ZONE/instances',
-                '$ t() { gcloud network-management connectivity-tests create $PFX-$1-$2 --protocol=TCP --destination-port=8080 \\',
-                '    --source-instance=$B/$PFX-$1 --destination-instance=$B/$PFX-$2; }',
-                '$ t web app; t probe app; t web db',
-                '$ gcloud network-management connectivity-tests describe $PFX-web-app --format="value(reachabilityDetails.result)"'
+              kind: 'steps',
+              lab: true,
+              items: [
+                {
+                  title: 'Task 5a · Find the deny-app entries in the firewall log',
+                  text: 'Firewall Rules Logging was turned on for `allow-app` and `deny-app`, so Test 6 left an entry. Entries take a minute or two to appear.',
+                  spec: [
+                    'Logs Explorer: `resource.type="gce_subnetwork"`, `logName:"compute.googleapis.com%2Ffirewall"`, `jsonPayload.rule_details.reference:"deny-app"`',
+                    'Or `gcloud logging read` with the same filter, `--limit=3`, `--freshness=1h`',
+                    'Read `disposition`, `connection` and `rule_details.reference`'
+                  ],
+                  code: [
+                    'gcloud logging read \'resource.type="gce_subnetwork" AND jsonPayload.rule_details.reference:"deny-app"\' --limit=3 --freshness=1h'
+                  ],
+                  flags: [
+                    { cmd: 'logging read', flags: ['--limit=3', '--freshness=1h'] }
+                  ]
+                },
+                {
+                  title: 'Task 5b · One Connectivity Test per path',
+                  text: 'Connectivity Tests analyse routes and firewall rules without sending traffic. Build the instance path once, then create three tests.',
+                  spec: [
+                    'Must exist first: the Network Management API (Setup)',
+                    'Names: `$PFX-web-app`, `$PFX-probe-app`, `$PFX-web-db`',
+                    'Protocol `TCP`, destination port `8080`',
+                    'Source and destination as full paths: `projects/PROJECT/zones/$ZONE/instances/NAME`'
+                  ],
+                  code: [
+                    'B=projects/$(gcloud config get-value project)/zones/$ZONE/instances',
+                    'gcloud network-management connectivity-tests create $PFX-web-app --protocol=TCP --destination-port=8080 --source-instance=$B/$PFX-web --destination-instance=$B/$PFX-app',
+                    'gcloud network-management connectivity-tests create $PFX-probe-app --protocol=TCP --destination-port=8080 --source-instance=$B/$PFX-probe --destination-instance=$B/$PFX-app',
+                    'gcloud network-management connectivity-tests create $PFX-web-db --protocol=TCP --destination-port=8080 --source-instance=$B/$PFX-web --destination-instance=$B/$PFX-db'
+                  ],
+                  flags: [
+                    { cmd: 'connectivity-tests create $PFX-web-app', flags: ['--protocol=TCP', '--destination-port=8080', '--source-instance=$B/$PFX-web', '--destination-instance=$B/$PFX-app'] },
+                    { cmd: 'connectivity-tests create $PFX-probe-app', flags: ['--protocol=TCP', '--destination-port=8080', '--source-instance=$B/$PFX-probe', '--destination-instance=$B/$PFX-app'] },
+                    { cmd: 'connectivity-tests create $PFX-web-db', flags: ['--protocol=TCP', '--destination-port=8080', '--source-instance=$B/$PFX-web', '--destination-instance=$B/$PFX-db'] }
+                  ]
+                },
+                {
+                  title: 'Task 5c · Read each result',
+                  text: 'Print only the verdict of each test and compare it with the table below.',
+                  spec: [
+                    'Field: `reachabilityDetails.result` (`--format="value(reachabilityDetails.result)"`)',
+                    'Expected: web-app REACHABLE, probe-app and web-db UNREACHABLE'
+                  ],
+                  code: [
+                    'gcloud network-management connectivity-tests describe $PFX-web-app --format="value(reachabilityDetails.result)"'
+                  ],
+                  flags: [
+                    { cmd: 'connectivity-tests describe $PFX-web-app', flags: ['--format="value(reachabilityDetails.result)"'] }
+                  ]
+                }
               ]
             },
             {
@@ -923,19 +1076,79 @@ export const lesson: Lesson = {
               text: 'In the log entries, `disposition` shows ALLOWED or DENIED, `connection` shows the source and destination IP and port, and `rule_details.reference` names the rule that matched. Expect ALLOWED for `allow-app` and DENIED for `deny-app`.'
             },
             {
-              kind: 'p',
-              text: '**Clean up in reverse order**, because a network cannot go while anything uses it: the three Connectivity Tests, then the four VMs, then the six firewall rules, then the three subnets, and the two networks last.'
-            },
-            {
-              kind: 'code',
-              reveal: true,
-              title: 'Clean up in reverse order (a network cannot go while anything uses it)',
-              lines: [
-                '$ for T in web-app probe-app web-db; do gcloud network-management connectivity-tests delete $PFX-$T --quiet; done',
-                '$ gcloud compute instances delete $PFX-web $PFX-app $PFX-probe $PFX-db --quiet',
-                '$ gcloud compute firewall-rules delete $PFX-allow-iap $PFX-allow-http $PFX-allow-icmp $PFX-allow-app $PFX-deny-app $PFX-data-iap --quiet',
-                '$ gcloud compute networks subnets delete $PFX-web $PFX-app $PFX-db --region=$REGION --quiet',
-                '$ gcloud compute networks delete $PFX-prod $PFX-data --quiet'
+              kind: 'steps',
+              lab: true,
+              items: [
+                {
+                  title: 'Cleanup · The three Connectivity Tests',
+                  text: 'Clean up in reverse order of building, because a network cannot be deleted while anything still uses it. Start with the tests.',
+                  spec: [
+                    '`$PFX-web-app`, `$PFX-probe-app`, `$PFX-web-db`',
+                    'Skip the prompt: `--quiet`'
+                  ],
+                  code: [
+                    'for T in web-app probe-app web-db; do gcloud network-management connectivity-tests delete $PFX-$T --quiet; done'
+                  ],
+                  flags: [
+                    { cmd: 'connectivity-tests delete $PFX-$T', flags: ['--quiet'] }
+                  ]
+                },
+                {
+                  title: 'Cleanup · The four VMs',
+                  text: 'VMs hold the subnets, so they go before the network pieces.',
+                  spec: [
+                    '`$PFX-web`, `$PFX-app`, `$PFX-probe`, `$PFX-db` in one command',
+                    '`--quiet`'
+                  ],
+                  code: [
+                    'gcloud compute instances delete $PFX-web $PFX-app $PFX-probe $PFX-db --quiet'
+                  ],
+                  flags: [
+                    { cmd: 'instances delete $PFX-web $PFX-app $PFX-probe $PFX-db', flags: ['--quiet'] }
+                  ]
+                },
+                {
+                  title: 'Cleanup · The six firewall rules',
+                  text: 'Rules belong to a network, so they must go before it.',
+                  spec: [
+                    '`$PFX-allow-iap`, `$PFX-allow-http`, `$PFX-allow-icmp`, `$PFX-allow-app`, `$PFX-deny-app`, `$PFX-data-iap`',
+                    '`--quiet`'
+                  ],
+                  code: [
+                    'gcloud compute firewall-rules delete $PFX-allow-iap $PFX-allow-http $PFX-allow-icmp $PFX-allow-app $PFX-deny-app $PFX-data-iap --quiet'
+                  ],
+                  flags: [
+                    { cmd: 'firewall-rules delete $PFX-allow-iap $PFX-allow-http $PFX-allow-icmp $PFX-allow-app $PFX-deny-app $PFX-data-iap', flags: ['--quiet'] }
+                  ]
+                },
+                {
+                  title: 'Cleanup · The three subnets',
+                  text: 'Subnets are regional, so the region is part of the delete.',
+                  spec: [
+                    '`$PFX-web`, `$PFX-app`, `$PFX-db`',
+                    '`--region=$REGION`, `--quiet`'
+                  ],
+                  code: [
+                    'gcloud compute networks subnets delete $PFX-web $PFX-app $PFX-db --region=$REGION --quiet'
+                  ],
+                  flags: [
+                    { cmd: 'subnets delete $PFX-web $PFX-app $PFX-db', flags: ['--region=$REGION', '--quiet'] }
+                  ]
+                },
+                {
+                  title: 'Cleanup · The two networks, last',
+                  text: 'With nothing left inside them, the networks can go. Screenshot the empty list for the deliverable.',
+                  spec: [
+                    '`$PFX-prod`, `$PFX-data`',
+                    '`--quiet`'
+                  ],
+                  code: [
+                    'gcloud compute networks delete $PFX-prod $PFX-data --quiet'
+                  ],
+                  flags: [
+                    { cmd: 'networks delete $PFX-prod $PFX-data', flags: ['--quiet'] }
+                  ]
+                }
               ]
             },
             {
@@ -1831,6 +2044,12 @@ export const lesson: Lesson = {
                     'gcloud compute networks subnets create web-jkt --network=prod-vpc --region=asia-southeast2 --range=10.20.1.0/24 --enable-private-ip-google-access',
                     'gcloud compute networks subnets create app-jkt --network=prod-vpc --region=asia-southeast2 --range=10.20.2.0/24 --enable-private-ip-google-access',
                     'gcloud compute networks subnets create db-jkt --network=prod-vpc --region=asia-southeast2 --range=10.20.3.0/24 --enable-private-ip-google-access'
+                  ],
+                  flags: [
+                    { cmd: 'networks create prod-vpc', flags: ['--subnet-mode=custom', '--bgp-routing-mode=global'] },
+                    { cmd: 'subnets create web-jkt', flags: ['--network=prod-vpc', '--region=asia-southeast2', '--range=10.20.1.0/24', '--enable-private-ip-google-access'] },
+                    { cmd: 'subnets create app-jkt', flags: ['--network=prod-vpc', '--region=asia-southeast2', '--range=10.20.2.0/24', '--enable-private-ip-google-access'] },
+                    { cmd: 'subnets create db-jkt', flags: ['--network=prod-vpc', '--region=asia-southeast2', '--range=10.20.3.0/24', '--enable-private-ip-google-access'] }
                   ]
                 },
                 {
@@ -1844,6 +2063,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud compute routers create prod-router --network=prod-vpc --region=asia-southeast2',
                     'gcloud compute routers nats create prod-nat --router=prod-router --region=asia-southeast2 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges'
+                  ],
+                  flags: [
+                    { cmd: 'routers create prod-router', flags: ['--network=prod-vpc', '--region=asia-southeast2'] },
+                    { cmd: 'nats create prod-nat', flags: ['--router=prod-router', '--region=asia-southeast2', '--auto-allocate-nat-external-ips', '--nat-all-subnet-ip-ranges'] }
                   ]
                 },
                 {
@@ -1858,6 +2081,11 @@ export const lesson: Lesson = {
                     'gcloud resource-manager tags keys create tier --parent=projects/PROJECT_ID --purpose=GCE_FIREWALL --purpose-data=network=PROJECT_ID/prod-vpc',
                     'for V in web app db; do gcloud resource-manager tags values create $V --parent=PROJECT_ID/tier; done',
                     'for V in web app db; do gcloud resource-manager tags values add-iam-policy-binding PROJECT_ID/tier/$V --member=group:platform@example.com --role=roles/resourcemanager.tagUser; done'
+                  ],
+                  flags: [
+                    { cmd: 'keys create tier', flags: ['--parent=projects/PROJECT_ID', '--purpose=GCE_FIREWALL', '--purpose-data=network=PROJECT_ID/prod-vpc'] },
+                    { cmd: 'values create $V', flags: ['--parent=PROJECT_ID/tier'] },
+                    { cmd: 'values add-iam-policy-binding PROJECT_ID/tier/$V', flags: ['--member=group:platform@example.com', '--role=roles/resourcemanager.tagUser'] }
                   ]
                 },
                 {
@@ -1876,6 +2104,13 @@ export const lesson: Lesson = {
                     'gcloud compute network-firewall-policies rules create 1100 --firewall-policy=tier-policy --global-firewall-policy --direction=INGRESS --action=allow --layer4-configs=tcp:8080 --src-secure-tags=PROJECT_ID/tier/web --target-secure-tags=PROJECT_ID/tier/app',
                     'gcloud compute network-firewall-policies rules create 1200 --firewall-policy=tier-policy --global-firewall-policy --direction=INGRESS --action=allow --layer4-configs=tcp:5432 --src-secure-tags=PROJECT_ID/tier/app --target-secure-tags=PROJECT_ID/tier/db',
                     'gcloud compute network-firewall-policies rules create 1300 --firewall-policy=tier-policy --global-firewall-policy --direction=INGRESS --action=allow --layer4-configs=tcp:22 --src-ip-ranges=35.235.240.0/20'
+                  ],
+                  flags: [
+                    { cmd: 'network-firewall-policies create tier-policy', flags: ['--global'] },
+                    { cmd: 'rules create 1000', flags: ['--firewall-policy=tier-policy', '--global-firewall-policy', '--direction=INGRESS', '--action=allow', '--layer4-configs=tcp:80', '--src-ip-ranges=130.211.0.0/22,35.191.0.0/16', '--target-secure-tags=PROJECT_ID/tier/web'] },
+                    { cmd: 'rules create 1100', flags: ['--firewall-policy=tier-policy', '--global-firewall-policy', '--direction=INGRESS', '--action=allow', '--layer4-configs=tcp:8080', '--src-secure-tags=PROJECT_ID/tier/web', '--target-secure-tags=PROJECT_ID/tier/app'] },
+                    { cmd: 'rules create 1200', flags: ['--firewall-policy=tier-policy', '--global-firewall-policy', '--direction=INGRESS', '--action=allow', '--layer4-configs=tcp:5432', '--src-secure-tags=PROJECT_ID/tier/app', '--target-secure-tags=PROJECT_ID/tier/db'] },
+                    { cmd: 'rules create 1300', flags: ['--firewall-policy=tier-policy', '--global-firewall-policy', '--direction=INGRESS', '--action=allow', '--layer4-configs=tcp:22', '--src-ip-ranges=35.235.240.0/20'] }
                   ]
                 },
                 {
@@ -1888,6 +2123,9 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud compute network-firewall-policies associations create --firewall-policy=tier-policy --network=prod-vpc --global-firewall-policy',
                     'gcloud compute networks get-effective-firewalls prod-vpc'
+                  ],
+                  flags: [
+                    { cmd: 'associations create', flags: ['--firewall-policy=tier-policy', '--network=prod-vpc', '--global-firewall-policy'] }
                   ]
                 },
                 {
@@ -1902,6 +2140,10 @@ export const lesson: Lesson = {
                     'gcloud resource-manager tags values list --parent=PROJECT_ID/tier',
                     'gcloud compute instance-templates create web-t --machine-type=e2-small --image-family=debian-12 --image-project=debian-cloud --network=prod-vpc --subnet=web-jkt --region=asia-southeast2 --no-address --resource-manager-tags=tagKeys/KEY_ID=tagValues/WEB_ID --metadata-from-file=startup-script=web.sh',
                     '# app-t and db-t the same way, with their subnet and tag value'
+                  ],
+                  flags: [
+                    { cmd: 'values list', flags: ['--parent=PROJECT_ID/tier'] },
+                    { cmd: 'instance-templates create web-t', flags: ['--machine-type=e2-small', '--image-family=debian-12', '--image-project=debian-cloud', '--network=prod-vpc', '--subnet=web-jkt', '--region=asia-southeast2', '--no-address', '--resource-manager-tags=tagKeys/KEY_ID=tagValues/WEB_ID', '--metadata-from-file=startup-script=web.sh'] }
                   ]
                 },
                 {
@@ -1919,6 +2161,12 @@ export const lesson: Lesson = {
                     'gcloud compute instance-groups managed create web-mig --region=asia-southeast2 --template=web-t --size=3 --health-check=web-hc --initial-delay=120',
                     'gcloud compute instance-groups set-named-ports web-mig --region=asia-southeast2 --named-ports=http:80',
                     'gcloud compute instance-groups managed set-autoscaling web-mig --region=asia-southeast2 --min-num-replicas=3 --max-num-replicas=6 --target-cpu-utilization=0.6'
+                  ],
+                  flags: [
+                    { cmd: 'health-checks create http web-hc', flags: ['--port=80'] },
+                    { cmd: 'managed create web-mig', flags: ['--region=asia-southeast2', '--template=web-t', '--size=3', '--health-check=web-hc', '--initial-delay=120'] },
+                    { cmd: 'instance-groups set-named-ports web-mig', flags: ['--region=asia-southeast2', '--named-ports=http:80'] },
+                    { cmd: 'managed set-autoscaling web-mig', flags: ['--region=asia-southeast2', '--min-num-replicas=3', '--max-num-replicas=6', '--target-cpu-utilization=0.6'] }
                   ]
                 },
                 {
@@ -1938,6 +2186,15 @@ export const lesson: Lesson = {
                     'gcloud compute target-https-proxies create web-proxy --url-map=web-map --ssl-certificates=web-cert',
                     'gcloud compute addresses create web-ip --global',
                     'gcloud compute forwarding-rules create web-fr --global --load-balancing-scheme=EXTERNAL_MANAGED --address=web-ip --target-https-proxy=web-proxy --ports=443'
+                  ],
+                  flags: [
+                    { cmd: 'backend-services create web-be', flags: ['--global', '--protocol=HTTP', '--port-name=http', '--health-checks=web-hc', '--load-balancing-scheme=EXTERNAL_MANAGED'] },
+                    { cmd: 'add-backend web-be', flags: ['--global', '--instance-group=web-mig', '--instance-group-region=asia-southeast2'] },
+                    { cmd: 'url-maps create web-map', flags: ['--default-service=web-be'] },
+                    { cmd: 'ssl-certificates create web-cert', flags: ['--domains=shop.example.com', '--global'] },
+                    { cmd: 'target-https-proxies create web-proxy', flags: ['--url-map=web-map', '--ssl-certificates=web-cert'] },
+                    { cmd: 'addresses create web-ip', flags: ['--global'] },
+                    { cmd: 'forwarding-rules create web-fr', flags: ['--global', '--load-balancing-scheme=EXTERNAL_MANAGED', '--address=web-ip', '--target-https-proxy=web-proxy', '--ports=443'] }
                   ]
                 },
                 {
@@ -1952,6 +2209,11 @@ export const lesson: Lesson = {
                     'gcloud compute backend-services get-health web-be --global',
                     'gcloud compute instance-groups managed list-instances web-mig --region=asia-southeast2',
                     'gcloud compute instances delete VM_NAME --zone=asia-southeast2-a --quiet'
+                  ],
+                  flags: [
+                    { cmd: 'get-health web-be', flags: ['--global'] },
+                    { cmd: 'list-instances web-mig', flags: ['--region=asia-southeast2'] },
+                    { cmd: 'instances delete VM_NAME', flags: ['--zone=asia-southeast2-a', '--quiet'] }
                   ]
                 }
               ]

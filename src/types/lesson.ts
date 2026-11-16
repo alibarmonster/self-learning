@@ -98,8 +98,13 @@ export type LessonBlock =
    * Numbered steps. In a lab (`lab: true`) each step says what to build and
    * `spec` lists its name, settings and flags, and what must exist first; the
    * commands stay hidden until asked for, so the lab is done before it is read.
+   * `flags` shows, per command, the resource it acts on and the flags it takes.
    */
-  | { kind: 'steps'; lab?: boolean; items: { title: string; text: string; spec?: string[]; code?: string[] }[] }
+  | {
+      kind: 'steps';
+      lab?: boolean;
+      items: { title: string; text: string; spec?: string[]; flags?: { cmd: string; flags: string[] }[]; code?: string[] }[];
+    }
   | {
       kind: 'case';
       title: string;

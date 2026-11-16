@@ -295,6 +295,17 @@
                           <p class="step-title">{st.title}</p>
                           <p>{@html fmt(st.text)}</p>
                           {#if st.spec}<ul class="spec">{#each st.spec as sp, m (m)}<li>{@html fmt(sp)}</li>{/each}</ul>{/if}
+                          {#if st.flags && b.lab}
+                            <div class="flags">
+                              <p class="flags-h">Flags</p>
+                              {#each st.flags as f, m (m)}
+                                <div class="flag-row">
+                                  <span class="flag-cmd">{f.cmd}</span>
+                                  <span class="flag-list">{#each f.flags as x, n (n)}<code>{x}</code>{/each}</span>
+                                </div>
+                              {/each}
+                            </div>
+                          {/if}
                           {#if st.code && b.lab}
                             <details class="reveal">
                               <summary>Show the command{st.code.length > 1 ? 's' : ''}</summary>
@@ -959,6 +970,54 @@
 
   .spec li + li {
     margin-top: 2px;
+  }
+
+  .flags {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--line-strong);
+    font-size: 13.5px;
+  }
+
+  .flags-h {
+    margin: 0 0 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  .flag-row {
+    display: grid;
+    grid-template-columns: minmax(0, 13em) minmax(0, 1fr);
+    gap: 4px 12px;
+    align-items: baseline;
+  }
+
+  .flag-row + .flag-row {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--line-strong);
+  }
+
+  .flag-cmd {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    overflow-wrap: anywhere;
+  }
+
+  .flag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+  }
+
+  @media (max-width: 560px) {
+    .flag-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   .reveal {

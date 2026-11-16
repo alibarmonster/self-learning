@@ -563,6 +563,9 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud projects create ace-lab-123 --folder=123456789 --labels=env=lab',
                     'gcloud config set project ace-lab-123'
+                  ],
+                  flags: [
+                    { cmd: 'projects create ace-lab-123', flags: ['--folder=123456789', '--labels=env=lab'] }
                   ]
                 },
                 {
@@ -576,6 +579,9 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud billing accounts list',
                     'gcloud billing projects link ace-lab-123 --billing-account=0X0X0X-0X0X0X-0X0X0X'
+                  ],
+                  flags: [
+                    { cmd: 'projects link ace-lab-123', flags: ['--billing-account=0X0X0X-0X0X0X-0X0X0X'] }
                   ]
                 },
                 {
@@ -590,6 +596,9 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud services enable compute.googleapis.com logging.googleapis.com monitoring.googleapis.com billingbudgets.googleapis.com',
                     'gcloud services list --enabled'
+                  ],
+                  flags: [
+                    { cmd: 'services list', flags: ['--enabled'] }
                   ]
                 },
                 {
@@ -611,6 +620,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud projects add-iam-policy-binding ace-lab-123 --member=group:lab-devs@example.com --role=roles/compute.instanceAdmin.v1',
                     'gcloud projects add-iam-policy-binding ace-lab-123 --member=group:lab-viewers@example.com --role=roles/viewer'
+                  ],
+                  flags: [
+                    { cmd: 'projects add-iam-policy-binding ace-lab-123', flags: ['--member=group:lab-devs@example.com', '--role=roles/compute.instanceAdmin.v1'] },
+                    { cmd: 'projects add-iam-policy-binding ace-lab-123', flags: ['--member=group:lab-viewers@example.com', '--role=roles/viewer'] }
                   ]
                 },
                 {
@@ -623,6 +636,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud iam service-accounts create web-sa --display-name="web app"'
+                  ],
+                  flags: [
+                    { cmd: 'service-accounts create web-sa', flags: ['--display-name="web app"'] }
                   ]
                 },
                 {
@@ -635,6 +651,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud storage buckets create gs://ace-lab-assets --location=asia-southeast2 --uniform-bucket-level-access'
+                  ],
+                  flags: [
+                    { cmd: 'buckets create gs://ace-lab-assets', flags: ['--location=asia-southeast2', '--uniform-bucket-level-access'] }
                   ]
                 },
                 {
@@ -648,6 +667,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud projects add-iam-policy-binding ace-lab-123 --member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/logging.logWriter',
                     'gcloud storage buckets add-iam-policy-binding gs://ace-lab-assets --member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/storage.objectViewer'
+                  ],
+                  flags: [
+                    { cmd: 'projects add-iam-policy-binding ace-lab-123', flags: ['--member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com', '--role=roles/logging.logWriter'] },
+                    { cmd: 'buckets add-iam-policy-binding gs://ace-lab-assets', flags: ['--member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com', '--role=roles/storage.objectViewer'] }
                   ]
                 },
                 {
@@ -661,6 +684,9 @@ export const lesson: Lesson = {
                   ],
                   code: [
                     'gcloud billing budgets create --billing-account=0X0X0X-0X0X0X-0X0X0X --display-name="lab" --budget-amount=50USD --filter-projects=projects/ace-lab-123 --threshold-rule=percent=0.5 --threshold-rule=percent=0.9 --threshold-rule=percent=1.0'
+                  ],
+                  flags: [
+                    { cmd: 'budgets create', flags: ['--billing-account=0X0X0X-0X0X0X-0X0X0X', '--display-name=lab', '--budget-amount=50USD', '--filter-projects=projects/ace-lab-123', '--threshold-rule=percent=0.5', '--threshold-rule=percent=0.9', '--threshold-rule=percent=1.0'] }
                   ]
                 },
                 {
@@ -673,6 +699,10 @@ export const lesson: Lesson = {
                   code: [
                     'gcloud projects get-iam-policy ace-lab-123 --format=json > iam-bindings.json',
                     'gcloud policy-troubleshoot iam //cloudresourcemanager.googleapis.com/projects/ace-lab-123 --principal-email=dev@example.com --permission=compute.instances.create'
+                  ],
+                  flags: [
+                    { cmd: 'projects get-iam-policy ace-lab-123', flags: ['--format=json'] },
+                    { cmd: 'policy-troubleshoot iam //cloudresourcemanager.googleapis.com/projects/ace-lab-123', flags: ['--principal-email=dev@example.com', '--permission=compute.instances.create'] }
                   ]
                 }
               ]
