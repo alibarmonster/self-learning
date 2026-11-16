@@ -15,6 +15,7 @@ import { tryoutPlanning } from './questions/tryout-planning';
 import { tryoutOperating } from './questions/tryout-operating';
 import { tryoutAccess } from './questions/tryout-access';
 import { tryoutMd34 } from './questions/tryout-md34';
+import { sessionsMd34 } from './questions/sessions-md34';
 import { inSection } from './questions/module-types';
 import { module1 } from './questions/module1';
 import { module2 } from './questions/module2';
@@ -35,14 +36,15 @@ import { module6 } from './questions/module6';
  *
  * The bank is 666 questions from a community dump, plus 200 written for the
  * course tryout (questions/tryout*.ts, 50 per section) and 600 for the six module
- * try-outs of the course syllabus (questions/module1-6.ts, 100 per module) and 20
- * for the combined MD3–MD4 tryout (questions/tryout-md34.ts), each
+ * try-outs of the course syllabus (questions/module1-6.ts, 100 per module), 200
+ * for the combined MD3–MD4 tryout (questions/tryout-md34.ts) and 180 for the
+ * session exams of sessions 9–17 (questions/sessions-md34.ts), each
  * assigned to the section
  * its decision belongs to, with every key reviewed — see questions/*.ts. The
  * real paper interleaves the sections, so the exam is `mixed`.
  */
-/** The module try-outs and the combined MD3–MD4 tryout, each question tagged with its section. */
-const MODULES = [...module1, ...module2, ...module3, ...module4, ...module5, ...module6, ...tryoutMd34];
+/** The module try-outs, the MD3–MD4 tryout and the session exams, each question tagged with its section. */
+const MODULES = [...module1, ...module2, ...module3, ...module4, ...module5, ...module6, ...tryoutMd34, ...sessionsMd34];
 
 const SECTIONS: Section[] = [
   {
@@ -143,7 +145,7 @@ export const ace = defineExam({
   short: 'ACE',
   tagline: 'Google Cloud · associate certification',
   blurb:
-    'A timed simulator for Google\'s hands-on cloud certification: 50–60 questions in two hours about deploying, operating and securing real projects, from a 1,666-question bank with a reviewed key and an explanation on every question.',
+    'A timed simulator for Google\'s hands-on cloud certification: 50–60 questions in two hours about deploying, operating and securing real projects, from a 1,846-question bank with a reviewed key and an explanation on every question.',
   icon: 'AC',
   fullModeId: 'full',
   mixed: true,

@@ -12,7 +12,9 @@
  * deal the other 150 out section by section, so each gets an even share. Tryout
  * MD3–MD4 (questions/tryout-md34.ts) is the combined Module 3 + 4 try-out of
  * 20 November 2026: ten sets of 20, each with two questions from every one of
- * the ten sections, 24 minutes each.
+ * the ten sections, 24 minutes each. Last come the session exams
+ * (questions/sessions-md34.ts): one set of 20 for each of sessions 9–17, so a
+ * session can be checked on its own.
  */
 import type { PaperSet } from '@/types';
 
@@ -338,6 +340,78 @@ export const sets: PaperSet[] = [
     note: 'Modules MD3–MD4 · 10 sections × 2 · for 20 Nov 2026 · 24 min',
     minutes: 24,
     questionIds: ['ace-t34-037', 'ace-t34-038', 'ace-t34-055', 'ace-t34-056', 'ace-t34-073', 'ace-t34-074', 'ace-t34-091', 'ace-t34-092', 'ace-t34-109', 'ace-t34-110', 'ace-t34-127', 'ace-t34-128', 'ace-t34-145', 'ace-t34-146', 'ace-t34-163', 'ace-t34-164', 'ace-t34-181', 'ace-t34-182', 'ace-t34-199', 'ace-t34-200']
+  },
+  {
+    id: 'session-09',
+    name: 'S9 · Cloud Storage',
+    group: 'Session exams · Module 3',
+    note: 'Session 9 only · 20 questions · 24 min',
+    minutes: 24,
+    questionIds: ['ace-s09-01', 'ace-s09-02', 'ace-s09-03', 'ace-s09-04', 'ace-s09-05', 'ace-s09-06', 'ace-s09-07', 'ace-s09-08', 'ace-s09-09', 'ace-s09-10', 'ace-s09-11', 'ace-s09-12', 'ace-s09-13', 'ace-s09-14', 'ace-s09-15', 'ace-s09-16', 'ace-s09-17', 'ace-s09-18', 'ace-s09-19', 'ace-s09-20']
+  },
+  {
+    id: 'session-10',
+    name: 'S10 · Databases',
+    group: 'Session exams · Module 3',
+    note: 'Session 10 only · 20 questions · 24 min',
+    minutes: 24,
+    questionIds: ['ace-s10-01', 'ace-s10-02', 'ace-s10-03', 'ace-s10-04', 'ace-s10-05', 'ace-s10-06', 'ace-s10-07', 'ace-s10-08', 'ace-s10-09', 'ace-s10-10', 'ace-s10-11', 'ace-s10-12', 'ace-s10-13', 'ace-s10-14', 'ace-s10-15', 'ace-s10-16', 'ace-s10-17', 'ace-s10-18', 'ace-s10-19', 'ace-s10-20']
+  },
+  {
+    id: 'session-11',
+    name: 'S11 · Messaging & data protection',
+    group: 'Session exams · Module 3',
+    note: 'Session 11 only · 20 questions · 24 min',
+    minutes: 24,
+    questionIds: ['ace-s11-01', 'ace-s11-02', 'ace-s11-03', 'ace-s11-04', 'ace-s11-05', 'ace-s11-06', 'ace-s11-07', 'ace-s11-08', 'ace-s11-09', 'ace-s11-10', 'ace-s11-11', 'ace-s11-12', 'ace-s11-13', 'ace-s11-14', 'ace-s11-15', 'ace-s11-16', 'ace-s11-17', 'ace-s11-18', 'ace-s11-19', 'ace-s11-20']
+  },
+  {
+    id: 'session-12',
+    name: 'S12 · Lab: data stack & restore drill',
+    group: 'Session exams · Module 3',
+    note: 'Session 12 only · 20 questions · 24 min',
+    minutes: 24,
+    questionIds: ['ace-s12-01', 'ace-s12-02', 'ace-s12-03', 'ace-s12-04', 'ace-s12-05', 'ace-s12-06', 'ace-s12-07', 'ace-s12-08', 'ace-s12-09', 'ace-s12-10', 'ace-s12-11', 'ace-s12-12', 'ace-s12-13', 'ace-s12-14', 'ace-s12-15', 'ace-s12-16', 'ace-s12-17', 'ace-s12-18', 'ace-s12-19', 'ace-s12-20']
+  },
+  {
+    id: 'session-13',
+    name: 'S13 · VPC, firewalls, Shared VPC',
+    group: 'Session exams · Module 4',
+    note: 'Session 13 only · 20 questions · 24 min',
+    minutes: 24,
+    questionIds: ['ace-s13-01', 'ace-s13-02', 'ace-s13-03', 'ace-s13-04', 'ace-s13-05', 'ace-s13-06', 'ace-s13-07', 'ace-s13-08', 'ace-s13-09', 'ace-s13-10', 'ace-s13-11', 'ace-s13-12', 'ace-s13-13', 'ace-s13-14', 'ace-s13-15', 'ace-s13-16', 'ace-s13-17', 'ace-s13-18', 'ace-s13-19', 'ace-s13-20']
+  },
+  {
+    id: 'session-14',
+    name: 'S14 · Lab: segmented VPC (LAB01)',
+    group: 'Session exams · Module 4',
+    note: 'Session 14 only · 20 questions · 24 min',
+    minutes: 24,
+    questionIds: ['ace-s14-01', 'ace-s14-02', 'ace-s14-03', 'ace-s14-04', 'ace-s14-05', 'ace-s14-06', 'ace-s14-07', 'ace-s14-08', 'ace-s14-09', 'ace-s14-10', 'ace-s14-11', 'ace-s14-12', 'ace-s14-13', 'ace-s14-14', 'ace-s14-15', 'ace-s14-16', 'ace-s14-17', 'ace-s14-18', 'ace-s14-19', 'ace-s14-20']
+  },
+  {
+    id: 'session-15',
+    name: 'S15 · VPN, Interconnect, DNS, NAT',
+    group: 'Session exams · Module 4',
+    note: 'Session 15 only · 20 questions · 24 min',
+    minutes: 24,
+    questionIds: ['ace-s15-01', 'ace-s15-02', 'ace-s15-03', 'ace-s15-04', 'ace-s15-05', 'ace-s15-06', 'ace-s15-07', 'ace-s15-08', 'ace-s15-09', 'ace-s15-10', 'ace-s15-11', 'ace-s15-12', 'ace-s15-13', 'ace-s15-14', 'ace-s15-15', 'ace-s15-16', 'ace-s15-17', 'ace-s15-18', 'ace-s15-19', 'ace-s15-20']
+  },
+  {
+    id: 'session-16',
+    name: 'S16 · Load balancing',
+    group: 'Session exams · Module 4',
+    note: 'Session 16 only · 20 questions · 24 min',
+    minutes: 24,
+    questionIds: ['ace-s16-01', 'ace-s16-02', 'ace-s16-03', 'ace-s16-04', 'ace-s16-05', 'ace-s16-06', 'ace-s16-07', 'ace-s16-08', 'ace-s16-09', 'ace-s16-10', 'ace-s16-11', 'ace-s16-12', 'ace-s16-13', 'ace-s16-14', 'ace-s16-15', 'ace-s16-16', 'ace-s16-17', 'ace-s16-18', 'ace-s16-19', 'ace-s16-20']
+  },
+  {
+    id: 'session-17',
+    name: 'S17 · Lab: load-balanced multi-tier',
+    group: 'Session exams · Module 4',
+    note: 'Session 17 only · 20 questions · 24 min',
+    minutes: 24,
+    questionIds: ['ace-s17-01', 'ace-s17-02', 'ace-s17-03', 'ace-s17-04', 'ace-s17-05', 'ace-s17-06', 'ace-s17-07', 'ace-s17-08', 'ace-s17-09', 'ace-s17-10', 'ace-s17-11', 'ace-s17-12', 'ace-s17-13', 'ace-s17-14', 'ace-s17-15', 'ace-s17-16', 'ace-s17-17', 'ace-s17-18', 'ace-s17-19', 'ace-s17-20']
   },
   {
     id: 'set-01',

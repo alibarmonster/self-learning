@@ -49,7 +49,7 @@ const TRYOUT_PREP: LessonMeta[] = [
     level: 'Module 3',
     topics: ['Cloud Storage', 'Cloud SQL', 'Spanner', 'BigQuery', 'Dataflow', 'CMEK'],
     group: PREP,
-    prepares: ['Module 3 · Storage & Data Solutions', 'Tryout · MD3–MD4'],
+    prepares: ['Module 3 · Storage & Data Solutions', 'Session exams · Module 3', 'Tryout · MD3–MD4'],
     load: () => import('./tryout-m3')
   },
   {
@@ -60,7 +60,7 @@ const TRYOUT_PREP: LessonMeta[] = [
     level: 'Module 4',
     topics: ['VPC', 'Cloud NGFW', 'Shared VPC', 'HA VPN', 'Cloud NAT', 'Load balancing'],
     group: PREP,
-    prepares: ['Module 4 · Cloud Networking', 'Tryout · MD3–MD4'],
+    prepares: ['Module 4 · Cloud Networking', 'Session exams · Module 4', 'Tryout · MD3–MD4'],
     load: () => import('./tryout-m4')
   },
   {
