@@ -670,7 +670,12 @@ export const lesson: Lesson = {
               ]
             },
             {
+              kind: 'p',
+              text: '**Setup in Cloud Shell.** Check which account is active, set the lab project, export three variables (`PFX` as `terra-` plus your name, `REGION=asia-southeast2`, `ZONE=asia-southeast2-a`), make the region and zone the gcloud defaults, and enable the Compute Engine and Network Management APIs.'
+            },
+            {
               kind: 'code',
+              reveal: true,
               title: 'Setup in Cloud Shell',
               lines: [
                 '$ gcloud auth list',
@@ -694,41 +699,99 @@ export const lesson: Lesson = {
           blocks: [
             {
               kind: 'steps',
+              lab: true,
               items: [
                 {
                   title: 'Task 1a · The prod network, custom mode',
-                  text: '`--subnet-mode=custom` creates no subnets. Each /24 keeps 252 usable addresses, and ranges must not overlap inside one network.',
-                  code: ['gcloud compute networks create $PFX-prod --subnet-mode=custom', 'gcloud compute networks subnets create $PFX-web --network=$PFX-prod --region=$REGION --range=10.10.1.0/24', 'gcloud compute networks subnets create $PFX-app --network=$PFX-prod --region=$REGION --range=10.10.2.0/24']
+                  text: 'Create the `prod` network with no automatic subnets, then add the web and app subnets yourself. Each /24 keeps 252 usable addresses, and ranges must not overlap inside one network.',
+                  spec: [
+                    'Network: `$PFX-prod`, `--subnet-mode=custom`',
+                    'Subnet `$PFX-web`: `10.10.1.0/24`, region `$REGION`',
+                    'Subnet `$PFX-app`: `10.10.2.0/24`, region `$REGION`'
+                  ],
+                  code: [
+                    'gcloud compute networks create $PFX-prod --subnet-mode=custom',
+                    'gcloud compute networks subnets create $PFX-web --network=$PFX-prod --region=$REGION --range=10.10.1.0/24',
+                    'gcloud compute networks subnets create $PFX-app --network=$PFX-prod --region=$REGION --range=10.10.2.0/24'
+                  ]
                 },
                 {
                   title: 'Task 1b · The data network, then verify',
-                  text: 'A separate VPC has no route to prod. 10.10.x.x and 10.20.x.x do not overlap, so they could be peered later.',
-                  code: ['gcloud compute networks create $PFX-data --subnet-mode=custom', 'gcloud compute networks subnets create $PFX-db --network=$PFX-data --region=$REGION --range=10.20.1.0/24', 'gcloud compute networks list --filter="name~^$PFX"', 'gcloud compute networks subnets list --filter="name~^$PFX"']
+                  text: 'A second, separate network for the database. It has no route to `prod`; `10.10.x.x` and `10.20.x.x` do not overlap, so the two could be peered later. List both networks and all subnets to check.',
+                  spec: [
+                    'Network: `$PFX-data`, custom mode',
+                    'Subnet `$PFX-db`: `10.20.1.0/24`, region `$REGION`',
+                    'Verify with a list filtered on `name~^$PFX`'
+                  ],
+                  code: [
+                    'gcloud compute networks create $PFX-data --subnet-mode=custom',
+                    'gcloud compute networks subnets create $PFX-db --network=$PFX-data --region=$REGION --range=10.20.1.0/24',
+                    'gcloud compute networks list --filter="name~^$PFX"',
+                    'gcloud compute networks subnets list --filter="name~^$PFX"'
+                  ]
                 },
                 {
                   title: 'Task 2a · A test server on every VM',
-                  text: 'Each VM serves its hostname on ports 80 and 8080 with the python3 already on Debian, so no internet access is needed. The firewall, not the VMs, decides who connects.',
-                  code: ["cat > serve.sh <<'EOF'", '#!/bin/bash', 'hostname > /tmp/index.html', 'systemd-run --working-directory=/tmp python3 -m http.server 80', 'systemd-run --working-directory=/tmp python3 -m http.server 8080', 'EOF']
+                  text: 'Write a startup script that serves the VM’s hostname on ports 80 and 8080 with the python3 already on Debian, so no internet access is needed. The firewall, not the VMs, decides who connects.',
+                  spec: [
+                    'File: `serve.sh`',
+                    'Write the hostname to `/tmp/index.html`',
+                    'Two `python3 -m http.server` processes, on 80 and on 8080, started with `systemd-run`'
+                  ],
+                  code: [
+                    'cat > serve.sh <<\'EOF\'',
+                    '#!/bin/bash',
+                    'hostname > /tmp/index.html',
+                    'systemd-run --working-directory=/tmp python3 -m http.server 80',
+                    'systemd-run --working-directory=/tmp python3 -m http.server 8080',
+                    'EOF'
+                  ]
                 },
                 {
                   title: 'Task 2b · Four VMs',
-                  text: 'The subnet decides the internal IP. `--tags` sets the network tag the rules match; `--no-address` removes the external IP. Check that all four are RUNNING.',
+                  text: 'The subnet decides each VM’s internal IP; the tag decides which rules match it. Check that all four are RUNNING and write down their internal IPs.',
+                  spec: [
+                    'All four: `e2-micro`, image family `debian-12` from `debian-cloud`, startup script `serve.sh`',
+                    '`$PFX-web`: subnet `$PFX-web`, tag `web`, keeps an external IP',
+                    '`$PFX-app`: subnet `$PFX-app`, tag `app`, `--no-address`',
+                    '`$PFX-probe`: subnet `$PFX-web`, no tags, `--no-address`',
+                    '`$PFX-db`: subnet `$PFX-db`, no tags, `--no-address`'
+                  ],
                   code: [
                     'gcloud compute instances create $PFX-web --machine-type=e2-micro --subnet=$PFX-web --tags=web --image-family=debian-12 --image-project=debian-cloud --metadata-from-file=startup-script=serve.sh',
                     'gcloud compute instances create $PFX-app --machine-type=e2-micro --subnet=$PFX-app --tags=app --no-address --image-family=debian-12 --image-project=debian-cloud --metadata-from-file=startup-script=serve.sh',
                     'gcloud compute instances create $PFX-probe --machine-type=e2-micro --subnet=$PFX-web --no-address --image-family=debian-12 --image-project=debian-cloud --metadata-from-file=startup-script=serve.sh',
-                    'gcloud compute instances create $PFX-db --machine-type=e2-micro --subnet=$PFX-db --no-address --image-family=debian-12 --image-project=debian-cloud --metadata-from-file=startup-script=serve.sh'
+                    'gcloud compute instances create $PFX-db --machine-type=e2-micro --subnet=$PFX-db --no-address --image-family=debian-12 --image-project=debian-cloud --metadata-from-file=startup-script=serve.sh',
+                    'gcloud compute instances list --filter="name~^$PFX"'
                   ]
                 },
                 {
                   title: 'Task 3a · Three allow rules at the default priority 1000',
-                  text: 'Direction defaults to INGRESS. SSH only from the IAP range, port 80 only to the web tag, ping only inside the prod ranges.',
-                  code: ['gcloud compute firewall-rules create $PFX-allow-iap --network=$PFX-prod --allow=tcp:22 --source-ranges=35.235.240.0/20', 'gcloud compute firewall-rules create $PFX-allow-http --network=$PFX-prod --allow=tcp:80 --source-ranges=0.0.0.0/0 --target-tags=web', 'gcloud compute firewall-rules create $PFX-allow-icmp --network=$PFX-prod --allow=icmp --source-ranges=10.10.0.0/16']
+                  text: 'In the prod network: SSH only from the IAP range, port 80 only to the web tag, ping only from inside the prod ranges. Direction defaults to ingress.',
+                  spec: [
+                    '`$PFX-allow-iap`: allow `tcp:22` from `35.235.240.0/20`, all VMs',
+                    '`$PFX-allow-http`: allow `tcp:80` from `0.0.0.0/0`, target tag `web`',
+                    '`$PFX-allow-icmp`: allow `icmp` from `10.10.0.0/16`, all VMs'
+                  ],
+                  code: [
+                    'gcloud compute firewall-rules create $PFX-allow-iap --network=$PFX-prod --allow=tcp:22 --source-ranges=35.235.240.0/20',
+                    'gcloud compute firewall-rules create $PFX-allow-http --network=$PFX-prod --allow=tcp:80 --source-ranges=0.0.0.0/0 --target-tags=web',
+                    'gcloud compute firewall-rules create $PFX-allow-icmp --network=$PFX-prod --allow=icmp --source-ranges=10.10.0.0/16'
+                  ]
                 },
                 {
                   title: 'Task 3b · The app, deny and data rules',
-                  text: '`allow-app` uses a source tag (same network only). `deny-app` at 2000 loses to 1000, and exists so blocked traffic shows up in the logs, which the implied deny never does. The data network needs its own IAP rule.',
-                  code: ['gcloud compute firewall-rules create $PFX-allow-app --network=$PFX-prod --allow=tcp:8080 --enable-logging --source-tags=web --target-tags=app', 'gcloud compute firewall-rules create $PFX-deny-app --network=$PFX-prod --action=DENY --rules=tcp:8080 --priority=2000 --enable-logging --source-ranges=0.0.0.0/0 --target-tags=app', 'gcloud compute firewall-rules create $PFX-data-iap --network=$PFX-data --allow=tcp:22 --source-ranges=35.235.240.0/20']
+                  text: '`allow-app` uses a source tag (which only matches VMs in the same network). `deny-app` at 2000 loses to 1000 and exists so blocked traffic shows up in the logs, which the implied deny never does. The data network needs its own IAP rule.',
+                  spec: [
+                    '`$PFX-allow-app`: allow `tcp:8080`, source tag `web`, target tag `app`, logging on',
+                    '`$PFX-deny-app`: deny `tcp:8080`, priority 2000, from `0.0.0.0/0`, target tag `app`, logging on',
+                    '`$PFX-data-iap`: in `$PFX-data`, allow `tcp:22` from `35.235.240.0/20`'
+                  ],
+                  code: [
+                    'gcloud compute firewall-rules create $PFX-allow-app --network=$PFX-prod --allow=tcp:8080 --enable-logging --source-tags=web --target-tags=app',
+                    'gcloud compute firewall-rules create $PFX-deny-app --network=$PFX-prod --action=DENY --rules=tcp:8080 --priority=2000 --enable-logging --source-ranges=0.0.0.0/0 --target-tags=app',
+                    'gcloud compute firewall-rules create $PFX-data-iap --network=$PFX-data --allow=tcp:22 --source-ranges=35.235.240.0/20'
+                  ]
                 }
               ]
             },
@@ -785,7 +848,12 @@ export const lesson: Lesson = {
               ]
             },
             {
+              kind: 'p',
+              text: '**Task 4.** List the VMs to get their IPs. Open two Cloud Shell tabs and SSH through IAP into `$PFX-web` and `$PFX-probe` (`--tunnel-through-iap`). Run Test 1 from Cloud Shell, Tests 2 to 5 inside the web VM and Test 6 inside the probe VM, with `curl -m 5` for ports and `ping -c 3` for ICMP.'
+            },
+            {
               kind: 'code',
+              reveal: true,
               title: 'Connect with IAP and run the tests',
               lines: [
                 '$ gcloud compute instances list --filter="name~^$PFX"',
@@ -818,7 +886,12 @@ export const lesson: Lesson = {
               text: '**Timeout vs refused**: a silent timeout means the firewall dropped the packet. "Connection refused" means the firewall **allowed** it and nothing is listening on that port, so look at the server, not the rules.'
             },
             {
+              kind: 'p',
+              text: '**Task 5.** In Logs Explorer, filter the firewall log (`compute.googleapis.com/firewall`) for entries whose rule is `deny-app`. Then create one Connectivity Test per path, all TCP to port 8080: `web → app`, `probe → app` and `web → db`, named `$PFX-web-app` and so on, and read each result.'
+            },
+            {
               kind: 'code',
+              reveal: true,
               title: 'Task 5: firewall logs, then Connectivity Tests',
               lines: [
                 '# Logs Explorer query (entries take a minute or two)',
@@ -850,7 +923,12 @@ export const lesson: Lesson = {
               text: 'In the log entries, `disposition` shows ALLOWED or DENIED, `connection` shows the source and destination IP and port, and `rule_details.reference` names the rule that matched. Expect ALLOWED for `allow-app` and DENIED for `deny-app`.'
             },
             {
+              kind: 'p',
+              text: '**Clean up in reverse order**, because a network cannot go while anything uses it: the three Connectivity Tests, then the four VMs, then the six firewall rules, then the three subnets, and the two networks last.'
+            },
+            {
               kind: 'code',
+              reveal: true,
               title: 'Clean up in reverse order (a network cannot go while anything uses it)',
               lines: [
                 '$ for T in web-app probe-app web-db; do gcloud network-management connectivity-tests delete $PFX-$T --quiet; done',
@@ -1738,16 +1816,143 @@ export const lesson: Lesson = {
           blocks: [
             {
               kind: 'steps',
+              lab: true,
               items: [
-                { title: 'Three subnets', text: 'web, app and db, as in S13-01.' },
-                { title: 'Secure tags for the tiers', text: 'A `tier` key with purpose GCE_FIREWALL for the VPC, values web/app/db; give the platform team Tag User on the values.' },
-                { title: 'A global network firewall policy', text: 'Allow the LB and health check ranges to `tier=web` on 80; `web → app` on 8080; `app → db` on 5432; IAP SSH to all; everything else falls to the implied deny.' },
-                { title: 'MIGs per tier, web autoscaled', text: 'A regional web MIG with a health check and named port `http:80`.' },
-                { title: 'The external Application Load Balancer', text: 'Backend service → URL map → HTTPS proxy → global forwarding rule, as in S16-02.' },
+                {
+                  title: 'The VPC and three subnets',
+                  text: 'A custom mode VPC with one subnet per tier, as in S13-01, all in Jakarta.',
+                  spec: [
+                    'Network: `prod-vpc`, `--subnet-mode=custom`, `--bgp-routing-mode=global`',
+                    '`web-jkt`: `10.20.1.0/24`; `app-jkt`: `10.20.2.0/24`; `db-jkt`: `10.20.3.0/24`',
+                    'Region: `asia-southeast2`; Private Google Access on all three'
+                  ],
+                  code: [
+                    'gcloud compute networks create prod-vpc --subnet-mode=custom --bgp-routing-mode=global',
+                    'gcloud compute networks subnets create web-jkt --network=prod-vpc --region=asia-southeast2 --range=10.20.1.0/24 --enable-private-ip-google-access',
+                    'gcloud compute networks subnets create app-jkt --network=prod-vpc --region=asia-southeast2 --range=10.20.2.0/24 --enable-private-ip-google-access',
+                    'gcloud compute networks subnets create db-jkt --network=prod-vpc --region=asia-southeast2 --range=10.20.3.0/24 --enable-private-ip-google-access'
+                  ]
+                },
+                {
+                  title: 'Cloud Router first, then Cloud NAT',
+                  text: 'No VM in this lab gets an external IP, but they still need to install packages. Cloud NAT is a setting on a Cloud Router, so create the router, then the NAT gateway on it.',
+                  spec: [
+                    'Cloud Router: `prod-router`, network `prod-vpc`, region `asia-southeast2`',
+                    'Cloud NAT: `prod-nat` on `prod-router`',
+                    'NAT IPs: automatic; subnets: all ranges in the region'
+                  ],
+                  code: [
+                    'gcloud compute routers create prod-router --network=prod-vpc --region=asia-southeast2',
+                    'gcloud compute routers nats create prod-nat --router=prod-router --region=asia-southeast2 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges'
+                  ]
+                },
+                {
+                  title: 'Secure tags for the tiers',
+                  text: 'A tag key with the firewall purpose, bound to `prod-vpc`, and one value per tier. The platform team gets Tag User on the values, so only they can attach them.',
+                  spec: [
+                    'Key: `tier`, parent the project, `--purpose=GCE_FIREWALL`, `--purpose-data=network=PROJECT_ID/prod-vpc`',
+                    'Values: `web`, `app`, `db`',
+                    'Tag User (`roles/resourcemanager.tagUser`) on each value for `platform@example.com`'
+                  ],
+                  code: [
+                    'gcloud resource-manager tags keys create tier --parent=projects/PROJECT_ID --purpose=GCE_FIREWALL --purpose-data=network=PROJECT_ID/prod-vpc',
+                    'for V in web app db; do gcloud resource-manager tags values create $V --parent=PROJECT_ID/tier; done',
+                    'for V in web app db; do gcloud resource-manager tags values add-iam-policy-binding PROJECT_ID/tier/$V --member=group:platform@example.com --role=roles/resourcemanager.tagUser; done'
+                  ]
+                },
+                {
+                  title: 'A global network firewall policy with four rules',
+                  text: 'Only what is listed is allowed; everything else falls to the implied deny. Rules use secure tags, not network tags.',
+                  spec: [
+                    'Policy: `tier-policy`, global',
+                    '1000: allow `tcp:80` from `130.211.0.0/22`, `35.191.0.0/16` to `tier=web` (load balancer and health checks)',
+                    '1100: allow `tcp:8080` from `tier=web` to `tier=app`',
+                    '1200: allow `tcp:5432` from `tier=app` to `tier=db`',
+                    '1300: allow `tcp:22` from `35.235.240.0/20` to all VMs (IAP)'
+                  ],
+                  code: [
+                    'gcloud compute network-firewall-policies create tier-policy --global',
+                    'gcloud compute network-firewall-policies rules create 1000 --firewall-policy=tier-policy --global-firewall-policy --direction=INGRESS --action=allow --layer4-configs=tcp:80 --src-ip-ranges=130.211.0.0/22,35.191.0.0/16 --target-secure-tags=PROJECT_ID/tier/web',
+                    'gcloud compute network-firewall-policies rules create 1100 --firewall-policy=tier-policy --global-firewall-policy --direction=INGRESS --action=allow --layer4-configs=tcp:8080 --src-secure-tags=PROJECT_ID/tier/web --target-secure-tags=PROJECT_ID/tier/app',
+                    'gcloud compute network-firewall-policies rules create 1200 --firewall-policy=tier-policy --global-firewall-policy --direction=INGRESS --action=allow --layer4-configs=tcp:5432 --src-secure-tags=PROJECT_ID/tier/app --target-secure-tags=PROJECT_ID/tier/db',
+                    'gcloud compute network-firewall-policies rules create 1300 --firewall-policy=tier-policy --global-firewall-policy --direction=INGRESS --action=allow --layer4-configs=tcp:22 --src-ip-ranges=35.235.240.0/20'
+                  ]
+                },
+                {
+                  title: 'Associate the policy with the VPC',
+                  text: 'A policy does nothing until it is associated with a network.',
+                  spec: [
+                    'Policy `tier-policy` → network `prod-vpc`',
+                    'Check: the policy shows under the VPC’s firewall policies'
+                  ],
+                  code: [
+                    'gcloud compute network-firewall-policies associations create --firewall-policy=tier-policy --network=prod-vpc --global-firewall-policy',
+                    'gcloud compute networks get-effective-firewalls prod-vpc'
+                  ]
+                },
+                {
+                  title: 'An instance template per tier, with its secure tag',
+                  text: 'Templates carry the secure tag, so every VM a group creates is tagged from boot. No template gets an external IP.',
+                  spec: [
+                    '`web-t`: subnet `web-jkt`, tag `tier=web`, startup script that installs a web server on 80',
+                    '`app-t`: subnet `app-jkt`, tag `tier=app`; `db-t`: subnet `db-jkt`, tag `tier=db`',
+                    'All: `e2-small`, `debian-12`, `--no-address`, tags as `--resource-manager-tags=tagKeys/KEY_ID=tagValues/VALUE_ID` (IDs from `tags values list`)'
+                  ],
+                  code: [
+                    'gcloud resource-manager tags values list --parent=PROJECT_ID/tier',
+                    'gcloud compute instance-templates create web-t --machine-type=e2-small --image-family=debian-12 --image-project=debian-cloud --network=prod-vpc --subnet=web-jkt --region=asia-southeast2 --no-address --resource-manager-tags=tagKeys/KEY_ID=tagValues/WEB_ID --metadata-from-file=startup-script=web.sh',
+                    '# app-t and db-t the same way, with their subnet and tag value'
+                  ]
+                },
+                {
+                  title: 'Health check, then the regional web MIG',
+                  text: 'The health check must exist before the group that uses it. The group spreads over the zones of Jakarta, has a named port for the load balancer, and autoscales on CPU.',
+                  spec: [
+                    'Health check: `web-hc`, HTTP port 80',
+                    'MIG: `web-mig`, regional, template `web-t`, size 3, autohealing on `web-hc`',
+                    'Named port: `http:80`',
+                    'Autoscaling: 3 to 6 VMs at 60% CPU',
+                    'App and db groups: `app-mig` (size 2) and `db-mig` (size 1) from their templates'
+                  ],
+                  code: [
+                    'gcloud compute health-checks create http web-hc --port=80',
+                    'gcloud compute instance-groups managed create web-mig --region=asia-southeast2 --template=web-t --size=3 --health-check=web-hc --initial-delay=120',
+                    'gcloud compute instance-groups set-named-ports web-mig --region=asia-southeast2 --named-ports=http:80',
+                    'gcloud compute instance-groups managed set-autoscaling web-mig --region=asia-southeast2 --min-num-replicas=3 --max-num-replicas=6 --target-cpu-utilization=0.6'
+                  ]
+                },
+                {
+                  title: 'The external Application Load Balancer, back to front',
+                  text: 'Backend service, URL map, certificate and HTTPS proxy, then a static IP and the forwarding rule. Point your domain’s A record at the IP so the certificate can be issued.',
+                  spec: [
+                    'Backend service: `web-be`, global, HTTP, port name `http`, health check `web-hc`, scheme `EXTERNAL_MANAGED`, backend `web-mig`',
+                    'URL map `web-map`; Google-managed certificate `web-cert` for your domain',
+                    'HTTPS proxy `web-proxy`; global address `web-ip`; forwarding rule `web-fr` on port 443',
+                    'DNS: A record for the domain → `web-ip`'
+                  ],
+                  code: [
+                    'gcloud compute backend-services create web-be --global --protocol=HTTP --port-name=http --health-checks=web-hc --load-balancing-scheme=EXTERNAL_MANAGED',
+                    'gcloud compute backend-services add-backend web-be --global --instance-group=web-mig --instance-group-region=asia-southeast2',
+                    'gcloud compute url-maps create web-map --default-service=web-be',
+                    'gcloud compute ssl-certificates create web-cert --domains=shop.example.com --global',
+                    'gcloud compute target-https-proxies create web-proxy --url-map=web-map --ssl-certificates=web-cert',
+                    'gcloud compute addresses create web-ip --global',
+                    'gcloud compute forwarding-rules create web-fr --global --load-balancing-scheme=EXTERNAL_MANAGED --address=web-ip --target-https-proxy=web-proxy --ports=443'
+                  ]
+                },
                 {
                   title: 'Validate failover',
-                  text: 'Stop or delete the VMs in one zone and watch the load balancer keep serving from the others; the MIG recreates what it lost.',
-                  code: ['gcloud compute backend-services get-health web-be --global', 'gcloud compute instance-groups managed list-instances web-mig --region=asia-southeast2']
+                  text: 'Delete the web VMs in one zone and watch the load balancer keep serving from the others, while the MIG recreates what it lost.',
+                  spec: [
+                    'Before: all backends HEALTHY in `get-health`',
+                    'Delete the web VMs in one zone (names from `list-instances`)',
+                    'After: traffic still served; the group shows `CREATING` until it is back to size'
+                  ],
+                  code: [
+                    'gcloud compute backend-services get-health web-be --global',
+                    'gcloud compute instance-groups managed list-instances web-mig --region=asia-southeast2',
+                    'gcloud compute instances delete VM_NAME --zone=asia-southeast2-a --quiet'
+                  ]
                 }
               ]
             }

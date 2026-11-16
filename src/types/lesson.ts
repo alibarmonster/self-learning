@@ -91,9 +91,15 @@ export type LessonBlock =
   | { kind: 'terms'; items: LessonTerm[] }
   | { kind: 'table'; caption?: string; columns: string[]; rows: string[][]; mono?: number[] }
   | { kind: 'figure'; svg: string; caption: string }
-  | ({ kind: 'code' } & LessonCode)
+  /** `reveal` hides the commands behind a button, so a lab can be tried before it is read. */
+  | ({ kind: 'code'; reveal?: boolean } & LessonCode)
   | { kind: 'callout'; tone: 'analogy' | 'exam' | 'tip' | 'warn'; title?: string; text: string }
-  | { kind: 'steps'; items: { title: string; text: string; code?: string[] }[] }
+  /**
+   * Numbered steps. In a lab (`lab: true`) each step says what to build and
+   * `spec` lists its name, settings and flags, and what must exist first; the
+   * commands stay hidden until asked for, so the lab is done before it is read.
+   */
+  | { kind: 'steps'; lab?: boolean; items: { title: string; text: string; spec?: string[]; code?: string[] }[] }
   | {
       kind: 'case';
       title: string;

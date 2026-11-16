@@ -328,13 +328,109 @@ export const lesson: Lesson = {
           blocks: [
             {
               kind: 'steps',
+              lab: true,
               items: [
-                { title: 'A dashboard for the app', text: 'Request count, latency and error rate side by side; save it as JSON for source control.', code: ['gcloud monitoring dashboards create --config-from-file=shop-dashboard.json'] },
-                { title: 'An alert that pages a person', text: 'Threshold plus duration, an email channel, and documentation that says what to check first.' },
-                { title: 'An uptime check with an alert', text: 'HTTPS on `/healthz` from several regions.' },
-                { title: 'Query the logs', text: 'Find the errors of the last hour for one service, open an entry, follow its trace ID.', code: ['gcloud logging read \'resource.type="cloud_run_revision" AND severity>=ERROR\' --freshness=1h'] },
-                { title: 'Turn an error into a metric', text: 'A log-based counter for checkout errors, then an alert on its rate.' },
-                { title: 'Route audit logs to BigQuery', text: 'A sink, then grant its writer identity on the dataset, then query the table that appears.', code: ['gcloud logging sinks create audit-bq bigquery.googleapis.com/projects/ace-lab-123/datasets/audit --log-filter=\'logName:"cloudaudit.googleapis.com"\''] }
+                {
+                  title: 'A dashboard for the app',
+                  text: 'Build the dashboard in the console, export it as JSON for source control, and recreate it from the file to prove it works.',
+                  spec: [
+                    'Charts side by side: request count, latency, error rate',
+                    'File: `shop-dashboard.json`',
+                    'Create from file with `--config-from-file`'
+                  ],
+                  code: [
+                    'gcloud monitoring dashboards create --config-from-file=shop-dashboard.json',
+                    'gcloud monitoring dashboards list --format="value(displayName)"'
+                  ]
+                },
+                {
+                  title: 'A notification channel first',
+                  text: 'An alert can only page someone through a channel, so create the email channel before the alert policy.',
+                  spec: [
+                    'Type: `email`, display name `on-call`',
+                    'Address: your team’s email',
+                    'Keep the channel’s ID for the next step'
+                  ],
+                  code: [
+                    'gcloud beta monitoring channels create --display-name="on-call" --type=email --channel-labels=email_address=oncall@example.com',
+                    'gcloud beta monitoring channels list --format="value(name,displayName)"'
+                  ]
+                },
+                {
+                  title: 'An alert that pages a person',
+                  text: 'A threshold that must hold for a duration, sent to the channel, with documentation that tells the on-call person what to check first.',
+                  spec: [
+                    'Condition: 5xx error rate above the threshold for 5 minutes',
+                    'Notification channel: `on-call` from the previous step',
+                    'Documentation: the first checks and the runbook link',
+                    'Defined in `error-alert.json`, created with `--policy-from-file`'
+                  ],
+                  code: [
+                    'gcloud monitoring policies create --policy-from-file=error-alert.json'
+                  ]
+                },
+                {
+                  title: 'An uptime check with an alert',
+                  text: 'Check the public endpoint from several regions, then alert on the check failing.',
+                  spec: [
+                    'Name: `shop-uptime`, HTTPS, host `shop.example.com`, path `/healthz`',
+                    'Resource type: `uptime-url`',
+                    'Alert on the check through the same `on-call` channel'
+                  ],
+                  code: [
+                    'gcloud monitoring uptime create shop-uptime --resource-type=uptime-url --resource-labels=host=shop.example.com --protocol=https --path=/healthz'
+                  ]
+                },
+                {
+                  title: 'Query the logs',
+                  text: 'Find the errors of the last hour for one service, open an entry, and follow its trace ID into Cloud Trace.',
+                  spec: [
+                    'Resource: `cloud_run_revision`; severity `ERROR` and above',
+                    'Window: the last hour (`--freshness=1h`)'
+                  ],
+                  code: [
+                    'gcloud logging read \'resource.type="cloud_run_revision" AND severity>=ERROR\' --freshness=1h --limit=20'
+                  ]
+                },
+                {
+                  title: 'Turn an error into a metric, then alert on it',
+                  text: 'A log-based counter for checkout errors, so you can chart it and alert on its rate.',
+                  spec: [
+                    'Metric: `checkout_errors`, counter',
+                    'Filter: the checkout service’s entries with severity `ERROR`',
+                    'Then an alert policy on the metric’s rate, to `on-call`'
+                  ],
+                  code: [
+                    'gcloud logging metrics create checkout_errors --description="Checkout errors" --log-filter=\'resource.type="cloud_run_revision" AND resource.labels.service_name="checkout" AND severity>=ERROR\''
+                  ]
+                },
+                {
+                  title: 'The BigQuery dataset first, then the sink',
+                  text: 'A sink needs its destination to exist. Create the dataset, then the sink that routes audit logs to it.',
+                  spec: [
+                    'Dataset: `ace-lab-123:audit`, location `asia-southeast2`',
+                    'Sink: `audit-bq` to `bigquery.googleapis.com/projects/ace-lab-123/datasets/audit`',
+                    'Filter: `logName:"cloudaudit.googleapis.com"`'
+                  ],
+                  code: [
+                    'bq --location=asia-southeast2 mk --dataset ace-lab-123:audit',
+                    'gcloud logging sinks create audit-bq bigquery.googleapis.com/projects/ace-lab-123/datasets/audit --log-filter=\'logName:"cloudaudit.googleapis.com"\''
+                  ]
+                },
+                {
+                  title: 'Grant the sink’s writer identity, then check',
+                  text: 'The sink writes as its own service account (its writer identity), which needs BigQuery Data Editor. Grant it, generate some activity, and query the table that appears.',
+                  spec: [
+                    'Writer identity: `writerIdentity` from `gcloud logging sinks describe`',
+                    'Role: BigQuery Data Editor (`roles/bigquery.dataEditor`), on the dataset (narrowest) or the project',
+                    'Check: a `cloudaudit_googleapis_com_activity` table appears in `audit`'
+                  ],
+                  code: [
+                    'WI=$(gcloud logging sinks describe audit-bq --format="value(writerIdentity)")',
+                    'gcloud projects add-iam-policy-binding ace-lab-123 --member=$WI --role=roles/bigquery.dataEditor',
+                    'bq ls ace-lab-123:audit'
+                  ]
+                }
               ]
             }
           ]
@@ -641,12 +737,95 @@ export const lesson: Lesson = {
           blocks: [
             {
               kind: 'steps',
+              lab: true,
               items: [
-                { title: 'Install the Ops Agent on the MIG’s VMs', text: 'In the template’s startup script, or through a VM Manager policy, so new VMs get it too.' },
-                { title: 'Add a custom metric and an uptime check', text: 'A log-based metric for application errors and an HTTPS uptime check, each with an alert to email.' },
-                { title: 'Investigate the injected fault', text: 'When the alert fires: Logs Explorer for the errors, follow the trace ID into Cloud Trace, find the failing call, and write the root-cause note.' },
-                { title: 'Describe the stack in Terraform', text: 'Template, MIG, health check, load balancer and alert policy as resources; state in a Cloud Storage bucket.', code: ['terraform init', 'terraform plan -out=plan.tfplan'] },
-                { title: 'Redeploy from code and compare', text: 'Apply, confirm the app and the alerts work, then destroy the manual copy.', code: ['terraform apply plan.tfplan'] }
+                {
+                  title: 'Give the VMs’ service account its writer roles',
+                  text: 'The Ops Agent sends logs and metrics as the VM’s service account, so it needs both writer roles before the agent can report anything.',
+                  spec: [
+                    'Service account: the one in the MIG’s template, for example `web-sa`',
+                    'Roles: Logs Writer `roles/logging.logWriter` and Monitoring Metric Writer `roles/monitoring.metricWriter`'
+                  ],
+                  code: [
+                    'gcloud projects add-iam-policy-binding ace-lab-123 --member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/logging.logWriter',
+                    'gcloud projects add-iam-policy-binding ace-lab-123 --member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/monitoring.metricWriter'
+                  ]
+                },
+                {
+                  title: 'Install the Ops Agent through the template',
+                  text: 'Put the install in the template’s startup script so new VMs get it too. The script downloads the agent, so private VMs need Cloud NAT (Cloud Router first, then the NAT gateway) as in Session 17.',
+                  spec: [
+                    'Startup script: add the Ops Agent repository script with `--also-install`',
+                    'New template version (templates cannot be edited), then a rolling update of the MIG',
+                    'Check: the VMs show the agent in Observability → VM Instances'
+                  ],
+                  code: [
+                    '# in the startup script',
+                    'curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh',
+                    'sudo bash add-google-cloud-ops-agent-repo.sh --also-install',
+                    '# then roll the group onto the new template',
+                    'gcloud compute instance-groups managed rolling-action start-update web-mig --region=asia-southeast2 --version=template=web-t2'
+                  ]
+                },
+                {
+                  title: 'Add a custom metric and an uptime check',
+                  text: 'A log-based metric for application errors and an HTTPS uptime check, each with an alert to the email channel from Session 19.',
+                  spec: [
+                    'Metric: `app_errors`, counter on the app’s `ERROR` entries',
+                    'Uptime check: HTTPS on the load balancer’s host, path `/healthz`',
+                    'Both alerts to the existing email channel'
+                  ],
+                  code: [
+                    'gcloud logging metrics create app_errors --description="App errors" --log-filter=\'resource.type="gce_instance" AND severity>=ERROR\'',
+                    'gcloud monitoring uptime create web-uptime --resource-type=uptime-url --resource-labels=host=shop.example.com --protocol=https --path=/healthz'
+                  ]
+                },
+                {
+                  title: 'Investigate the injected fault',
+                  text: 'When the alert fires: open Logs Explorer for the errors, follow the trace ID into Cloud Trace, find the failing call, and write the root-cause note.',
+                  spec: [
+                    'Start from the alert’s incident, not from the code',
+                    'Evidence: the log entry, the trace, the failing span',
+                    'Note: cause, impact, fix, and how to prevent it'
+                  ]
+                },
+                {
+                  title: 'A bucket for Terraform state first',
+                  text: 'Terraform keeps its state in a Cloud Storage backend, which must exist before `terraform init`. Turn on versioning so a bad state can be rolled back.',
+                  spec: [
+                    'Bucket: `gs://ace-lab-123-tfstate`, `asia-southeast2`, uniform access, versioning on',
+                    'Backend block in `main.tf`: `backend "gcs"` with that bucket and a prefix'
+                  ],
+                  code: [
+                    'gcloud storage buckets create gs://ace-lab-123-tfstate --location=asia-southeast2 --uniform-bucket-level-access',
+                    'gcloud storage buckets update gs://ace-lab-123-tfstate --versioning'
+                  ]
+                },
+                {
+                  title: 'Describe the stack in Terraform, then plan',
+                  text: 'Template, MIG, health check, load balancer and alert policy as resources. `init` connects the backend and providers; `plan` shows what will change and saves the plan.',
+                  spec: [
+                    'Resources: `google_compute_instance_template`, `google_compute_region_instance_group_manager`, `google_compute_health_check`, the load balancer parts, `google_monitoring_alert_policy`',
+                    'Save the plan: `-out=plan.tfplan`'
+                  ],
+                  code: [
+                    'terraform init',
+                    'terraform plan -out=plan.tfplan'
+                  ]
+                },
+                {
+                  title: 'Redeploy from code and compare',
+                  text: 'Apply the saved plan, confirm the app and the alerts work, then remove the manually built copy.',
+                  spec: [
+                    'Apply exactly the saved plan',
+                    'Check the app through the load balancer and trigger one alert',
+                    'Delete the manual resources so only the Terraform copy remains'
+                  ],
+                  code: [
+                    'terraform apply plan.tfplan',
+                    'terraform state list'
+                  ]
+                }
               ]
             }
           ]

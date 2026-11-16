@@ -256,6 +256,14 @@
                       </tbody>
                     </table>
                   </div>
+                {:else if b.kind === 'code' && b.reveal}
+                  <details class="reveal block">
+                    <summary>Show the commands{b.title ? `: ${b.title}` : ''}</summary>
+                    <div class="term">
+                      <pre>{#each b.lines as l, k (k)}<span class={`ln ${lineKind(l)}`}>{#if lineKind(l) === 'cmd'}<span class="ps">$</span>{l.slice(1)}{:else}{l}{/if}</span>
+{/each}</pre>
+                    </div>
+                  </details>
                 {:else if b.kind === 'code'}
                   <div class="term">
                     {#if b.title}<p class="term-title">{b.title}</p>{/if}
@@ -286,7 +294,13 @@
                         <div>
                           <p class="step-title">{st.title}</p>
                           <p>{@html fmt(st.text)}</p>
-                          {#if st.code}<pre class="mini">{st.code.join('\n')}</pre>{/if}
+                          {#if st.spec}<ul class="spec">{#each st.spec as sp, m (m)}<li>{@html fmt(sp)}</li>{/each}</ul>{/if}
+                          {#if st.code && b.lab}
+                            <details class="reveal">
+                              <summary>Show the command{st.code.length > 1 ? 's' : ''}</summary>
+                              <pre class="mini">{st.code.join('\n')}</pre>
+                            </details>
+                          {:else if st.code}<pre class="mini">{st.code.join('\n')}</pre>{/if}
                         </div>
                       </li>
                     {/each}
@@ -933,6 +947,60 @@
 
   .step-title {
     font-weight: 600;
+  }
+
+  .spec {
+    margin: 8px 0 0;
+    padding-left: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .spec li + li {
+    margin-top: 2px;
+  }
+
+  .reveal {
+    margin-top: 10px;
+  }
+
+  .reveal.block {
+    margin-top: 18px;
+  }
+
+  .reveal > summary {
+    display: inline-block;
+    cursor: pointer;
+    padding: 4px 10px;
+    border: 1px solid var(--line-strong);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    list-style: none;
+    user-select: none;
+  }
+
+  .reveal > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .reveal > summary::before {
+    content: '▸ ';
+  }
+
+  .reveal[open] > summary::before {
+    content: '▾ ';
+  }
+
+  .reveal > summary:hover,
+  .reveal > summary:focus-visible {
+    color: var(--text);
+    border-color: var(--text-secondary);
+  }
+
+  .reveal .term {
+    margin-top: 8px;
   }
 
   .case {

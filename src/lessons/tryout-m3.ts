@@ -1276,13 +1276,160 @@ export const lesson: Lesson = {
           blocks: [
             {
               kind: 'steps',
+              lab: true,
               items: [
-                { title: 'A raw-data bucket with lifecycle', text: 'Standard for new files, Coldline after 30 days, delete after a year.', code: ['gcloud storage buckets create gs://ace-lab-raw --location=asia-southeast2 --uniform-bucket-level-access', 'gcloud storage buckets update gs://ace-lab-raw --lifecycle-file=lifecycle.json'] },
-                { title: 'Load files into BigQuery', text: 'A dataset in the same location as the bucket, then a load job (free).', code: ['bq --location=asia-southeast2 mk --dataset ace-lab-123:sales', 'bq load --source_format=CSV --autodetect sales.orders gs://ace-lab-raw/orders.csv'] },
-                { title: 'A Cloud SQL instance with backups and PITR', text: 'HA on, private IP, PITR enabled.', code: ['gcloud sql instances create shop-db --database-version=POSTGRES_16 --edition=ENTERPRISE --tier=db-custom-2-8192 --region=asia-southeast2 --availability-type=REGIONAL --enable-point-in-time-recovery'] },
-                { title: 'Import the application data', text: 'The instance’s service account needs read access on the bucket.', code: ['gcloud sql import csv shop-db gs://ace-lab-raw/customers.csv --database=shop --table=customers'] },
-                { title: 'Take an on-demand backup, then break something', text: 'Note the time, then delete some rows on purpose.', code: ['gcloud sql backups create --instance=shop-db --description="before drill"'] },
-                { title: 'Recover and verify', text: 'Clone to a point in time just before the damage, check the row counts, then record the evidence.', code: ['gcloud sql instances clone shop-db shop-db-drill --point-in-time="2026-10-30T02:59:00Z"', 'gcloud sql operations list --instance=shop-db-drill --limit=5'] }
+                {
+                  title: 'Create the raw-data bucket',
+                  text: 'One bucket for the raw CSV files, in Jakarta, with IAM-only access.',
+                  spec: [
+                    'Name: `gs://ace-lab-raw`',
+                    'Location: `asia-southeast2`',
+                    'Uniform bucket-level access: on'
+                  ],
+                  code: [
+                    'gcloud storage buckets create gs://ace-lab-raw --location=asia-southeast2 --uniform-bucket-level-access'
+                  ]
+                },
+                {
+                  title: 'Write the lifecycle file, then apply it',
+                  text: 'Lifecycle rules live in a JSON file that you apply to the bucket: Standard for new files, Coldline after 30 days, delete after a year.',
+                  spec: [
+                    'File: `lifecycle.json`',
+                    'Rule 1: `SetStorageClass` to `COLDLINE` when `age` is 30',
+                    'Rule 2: `Delete` when `age` is 365',
+                    'Apply with `--lifecycle-file`, check with `buckets describe`'
+                  ],
+                  code: [
+                    'cat > lifecycle.json <<\'EOF\'',
+                    '{"rule": [',
+                    '  {"action": {"type": "SetStorageClass", "storageClass": "COLDLINE"}, "condition": {"age": 30}},',
+                    '  {"action": {"type": "Delete"}, "condition": {"age": 365}}',
+                    ']}',
+                    'EOF',
+                    'gcloud storage buckets update gs://ace-lab-raw --lifecycle-file=lifecycle.json',
+                    'gcloud storage buckets describe gs://ace-lab-raw --format="default(lifecycle_config)"'
+                  ]
+                },
+                {
+                  title: 'Upload the lab files',
+                  text: 'Copy both CSV files into the bucket; the next steps load them from there.',
+                  spec: [
+                    'Files: `orders.csv` and `customers.csv`',
+                    'Destination: `gs://ace-lab-raw/`'
+                  ],
+                  code: [
+                    'gcloud storage cp orders.csv customers.csv gs://ace-lab-raw/'
+                  ]
+                },
+                {
+                  title: 'Create the BigQuery dataset, then load the orders',
+                  text: 'The dataset must be in the same location as the bucket, and that location cannot change later. Loading is free.',
+                  spec: [
+                    'Dataset: `ace-lab-123:sales`, location `asia-southeast2` (`bq --location=...`)',
+                    'Table: `sales.orders` from `gs://ace-lab-raw/orders.csv`',
+                    'Format CSV, schema detected for you: `--source_format=CSV --autodetect`'
+                  ],
+                  code: [
+                    'bq --location=asia-southeast2 mk --dataset ace-lab-123:sales',
+                    'bq load --source_format=CSV --autodetect sales.orders gs://ace-lab-raw/orders.csv',
+                    'bq query --use_legacy_sql=false \'SELECT COUNT(*) FROM sales.orders\''
+                  ]
+                },
+                {
+                  title: 'Set up private services access',
+                  text: 'A private-IP Cloud SQL instance lives in Google’s network and is reached through a peering. Reserve a range for it and connect the peering before creating the instance.',
+                  spec: [
+                    'Enable `servicenetworking.googleapis.com` and `sqladmin.googleapis.com`',
+                    'Reserved range: `google-managed-services-default`, global, purpose `VPC_PEERING`, `/16`, network `default`',
+                    'Peering: `gcloud services vpc-peerings connect` to `servicenetworking.googleapis.com`'
+                  ],
+                  code: [
+                    'gcloud services enable servicenetworking.googleapis.com sqladmin.googleapis.com',
+                    'gcloud compute addresses create google-managed-services-default --global --purpose=VPC_PEERING --prefix-length=16 --network=default',
+                    'gcloud services vpc-peerings connect --service=servicenetworking.googleapis.com --ranges=google-managed-services-default --network=default'
+                  ]
+                },
+                {
+                  title: 'Create the Cloud SQL instance with HA and PITR',
+                  text: 'PostgreSQL 16, highly available, private IP only, with point-in-time recovery on.',
+                  spec: [
+                    'Instance: `shop-db`, `POSTGRES_16`, edition `ENTERPRISE`, tier `db-custom-2-8192`, region `asia-southeast2`',
+                    'HA: `--availability-type=REGIONAL`',
+                    'PITR: `--enable-point-in-time-recovery` (automated backups are on by default)',
+                    'Private IP only: `--network=default --no-assign-ip`'
+                  ],
+                  code: [
+                    'gcloud sql instances create shop-db --database-version=POSTGRES_16 --edition=ENTERPRISE --tier=db-custom-2-8192 --region=asia-southeast2 --availability-type=REGIONAL --enable-point-in-time-recovery --network=default --no-assign-ip'
+                  ]
+                },
+                {
+                  title: 'Create the database and the table',
+                  text: '`gcloud sql import csv` loads into an existing table, so create both first. Without a public IP, create the table in Cloud SQL Studio in the console.',
+                  spec: [
+                    'Database: `shop`',
+                    'Table: `customers`, with the same columns as `customers.csv`'
+                  ],
+                  code: [
+                    'gcloud sql databases create shop --instance=shop-db',
+                    '-- in Cloud SQL Studio, database shop',
+                    'CREATE TABLE customers (id INT PRIMARY KEY, name TEXT, city TEXT);'
+                  ]
+                },
+                {
+                  title: 'Let the instance read the bucket, then import',
+                  text: 'Cloud SQL reads the file as the instance’s own service account, not as you. Find that account, grant it read on the bucket, then import.',
+                  spec: [
+                    'Find the account: `serviceAccountEmailAddress` in `gcloud sql instances describe`',
+                    'Grant: Storage Object Viewer on `gs://ace-lab-raw`',
+                    'Import: `customers.csv` into database `shop`, table `customers`'
+                  ],
+                  code: [
+                    'SA=$(gcloud sql instances describe shop-db --format="value(serviceAccountEmailAddress)")',
+                    'gcloud storage buckets add-iam-policy-binding gs://ace-lab-raw --member=serviceAccount:$SA --role=roles/storage.objectViewer',
+                    'gcloud sql import csv shop-db gs://ace-lab-raw/customers.csv --database=shop --table=customers'
+                  ]
+                },
+                {
+                  title: 'Take an on-demand backup, then break something',
+                  text: 'Back up, count the rows, note the time in UTC, then delete some rows on purpose in Cloud SQL Studio.',
+                  spec: [
+                    'Backup description: `before drill`',
+                    'Record: the row count of `customers` and the time from `date -u`',
+                    'Then delete some rows, for example `DELETE FROM customers WHERE city = \'Bandung\';`'
+                  ],
+                  code: [
+                    'gcloud sql backups create --instance=shop-db --description="before drill"',
+                    'date -u +%Y-%m-%dT%H:%M:%SZ'
+                  ]
+                },
+                {
+                  title: 'Recover to a point in time and verify',
+                  text: 'Clone the instance to one minute before the damage; `shop-db` keeps running. Compare row counts, then keep the operation IDs as evidence.',
+                  spec: [
+                    'Clone: `shop-db-drill` from `shop-db`',
+                    'Time: RFC 3339 in UTC, one minute before the delete, for example `2026-10-30T02:59:00Z`',
+                    'Evidence: operation IDs and times from `gcloud sql operations list`, plus row counts before and after'
+                  ],
+                  code: [
+                    'gcloud sql instances clone shop-db shop-db-drill --point-in-time="2026-10-30T02:59:00Z"',
+                    'gcloud sql operations list --instance=shop-db-drill --limit=5'
+                  ]
+                },
+                {
+                  title: 'Clean up',
+                  text: 'Delete the clone and the instance (a stopped instance still bills storage), the dataset and the bucket.',
+                  spec: [
+                    'Delete `shop-db-drill` and `shop-db`',
+                    'Delete dataset `sales` with its tables (`bq rm -r`)',
+                    'Delete bucket `gs://ace-lab-raw` with its objects'
+                  ],
+                  code: [
+                    'gcloud sql instances delete shop-db-drill --quiet',
+                    'gcloud sql instances delete shop-db --quiet',
+                    'bq rm -r -f ace-lab-123:sales',
+                    'gcloud storage rm -r gs://ace-lab-raw'
+                  ]
+                }
               ]
             },
             {

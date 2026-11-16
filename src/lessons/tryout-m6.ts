@@ -461,12 +461,120 @@ export const lesson: Lesson = {
           blocks: [
             {
               kind: 'steps',
+              lab: true,
               items: [
-                { title: 'Custom role and least-privilege grants', text: 'Create a narrow custom role, grant it to a group, and verify with Policy Troubleshooter.' },
-                { title: 'A dedicated service account per workload', text: 'Grant on resources (bucket, topic) rather than the project; no keys.' },
-                { title: 'IAP for SSH and for the web app', text: 'Firewall from 35.235.240.0/20; IAP-secured Tunnel User for admins; IAP-secured Web App User for staff.' },
-                { title: 'A private GKE cluster with Workload Identity Federation', text: 'A dedicated node service account; one KSA per app with only its roles.' },
-                { title: 'Secrets and keys', text: 'Database password in Secret Manager; CMEK on the bucket that holds customer files.' }
+                {
+                  title: 'A narrow custom role',
+                  text: 'When no predefined role is narrow enough, create a custom role with only the permissions the job needs.',
+                  spec: [
+                    'Role ID: `labInstanceViewer` in project `ace-lab-123`',
+                    'Permissions: `compute.instances.get`, `compute.instances.list`',
+                    'Stage: `GA`'
+                  ],
+                  code: [
+                    'gcloud iam roles create labInstanceViewer --project=ace-lab-123 --title="Lab instance viewer" --permissions=compute.instances.get,compute.instances.list --stage=GA'
+                  ]
+                },
+                {
+                  title: 'Grant it to a group, then verify',
+                  text: 'Grant the custom role to a group, then check one person’s access with Policy Troubleshooter.',
+                  spec: [
+                    'Member: `group:lab-viewers@example.com`',
+                    'Role: `projects/ace-lab-123/roles/labInstanceViewer`',
+                    'Verify `compute.instances.list` (allowed) and `compute.instances.delete` (denied)'
+                  ],
+                  code: [
+                    'gcloud projects add-iam-policy-binding ace-lab-123 --member=group:lab-viewers@example.com --role=projects/ace-lab-123/roles/labInstanceViewer',
+                    'gcloud policy-troubleshoot iam //cloudresourcemanager.googleapis.com/projects/ace-lab-123 --principal-email=viewer@example.com --permission=compute.instances.delete'
+                  ]
+                },
+                {
+                  title: 'A dedicated service account per workload',
+                  text: 'One service account for each workload, granted on the resources it uses (a bucket, a topic) rather than the project. No keys.',
+                  spec: [
+                    'Service account: `orders-sa`',
+                    'Pub/Sub Publisher on topic `orders` only',
+                    'Storage Object Viewer on `gs://ace-lab-assets` only'
+                  ],
+                  code: [
+                    'gcloud iam service-accounts create orders-sa --display-name="orders"',
+                    'gcloud pubsub topics add-iam-policy-binding orders --member=serviceAccount:orders-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/pubsub.publisher',
+                    'gcloud storage buckets add-iam-policy-binding gs://ace-lab-assets --member=serviceAccount:orders-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/storage.objectViewer'
+                  ]
+                },
+                {
+                  title: 'IAP for SSH and for the web app',
+                  text: 'Admins reach VMs through IAP, and staff reach the web app through IAP on the load balancer’s backend service. The firewall must let the IAP range in first.',
+                  spec: [
+                    'Firewall: allow `tcp:22` from `35.235.240.0/20`',
+                    'Admins: IAP-secured Tunnel User (`roles/iap.tunnelResourceAccessor`)',
+                    'Staff: IAP-secured Web App User (`roles/iap.httpsResourceAccessor`), with IAP enabled on backend service `web-be`'
+                  ],
+                  code: [
+                    'gcloud compute firewall-rules create allow-iap-ssh --network=prod-vpc --allow=tcp:22 --source-ranges=35.235.240.0/20',
+                    'gcloud projects add-iam-policy-binding ace-lab-123 --member=group:admins@example.com --role=roles/iap.tunnelResourceAccessor',
+                    'gcloud compute backend-services update web-be --global --iap=enabled',
+                    'gcloud iap web add-iam-policy-binding --resource-type=backend-services --service=web-be --member=group:staff@example.com --role=roles/iap.httpsResourceAccessor'
+                  ]
+                },
+                {
+                  title: 'Cloud Router and Cloud NAT for the private cluster',
+                  text: 'Private nodes have no external IPs, so pulling public images needs Cloud NAT. Create the Cloud Router first, then the NAT gateway on it (skip this if Session 17’s `prod-nat` already covers the region).',
+                  spec: [
+                    'Cloud Router: `prod-router`, network `prod-vpc`, `asia-southeast2`',
+                    'Cloud NAT: `prod-nat` on that router, automatic IPs, all subnet ranges'
+                  ],
+                  code: [
+                    'gcloud compute routers create prod-router --network=prod-vpc --region=asia-southeast2',
+                    'gcloud compute routers nats create prod-nat --router=prod-router --region=asia-southeast2 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges'
+                  ]
+                },
+                {
+                  title: 'A private GKE cluster with Workload Identity Federation',
+                  text: 'Autopilot with private nodes (Workload Identity Federation is always on in Autopilot). Each app gets its own Kubernetes service account, mapped to a Google service account with only its roles.',
+                  spec: [
+                    'Cluster: `secure-ap`, Autopilot, `asia-southeast2`, `--enable-private-nodes`, network `prod-vpc`, subnet `app-jkt`',
+                    'KSA `orders` in namespace `default`',
+                    'Bind it to `orders-sa` with Workload Identity User (`roles/iam.workloadIdentityUser`)',
+                    'Annotate the KSA with `iam.gke.io/gcp-service-account`'
+                  ],
+                  code: [
+                    'gcloud container clusters create-auto secure-ap --region=asia-southeast2 --network=prod-vpc --subnetwork=app-jkt --enable-private-nodes',
+                    'gcloud container clusters get-credentials secure-ap --region=asia-southeast2',
+                    'kubectl create serviceaccount orders',
+                    'gcloud iam service-accounts add-iam-policy-binding orders-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/iam.workloadIdentityUser --member="serviceAccount:ace-lab-123.svc.id.goog[default/orders]"',
+                    'kubectl annotate serviceaccount orders iam.gke.io/gcp-service-account=orders-sa@ace-lab-123.iam.gserviceaccount.com'
+                  ]
+                },
+                {
+                  title: 'The database password in Secret Manager',
+                  text: 'Store the password as a secret, and let only the workload’s service account read it.',
+                  spec: [
+                    'Secret: `db-pass`, automatic replication, value from stdin',
+                    'Secret Manager Secret Accessor (`roles/secretmanager.secretAccessor`) for `orders-sa` on that secret only'
+                  ],
+                  code: [
+                    'gcloud secrets create db-pass --replication-policy=automatic',
+                    'printf \'%s\' \'S3cret!\' | gcloud secrets versions add db-pass --data-file=-',
+                    'gcloud secrets add-iam-policy-binding db-pass --member=serviceAccount:orders-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/secretmanager.secretAccessor'
+                  ]
+                },
+                {
+                  title: 'CMEK on the customer-files bucket',
+                  text: 'Key ring and key first, in the bucket’s location; then let the Cloud Storage service agent use the key; then set it as the bucket’s default key.',
+                  spec: [
+                    'Must exist first: bucket `gs://ace-lab-files` in `asia-southeast2`, and the Cloud KMS API (`cloudkms.googleapis.com`)',
+                    'Key ring `lab-ring` and key `files-key`, location `asia-southeast2`, purpose `encryption`',
+                    'Cloud KMS CryptoKey Encrypter/Decrypter for the Cloud Storage service agent (`gcloud storage service-agent`)',
+                    'Bucket default key: `--default-encryption-key`'
+                  ],
+                  code: [
+                    'gcloud kms keyrings create lab-ring --location=asia-southeast2',
+                    'gcloud kms keys create files-key --keyring=lab-ring --location=asia-southeast2 --purpose=encryption',
+                    'gcloud storage service-agent --project=ace-lab-123 --authorize-cmek=projects/ace-lab-123/locations/asia-southeast2/keyRings/lab-ring/cryptoKeys/files-key',
+                    'gcloud storage buckets update gs://ace-lab-files --default-encryption-key=projects/ace-lab-123/locations/asia-southeast2/keyRings/lab-ring/cryptoKeys/files-key'
+                  ]
+                }
               ]
             },
             {

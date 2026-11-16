@@ -549,30 +549,132 @@ export const lesson: Lesson = {
             },
             {
               kind: 'steps',
+              lab: true,
               items: [
-                { title: 'Create the project in the right folder', text: 'So it inherits the folder’s IAM and organization policies from the start.', code: ['gcloud projects create ace-lab-123 --folder=123456789 --labels=env=lab'] },
-                { title: 'Link billing', text: 'Needs Billing Account User on the account.', code: ['gcloud billing projects link ace-lab-123 --billing-account=0X0X0X-0X0X0X-0X0X0X'] },
-                { title: 'Enable only the APIs you need', text: 'Fewer APIs means a smaller attack surface and fewer surprise costs.', code: ['gcloud services enable compute.googleapis.com logging.googleapis.com monitoring.googleapis.com'] },
-                { title: 'Create groups for people', text: 'In the Admin console (or synced from your directory): for example `lab-devs@` and `lab-viewers@`.' },
+                {
+                  title: 'Create the project inside the lab folder',
+                  text: 'Create the project directly under the lab folder, so it inherits the folder’s IAM and organization policies from the start.',
+                  spec: [
+                    'Project ID: `ace-lab-123` (globally unique, and it cannot be changed later)',
+                    'Parent folder: `--folder=FOLDER_ID`',
+                    'Label: `env=lab`, with `--labels`',
+                    'You need first: Project Creator on the folder'
+                  ],
+                  code: [
+                    'gcloud projects create ace-lab-123 --folder=123456789 --labels=env=lab',
+                    'gcloud config set project ace-lab-123'
+                  ]
+                },
+                {
+                  title: 'Link the billing account',
+                  text: 'Attach the project to the billing account, otherwise paid APIs such as Compute Engine cannot be enabled.',
+                  spec: [
+                    'Project: `ace-lab-123`',
+                    'Billing account: `--billing-account=ACCOUNT_ID` (find it with `gcloud billing accounts list`)',
+                    'You need first: Billing Account User on the account, and Project Billing Manager (or Owner) on the project'
+                  ],
+                  code: [
+                    'gcloud billing accounts list',
+                    'gcloud billing projects link ace-lab-123 --billing-account=0X0X0X-0X0X0X-0X0X0X'
+                  ]
+                },
+                {
+                  title: 'Enable only the APIs the lab needs',
+                  text: 'Fewer APIs means a smaller attack surface and fewer surprise costs.',
+                  spec: [
+                    'Compute Engine: `compute.googleapis.com`',
+                    'Cloud Logging and Monitoring: `logging.googleapis.com`, `monitoring.googleapis.com`',
+                    'Budgets (for step 9): `billingbudgets.googleapis.com`',
+                    'Must exist first: the billing link from step 2'
+                  ],
+                  code: [
+                    'gcloud services enable compute.googleapis.com logging.googleapis.com monitoring.googleapis.com billingbudgets.googleapis.com',
+                    'gcloud services list --enabled'
+                  ]
+                },
+                {
+                  title: 'Create groups for people',
+                  text: 'People get access through groups, never one by one. This is done in the Admin console (or synced from your directory), not with gcloud.',
+                  spec: [
+                    '`lab-devs@example.com` for the developers',
+                    '`lab-viewers@example.com` for read-only users'
+                  ]
+                },
                 {
                   title: 'Grant predefined roles to the groups',
-                  text: 'Never Owner for daily work.',
+                  text: 'Bind each group to the narrowest predefined role on the project. Never Owner for daily work.',
+                  spec: [
+                    '`lab-devs@`: Compute Instance Admin (v1), `roles/compute.instanceAdmin.v1`',
+                    '`lab-viewers@`: Viewer, `roles/viewer`',
+                    'Member format: `--member=group:EMAIL`'
+                  ],
                   code: [
                     'gcloud projects add-iam-policy-binding ace-lab-123 --member=group:lab-devs@example.com --role=roles/compute.instanceAdmin.v1',
                     'gcloud projects add-iam-policy-binding ace-lab-123 --member=group:lab-viewers@example.com --role=roles/viewer'
                   ]
                 },
-                { title: 'Create a dedicated service account for the workload', text: 'Do not use the Compute Engine default service account, which has Editor in older projects.', code: ['gcloud iam service-accounts create web-sa --display-name="web app"'] },
                 {
-                  title: 'Grant it only what it needs, on the resource',
-                  text: 'For example, write logs on the project and read one bucket.',
+                  title: 'Create a dedicated service account for the workload',
+                  text: 'Do not use the Compute Engine default service account, which has Editor in older projects. Create no keys.',
+                  spec: [
+                    'Name: `web-sa`',
+                    'Display name: `web app`',
+                    'Its email becomes `web-sa@ace-lab-123.iam.gserviceaccount.com`'
+                  ],
+                  code: [
+                    'gcloud iam service-accounts create web-sa --display-name="web app"'
+                  ]
+                },
+                {
+                  title: 'Create the assets bucket',
+                  text: 'The service account will read one bucket only, so that bucket has to exist before you can grant on it.',
+                  spec: [
+                    'Name: `gs://ace-lab-assets`',
+                    'Location: `asia-southeast2`',
+                    'Uniform bucket-level access: on (`--uniform-bucket-level-access`)'
+                  ],
+                  code: [
+                    'gcloud storage buckets create gs://ace-lab-assets --location=asia-southeast2 --uniform-bucket-level-access'
+                  ]
+                },
+                {
+                  title: 'Grant the service account only what it needs, on the resource',
+                  text: 'Write logs on the project, and read objects on that one bucket rather than on the whole project.',
+                  spec: [
+                    'Logs Writer `roles/logging.logWriter` on the project',
+                    'Storage Object Viewer `roles/storage.objectViewer` on `gs://ace-lab-assets` only',
+                    'Member format: `--member=serviceAccount:EMAIL`'
+                  ],
                   code: [
                     'gcloud projects add-iam-policy-binding ace-lab-123 --member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/logging.logWriter',
                     'gcloud storage buckets add-iam-policy-binding gs://ace-lab-assets --member=serviceAccount:web-sa@ace-lab-123.iam.gserviceaccount.com --role=roles/storage.objectViewer'
                   ]
                 },
-                { title: 'Add a budget with alerts', text: 'Thresholds at 50%, 90% and 100%, emailed to billing admins, optionally to Pub/Sub.', code: ['gcloud billing budgets create --billing-account=0X0X0X-0X0X0X-0X0X0X --display-name="lab" --budget-amount=50USD --threshold-rule=percent=0.5 --threshold-rule=percent=0.9 --threshold-rule=percent=1.0'] },
-                { title: 'Document and verify the bindings', text: 'Save the allow policy; use Policy Troubleshooter to confirm a teammate can (or cannot) do something.', code: ['gcloud projects get-iam-policy ace-lab-123 --format=json > iam-bindings.json'] }
+                {
+                  title: 'Add a budget with alerts',
+                  text: 'A budget on the billing account, scoped to the lab project, emails billing admins as spend grows.',
+                  spec: [
+                    'Display name: `lab`, amount: 50 USD',
+                    'Thresholds: 50%, 90% and 100% (`--threshold-rule=percent=0.5` and so on)',
+                    'Scope: only this project, `--filter-projects=projects/ace-lab-123`',
+                    'You need first: Billing Account Administrator (or Costs Manager) and the Budget API from step 3'
+                  ],
+                  code: [
+                    'gcloud billing budgets create --billing-account=0X0X0X-0X0X0X-0X0X0X --display-name="lab" --budget-amount=50USD --filter-projects=projects/ace-lab-123 --threshold-rule=percent=0.5 --threshold-rule=percent=0.9 --threshold-rule=percent=1.0'
+                  ]
+                },
+                {
+                  title: 'Document and verify the bindings',
+                  text: 'Save the allow policy as evidence, then check that a teammate can (or cannot) do something.',
+                  spec: [
+                    'Export the policy to `iam-bindings.json`',
+                    'Check one permission for one person with Policy Troubleshooter, for example `compute.instances.create`'
+                  ],
+                  code: [
+                    'gcloud projects get-iam-policy ace-lab-123 --format=json > iam-bindings.json',
+                    'gcloud policy-troubleshoot iam //cloudresourcemanager.googleapis.com/projects/ace-lab-123 --principal-email=dev@example.com --permission=compute.instances.create'
+                  ]
+                }
               ]
             },
             {

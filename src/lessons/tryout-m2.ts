@@ -406,23 +406,178 @@ export const lesson: Lesson = {
           blocks: [
             {
               kind: 'steps',
+              lab: true,
               items: [
-                { title: 'Create and connect to a VM', text: 'No external IP; SSH through IAP after allowing 35.235.240.0/20.', code: ['gcloud compute instances create lab-1 --zone=asia-southeast2-a --machine-type=e2-small --no-address --image-family=debian-12 --image-project=debian-cloud', 'gcloud compute ssh lab-1 --zone=asia-southeast2-a --tunnel-through-iap'] },
                 {
-                  title: 'Add, format and mount a data disk',
-                  text: 'Mount by UUID in `/etc/fstab` so it survives reboots.',
+                  title: 'Open SSH from IAP only',
+                  text: 'The VM will have no external IP, so you reach it through IAP. Create the firewall rule before the VM, so the first SSH works.',
+                  spec: [
+                    'Name: `allow-iap-ssh`, network `default`',
+                    'Direction ingress, action allow, protocol and port `tcp:22`',
+                    'Source range: `35.235.240.0/20` (the IAP range)'
+                  ],
                   code: [
-                    'gcloud compute disks create lab-data --zone=asia-southeast2-a --size=50GB --type=pd-balanced',
-                    'gcloud compute instances attach-disk lab-1 --disk=lab-data --zone=asia-southeast2-a',
-                    '# on the VM',
-                    'sudo mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/sdb',
-                    'sudo mkdir -p /mnt/data && sudo mount -o discard,defaults /dev/sdb /mnt/data'
+                    'gcloud compute firewall-rules create allow-iap-ssh --network=default --direction=INGRESS --allow=tcp:22 --source-ranges=35.235.240.0/20'
                   ]
                 },
-                { title: 'Snapshot it, then schedule snapshots', text: 'An on-demand snapshot now, a daily schedule for later.', code: ['gcloud compute snapshots create lab-data-1 --source-disk=lab-data --source-disk-zone=asia-southeast2-a', 'gcloud compute disks add-resource-policies lab-data --resource-policies=daily-7d --zone=asia-southeast2-a'] },
-                { title: 'Build an image and a template', text: 'Stop the VM first, then image its boot disk into a family.', code: ['gcloud compute instances stop lab-1 --zone=asia-southeast2-a', 'gcloud compute images create web-v1 --source-disk=lab-1 --source-disk-zone=asia-southeast2-a --family=web', 'gcloud compute instance-templates create web-t1 --machine-type=e2-small --image-family=web --tags=http-server'] },
-                { title: 'Deploy an autoscaled, autohealing MIG', text: 'Health check plus its firewall rule, then autoscaling on CPU.', code: ['gcloud compute instance-groups managed create web-mig --region=asia-southeast2 --template=web-t1 --size=2 --health-check=web-hc --initial-delay=180', 'gcloud compute instance-groups managed set-autoscaling web-mig --region=asia-southeast2 --min-num-replicas=2 --max-num-replicas=6 --target-cpu-utilization=0.6'] },
-                { title: 'Load it and watch it scale', text: 'Run a CPU load on the VMs (for example `stress-ng`), watch the group grow, stop the load, and watch it shrink after the stabilisation period.' }
+                {
+                  title: 'Create a VM without an external IP',
+                  text: 'A small Debian VM in Jakarta that is only reachable privately.',
+                  spec: [
+                    'Name: `lab-1`, zone `asia-southeast2-a`',
+                    'Machine type: `e2-small`',
+                    'Image: family `debian-12` from project `debian-cloud`',
+                    'No external IP: `--no-address`'
+                  ],
+                  code: [
+                    'gcloud compute instances create lab-1 --zone=asia-southeast2-a --machine-type=e2-small --no-address --image-family=debian-12 --image-project=debian-cloud'
+                  ]
+                },
+                {
+                  title: 'Give private VMs a way out: Cloud Router first, then Cloud NAT',
+                  text: 'Without an external IP, `apt-get` cannot reach the internet. Cloud NAT is configured on a Cloud Router, so create the router first, then the NAT gateway on it.',
+                  spec: [
+                    'Cloud Router: `lab-router`, network `default`, region `asia-southeast2`',
+                    'Cloud NAT: `lab-nat` on router `lab-router`, same region',
+                    'NAT IPs: automatic (`--auto-allocate-nat-external-ips`)',
+                    'Subnets: all ranges in the region (`--nat-all-subnet-ip-ranges`)'
+                  ],
+                  code: [
+                    'gcloud compute routers create lab-router --network=default --region=asia-southeast2',
+                    'gcloud compute routers nats create lab-nat --router=lab-router --region=asia-southeast2 --auto-allocate-nat-external-ips --nat-all-subnet-ip-ranges'
+                  ]
+                },
+                {
+                  title: 'Connect through IAP and install the web server',
+                  text: 'SSH through the IAP tunnel, then install a web server (for the health check later) and a load tool.',
+                  spec: [
+                    'SSH flag: `--tunnel-through-iap`',
+                    'You need first: IAP-secured Tunnel User on the project, the rule from step 1, NAT from step 3',
+                    'Packages: `nginx` and `stress-ng`'
+                  ],
+                  code: [
+                    'gcloud compute ssh lab-1 --zone=asia-southeast2-a --tunnel-through-iap',
+                    '# on the VM',
+                    'sudo apt-get update && sudo apt-get install -y nginx stress-ng'
+                  ]
+                },
+                {
+                  title: 'Create a data disk and attach it',
+                  text: 'A separate disk for data, in the same zone as the VM.',
+                  spec: [
+                    'Disk: `lab-data`, 50 GB, type `pd-balanced`, zone `asia-southeast2-a`',
+                    'Attach it to `lab-1`'
+                  ],
+                  code: [
+                    'gcloud compute disks create lab-data --zone=asia-southeast2-a --size=50GB --type=pd-balanced',
+                    'gcloud compute instances attach-disk lab-1 --disk=lab-data --zone=asia-southeast2-a'
+                  ]
+                },
+                {
+                  title: 'Format and mount the disk on the VM',
+                  text: 'Inside the VM: find the new device, format it, mount it, and add it to `/etc/fstab` by UUID so it survives reboots.',
+                  spec: [
+                    'Find the device with `lsblk` (usually `/dev/sdb`)',
+                    'File system: ext4; mount point `/mnt/data`',
+                    '`/etc/fstab` entry by UUID, with the `nofail` option'
+                  ],
+                  code: [
+                    'lsblk',
+                    'sudo mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/sdb',
+                    'sudo mkdir -p /mnt/data && sudo mount -o discard,defaults /dev/sdb /mnt/data',
+                    'echo "UUID=$(sudo blkid -s UUID -o value /dev/sdb) /mnt/data ext4 discard,defaults,nofail 0 2" | sudo tee -a /etc/fstab'
+                  ]
+                },
+                {
+                  title: 'Take a snapshot now',
+                  text: 'An on-demand snapshot of the data disk.',
+                  spec: [
+                    'Snapshot: `lab-data-1`',
+                    'Source disk: `lab-data` in `asia-southeast2-a`'
+                  ],
+                  code: [
+                    'gcloud compute snapshots create lab-data-1 --source-disk=lab-data --source-disk-zone=asia-southeast2-a'
+                  ]
+                },
+                {
+                  title: 'Create a snapshot schedule, then attach it',
+                  text: 'A schedule is its own resource (a resource policy). Create it first, then attach it to the disk.',
+                  spec: [
+                    'Policy: `daily-7d`, region `asia-southeast2`',
+                    'Daily at 02:00 UTC: `--daily-schedule --start-time=02:00`',
+                    'Keep 7 days: `--max-retention-days=7`',
+                    'Then attach it to disk `lab-data`'
+                  ],
+                  code: [
+                    'gcloud compute resource-policies create snapshot-schedule daily-7d --region=asia-southeast2 --daily-schedule --start-time=02:00 --max-retention-days=7',
+                    'gcloud compute disks add-resource-policies lab-data --resource-policies=daily-7d --zone=asia-southeast2-a'
+                  ]
+                },
+                {
+                  title: 'Build an image, then a template from it',
+                  text: 'Stop the VM first so the boot disk is consistent, image it into a family, then make a template that uses the family.',
+                  spec: [
+                    'Stop `lab-1` first',
+                    'Image: `web-v1` in family `web`, from boot disk `lab-1`',
+                    'Template: `web-t1`, machine type `e2-small`, image family `web`, tag `http-server`, no external IP'
+                  ],
+                  code: [
+                    'gcloud compute instances stop lab-1 --zone=asia-southeast2-a',
+                    'gcloud compute images create web-v1 --source-disk=lab-1 --source-disk-zone=asia-southeast2-a --family=web',
+                    'gcloud compute instance-templates create web-t1 --machine-type=e2-small --image-family=web --tags=http-server --no-address'
+                  ]
+                },
+                {
+                  title: 'Create the health check and its firewall rule',
+                  text: 'Autohealing needs a health check, and probes come from Google’s ranges, so they must be allowed in before the group exists.',
+                  spec: [
+                    'Health check: `web-hc`, HTTP, port 80, path `/`',
+                    'Firewall rule: `allow-hc`, ingress, allow `tcp:80`',
+                    'Sources: `130.211.0.0/22` and `35.191.0.0/16`, target tag `http-server`'
+                  ],
+                  code: [
+                    'gcloud compute health-checks create http web-hc --port=80 --request-path=/',
+                    'gcloud compute firewall-rules create allow-hc --network=default --direction=INGRESS --allow=tcp:80 --source-ranges=130.211.0.0/22,35.191.0.0/16 --target-tags=http-server'
+                  ]
+                },
+                {
+                  title: 'Create the regional MIG with autohealing',
+                  text: 'A regional group spread over the zones of Jakarta, healed by the health check.',
+                  spec: [
+                    'Name: `web-mig`, region `asia-southeast2`, size 2',
+                    'Template: `web-t1`',
+                    'Autohealing: `--health-check=web-hc`, initial delay 180 seconds',
+                    'Must exist first: `web-t1`, `web-hc` and `allow-hc`'
+                  ],
+                  code: [
+                    'gcloud compute instance-groups managed create web-mig --region=asia-southeast2 --template=web-t1 --size=2 --health-check=web-hc --initial-delay=180'
+                  ]
+                },
+                {
+                  title: 'Turn on autoscaling',
+                  text: 'Scale on CPU between two and six VMs.',
+                  spec: [
+                    'Minimum 2, maximum 6 replicas',
+                    'Target CPU utilization: 60% (`0.6`)'
+                  ],
+                  code: [
+                    'gcloud compute instance-groups managed set-autoscaling web-mig --region=asia-southeast2 --min-num-replicas=2 --max-num-replicas=6 --target-cpu-utilization=0.6'
+                  ]
+                },
+                {
+                  title: 'Load it and watch it scale',
+                  text: 'Run CPU load on the group’s VMs, watch the group grow, stop the load, and watch it shrink after the stabilisation period (about 10 minutes).',
+                  spec: [
+                    'Load: `stress-ng` on each VM for 10 minutes',
+                    'Watch the instance list until the size changes'
+                  ],
+                  code: [
+                    '# on each VM in the group (SSH through IAP)',
+                    'stress-ng --cpu 2 --timeout 600',
+                    '# from Cloud Shell',
+                    'gcloud compute instance-groups managed list-instances web-mig --region=asia-southeast2'
+                  ]
+                }
               ]
             }
           ]
@@ -806,25 +961,151 @@ export const lesson: Lesson = {
           blocks: [
             {
               kind: 'steps',
+              lab: true,
               items: [
-                { title: 'Build the image once', text: 'Push it to Artifact Registry; every platform pulls the same image.', code: [`gcloud builds submit --tag ${AR}/web:v1`] },
                 {
-                  title: 'Platform 1: a managed instance group',
-                  text: 'A template on a Container-Optimized OS image whose startup script pulls and runs the container, behind an external Application Load Balancer, with a health check, autoscaling and a firewall rule for the health check ranges.',
-                  code: ['gcloud compute instance-templates create web-c1 --machine-type=e2-small --image-family=cos-stable --image-project=cos-cloud --tags=http-server --metadata-from-file=startup-script=run-web.sh', 'gcloud compute instance-groups managed create web-mig --region=asia-southeast2 --template=web-c1 --size=2 --health-check=web-hc']
+                  title: 'Create the Artifact Registry repository',
+                  text: 'Every platform will pull the same image, so first make a Docker repository for it.',
+                  spec: [
+                    'Repository: `apps`, format Docker, location `asia-southeast2`',
+                    'Enable first: `artifactregistry.googleapis.com` and `cloudbuild.googleapis.com`',
+                    'Image path becomes `asia-southeast2-docker.pkg.dev/ace-lab-123/apps/web`'
+                  ],
+                  code: [
+                    'gcloud services enable artifactregistry.googleapis.com cloudbuild.googleapis.com run.googleapis.com container.googleapis.com',
+                    'gcloud artifacts repositories create apps --repository-format=docker --location=asia-southeast2'
+                  ]
                 },
                 {
-                  title: 'Platform 2: GKE Autopilot',
-                  text: 'A Deployment with requests set, then a Service or Gateway.',
-                  code: ['gcloud container clusters create-auto web-ap --region=asia-southeast2', 'kubectl create deployment web --image=' + AR + '/web:v1 --replicas=2', 'kubectl set resources deployment web --requests=cpu=250m,memory=512Mi', 'kubectl expose deployment web --type=LoadBalancer --port=80 --target-port=8080']
+                  title: 'Build the image once and push it',
+                  text: 'From the folder with the app and its Dockerfile, let Cloud Build build and push version 1. The app listens on port 8080.',
+                  spec: [
+                    'Tag: `web:v1` in the `apps` repository',
+                    'Build service: Cloud Build (`gcloud builds submit`)'
+                  ],
+                  code: [
+                    `gcloud builds submit --tag ${AR}/web:v1`
+                  ]
                 },
-                { title: 'Platform 3: Cloud Run', text: 'One command: no servers, no cluster.', code: ['gcloud run deploy web --image=' + AR + '/web:v1 --region=asia-southeast2 --allow-unauthenticated'] },
+                {
+                  title: 'Platform 1 · Write the startup script',
+                  text: 'A Container-Optimized OS VM runs the container from a startup script. Write `run-web.sh` so it pulls the image and maps port 80 on the VM to 8080 in the container.',
+                  spec: [
+                    'File: `run-web.sh`',
+                    'Log Docker in to Artifact Registry, then `docker run` with `-p 80:8080`',
+                    'The VMs’ service account needs Artifact Registry Reader on the repository'
+                  ],
+                  code: [
+                    'cat > run-web.sh <<\'EOF\'',
+                    '#!/bin/bash',
+                    'docker-credential-gcr configure-docker --registries=asia-southeast2-docker.pkg.dev',
+                    `docker run -d --restart=always -p 80:8080 ${AR}/web:v1`,
+                    'EOF'
+                  ]
+                },
+                {
+                  title: 'Platform 1 · Health check and firewall rule',
+                  text: 'Create these before the group, as in Session 5.',
+                  spec: [
+                    'Health check: `web-hc`, HTTP port 80',
+                    'Firewall rule: `allow-hc`, allow `tcp:80` from `130.211.0.0/22` and `35.191.0.0/16` to tag `http-server`'
+                  ],
+                  code: [
+                    'gcloud compute health-checks create http web-hc --port=80',
+                    'gcloud compute firewall-rules create allow-hc --network=default --allow=tcp:80 --source-ranges=130.211.0.0/22,35.191.0.0/16 --target-tags=http-server'
+                  ]
+                },
+                {
+                  title: 'Platform 1 · Template and regional MIG',
+                  text: 'A template on Container-Optimized OS with the startup script, then a regional group with a named port for the load balancer.',
+                  spec: [
+                    'Template: `web-c1`, `e2-small`, image family `cos-stable` from `cos-cloud`, tag `http-server`',
+                    'Startup script: `--metadata-from-file=startup-script=run-web.sh`',
+                    'MIG: `web-mig`, region `asia-southeast2`, size 2, health check `web-hc`',
+                    'Named port: `http:80`'
+                  ],
+                  code: [
+                    'gcloud compute instance-templates create web-c1 --machine-type=e2-small --image-family=cos-stable --image-project=cos-cloud --tags=http-server --metadata-from-file=startup-script=run-web.sh',
+                    'gcloud compute instance-groups managed create web-mig --region=asia-southeast2 --template=web-c1 --size=2 --health-check=web-hc',
+                    'gcloud compute instance-groups set-named-ports web-mig --region=asia-southeast2 --named-ports=http:80'
+                  ]
+                },
+                {
+                  title: 'Platform 1 · External Application Load Balancer',
+                  text: 'Build it from the back to the front: backend service, URL map, proxy, then forwarding rule.',
+                  spec: [
+                    'Backend service: `web-be`, global, HTTP, port name `http`, health check `web-hc`, scheme `EXTERNAL_MANAGED`',
+                    'Add `web-mig` as its backend',
+                    'URL map `web-map`, then HTTP proxy `web-proxy`',
+                    'Forwarding rule: `web-fr`, global, port 80'
+                  ],
+                  code: [
+                    'gcloud compute backend-services create web-be --global --protocol=HTTP --port-name=http --health-checks=web-hc --load-balancing-scheme=EXTERNAL_MANAGED',
+                    'gcloud compute backend-services add-backend web-be --global --instance-group=web-mig --instance-group-region=asia-southeast2',
+                    'gcloud compute url-maps create web-map --default-service=web-be',
+                    'gcloud compute target-http-proxies create web-proxy --url-map=web-map',
+                    'gcloud compute forwarding-rules create web-fr --global --load-balancing-scheme=EXTERNAL_MANAGED --target-http-proxy=web-proxy --ports=80'
+                  ]
+                },
+                {
+                  title: 'Platform 2 · An Autopilot cluster, then its credentials',
+                  text: 'Create the cluster, then fetch credentials, which `kubectl` needs before any command works.',
+                  spec: [
+                    'Cluster: `web-ap`, Autopilot, region `asia-southeast2`',
+                    'Credentials: `gcloud container clusters get-credentials`'
+                  ],
+                  code: [
+                    'gcloud container clusters create-auto web-ap --region=asia-southeast2',
+                    'gcloud container clusters get-credentials web-ap --region=asia-southeast2'
+                  ]
+                },
+                {
+                  title: 'Platform 2 · Deployment and Service',
+                  text: 'Run two replicas with resource requests set (Autopilot bills by them), then expose them.',
+                  spec: [
+                    'Deployment: `web`, image `web:v1`, 2 replicas',
+                    'Requests: `cpu=250m`, `memory=512Mi`',
+                    'Service: type `LoadBalancer`, port 80 to target port 8080'
+                  ],
+                  code: [
+                    `kubectl create deployment web --image=${AR}/web:v1 --replicas=2`,
+                    'kubectl set resources deployment web --requests=cpu=250m,memory=512Mi',
+                    'kubectl expose deployment web --type=LoadBalancer --port=80 --target-port=8080',
+                    'kubectl get service web --watch'
+                  ]
+                },
+                {
+                  title: 'Platform 3 · Cloud Run',
+                  text: 'One deploy: no servers and no cluster. Cloud Run sends traffic to port 8080 by default.',
+                  spec: [
+                    'Service: `web`, region `asia-southeast2`',
+                    'Image: `web:v1`',
+                    'Public access: `--allow-unauthenticated`'
+                  ],
+                  code: [
+                    `gcloud run deploy web --image=${AR}/web:v1 --region=asia-southeast2 --allow-unauthenticated`
+                  ]
+                },
                 {
                   title: 'Roll out v2 on Cloud Run with a traffic split',
-                  text: 'Deploy with no traffic, test the tag URL, then 10% → 50% → 100%.',
-                  code: ['gcloud run deploy web --image=' + AR + '/web:v2 --region=asia-southeast2 --no-traffic --tag=v2', 'gcloud run services update-traffic web --region=asia-southeast2 --to-tags=v2=10', 'gcloud run services update-traffic web --region=asia-southeast2 --to-latest']
+                  text: 'Build v2, deploy it with no traffic under a tag, test the tag URL, then move traffic 10% → 50% → 100%.',
+                  spec: [
+                    'Build `web:v2` first, as in step 2',
+                    'Deploy flags: `--no-traffic --tag=v2`',
+                    'Split: `update-traffic --to-tags=v2=10`, then 50, then `--to-latest`'
+                  ],
+                  code: [
+                    `gcloud builds submit --tag ${AR}/web:v2`,
+                    `gcloud run deploy web --image=${AR}/web:v2 --region=asia-southeast2 --no-traffic --tag=v2`,
+                    'gcloud run services update-traffic web --region=asia-southeast2 --to-tags=v2=10',
+                    'gcloud run services update-traffic web --region=asia-southeast2 --to-tags=v2=50',
+                    'gcloud run services update-traffic web --region=asia-southeast2 --to-latest'
+                  ]
                 },
-                { title: 'Compare and write it up', text: 'Note the provisioning effort, scaling behaviour and idle cost of each.' }
+                {
+                  title: 'Compare and write it up',
+                  text: 'Note the provisioning effort, scaling behaviour and idle cost of each platform, then fill in the table below.'
+                }
               ]
             },
             {
